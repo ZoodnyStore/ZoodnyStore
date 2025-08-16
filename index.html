@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>زودني zoodny</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root {
+            --primary: #2A3F54;
+            --secondary: #F7C873;
+            --accent: #E74C3C;
+            --light: #F9F9F9;
+            --dark: #1A252F;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--dark);
+            padding-top: 80px;
+        }
+
+        /* نافبار */
+        .navbar {
+            background: rgba(42, 63, 84, 0.98);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            height: 80px;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+        }
+
+        .logo {
+            color: var(--secondary);
+            font-size: 2rem;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: 1px;
+            margin-right: 1.5rem;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* الهيرو */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 5%;
+            margin-top: 80px;
+            background: linear-gradient(45deg, var(--primary), #1E2B38);
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* فروع */
+        .branches {
+            padding: 8rem 5%;
+            background: #ffffff;
+        }
+
+        .branches-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .branch-card {
+            background: var(--light);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .branch-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .branch-icon {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .branch-info {
+            margin: 1rem 0;
+        }
+
+        .branch-info h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .branch-info p {
+            line-height: 1.6;
+            color: #666;
+        }
+
+        iframe {
+            border-radius: 8px;
+            border: 0;
+            width: 100%;
+            height: 200px;
+        }
+
+        /* أصناف */
+        .products {
+            padding: 8rem 5%;
+            background: #f5f6fa;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            width: 100px;
+            height: 4px;
+            background: var(--secondary);
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .product-filters {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            background: var(--primary);
+            color: var(--light);
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+
+        .products-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            display: block;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-bottom: 4px solid var(--secondary);
+        }
+
+        .product-info {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .product-title {
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            color: var(--accent);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .whatsapp-button {
+            background-color: #25D366;
+            color: white !important;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .whatsapp-button:hover {
+            background-color: #1ebe57;
+        }
+
+        /* من نحن */
+        .about {
+            padding: 8rem 5%;
+            background: white;
+        }
+
+        .about-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.8rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* تواصل */
+        .contact {
+            padding: 8rem 5%;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+        }
+
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            background: #25D366;
+            color: white !important;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.3rem;
+            margin-top: 3rem;
+            transition: all 0.3s;
+        }
+
+        .whatsapp-btn i {
+            font-size: 1.8rem;
+        }
+
+        .whatsapp-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* ريسبونسف */
+        @media (max-width: 992px) {
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .nav-links.active {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--primary);
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .about-features {
+                grid-template-columns: 1fr;
+            }
+
+            .product-info {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="#" class="logo">زودني zoodny</a>
+            <div class="nav-links">
+                <a href="#home">الرئيسية</a>
+                <a href="#products">الأصناف</a>
+                <a href="#branches">فروعنا</a>
+                <a href="#about">من نحن</a>
+                <a href="#contact">اتصل بنا</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="home" data-aos="fade-up">
+        <div class="hero-content">
+            <h1>التجربة الأولى من نوعها في سوريا <span style="color: var(--secondary)">زودني</span></h1>
+            <p>جودة عالية وتوصيل سريع</p>
+        </div>
+    </section>
+
+    <section class="branches" id="branches">
+        <h2 class="section-title" data-aos="fade-up">فروعنا في سوريا</h2>
+        <div class="branches-grid">
+            <div class="branch-card" data-aos="fade-up">
+                <i class="fas fa-map-marker-alt branch-icon"></i>
+                <div class="branch-info">
+                    <h3>الفرع الرئيسي - دمشق</h3>
+                    <p>دمشق - حي الشعلان<br />هاتف: +306986410324</p>
+                </div>
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3326.359751925289!2d36.291579524507455!3d33.51803107336278!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1518e703bd037f1d%3A0xe8bcdc5c749e2648!2z2KfZhNi02LnZhNin2YY!5e0!3m2!1sar!2s!4v1748195840288!5m2!1sar!2s"
+                    allowfullscreen=""
+                    loading="lazy"
+                ></iframe>
+            </div>
+
+            <div class="branch-card" data-aos="fade-up" data-aos-delay="200">
+                <i class="fas fa-map-marker-alt branch-icon"></i>
+                <div class="branch-info">
+                    <h3>الفرع الثاني - ادلب</h3>
+                    <p>ادلب - شارع الجلاء<br />هاتف: +306986410324</p>
+                </div>
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d6461.705523503563!2d36.63599865627803!3d35.92610384003652!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1z2KfYr9mE2Kgg2LTYp9ix2Lkg2KfZhNis2YTYp9ih!5e0!3m2!1sar!2s!4v1748196100705!5m2!1sar!2s"
+                    allowfullscreen=""
+                    loading="lazy"
+                ></iframe>
+            </div>
+        </div>
+    </section>
+
+    <section class="products" id="products">
+        <h2 class="section-title" data-aos="fade-up">أصنافنا المميزة</h2>
+
+        <!-- أزرار التصنيفات -->
+        <div class="product-filters">
+            <button class="filter-btn active" data-filter="all">الكل</button>
+            <button class="filter-btn" data-filter="clothing">ألبسة</button>
+            <button class="filter-btn" data-filter="accessories">أكسسوارات الهاتف</button>
+            <button class="filter-btn" data-filter="food">منتجات غذائية</button>
+        </div>
+
+        <div class="products-grid">
+            <!-- ألبسة -->
+            <div class="product-card" data-aos="fade-up" data-category="clothing">
+                <img src="C:\Users\ACAD CENTER\Documents\zoodny 2\متجر واحد\system\image\img7.webp" class="product-img" alt="قميص رجالي" />
+                <div class="product-info">
+                    <h3 class="product-title">قميص رجالي</h3>
+                    <p class="product-price">السعر: 15,000 ل.س</p>
+                    <a href="https://wa.me/306986410324?text=أرغب في شراء قميص رجالي" class="whatsapp-button">اطلب الآن</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-aos="fade-up" data-category="clothing">
+                <img src="C:\Users\ACAD CENTER\Documents\zoodny 2\متجر واحد\system\image\img6.avif" class="product-img" alt="بنطال نسائي" />
+                <div class="product-info">
+                    <h3 class="product-title">بنطال رجالي</h3>
+                    <p class="product-price">السعر: 20,000 ل.س</p>
+                    <a href="https://wa.me/306986410324?text=أرغب في شراء بنطال رجالي" class="whatsapp-button">اطلب الآن</a>
+                </div>
+            </div>
+
+            <!-- أكسسوارات الهاتف -->
+            <div class="product-card" data-aos="fade-up" data-category="accessories">
+                <img src="C:\Users\ACAD CENTER\Documents\zoodny 2\متجر واحد\system\image\img5.jpg" class="product-img" alt="غطاء هاتف" />
+                <div class="product-info">
+                    <h3 class="product-title">غطاء هاتف</h3>
+                    <p class="product-price">السعر: 5,000 ل.س</p>
+                    <a href="https://wa.me/306986410324?text=أرغب في شراء غطاء هاتف" class="whatsapp-button">اطلب الآن</a>
+                </div>
+            </div>
+
+            <!-- منتجات غذائية -->
+            <div class="product-card" data-aos="fade-up" data-category="food">
+                <img src="C:\Users\ACAD CENTER\Documents\zoodny 2\متجر واحد\system\image\img4.jpg" class="product-img" alt="لاڤيتا" />
+                <div class="product-info">
+                    <h3 class="product-title">لاڤيتا</h3>
+                    <p class="product-price">السعر: 8,500 ل.س</p>
+                    <a href="https://wa.me/306986410324?text=أرغب في شراء منتج لاڤيتا" class="whatsapp-button">اطلب الآن</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="about-content" data-aos="fade-up">
+            <div class="about-text">
+                <h2>من نحن؟</h2>
+                <p>زودني هي تجربة جديدة ومميزة توفر لك أفضل الأصناف مع جودة عالية وخدمة توصيل سريعة داخل سوريا.</p>
+                <p>نحرص على تقديم منتجات مختارة بعناية لتلبية احتياجاتكم اليومية.</p>
+            </div>
+            <div class="about-features">
+                <div class="feature-card">
+                    <i class="fas fa-shipping-fast"></i>
+                    <h4>توصيل سريع</h4>
+                    <p>نوفر خدمة توصيل سريعة وآمنة لجميع الفروع.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-star"></i>
+                    <h4>منتجات عالية الجودة</h4>
+                    <p>نختار أفضل المنتجات لضمان رضاكم التام.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-headset"></i>
+                    <h4>دعم العملاء</h4>
+                    <p>فريقنا جاهز للرد على استفساراتكم في أي وقت.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-lock"></i>
+                    <h4>أمان وخصوصية</h4>
+                    <p>نحترم خصوصيتكم ونحافظ على بياناتكم بسرية تامة.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <h2 class="section-title" data-aos="fade-up">اتصل بنا</h2>
+        <p data-aos="fade-up" data-aos-delay="200">للطلبات أو الاستفسارات تواصل معنا عبر واتساب</p>
+        <a href="https://wa.me/306986410324" target="_blank" class="whatsapp-btn" data-aos="fade-up" data-aos-delay="400">
+            <i class="fab fa-whatsapp"></i> تواصل عبر واتساب
+        </a>
+    </section>
+
+    <footer>
+        <p>© 2025 زودني. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init();
+
+        // فلترة المنتجات
+        document.addEventListener("DOMContentLoaded", function () {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const productCards = document.querySelectorAll('.product-card');
+
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const filter = btn.getAttribute('data-filter');
+
+                    // تفعيل زر التصنيف المختار فقط
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // اظهار/اخفاء المنتجات حسب التصنيف
+                    productCards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

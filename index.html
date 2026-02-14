@@ -2420,7 +2420,7 @@
             <div class="quantity-body">
                 <div class="quantity-info">
                     <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
-                    <span id="selectedProductName">متابعين إنستغرام وهمي</span>
+                    <span id="selectedProductName">متابعين إنستغرام حقيقي</span>
                 </div>
                 
                 <div class="form-group">
@@ -2432,10 +2432,65 @@
                 <div class="price-preview" id="pricePreview">
                     <p style="color: var(--gray); margin-bottom: 0.5rem;">السعر المقدر:</p>
                     <span id="calculatedPrice">0.00$</span>
-                    <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem;">* سعر الألف: <span id="pricePerThousand">1.00$</span></p>
+                    <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem;">* سعر الألف: <span id="pricePerThousand">3.50$</span></p>
                 </div>
                 
                 <button class="submit-order-btn" id="confirmQuantityBtn">
+                    <i class="fas fa-check"></i> تأكيد وإضافة للسلة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إدخال بيانات رصيد الموبايل -->
+    <div class="quantity-modal" id="creditModal">
+        <div class="quantity-container">
+            <div class="quantity-header">
+                <h3><i class="fas fa-phone-alt"></i> شحن رصيد موبايل</h3>
+                <button class="quantity-close" id="creditClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="quantity-body">
+                <div class="quantity-info">
+                    <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
+                    <span id="selectedCreditName">سيرياتيل - رصيد</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="creditAmount">اختر الكمية *</label>
+                    <select id="creditAmount" class="form-control" required>
+                        <option value="">-- اختر قيمة الرصيد --</option>
+                        <option value="200" data-price="0.24">200 ل.س - 0.24$</option>
+                        <option value="300" data-price="0.37">300 ل.س - 0.37$</option>
+                        <option value="400" data-price="0.45">400 ل.س - 0.45$</option>
+                        <option value="500" data-price="0.50">500 ل.س - 0.50$</option>
+                        <option value="600" data-price="0.59">600 ل.س - 0.59$</option>
+                        <option value="644" data-price="0.19">644 ل.س - 0.19$</option>
+                        <option value="700" data-price="0.77">700 ل.س - 0.77$</option>
+                        <option value="800" data-price="0.91">800 ل.س - 0.91$</option>
+                        <option value="900" data-price="0.93">900 ل.س - 0.93$</option>
+                        <option value="1000" data-price="1.09">1000 ل.س - 1.09$</option>
+                        <option value="1100" data-price="1.16">1100 ل.س - 1.16$</option>
+                        <option value="1200" data-price="1.37">1200 ل.س - 1.37$</option>
+                        <option value="1300" data-price="1.55">1300 ل.س - 1.55$</option>
+                        <option value="1400" data-price="1.74">1400 ل.س - 1.74$</option>
+                        <option value="1500" data-price="2.28">1500 ل.س - 2.28$</option>
+                        <option value="1600" data-price="2.74">1600 ل.س - 2.74$</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="creditPhoneNumber">رقم الهاتف *</label>
+                    <input type="tel" id="creditPhoneNumber" class="form-control" placeholder="09xxxxxxxx" pattern="09[0-9]{8}" required>
+                    <small style="color: var(--gray); font-size: 0.85rem;">يجب أن يبدأ الرقم بـ 09</small>
+                </div>
+                
+                <div class="price-preview" id="creditPricePreview">
+                    <p style="color: var(--gray); margin-bottom: 0.5rem;">السعر:</p>
+                    <span id="calculatedCreditPrice">0.00$</span>
+                    <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem;">* قيمة الرصيد: <span id="selectedCreditValue">0</span> ل.س</p>
+                </div>
+                
+                <button class="submit-order-btn" id="confirmCreditBtn">
                     <i class="fas fa-check"></i> تأكيد وإضافة للسلة
                 </button>
             </div>
@@ -3021,7 +3076,7 @@
                 image: "باور 1.png"
             },
             { 
-                id: 6, 
+                id: 7, 
                 name: "باور بانك kakusiga 10000mA", 
                 category: "accessories", 
                 price: 6, 
@@ -3029,7 +3084,7 @@
                 image: "بور 10000.jpg"
             },
             { 
-                id: 7, 
+                id: 8, 
                 name: "سماعة هيدفون P9", 
                 category: "accessories", 
                 price: 4, 
@@ -3037,7 +3092,7 @@
                 image: "p9.jpg"
             },
             { 
-                id: 8, 
+                id: 9, 
                 name: "سماعة هيدفون P47", 
                 category: "accessories", 
                 price: 3, 
@@ -3045,7 +3100,7 @@
                 image: "p47.jpg"
             },
             { 
-                id: 9, 
+                id: 10, 
                 name: "سماعة هيدفون P47 قطة", 
                 category: "accessories", 
                 price: 3, 
@@ -3053,7 +3108,7 @@
                 image: "قطة.jpg"
             },
             { 
-                id: 10, 
+                id: 11, 
                 name: "سماعة هيدفون GAMING A4", 
                 category: "accessories", 
                 price: 8, 
@@ -3061,7 +3116,7 @@
                 image: "a4.jpg"
             },
             { 
-                id: 11, 
+                id: 12, 
                 name: "سماعة هيدفون GAMING G9000", 
                 category: "accessories", 
                 price: 8, 
@@ -3069,7 +3124,7 @@
                 image: "g9000.webp"
             },
             { 
-                id: 12, 
+                id: 13, 
                 name: "تحويلة Tybe C", 
                 category: "accessories", 
                 price: 1.5, 
@@ -3077,7 +3132,7 @@
                 image: "usb c.webp"
             },
             { 
-                id: 13, 
+                id: 14, 
                 name: "تحويلة ايفون", 
                 category: "accessories", 
                 price: 1.5, 
@@ -3085,7 +3140,7 @@
                 image: "تحويلة ايفون.png"
             },
             { 
-                id: 14, 
+                id: 15, 
                 name: "مبرد TL07", 
                 category: "accessories", 
                 price: 9, 
@@ -3093,7 +3148,7 @@
                 image: "مبرد 1.avif"
             },
             { 
-                id: 15, 
+                id: 16, 
                 name: "مبرد BG15", 
                 category: "accessories", 
                 price: 6.5, 
@@ -3101,7 +3156,7 @@
                 image: "مبرد 2.png"
             },
             { 
-                id: 16, 
+                id: 17, 
                 name: "سماعة M20", 
                 category: "accessories", 
                 price: 3.5, 
@@ -3109,7 +3164,7 @@
                 image: "m20.webp"
             },
             { 
-                id: 17, 
+                id: 18, 
                 name: "سماعة M30", 
                 category: "accessories", 
                 price: 5, 
@@ -3117,7 +3172,7 @@
                 image: "m30.webp"
             },
             { 
-                id: 18, 
+                id: 19, 
                 name: "سماعة A9 PRO", 
                 category: "accessories", 
                 price: 9, 
@@ -3125,7 +3180,7 @@
                 image: "anc enc.webp"
             },
             { 
-                id: 19, 
+                id: 20, 
                 name: "وصلة شحن USB Tybe C", 
                 category: "accessories", 
                 price: 1.5, 
@@ -3133,7 +3188,7 @@
                 image: "usb.webp"
             },
             { 
-                id: 20, 
+                id: 21, 
                 name: "وصلة شحن ELITE", 
                 category: "accessories", 
                 price: 2, 
@@ -3141,7 +3196,7 @@
                 image: "USB ايليت.png"
             },
             { 
-                id: 21, 
+                id: 22, 
                 name: "وصلة شحن", 
                 category: "accessories", 
                 price: 1.5, 
@@ -3149,7 +3204,7 @@
                 image: "تايب c.webp"
             },
             { 
-                id: 20, 
+                id: 23, 
                 name: "وصلة شحن ELITE", 
                 category: "accessories", 
                 price: 2, 
@@ -3157,7 +3212,7 @@
                 image: "تايب سي ايليت.png"
             },
             { 
-                id: 22, 
+                id: 24, 
                 name: "راس شاحن شاومي 67W", 
                 category: "accessories", 
                 price: 5, 
@@ -3165,7 +3220,7 @@
                 image: "67.jpeg"
             },
             { 
-                id: 23, 
+                id: 25, 
                 name: "راس شاحن شاومي 120W", 
                 category: "accessories", 
                 price: 8, 
@@ -3173,7 +3228,7 @@
                 image: "120.webp"
             },
             { 
-                id: 24, 
+                id: 26, 
                 name: "راس شاحن ELITE", 
                 category: "accessories", 
                 price: 3.5, 
@@ -3181,7 +3236,7 @@
                 image: "راس ايليت.png"
             },
             { 
-                id: 25, 
+                id: 27, 
                 name: "مايك K9 wireless", 
                 category: "accessories", 
                 price: 8, 
@@ -3189,7 +3244,7 @@
                 image: "k9.jpg"
             },
             { 
-                id: 26, 
+                id: 28, 
                 name: "هولدر BY13", 
                 category: "accessories", 
                 price: 5, 
@@ -3199,7 +3254,7 @@
             
             // ملحقات اللابتوب
             { 
-                id: 27, 
+                id: 29, 
                 name: "كيبورد وماوس gaming F-83", 
                 category: "labtop", 
                 price: 8, 
@@ -3207,7 +3262,7 @@
                 image: "كيبورد مضيء.webp"
             },
             { 
-                id: 28, 
+                id: 30, 
                 name: "كيبورد H-820", 
                 category: "labtop", 
                 price: 5, 
@@ -3217,7 +3272,7 @@
             
             // ساعات ذكية
             { 
-                id: 29, 
+                id: 31, 
                 name: "ساعة C60 ULTRA 3", 
                 category: "watch", 
                 price: 9, 
@@ -3225,7 +3280,7 @@
                 image: "c60.jpg"
             },
             { 
-                id: 30, 
+                id: 32, 
                 name: "ساعة T1000 ULTRA", 
                 category: "watch", 
                 price: 9, 
@@ -3233,7 +3288,7 @@
                 image: "t1000.webp"
             },
             { 
-                id: 31, 
+                id: 33, 
                 name: "ساعة S30 PRO MAX", 
                 category: "watch", 
                 price: 9, 
@@ -3243,7 +3298,7 @@
             
             // مكبرات صوت
             { 
-                id: 32, 
+                id: 34, 
                 name: "مكبر صوت K-12", 
                 category: "speakers", 
                 price: 4.5, 
@@ -3251,7 +3306,7 @@
                 image: "K12.webp"
             },
             { 
-                id: 33, 
+                id: 35, 
                 name: "مكبر صوت FLAME LIGHT", 
                 category: "speakers", 
                 price: 3.5, 
@@ -3259,7 +3314,7 @@
                 image: "flame.jpeg"
             },
             { 
-                id: 34, 
+                id: 36, 
                 name: "مكبر صوت GTS-1881", 
                 category: "speakers", 
                 price: 2.5, 
@@ -3267,13 +3322,9 @@
                 image: "GTS 1881.jpeg"
             },
             
-            // ألعاب وبرامج
-            { 
-                
-            },
             // منتجات غذائية
             { 
-                id: 40, 
+                id: 37, 
                 name: "عسل مكسرات", 
                 category: "food", 
                 price: 16, 
@@ -3281,7 +3332,7 @@
                 image: "عسل مكسرات.png"
             },
             { 
-                id: 41, 
+                id: 38, 
                 name: "عسل حبة البركة", 
                 category: "food", 
                 price: 15, 
@@ -3289,7 +3340,7 @@
                 image: "عسل حبة البركة.png"
             },
             { 
-                id: 42, 
+                id: 39, 
                 name: "عسل الشوكيات", 
                 category: "food", 
                 price: 10, 
@@ -3297,7 +3348,7 @@
                 image: "عسل الشوكيات.png"
             },
             { 
-                id: 43, 
+                id: 40, 
                 name: "عسل الحمضيات", 
                 category: "food", 
                 price: 12, 
@@ -3305,7 +3356,7 @@
                 image: "عسل الحمضيات.png"
             },
             { 
-                id: 44, 
+                id: 41, 
                 name: "عسل العجرم", 
                 category: "food", 
                 price: 14, 
@@ -3313,7 +3364,7 @@
                 image: "عسل عجرم.png"
             },
             { 
-                id: 45, 
+                id: 42, 
                 name: "عسل بشهده", 
                 category: "food", 
                 price: 12, 
@@ -3321,7 +3372,7 @@
                 image: "عسل بشهدو.png"
             },
             { 
-                id: 46, 
+                id: 43, 
                 name: "سمن عربي غنم", 
                 category: "food", 
                 price: 15, 
@@ -3329,7 +3380,7 @@
                 image: "سمن عربي غنم.png"
             },
             { 
-                id: 47, 
+                id: 44, 
                 name: "سمن عربي بقر", 
                 category: "food", 
                 price: 8.5, 
@@ -3337,7 +3388,7 @@
                 image: "سمن عربي بقر.png"
             },
             { 
-                id: 48, 
+                id: 45, 
                 name: "حبوب لقاح النحل", 
                 category: "food", 
                 price: 12, 
@@ -3345,14 +3396,9 @@
                 image: "حبوب لقاح النحل.webp"
             },
             
-            // ألبسة
-            { 
-                
-            },
-            
             // خدمات سوشال ميديا - مع تحديث جميع الحدود الدنيا والقصوى
             { 
-                id: 50, 
+                id: 46, 
                 name: "متابعين إنستغرام وهمي", 
                 category: "social-media", 
                 basePrice: 2.3,
@@ -3364,7 +3410,7 @@
                 image: "انستغرام.png"
             },
             { 
-                id: 51, 
+                id: 47, 
                 name: "متابعين إنستغرام حقيقي", 
                 category: "social-media", 
                 basePrice: 3.5,
@@ -3376,7 +3422,7 @@
                 image: "انستغرام.png"
             },
             { 
-                id: 52, 
+                id: 48, 
                 name: "لايكات إنستغرام", 
                 category: "social-media", 
                 basePrice: 0.8,
@@ -3388,7 +3434,7 @@
                 image: "انستغرام.png"
             },
             { 
-                id: 53, 
+                id: 49, 
                 name: "مشاهدات إنستغرام", 
                 category: "social-media", 
                 basePrice: 0.15,
@@ -3400,7 +3446,7 @@
                 image: "انستغرام.png"
             },
             { 
-                id: 54, 
+                id: 50, 
                 name: "مشاركات إنستغرام", 
                 category: "social-media", 
                 basePrice: 0.25,
@@ -3412,7 +3458,7 @@
                 image: "انستغرام.png"
             },
             { 
-                id: 55, 
+                id: 51, 
                 name: "متابعين فيسبوك", 
                 category: "social-media", 
                 basePrice: 1.7,
@@ -3424,7 +3470,7 @@
                 image: "فيسبوك.jpg"
             },
             { 
-                id: 56, 
+                id: 52, 
                 name: "اعضاء كروبات فيسبوك", 
                 category: "social-media", 
                 basePrice: 1.5,
@@ -3436,7 +3482,7 @@
                 image: "فيسبوك.jpg"
             },
             { 
-                id: 57, 
+                id: 53, 
                 name: "تفاعل لايكات فيسبوك", 
                 category: "social-media", 
                 basePrice: 0.8,
@@ -3448,7 +3494,7 @@
                 image: "فيسبوك.jpg"
             },
             { 
-                id: 58, 
+                id: 54, 
                 name: "تفاعل قلوب فيسبوك", 
                 category: "social-media", 
                 basePrice: 0.9,
@@ -3460,7 +3506,7 @@
                 image: "فيسبوك.jpg"
             },
             { 
-                id: 59, 
+                id: 55, 
                 name: "مشاهدات فيسبوك", 
                 category: "social-media", 
                 basePrice: 0.15,
@@ -3472,7 +3518,7 @@
                 image: "فيسبوك.jpg"
             },
             { 
-                id: 60, 
+                id: 56, 
                 name: "متابعين تيك توك وهمي", 
                 category: "social-media", 
                 basePrice: 2.3,
@@ -3484,7 +3530,7 @@
                 image: "تيك توك.avif"
             },
             { 
-                id: 61, 
+                id: 57, 
                 name: "متابعين تيك توك حقيقي", 
                 category: "social-media", 
                 basePrice: 3.5,
@@ -3496,7 +3542,7 @@
                 image: "تيك توك.avif"
             },
             { 
-                id: 62, 
+                id: 58, 
                 name: "مشاهدات تيك توك", 
                 category: "social-media", 
                 basePrice: 0.2,
@@ -3508,7 +3554,7 @@
                 image: "تيك توك.avif"
             },
             { 
-                id: 63, 
+                id: 59, 
                 name: "لايكات تيك توك", 
                 category: "social-media", 
                 basePrice: 0.7,
@@ -3520,7 +3566,7 @@
                 image: "تيك توك.avif"
             },
             { 
-                id: 64, 
+                id: 60, 
                 name: "مشاركات تيك توك", 
                 category: "social-media", 
                 basePrice: 0.25,
@@ -3532,7 +3578,7 @@
                 image: "تيك توك.avif"
             },
             { 
-                id: 65, 
+                id: 61, 
                 name: "نقاط معركة تيك توك", 
                 category: "social-media", 
                 basePrice: 0.5,
@@ -3544,7 +3590,7 @@
                 image: "تيك توك.avif"
             },
             { 
-                id: 66, 
+                id: 62, 
                 name: "اعضاء تليغرام", 
                 category: "social-media", 
                 basePrice: 2.3,
@@ -3556,7 +3602,7 @@
                 image: "تليغرام.png"
             },
             { 
-                id: 67, 
+                id: 63, 
                 name: "مشاهدات تليغرام", 
                 category: "social-media", 
                 basePrice: 0.1,
@@ -3568,7 +3614,7 @@
                 image: "تليغرام.png"
             },
             { 
-                id: 68, 
+                id: 64, 
                 name: "تفاعلات ايجابي تليغرام", 
                 category: "social-media", 
                 basePrice: 0.6,
@@ -3580,7 +3626,7 @@
                 image: "تليغرام.png"
             },
             { 
-                id: 69, 
+                id: 65, 
                 name: "تفاعلات سلبي تليغرام", 
                 category: "social-media", 
                 basePrice: 0.6,
@@ -3592,7 +3638,7 @@
                 image: "تليغرام.png"
             },
             { 
-                id: 70, 
+                id: 66, 
                 name: "مشتركين يوتيوب", 
                 category: "social-media", 
                 basePrice: 28,
@@ -3604,7 +3650,7 @@
                 image: "يوتيوب.png"
             },
             { 
-                id: 71, 
+                id: 67, 
                 name: "مشاهدات يوتيوب", 
                 category: "social-media", 
                 basePrice: 2.5,
@@ -3616,7 +3662,7 @@
                 image: "يوتيوب.png"
             },
             { 
-                id: 72, 
+                id: 68, 
                 name: "لايكات يوتيوب", 
                 category: "social-media", 
                 basePrice: 1,
@@ -3628,7 +3674,7 @@
                 image: "يوتيوب.png"
             },
             { 
-                id: 73, 
+                id: 69, 
                 name: "مشاركات يوتيوب", 
                 category: "social-media", 
                 basePrice: 0.9,
@@ -3639,9 +3685,10 @@
                 maxQuantity: 1000000,
                 image: "يوتيوب.png"
             },
+            
             // الذكاء الاصطناعي
             {
-                id: 74, 
+                id: 70, 
                 name: "Chat GPT Plus - دعوة مساحة عمل - شهر", 
                 category: "chat", 
                 price: 7.5, 
@@ -3649,7 +3696,7 @@
                 image: "plus.png"
             },
             {
-                id: 75, 
+                id: 71, 
                 name: "Chat GPT Go - شهر", 
                 category: "chat", 
                 price: 10, 
@@ -3657,43 +3704,32 @@
                 image: "plus.png"
             },
             {
-                id: 76, 
+                id: 72, 
                 name: "Chat GPT Go - سنة", 
                 category: "chat", 
                 price: 50, 
                 description: "Chat GPT Go , حساب جاهز وخاص بك 100% , يمكنك نغيير بيانات الحساب بعد الاستلام , سنة",
                 image: "plus.png"
             },
-            // رصيد الموبايل 
-            {
-                id: 6, 
-                name: "سيرياتيل", 
+            
+            // رصيد الموبايل - منتج واحد فقط مع خانة اختيار الكمية
+            { 
+                id: 73, 
+                name: "رصيد سيرياتيل", 
                 category: "rased", 
-                price: 7, 
-                description: "رصيد سيرياتيل , قم باختيار الباقة",
+                price: 0, 
+                description: "شحن رصيد سيرياتيل - اختر الكمية المناسبة", 
                 image: "سيرياتيل.png"
             },
-            {
-                id: 6, 
-                name: "MTN", 
+            { 
+                id: 74, 
+                name: "رصيد MTN", 
                 category: "rased", 
-                price: 7, 
-                description: "رصيد MTN , قم باختيار الباقة",
+                price: 0, 
+                description: "شحن رصيد MTN - اختر الكمية المناسبة", 
                 image: "mtn1.png"
-            }    
-
+            }
         ];
-
-        // -------------------- دالة حساب سعر خدمات السوشال ميديا --------------------
-        function calculateSocialMediaPrice(productId, quantity) {
-            const product = products.find(p => p.id === productId);
-            if (!product || product.category !== 'social-media') return 0;
-            
-            const basePrice = product.basePrice || product.price || 0;
-            const price = (quantity / 1000) * basePrice;
-            
-            return Math.round(price * 100) / 100;
-        }
 
         // بيانات التصنيفات
         const categories = [
@@ -3776,6 +3812,26 @@
             }
         ];
 
+        // بيانات فئات الرصيد والأسعار
+        const creditAmounts = [
+            { value: 200, price: 0.24 },
+            { value: 300, price: 0.37 },
+            { value: 400, price: 0.45 },
+            { value: 500, price: 0.50 },
+            { value: 600, price: 0.59 },
+            { value: 644, price: 0.19 },
+            { value: 700, price: 0.77 },
+            { value: 800, price: 0.91 },
+            { value: 900, price: 0.93 },
+            { value: 1000, price: 1.09 },
+            { value: 1100, price: 1.16 },
+            { value: 1200, price: 1.37 },
+            { value: 1300, price: 1.55 },
+            { value: 1400, price: 1.74 },
+            { value: 1500, price: 2.28 },
+            { value: 1600, price: 2.74 }
+        ];
+
         // -------------------- حالة التطبيق --------------------
         let currentCategory = null;
         let cart = [];
@@ -3783,7 +3839,9 @@
         let screenshotFile = null;
         let currentStep = 1;
         let hasSocialMediaProduct = false;
+        let hasCreditProduct = false;
         let selectedSocialProduct = null;
+        let selectedCreditProduct = null;
         
         // عناصر DOM
         const categoriesSection = document.getElementById('categories');
@@ -3826,6 +3884,15 @@
         const calculatedPrice = document.getElementById('calculatedPrice');
         const pricePerThousand = document.getElementById('pricePerThousand');
         const confirmQuantityBtn = document.getElementById('confirmQuantityBtn');
+        
+        const creditModal = document.getElementById('creditModal');
+        const creditClose = document.getElementById('creditClose');
+        const selectedCreditName = document.getElementById('selectedCreditName');
+        const creditAmount = document.getElementById('creditAmount');
+        const creditPhoneNumber = document.getElementById('creditPhoneNumber');
+        const calculatedCreditPrice = document.getElementById('calculatedCreditPrice');
+        const selectedCreditValue = document.getElementById('selectedCreditValue');
+        const confirmCreditBtn = document.getElementById('confirmCreditBtn');
         
         const paymentModal = document.getElementById('paymentModal');
         const paymentClose = document.getElementById('paymentClose');
@@ -3890,6 +3957,17 @@
         
         window.addEventListener('resize', checkMobileScreen);
         window.addEventListener('load', checkMobileScreen);
+
+        // -------------------- دالة حساب سعر خدمات السوشال ميديا --------------------
+        function calculateSocialMediaPrice(productId, quantity) {
+            const product = products.find(p => p.id === productId);
+            if (!product || product.category !== 'social-media') return 0;
+            
+            const basePrice = product.basePrice || product.price || 0;
+            const price = (quantity / 1000) * basePrice;
+            
+            return Math.round(price * 100) / 100;
+        }
 
         // -------------------- دالة تحديث نص حقل الرابط حسب نوع الخدمة --------------------
         function updateSocialMediaFieldLabel() {
@@ -3998,117 +4076,6 @@
             if (accountUrlHelpText) accountUrlHelpText.textContent = helpText;
         }
 
-        // -------------------- دالة عرض تفاصيل المنتج --------------------
-        function showProductDetails(productId) {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-            
-            const category = categories.find(c => c.id === product.category);
-            const imageUrl = product.image || "images/placeholder.jpg";
-            
-            let priceDisplay = '';
-            let categoryName = category?.name || 'غير مصنف';
-            
-            if (product.category === 'social-media') {
-                priceDisplay = `${product.basePrice || product.price}$ لـ 1k`;
-            } else {
-                priceDisplay = product.price > 0 ? `${product.price}$` : 'قريباً';
-            }
-            
-            let badgeText = '';
-            if (product.category === 'food') badgeText = 'طبيعي';
-            else if (product.category === 'games') badgeText = 'رقمي';
-            else if (product.category === 'social-media') badgeText = 'خدمة';
-            
-            let featuresHtml = '';
-            if (product.category === 'social-media') {
-                featuresHtml = `
-                    <li><i class="fas fa-check-circle"></i> الحد الأدنى: ${product.minQuantity || 300}</li>
-                    <li><i class="fas fa-check-circle"></i> الحد الأقصى: ${(product.maxQuantity || 1000000).toLocaleString()}</li>
-                    <li><i class="fas fa-check-circle"></i> غيـــر مكفوووول</li>
-                    <li><i class="fas fa-check-circle"></i> يستغرق الوصول من 5 الى 15 دقيقة</li>
-                `;
-            } else {
-                featuresHtml = `
-                    <li><i class="fas fa-check-circle"></i> جودة عالية</li>
-                    <li><i class="fas fa-check-circle"></i> توصيل سريع</li>
-                    <li><i class="fas fa-check-circle"></i> ضمان الجودة</li>
-                `;
-            }
-            
-            productDetailsBody.innerHTML = `
-                <div class="product-details-image">
-                    <img src="${imageUrl}" alt="${product.name}" onerror="this.src='images/placeholder.jpg'">
-                </div>
-                <div class="product-details-info">
-                    <h2 class="product-details-title">${product.name}</h2>
-                    <span class="product-details-category">${categoryName} ${badgeText ? `- ${badgeText}` : ''}</span>
-                    
-                    <div class="product-details-price-box">
-                        <div class="product-details-price">${priceDisplay}</div>
-                        <div class="product-details-price-label"></div>
-                    </div>
-                    
-                    <div class="product-details-description">
-                        <strong>وصف المنتج:</strong><br>
-                        ${product.description}
-                    </div>
-                    
-                    <ul class="product-details-features">
-                        ${featuresHtml}
-                    </ul>
-                    
-                    <div class="product-details-actions">
-                        <button class="product-details-add-to-cart" data-id="${product.id}">
-                            <i class="fas fa-cart-plus"></i> أضف للسلة
-                        </button>
-                        <button class="product-details-whatsapp" data-id="${product.id}">
-                            <i class="fab fa-whatsapp"></i> استفسار
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            setTimeout(() => {
-                const detailsAddToCart = document.querySelector('.product-details-add-to-cart');
-                const detailsWhatsapp = document.querySelector('.product-details-whatsapp');
-                
-                if (detailsAddToCart) {
-                    detailsAddToCart.addEventListener('click', function() {
-                        const pid = parseInt(this.getAttribute('data-id'));
-                        const p = products.find(p => p.id === pid);
-                        
-                        if (p.category === 'social-media') {
-                            productDetailsModal.classList.remove('active');
-                            openQuantityModal(p);
-                        } else {
-                            addToCart(pid);
-                        }
-                    });
-                }
-                
-                if (detailsWhatsapp) {
-                    detailsWhatsapp.addEventListener('click', function() {
-                        const pid = parseInt(this.getAttribute('data-id'));
-                        const p = products.find(p => p.id === pid);
-                        if (p) {
-                            let message = `اريد الاستفسار عن ${p.name}`;
-                            if (p.category === 'social-media') {
-                                message += `\nأريد خدمة: ${p.name}`;
-                                message += `\nالسعر: ${p.basePrice || p.price}$ لكل 1000`;
-                                message += `\nالحد الأدنى: 300 - الحد الأقصى: 1,000,000`;
-                            } else {
-                                message += ` بسعر ${p.price}$ من زودني`;
-                            }
-                            window.open(`https://wa.me/963982199738?text=${encodeURIComponent(message)}`, '_blank');
-                        }
-                    });
-                }
-            }, 100);
-            
-            productDetailsModal.classList.add('active');
-        }
-
         // -------------------- عرض التصنيفات --------------------
         function renderCategories() {
             categoriesGrid.innerHTML = '';
@@ -4209,9 +4176,17 @@
             let filteredProducts = products.filter(product => product.category === categoryId);
             
             if (filter === 'lowest-price') {
-                filteredProducts.sort((a, b) => a.price - b.price);
+                filteredProducts.sort((a, b) => {
+                    if (a.category === 'rased') return 0;
+                    if (b.category === 'rased') return 0;
+                    return a.price - b.price;
+                });
             } else if (filter === 'highest-price') {
-                filteredProducts.sort((a, b) => b.price - a.price);
+                filteredProducts.sort((a, b) => {
+                    if (a.category === 'rased') return 0;
+                    if (b.category === 'rased') return 0;
+                    return b.price - a.price;
+                });
             }
             
             if (filteredProducts.length === 0) {
@@ -4235,6 +4210,8 @@
                 let priceDisplay = '';
                 if (product.category === 'social-media') {
                     priceDisplay = `${product.basePrice || product.price}$ لـ 1k`;
+                } else if (product.category === 'rased') {
+                    priceDisplay = 'اختر الكمية';
                 } else {
                     priceDisplay = product.price > 0 ? `${product.price}$` : 'قريباً';
                 }
@@ -4249,13 +4226,14 @@
                              onerror="this.src='images/placeholder.jpg'">
                         ${product.category === 'food' ? '<span class="product-badge">طبيعي</span>' : 
                           product.category === 'games' ? '<span class="product-badge">رقمي</span>' : 
-                          product.category === 'social-media' ? '<span class="product-badge">خدمة</span>' : ''}
+                          product.category === 'social-media' ? '<span class="product-badge">خدمة</span>' :
+                          product.category === 'rased' ? '<span class="product-badge">رصيد</span>' : ''}
                     </div>
                     <div class="product-info">
                         <h3 class="product-title">${product.name}</h3>
                         <p class="product-price">${priceDisplay}</p>
                         <div class="product-actions">
-                            ${product.price > 0 ? `
+                            ${product.price > 0 || product.category === 'rased' ? `
                                 <button class="product-details-btn" data-id="${product.id}">
                                     <i class="fas fa-info-circle"></i> تفاصيل المنتج
                                 </button>
@@ -4276,7 +4254,13 @@
             document.querySelectorAll('.product-details-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const productId = parseInt(this.getAttribute('data-id'));
-                    showProductDetails(productId);
+                    const product = products.find(p => p.id === productId);
+                    
+                    if (product.category === 'rased') {
+                        showProductDetails(productId);
+                    } else {
+                        showProductDetails(productId);
+                    }
                 });
             });
             
@@ -4287,6 +4271,8 @@
                     
                     if (product.category === 'social-media') {
                         openQuantityModal(product);
+                    } else if (product.category === 'rased') {
+                        openCreditModal(product);
                     } else {
                         addToCart(productId);
                     }
@@ -4304,6 +4290,8 @@
                             message += `\nأريد خدمة: ${product.name}`;
                             message += `\nالسعر: ${product.basePrice || product.price}$ لكل 1000`;
                             message += `\nالحد الأدنى: 300 - الحد الأقصى: 1,000,000`;
+                        } else if (product.category === 'rased') {
+                            message += `\nأريد شحن رصيد ${product.name}`;
                         } else {
                             message += ` بسعر ${product.price}$ من زودني`;
                         }
@@ -4314,7 +4302,7 @@
             });
         }
         
-        // -------------------- فتح نافذة إدخال الكمية --------------------
+        // -------------------- فتح نافذة إدخال الكمية للسوشال ميديا --------------------
         function openQuantityModal(product) {
             selectedSocialProduct = product;
             
@@ -4329,7 +4317,7 @@
             quantityModal.classList.add('active');
         }
         
-        // -------------------- تحديث معاينة السعر --------------------
+        // -------------------- تحديث معاينة السعر للسوشال ميديا --------------------
         function updatePricePreview() {
             if (!selectedSocialProduct) return;
             
@@ -4343,8 +4331,35 @@
             }
         }
         
+        // -------------------- فتح نافذة إدخال بيانات رصيد الموبايل --------------------
+        function openCreditModal(product) {
+            selectedCreditProduct = product;
+            
+            selectedCreditName.textContent = product.name;
+            creditAmount.value = '';
+            creditPhoneNumber.value = '';
+            calculatedCreditPrice.textContent = '0.00$';
+            selectedCreditValue.textContent = '0';
+            
+            creditModal.classList.add('active');
+        }
+        
+        // -------------------- تحديث معاينة سعر الرصيد --------------------
+        function updateCreditPricePreview() {
+            const selectedOption = creditAmount.options[creditAmount.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                const price = selectedOption.getAttribute('data-price');
+                const value = selectedOption.value;
+                calculatedCreditPrice.textContent = `${parseFloat(price).toFixed(2)}$`;
+                selectedCreditValue.textContent = value;
+            } else {
+                calculatedCreditPrice.textContent = '0.00$';
+                selectedCreditValue.textContent = '0';
+            }
+        }
+        
         // -------------------- إضافة منتج إلى السلة --------------------
-        function addToCart(productId, customQuantity = null, customPrice = null) {
+        function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null) {
             const product = products.find(p => p.id === productId);
             if (!product) return;
             
@@ -4360,7 +4375,7 @@
                 itemQuantity = 1;
                 itemPrice = calculateSocialMediaPrice(product.id, customQuantity);
                 
-                const existingItem = cart.find(item => item.id === productId);
+                const existingItem = cart.find(item => item.id === productId && item.customQuantity);
                 
                 if (existingItem) {
                     existingItem.customQuantity = (existingItem.customQuantity || 300) + customQuantity;
@@ -4378,6 +4393,26 @@
                         perThousand: product.perThousand || null
                     });
                 }
+            } else if (product.category === 'rased') {
+                if (!creditAmount_ || !phoneNumber) {
+                    showToast('يرجى اختيار الكمية وإدخال رقم الهاتف');
+                    return;
+                }
+                
+                const creditInfo = creditAmounts.find(c => c.value == creditAmount_);
+                if (!creditInfo) return;
+                
+                itemPrice = creditInfo.price;
+                
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: itemPrice,
+                    creditValue: creditInfo.value,
+                    quantity: 1,
+                    category: product.category,
+                    phoneNumber: phoneNumber
+                });
             } else {
                 const existingItem = cart.find(item => item.id === productId);
                 
@@ -4395,6 +4430,7 @@
             }
             
             checkForSocialMediaProducts();
+            checkForCreditProducts();
             
             localStorage.setItem('zoodnyCart', JSON.stringify(cart));
             updateCartUI();
@@ -4418,6 +4454,14 @@
                 socialMediaFields.classList.remove('active');
                 accountUrl.required = false;
             }
+        }
+        
+        // -------------------- التحقق من وجود منتجات رصيد --------------------
+        function checkForCreditProducts() {
+            hasCreditProduct = cart.some(item => {
+                const product = products.find(p => p.id === item.id);
+                return product && product.category === 'rased';
+            });
         }
         
         // -------------------- عرض ملخص منتجات السوشال ميديا --------------------
@@ -4490,6 +4534,7 @@
             cart.forEach(item => {
                 const product = products.find(p => p.id === item.id);
                 const isSocialMedia = product && product.category === 'social-media';
+                const isCredit = product && product.category === 'rased';
                 const customQty = item.customQuantity || 300;
                 
                 const cartItem = document.createElement('div');
@@ -4504,22 +4549,32 @@
                             <p style="color: var(--gray); font-size: 0.85rem;">الكمية: ${customQty.toLocaleString()}</p>
                         </div>
                     `;
+                } else if (isCredit) {
+                    detailsHtml = `
+                        <div style="flex: 1;">
+                            <h4 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.3rem;">${item.name}</h4>
+                            <p style="color: var(--accent); font-weight: 700;">${item.price.toFixed(2)}$</p>
+                            <p style="color: var(--gray); font-size: 0.85rem;">قيمة الرصيد: ${item.creditValue} ل.س</p>
+                            <p style="color: var(--gray); font-size: 0.85rem;">رقم الهاتف: ${item.phoneNumber}</p>
+                        </div>
+                    `;
                 } else {
                     detailsHtml = `
                         <div style="flex: 1;">
                             <h4 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.3rem;">${item.name}</h4>
                             <p style="color: var(--accent); font-weight: 700;">${item.price.toFixed(2)}$</p>
+                            <p style="color: var(--gray); font-size: 0.85rem;">الكمية: ${item.quantity}</p>
                         </div>
                     `;
                 }
                 
                 cartItem.innerHTML = `
                     <div style="width: 70px; height: 70px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                        <i class="${isSocialMedia ? 'fab fa-instagram' : 'fas fa-box'}" style="font-size: 1.5rem; color: ${isSocialMedia ? '#E1306C' : '#666'};"></i>
+                        <i class="${isSocialMedia ? 'fab fa-instagram' : isCredit ? 'fas fa-phone-alt' : 'fas fa-box'}" style="font-size: 1.5rem; color: ${isSocialMedia ? '#E1306C' : isCredit ? '#2ECC71' : '#666'};"></i>
                     </div>
                     ${detailsHtml}
                     <div class="cart-item-actions" style="display: flex; align-items: center; gap: 0.8rem;">
-                        ${!isSocialMedia ? `
+                        ${!isSocialMedia && !isCredit ? `
                             <button class="quantity-btn decrease" data-id="${item.id}" style="background: var(--light); border: 1px solid #ddd; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">-</button>
                             <span style="font-weight: 600; min-width: 25px; text-align: center;">${item.quantity}</span>
                             <button class="quantity-btn increase" data-id="${item.id}" style="background: var(--light); border: 1px solid #ddd; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">+</button>
@@ -4560,7 +4615,7 @@
             const product = products.find(p => p.id === productId);
             
             if (itemIndex !== -1) {
-                if (product && product.category === 'social-media') {
+                if (product && (product.category === 'social-media' || product.category === 'rased')) {
                     showToast('لتعديل الكمية، يرجى إزالة المنتج وإضافته مرة أخرى');
                     return;
                 }
@@ -4572,6 +4627,7 @@
                 }
                 
                 checkForSocialMediaProducts();
+                checkForCreditProducts();
                 
                 localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                 updateCartUI();
@@ -4583,6 +4639,7 @@
             cart = cart.filter(item => item.id !== productId);
             
             checkForSocialMediaProducts();
+            checkForCreditProducts();
             
             localStorage.setItem('zoodnyCart', JSON.stringify(cart));
             updateCartUI();
@@ -4601,6 +4658,7 @@
             cart.forEach(item => {
                 const itemTotal = item.price * item.quantity;
                 const isSocialMedia = item.category === 'social-media';
+                const isCredit = item.category === 'rased';
                 const customQty = item.customQuantity || 300;
                 
                 const summaryItem = document.createElement('div');
@@ -4610,6 +4668,11 @@
                     summaryItem.innerHTML = `
                         <span>${item.name} (${customQty.toLocaleString()})</span>
                         <span>${item.price.toFixed(2)}$</span>
+                    `;
+                } else if (isCredit) {
+                    summaryItem.innerHTML = `
+                        <span>${item.name} - ${item.creditValue} ل.س (هاتف: ${item.phoneNumber})</span>
+                        <span>${(item.price * item.quantity).toFixed(2)}$</span>
                     `;
                 } else {
                     summaryItem.innerHTML = `
@@ -4766,6 +4829,18 @@
                 });
             }
             
+            if (hasCreditProduct) {
+                message += `\n📞 معلومات شحن الرصيد:\n`;
+                
+                const creditItems = cart.filter(item => item.category === 'rased');
+                creditItems.forEach((item, index) => {
+                    message += `\nالرصيد ${index + 1}: ${item.name}\n`;
+                    message += `   قيمة الرصيد: ${item.creditValue} ل.س\n`;
+                    message += `   رقم الهاتف: ${item.phoneNumber}\n`;
+                    message += `   السعر: ${item.price.toFixed(2)}$\n`;
+                });
+            }
+            
             message += `\n💳 معلومات الدفع:\n`;
             message += `رقم التحويل: ${currentPaymentData.transferNumber}\n`;
             message += `المبلغ المدفوع: ${currentPaymentData.paidAmount}$\n`;
@@ -4779,6 +4854,11 @@
                     const customQty = item.customQuantity || 300;
                     message += `${index + 1}. ${item.name}\n`;
                     message += `   الكمية: ${customQty.toLocaleString()}\n`;
+                    message += `   السعر: ${item.price.toFixed(2)}$\n\n`;
+                } else if (item.category === 'rased') {
+                    message += `${index + 1}. ${item.name}\n`;
+                    message += `   قيمة الرصيد: ${item.creditValue} ل.س\n`;
+                    message += `   رقم الهاتف: ${item.phoneNumber}\n`;
                     message += `   السعر: ${item.price.toFixed(2)}$\n\n`;
                 } else {
                     const itemTotal = item.price * item.quantity;
@@ -4807,6 +4887,7 @@
             
             cart = [];
             hasSocialMediaProduct = false;
+            hasCreditProduct = false;
             localStorage.removeItem('zoodnyCart');
             updateCartUI();
             
@@ -4849,6 +4930,7 @@
                 });
                 
                 checkForSocialMediaProducts();
+                checkForCreditProducts();
                 updateCartUI();
             }
         }
@@ -4866,10 +4948,214 @@
             currentCategory = null;
         }
         
+        // -------------------- عرض تفاصيل المنتج --------------------
+        function showProductDetails(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const category = categories.find(c => c.id === product.category);
+            const imageUrl = product.image || "images/placeholder.jpg";
+            
+            let priceDisplay = '';
+            let categoryName = category?.name || 'غير مصنف';
+            
+            if (product.category === 'social-media') {
+                priceDisplay = `${product.basePrice || product.price}$ لـ 1k`;
+            } else if (product.category === 'rased') {
+                priceDisplay = 'اختر الكمية';
+            } else {
+                priceDisplay = product.price > 0 ? `${product.price}$` : 'قريباً';
+            }
+            
+            let badgeText = '';
+            if (product.category === 'food') badgeText = 'طبيعي';
+            else if (product.category === 'games') badgeText = 'رقمي';
+            else if (product.category === 'social-media') badgeText = 'خدمة';
+            else if (product.category === 'rased') badgeText = 'رصيد';
+            
+            let featuresHtml = '';
+            if (product.category === 'social-media') {
+                featuresHtml = `
+                    <li><i class="fas fa-check-circle"></i> الحد الأدنى: ${product.minQuantity || 300}</li>
+                    <li><i class="fas fa-check-circle"></i> الحد الأقصى: ${(product.maxQuantity || 1000000).toLocaleString()}</li>
+                    <li><i class="fas fa-check-circle"></i> غيـــر مكفوووول</li>
+                    <li><i class="fas fa-check-circle"></i> يستغرق الوصول من 5 الى 15 دقيقة</li>
+                `;
+            } else if (product.category === 'rased') {
+                featuresHtml = `
+                    <li><i class="fas fa-check-circle"></i> يتم الإرسال خلال 5 دقائق</li>
+                    <li><i class="fas fa-check-circle"></i> تحتاج إدخال رقم الهاتف</li>
+                    <li><i class="fas fa-check-circle"></i> متوفر لجميع الخطوط</li>
+                `;
+            } else {
+                featuresHtml = `
+                    <li><i class="fas fa-check-circle"></i> جودة عالية</li>
+                    <li><i class="fas fa-check-circle"></i> توصيل سريع</li>
+                    <li><i class="fas fa-check-circle"></i> ضمان الجودة</li>
+                `;
+            }
+            
+            productDetailsBody.innerHTML = `
+                <div class="product-details-image">
+                    <img src="${imageUrl}" alt="${product.name}" onerror="this.src='images/placeholder.jpg'">
+                </div>
+                <div class="product-details-info">
+                    <h2 class="product-details-title">${product.name}</h2>
+                    <span class="product-details-category">${categoryName} ${badgeText ? `- ${badgeText}` : ''}</span>
+                    
+                    <div class="product-details-price-box">
+                        <div class="product-details-price">${priceDisplay}</div>
+                        <div class="product-details-price-label"></div>
+                    </div>
+                    
+                    <div class="product-details-description">
+                        <strong>وصف المنتج:</strong><br>
+                        ${product.description}
+                    </div>
+                    
+                    <ul class="product-details-features">
+                        ${featuresHtml}
+                    </ul>
+                    
+                    <div class="product-details-actions">
+                        <button class="product-details-add-to-cart" data-id="${product.id}">
+                            <i class="fas fa-cart-plus"></i> أضف للسلة
+                        </button>
+                        <button class="product-details-whatsapp" data-id="${product.id}">
+                            <i class="fab fa-whatsapp"></i> استفسار
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                const detailsAddToCart = document.querySelector('.product-details-add-to-cart');
+                const detailsWhatsapp = document.querySelector('.product-details-whatsapp');
+                
+                if (detailsAddToCart) {
+                    detailsAddToCart.addEventListener('click', function() {
+                        const pid = parseInt(this.getAttribute('data-id'));
+                        const p = products.find(p => p.id === pid);
+                        
+                        if (p.category === 'social-media') {
+                            productDetailsModal.classList.remove('active');
+                            openQuantityModal(p);
+                        } else if (p.category === 'rased') {
+                            productDetailsModal.classList.remove('active');
+                            openCreditModal(p);
+                        } else {
+                            addToCart(pid);
+                            productDetailsModal.classList.remove('active');
+                        }
+                    });
+                }
+                
+                if (detailsWhatsapp) {
+                    detailsWhatsapp.addEventListener('click', function() {
+                        const pid = parseInt(this.getAttribute('data-id'));
+                        const p = products.find(p => p.id === pid);
+                        if (p) {
+                            let message = `اريد الاستفسار عن ${p.name}`;
+                            if (p.category === 'social-media') {
+                                message += `\nأريد خدمة: ${p.name}`;
+                                message += `\nالسعر: ${p.basePrice || p.price}$ لكل 1000`;
+                                message += `\nالحد الأدنى: 300 - الحد الأقصى: 1,000,000`;
+                            } else if (p.category === 'rased') {
+                                message += `\nأريد شحن رصيد ${p.name}`;
+                            } else {
+                                message += ` بسعر ${p.price}$ من زودني`;
+                            }
+                            window.open(`https://wa.me/963982199738?text=${encodeURIComponent(message)}`, '_blank');
+                        }
+                    });
+                }
+            }, 100);
+            
+            productDetailsModal.classList.add('active');
+        }
+        
         // -------------------- تهيئة الصفحة --------------------
         document.addEventListener('DOMContentLoaded', function() {
             renderCategories();
             initCart();
+            
+            // أحداث نافذة السوشال ميديا
+            socialQuantity.addEventListener('input', updatePricePreview);
+            
+            confirmQuantityBtn.addEventListener('click', function() {
+                if (!selectedSocialProduct) return;
+                
+                const quantity = parseInt(socialQuantity.value);
+                
+                if (!quantity || quantity < 300) {
+                    showToast('الحد الأدنى للطلب هو 300');
+                    return;
+                }
+                
+                if (quantity > 1000000) {
+                    showToast('الحد الأقصى للطلب هو 1,000,000');
+                    return;
+                }
+                
+                addToCart(selectedSocialProduct.id, quantity);
+                
+                quantityModal.classList.remove('active');
+                selectedSocialProduct = null;
+            });
+            
+            quantityClose.addEventListener('click', () => {
+                quantityModal.classList.remove('active');
+                selectedSocialProduct = null;
+            });
+            
+            quantityModal.addEventListener('click', function(e) {
+                if (e.target === quantityModal) {
+                    quantityModal.classList.remove('active');
+                    selectedSocialProduct = null;
+                }
+            });
+            
+            // أحداث نافذة الرصيد
+            creditAmount.addEventListener('change', updateCreditPricePreview);
+            
+            confirmCreditBtn.addEventListener('click', function() {
+                if (!selectedCreditProduct) return;
+                
+                const amount = creditAmount.value;
+                const phone = creditPhoneNumber.value.trim();
+                
+                if (!amount) {
+                    showToast('يرجى اختيار الكمية');
+                    return;
+                }
+                
+                if (!phone) {
+                    showToast('يرجى إدخال رقم الهاتف');
+                    return;
+                }
+                
+                if (!/^09[0-9]{8}$/.test(phone)) {
+                    showToast('رقم الهاتف غير صحيح. يجب أن يبدأ بـ 09 ويتكون من 10 أرقام');
+                    return;
+                }
+                
+                addToCart(selectedCreditProduct.id, null, null, phone, amount);
+                
+                creditModal.classList.remove('active');
+                selectedCreditProduct = null;
+            });
+            
+            creditClose.addEventListener('click', () => {
+                creditModal.classList.remove('active');
+                selectedCreditProduct = null;
+            });
+            
+            creditModal.addEventListener('click', function(e) {
+                if (e.target === creditModal) {
+                    creditModal.classList.remove('active');
+                    selectedCreditProduct = null;
+                }
+            });
             
             menuToggle.addEventListener('click', () => {
                 navLinks.classList.toggle('active');
@@ -4952,42 +5238,6 @@
                 if (e.target === productDetailsModal) {
                     productDetailsModal.classList.remove('active');
                 }
-            });
-            
-            // -------------------- أحداث نافذة إدخال الكمية --------------------
-            quantityClose.addEventListener('click', () => {
-                quantityModal.classList.remove('active');
-                selectedSocialProduct = null;
-            });
-            
-            quantityModal.addEventListener('click', function(e) {
-                if (e.target === quantityModal) {
-                    quantityModal.classList.remove('active');
-                    selectedSocialProduct = null;
-                }
-            });
-            
-            socialQuantity.addEventListener('input', updatePricePreview);
-            
-            confirmQuantityBtn.addEventListener('click', function() {
-                if (!selectedSocialProduct) return;
-                
-                const quantity = parseInt(socialQuantity.value);
-                
-                if (!quantity || quantity < 300) {
-                    showToast('الحد الأدنى للطلب هو 300');
-                    return;
-                }
-                
-                if (quantity > 1000000) {
-                    showToast('الحد الأقصى للطلب هو 1,000,000');
-                    return;
-                }
-                
-                addToCart(selectedSocialProduct.id, quantity);
-                
-                quantityModal.classList.remove('active');
-                selectedSocialProduct = null;
             });
             
             // -------------------- إرسال نموذج العميل --------------------

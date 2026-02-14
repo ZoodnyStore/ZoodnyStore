@@ -2461,34 +2461,6 @@
                     <label for="creditAmount">اختر الكمية *</label>
                     <select id="creditAmount" class="form-control" required>
                         <option value="">-- اختر قيمة الرصيد --</option>
-                        <option value="200" data-price="0.24">50 ل.س - 0.65$</option>
-                        <option value="300" data-price="0.37">60 ل.س - 0.80$</option>
-                        <option value="400" data-price="0.45">70 ل.س - 0.90$</option>
-                        <option value="500" data-price="0.50">85 ل.س - 1$</option>
-                        <option value="600" data-price="0.59">90 ل.س - 1.20$</option>
-                        <option value="644" data-price="0.19">100 ل.س - 1.30$</option>
-                        <option value="700" data-price="0.77">110 ل.س - 1.40$</option>
-                        <option value="800" data-price="0.91">150 ل.س - 1.65$</option>
-                        <option value="900" data-price="0.93">170 ل.س - 0.1.80$</option>
-                        <option value="1000" data-price="1.09">200 ل.س - 2.10$</option>
-                        <option value="1100" data-price="1.16">230 ل.س - 2.45$</option>
-                        <option value="1200" data-price="1.37">260 ل.س - 2.70$</option>
-                        <option value="1300" data-price="1.55">280 ل.س - 3$</option>
-                        <option value="1400" data-price="1.74">300 ل.س - 3.20$</option>
-                        <option value="1500" data-price="2.28">340 ل.س - 3.50$</option>
-                        <option value="1600" data-price="2.74">360 ل.س - 3.70$</option>
-                        <option value="1600" data-price="2.74">420 ل.س - 4.40$</option>
-                        <option value="1600" data-price="2.74">480 ل.س - 5.10$</option>
-                        <option value="1600" data-price="2.74">500 ل.س - 5.30$</option>
-                        <option value="1600" data-price="2.74">600 ل.س - 6.20$</option>
-                        <option value="1600" data-price="2.74">750 ل.س - 7.70$</option>
-                        <option value="1600" data-price="2.74">1000 ل.س - 10.60$</option>
-                        <option value="1600" data-price="2.74">1500 ل.س - 15.40$</option>
-                        <option value="1600" data-price="2.74">2500 ل.س - 25.10$</option>
-                        <option value="1600" data-price="2.74">3000 ل.س - 31$</option>
-                        <option value="1600" data-price="2.74">3500 ل.س - 36$</option>
-                        <option value="1600" data-price="2.74">4500 ل.س - 45.50$</option>
-                        <option value="1600" data-price="2.74">5000 ل.س - 51$</option>
                     </select>
                 </div>
                 
@@ -3827,25 +3799,77 @@
             }
         ];
 
-        // بيانات فئات الرصيد والأسعار
-        const creditAmounts = [
-            { value: 200, price: 0.24 },
-            { value: 300, price: 0.37 },
-            { value: 400, price: 0.45 },
-            { value: 500, price: 0.50 },
-            { value: 600, price: 0.59 },
-            { value: 644, price: 0.19 },
-            { value: 700, price: 0.77 },
-            { value: 800, price: 0.91 },
-            { value: 900, price: 0.93 },
-            { value: 1000, price: 1.09 },
-            { value: 1100, price: 1.16 },
-            { value: 1200, price: 1.37 },
-            { value: 1300, price: 1.55 },
-            { value: 1400, price: 1.74 },
-            { value: 1500, price: 2.28 },
-            { value: 1600, price: 2.74 }
-        ];
+        // بيانات فئات الرصيد والأسعار لكل شركة على حدة
+        const creditAmounts = {
+            syriatel: [
+                { value: 52.88, price: 0.24 },
+                { value: 62.50, price: 0.37 },
+                { value: 68.26, price: 0.45 },
+                { value: 72.11, price: 0.50 },
+                { value: 77.88, price: 0.59 },
+                { value: 81.73, price: 0.19 },
+                { value: 86.53, price: 0.77 },
+                { value: 96.15, price: 0.91 },
+                { value: 100.96, price: 0.93 },
+                { value: 105.76, price: 1.09 },
+                { value: 115.38, price: 1.16 },
+                { value: 125, price: 1.37 },
+                { value: 130.76, price: 1.55 },
+                { value: 144.23, price: 1.74 },
+                { value: 160.57, price: 2.28 },
+                { value: 163.46, price: 2.74 },
+                { value: 137.07, price: 2.74 },
+                { value: 183.65, price: 2.74 },
+                { value: 192.30, price: 2.74 },
+                { value: 211.53, price: 2.74 },
+                { value: 240.38, price: 2.74 },
+                { value: 288.46, price: 2.74 },
+                { value: 317.30, price: 2.74 },
+                { value: 370.19, price: 2.74 },
+                { value: 432.76, price: 2.74 },
+                { value: 480.76, price: 2.74 },
+                { value: 576.92, price: 2.74 },
+                { value: 625, price: 2.74 },
+                { value: 721.15, price: 2.74 },
+                { value: 769.23, price: 2.74 },
+                { value: 1057.69, price: 2.74 },
+                { value: 1250 , price: 2.74 },
+                { value: 1923.07, price: 2.74 },
+                { value: 2115.38, price: 2.74 },
+                { value: 2403.84, price: 2.74 },
+                { value: 163.46, price: 2.74 },
+            ],
+            mtn: [
+                { value: 50, price: 0.65 },
+                { value: 60, price: 0.80 },
+                { value: 70, price: 0.90 },
+                { value: 85, price: 1 },
+                { value: 90, price: 1.20 },
+                { value: 100, price: 1.30 },
+                { value: 110, price: 1.40 },
+                { value: 150, price: 1.65 },
+                { value: 170, price: 1.80 },
+                { value: 200, price: 2.10 },
+                { value: 230, price: 2.45 },
+                { value: 260, price: 2.70 },
+                { value: 280, price: 3 },
+                { value: 300, price: 3.20 },
+                { value: 340, price: 3.50 },
+                { value: 360, price: 3.70 },
+                { value: 420, price: 4.40 },
+                { value: 480, price: 5.10 },
+                { value: 500, price: 5.30 },
+                { value: 600, price: 6.20 },
+                { value: 750, price: 7.70 },
+                { value: 1000, price: 10.60 },
+                { value: 1500, price: 15.40 },
+                { value: 2500, price: 25.10 },
+                { value: 3000, price: 31 },
+                { value: 3500, price: 36 },
+                { value: 4500, price: 45.50 },
+                { value: 5000, price: 51 },
+            ]
+        };
 
         // مفتاح ImgBB API
         const IMGBB_API_KEY = "31321101ec3bd35ce08d26a9a01d40b1";
@@ -4403,12 +4427,32 @@
             }
         }
         
-        // -------------------- فتح نافذة إدخال بيانات رصيد الموبايل --------------------
+        // -------------------- فتح نافذة إدخال بيانات رصيد الموبايل (معدل لأسعار منفصلة) --------------------
         function openCreditModal(product) {
             selectedCreditProduct = product;
             
             selectedCreditName.textContent = product.name;
-            creditAmount.value = '';
+            
+            // تفريغ وتعبئة قائمة الكميات حسب نوع الرصيد
+            creditAmount.innerHTML = '<option value="">-- اختر قيمة الرصيد --</option>';
+            
+            // تحديد مصفوفة الأسعار حسب اسم المنتج
+            let priceList = [];
+            if (product.name.includes('سيرياتيل')) {
+                priceList = creditAmounts.syriatel;
+            } else if (product.name.includes('MTN')) {
+                priceList = creditAmounts.mtn;
+            }
+            
+            // إضافة الخيارات للقائمة المنسدلة
+            priceList.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.value;
+                option.setAttribute('data-price', item.price);
+                option.textContent = `${item.value} ل.س - ${item.price}$`;
+                creditAmount.appendChild(option);
+            });
+            
             creditPhoneNumber.value = '';
             calculatedCreditPrice.textContent = '0.00$';
             selectedCreditValue.textContent = '0';
@@ -4430,7 +4474,7 @@
             }
         }
         
-        // -------------------- إضافة منتج إلى السلة --------------------
+        // -------------------- إضافة منتج إلى السلة (معدل لأسعار منفصلة) --------------------
         function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null) {
             const product = products.find(p => p.id === productId);
             if (!product) return;
@@ -4471,7 +4515,15 @@
                     return;
                 }
                 
-                const creditInfo = creditAmounts.find(c => c.value == creditAmount_);
+                // تحديد مصفوفة الأسعار حسب اسم المنتج
+                let priceList = [];
+                if (product.name.includes('سيرياتيل')) {
+                    priceList = creditAmounts.syriatel;
+                } else if (product.name.includes('MTN')) {
+                    priceList = creditAmounts.mtn;
+                }
+                
+                const creditInfo = priceList.find(c => c.value == creditAmount_);
                 if (!creditInfo) return;
                 
                 itemPrice = creditInfo.price;

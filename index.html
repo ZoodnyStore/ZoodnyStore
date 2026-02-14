@@ -3638,7 +3638,32 @@
                 minQuantity: 300,
                 maxQuantity: 1000000,
                 image: "يوتيوب.png"
-            }
+            },
+            // الذكاء الاصطناعي
+            {
+                id: 74, 
+                name: "Chat GPT Plus - دعوة مساحة عمل - شهر", 
+                category: "chat", 
+                price: 7.5, 
+                description: "Chat GPT Plus-دعوة مساحة عمل : اي يكون معك اشخاص في الحساب , شهر واحد",
+                image: "plus.png"
+            },
+            {
+                id: 75, 
+                name: "Chat GPT Go - شهر", 
+                category: "chat", 
+                price: 10, 
+                description: "Chat GPT Go , حساب جاهز وخاص بك 100% , يمكنك نغيير بيانات الحساب بعد الاستلام , شهر",
+                image: "chat gpt.jpg"
+            },
+                        {
+                id: 76, 
+                name: "Chat GPT Go - سنة", 
+                category: "chat", 
+                price: 50, 
+                description: "Chat GPT Go , حساب جاهز وخاص بك 100% , يمكنك نغيير بيانات الحساب بعد الاستلام , سنة",
+                image: "chat gpt.jpg"
+            },            
         ];
 
         // -------------------- دالة حساب سعر خدمات السوشال ميديا --------------------
@@ -3655,11 +3680,32 @@
         // بيانات التصنيفات
         const categories = [
             {
+                id: "social-media",
+                name: "خدمات سوشال ميديا",
+                description: "متابعين , لايكات , مشاهدات , شيرات",
+                image: "خدمات سوشال ميديا.jpg",
+                count: 24
+            },
+            {
+                id: "chat",
+                name: "الذكاء الاصطناعي",
+                description: "Chat GPT , Gemini ",
+                image: "gpt & gemini.webp",
+                count: 0
+            },
+            {
+                id: "games",
+                name: "شحن ألعاب",
+                description: "ببجي , فري فاير",
+                image: "شحن العاب.jpg",
+                count: 0        
+            },
+            {
                 id: "accessories",
                 name: "أكسسوارات الهاتف",
                 description: "كفرات، سماعات، شواحن، وباور بانك",
                 image: "اكسسوارات الهاتف.webp",
-                count: 26
+                count: 28
             },
             {
                 id: "labtop",
@@ -3683,13 +3729,6 @@
                 count: 3
             },
             {
-                id: "games",
-                name: "شحن ألعاب",
-                description: "عملات رقمية، شدات، وجواهر",
-                image: "شحن العاب.jpg",
-                count: 0
-            },
-            {
                 id: "food",
                 name: "منتجات غذائية",
                 description: "عسل طبيعي، سمن، وحبوب لقاح",
@@ -3699,16 +3738,9 @@
             {
                 id: "clothing",
                 name: "ألبسة",
-                description: "ألبسة رياضية عالية الجودة",
+                description: "ألبسة التريند",
                 image: "https://images.unsplash.com/photo-1445205170230-053b83016050?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
                 count: 0
-            },
-            {
-                id: "social-media",
-                name: "خدمات سوشال ميديا",
-                description: "دعم متابعين إنستغرام وهمي وحقيقي",
-                image: "خدمات سوشال ميديا.jpg",
-                count: 24
             }
         ];
 

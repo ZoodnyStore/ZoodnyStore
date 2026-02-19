@@ -10,7 +10,7 @@
     <!-- إضافة Axios للتعامل مع طلبات API -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
-        /* جميع الأنماط CSS كما هي دون تغيير — فقط إضافة أنماط كروت المنصات في الأسفل */
+        /* جميع الأنماط CSS كما هي دون تغيير — فقط التعديل المطلوب في عرض البطاقات وتحسين صف المنتجات */
         :root {
             --primary: #2A3F54;
             --secondary: #F7C873;
@@ -2658,9 +2658,9 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="gamePlayerId">رقم اللاعب *</label>
-                    <input type="text" id="gamePlayerId" class="form-control" placeholder="أدخل رقم اللاعب أو معرف الحساب" required>
-                    <small style="color: var(--gray); font-size: 0.85rem;">أدخل رقم اللاعب الخاص بك (User ID)</small>
+                    <label for="gamePlayerId" id="gamePlayerIdLabel">رقم اللاعب *</label>
+                    <input type="text" id="gamePlayerId" class="form-control" placeholder="أدخل المطلوب منك تحت المستطيل :" required>
+                    <small style="color: var(--gray); font-size: 0.85rem;" id="gamePlayerIdHelp">أدخل رقم اللاعب الخاص بك (User ID)</small>
                 </div>
                 
                 <div class="price-preview" id="gamePricePreview">
@@ -3212,6 +3212,7 @@
                 category: "games",
                 description: "شدات ببجي - UC : اختر الكمية التي تريدها",
                 image: "ببجي.jpg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
                     { value: 60, price: 1.25, display: "60 شدة" },
                     { value: 325, price: 5.50, display: "325 شدة" },
@@ -3227,12 +3228,13 @@
                 category: "games",
                 description: "جواهر فري فاير : اختر الكمية التي تريدها",
                 image: "فري فاير.jpeg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
-                    { value: 110, price: 1.25, display: "110 جواهر" },
-                    { value: 210 + 21, price: 2.50, display: "210 + 21 جواهر" },
-                    { value: 520 + 52, price: 5.50, display: "520 + 52 جواهر" },
-                    { value: 1060 + 106, price: 11, display: "1060 + 106 جواهر" },
-                    { value: 2180 + 218, price: 23, display: "2180 + 218 جواهر" },
+                    { value: 110, price: 1.25, display: "110 جوهرة" },
+                    { value: 210 + 21, price: 2.50, display: "210 + 21 جوهرة" },
+                    { value: 520 + 52, price: 5.50, display: "520 + 52 جوهرة" },
+                    { value: 1060 + 106, price: 11, display: "1060 + 106 جوهرة" },
+                    { value: 2180 + 218, price: 23, display: "2180 + 218 جوهرة" },
                 ]
             },
             {
@@ -3241,6 +3243,7 @@
                 category: "games",
                 description: "عملات جواكر : اختر الكمية التي تريدها",
                 image: "جواكر.png",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
                     { value: 10000, price: 1.50, display: "10000 عملة" },
                     { value: 25000, price: 3.50, display: "25000 عملة" },
@@ -3261,11 +3264,14 @@
                 category: "games",
                 description: "العملة السلطانية : اختر الفئة التي تريدها",
                 image: "انتقام السلاطين.png",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
-                    { value: 100, price: 1.50, display: "100 سلطانية" },
-                    { value: 300, price: 4.00, display: "300 سلطانية" },
-                    { value: 500, price: 6.50, display: "500 سلطانية" },
-                    { value: 1000, price: 12.00, display: "1000 سلطانية" }
+                    { value: 20, price: 2.30, display: "20 عملة" },
+                    { value: 30, price: 3.20, display: "30 عملة" },
+                    { value: 50, price: 6.40, display: "50 عملة" },
+                    { value: 100, price: 10.30, display: "100 عملة" },
+                    { value: 500, price: 49, display: "500 عملة" },
+                    { value: 1000, price: 96, display: "1000 عملة" },
                 ]
             },
             {
@@ -3274,13 +3280,14 @@
                 category: "games",
                 description: "جواهر كلاش اوف كلانس : اختر الفئة التي تريدها",
                 image: "كلاش اوف كلانس.jpg",
+                inputLabel: "أدخل ايميل سوبر سيل", // ✅ نص مخصص لكلاش اوف كلانس
                 amounts: [
-                    { value: 80, price: 1.50, display: "80 جواهر" },
-                    { value: 500, price: 8.50, display: "500 جواهر" },
-                    { value: 1200, price: 19.00, display: "1200 جواهر" },
-                    { value: 2500, price: 38.00, display: "2500 جواهر" },
-                    { value: 6500, price: 95.00, display: "6500 جواهر" },
-                    { value: 14000, price: 190.00, display: "14000 جواهر" }
+                    { value: 80, price: 1.50, display: "80 جوهرة" },
+                    { value: 500, price: 6.40, display: "500 جوهرة" },
+                    { value: 1200, price: 11.70, display: "1200 جوهرة" },
+                    { value: 1850, price: 17.60, display: "1850 جوهرة" },
+                    { value: 2500, price: 24.30, display: "2500 جوهرة" },
+                    { value: 6500, price: 58, display: "6500 جوهرة" }
                 ]
             },
             {
@@ -3289,11 +3296,13 @@
                 category: "games",
                 description: "كلاش رويال - جواهر : اختر الفئة التي تريدها",
                 image: "كلاش رويال.png",
+                inputLabel: "ادخل ايميل سوبر سيل", // النص المخصص لحقل الإدخال
                 amounts: [
-                    { value: 60, price: 1.20, display: "60 جواهر" },
-                    { value: 300, price: 5.50, display: "300 جواهر" },
-                    { value: 700, price: 12.00, display: "700 جواهر" },
-                    { value: 1500, price: 25.00, display: "1500 جواهر" }
+                    { value: 80, price: 1.25, display: "80 جوهرة" },
+                    { value: 500, price: 6.40, display: "500 جوهرة" },
+                    { value: 1200, price: 11.70, display: "1200 جوهرة" },
+                    { value: 2500, price: 24.30, display: "2500 جوهرة" },
+                    { value: 6500, price: 58, display: "6500 جوهرة" },
                 ]
             },
             {
@@ -3302,12 +3311,13 @@
                 category: "games",
                 description: "ديلتا فورس العالمية : اختر الفئة التي تريدها",
                 image: "ديلتا فورس.jpg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
-                    { value: 60, price: 1.00, display: "60 CP" },
-                    { value: 300, price: 4.50, display: "300 CP" },
-                    { value: 600, price: 8.50, display: "600 CP" },
-                    { value: 1500, price: 20.00, display: "1500 CP" },
-                    { value: 3000, price: 38.00, display: "3000 CP" }
+                    { value: 60, price: 1.25, display: "60" },
+                    { value: 320, price: 4.85, display: "320" },
+                    { value: 750, price: 9, display: "750" },
+                    { value: 1480, price: 18, display: "1480" },
+                    { value: 1980, price: 23, display: "1980" }
                 ]
             },
             {
@@ -3316,17 +3326,16 @@
                 category: "games",
                 description: "فورتنايت - كود : اختر الفئة التي تريدها",
                 image: "فورتنايت.jpg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
-                    { value: 1000, price: 10.00, display: "1000 V-Bucks" },
-                    { value: 2800, price: 25.00, display: "2800 V-Bucks" },
-                    { value: 5000, price: 45.00, display: "5000 V-Bucks" },
-                    { value: 13500, price: 110.00, display: "13500 V-Bucks" }
+                    { value: 2800, price: 27.50, display: "2800" },
+                    { value: 5000, price: 45, display: "5000" },
+                    { value: 13500, price: 110, display: "13500" },
                 ]
             }
         ];
 
         // -------------------- بيانات المنتجات مع صور خاصة لكل منتج --------------------
-        // تم تعديل منتجات السوشيال ميديا بإضافة خاصية platform
         const products = [
             // أكسسوارات الهاتف - مع صور خاصة
             { 
@@ -4143,17 +4152,10 @@
                 image: "خدمات سوشال ميديا.jpg",
                 count: 24
             },
-                {
-                id: "sell acconts intagram",
-                name: " بيع حسابات انستغرام ",
-                description: "متابعين لا يقل عن 10k",
-                image: "خدمات سوشال ميديا.jpg",
-                count: 0
-            },
             {
                 id: "chat",
                 name: "الذكاء الاصطناعي",
-                description: "Chat GPT , Gemini ",  
+                description: "Chat GPT , Gemini ",
                 image: "gpt & gemini.webp",
                 count: 3
             },
@@ -4847,22 +4849,19 @@
         function renderPlatforms() {
             productsGrid.innerHTML = '';
             selectedPlatform = null;
-            
+
             platforms.forEach(platform => {
-                // حساب عدد الخدمات لهذه المنصة
                 const servicesCount = products.filter(p => p.category === 'social-media' && p.platform === platform.id).length;
-                
-                // الحصول على أسماء بعض الخدمات كعينة (أول 3)
                 const sampleServices = products
                     .filter(p => p.category === 'social-media' && p.platform === platform.id)
                     .slice(0, 3)
                     .map(p => p.name.split(' ').slice(0, 2).join(' '));
-                
+
                 const platformCard = document.createElement('div');
                 platformCard.className = 'platform-card';
                 platformCard.dataset.platform = platform.id;
                 platformCard.setAttribute('data-aos', 'fade-up');
-                
+
                 platformCard.innerHTML = `
                     <div class="platform-header" style="background: linear-gradient(135deg, ${platform.color}22, var(--primary));">
                         <i class="${platform.icon} platform-icon" style="color: ${platform.color};"></i>
@@ -4876,10 +4875,10 @@
                         </div>
                     </div>
                 `;
-                
+
                 productsGrid.appendChild(platformCard);
             });
-            
+
             document.querySelectorAll('.platform-card').forEach(card => {
                 card.addEventListener('click', function() {
                     const platformId = this.dataset.platform;
@@ -4887,31 +4886,37 @@
                 });
             });
         }
-        
+
         // -------------------- دالة عرض منتجات منصة معينة (جديدة) --------------------
         function showPlatformProducts(platformId) {
             selectedPlatform = platformId;
             const platform = platforms.find(p => p.id === platformId);
             if (!platform) return;
-            
+
             categoryProductsTitle.textContent = `خدمات ${platform.name}`;
             
-            // عرض منتجات المنصة
+            // إظهار أزرار الفلاتر (لأننا سنعرض منتجات)
+            productFilters.style.display = 'flex';
+            // إعادة تعيين الفلتر إلى "الكل"
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            const allFilter = document.querySelector('.filter-btn[data-filter="all"]');
+            if (allFilter) allFilter.classList.add('active');
+            
             renderProductsByPlatform(platformId);
         }
-        
+
         // -------------------- دالة عرض منتجات منصة معينة مع الفلتر (جديدة) --------------------
         function renderProductsByPlatform(platformId, filter = 'all') {
             productsGrid.innerHTML = '';
-            
+
             let filteredProducts = products.filter(p => p.category === 'social-media' && p.platform === platformId);
-            
+
             if (filter === 'lowest-price') {
                 filteredProducts.sort((a, b) => (a.basePrice || a.price) - (b.basePrice || b.price));
             } else if (filter === 'highest-price') {
                 filteredProducts.sort((a, b) => (b.basePrice || b.price) - (a.basePrice || b.price));
             }
-            
+
             if (filteredProducts.length === 0) {
                 productsGrid.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--gray);">
@@ -4922,7 +4927,7 @@
                 `;
                 return;
             }
-            
+
             // زر العودة إلى المنصات
             const backButton = document.createElement('div');
             backButton.style.gridColumn = '1 / -1';
@@ -4932,15 +4937,15 @@
                 </button>
             `;
             productsGrid.appendChild(backButton);
-            
+
             filteredProducts.forEach(product => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.setAttribute('data-aos', 'fade-up');
-                
+
                 const imageUrl = product.image || "images/placeholder.jpg";
                 const priceDisplay = `${product.basePrice || product.price}$ لـ 1k`;
-                
+
                 productCard.innerHTML = `
                     <div class="product-img-container">
                         <img src="${imageUrl}" class="product-img" alt="${product.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
@@ -4956,10 +4961,10 @@
                         </div>
                     </div>
                 `;
-                
+
                 productsGrid.appendChild(productCard);
             });
-            
+
             // إعادة ربط الأحداث للأزرار
             document.querySelectorAll('.product-details-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -4967,7 +4972,7 @@
                     showProductDetails(productId);
                 });
             });
-            
+
             document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const productId = parseInt(this.getAttribute('data-id'));
@@ -4975,7 +4980,7 @@
                     openQuantityModal(product);
                 });
             });
-            
+
             document.querySelectorAll('.whatsapp-btn-product').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const productId = parseInt(this.getAttribute('data-id'));
@@ -4986,11 +4991,12 @@
                     }
                 });
             });
-            
+
             // ربط حدث زر العودة
             document.getElementById('backToPlatformsBtn')?.addEventListener('click', function() {
                 renderPlatforms();
                 categoryProductsTitle.textContent = 'خدمات السوشيال ميديا';
+                productFilters.style.display = 'none'; // إخفاء الفلاتر عند العودة للمنصات
             });
         }
         
@@ -5091,6 +5097,22 @@
                     option.textContent = `${item.display} - ${item.price}$`;
                     gameAmount.appendChild(option);
                 });
+                
+                // ✅ تحديث النص في حقل الإدخال بناءً على inputLabel الخاص باللعبة
+                const gamePlayerIdLabel = document.querySelector('label[for="gamePlayerId"]');
+                if (gamePlayerIdLabel && gameData.inputLabel) {
+                    gamePlayerIdLabel.textContent = gameData.inputLabel + ' *';
+                }
+                
+                // تحديث نص المساعدة
+                const helpText = document.querySelector('#gamePlayerId + small');
+                if (helpText) {
+                    if (gameData.inputLabel && gameData.inputLabel.includes('ايميل')) {
+                        helpText.textContent = 'أدخل البريد الإلكتروني المرتبط بحساب سوبر سيل';
+                    } else {
+                        helpText.textContent = 'أدخل رقم اللاعب الخاص بك (User ID)';
+                    }
+                }
             }
             
             gamePlayerId.value = '';

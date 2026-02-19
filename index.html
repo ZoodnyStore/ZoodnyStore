@@ -1594,6 +1594,151 @@
             background: #1ebe57;
         }
 
+        /* أنماط كروت المنصات (جديدة) */
+        .platforms-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .platform-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid rgba(247, 200, 115, 0.3);
+        }
+
+        .platform-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(247, 200, 115, 0.2);
+            border-color: var(--secondary);
+        }
+
+        .platform-header {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), #1E2B38);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(247, 200, 115, 0.2) 1px, transparent 1px);
+            background-size: 20px 20px;
+            transform: rotate(45deg);
+            opacity: 0.3;
+        }
+
+        .platform-icon {
+            font-size: 3.5rem;
+            color: var(--secondary);
+            z-index: 1;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        }
+
+        .platform-body {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .platform-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .platform-services-count {
+            color: var(--gray);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .platform-services-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .service-tag {
+            background: rgba(247, 200, 115, 0.2);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .back-to-platforms {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-to-platforms:hover {
+            background: #1e2e3f;
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .platforms-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 1.5rem;
+            }
+            .platform-header {
+                height: 100px;
+            }
+            .platform-icon {
+                font-size: 2.5rem;
+            }
+            .platform-name {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .platforms-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+            .platform-body {
+                padding: 1rem;
+            }
+            .platform-name {
+                font-size: 1rem;
+            }
+            .service-tag {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.5rem;
+            }
+        }
+
         .branches {
             padding: 8rem 5%;
             background: #ffffff;
@@ -2119,29 +2264,34 @@
             
             /* 2 كولوم grid */
             .categories-grid,
-            .products-grid {
+            .products-grid,
+            .platforms-grid {
                 grid-template-columns: repeat(2, 1fr) !important;
                 gap: 0.8rem;
             }
             
             .category-card,
-            .product-card {
+            .product-card,
+            .platform-card {
                 width: 100%;
                 margin: 0;
             }
             
             .category-img-container,
-            .product-img-container {
+            .product-img-container,
+            .platform-header {
                 height: 130px;
             }
             
             .category-info,
-            .product-info {
+            .product-info,
+            .platform-body {
                 padding: 0.8rem 0.5rem;
             }
             
             .category-title,
-            .product-title {
+            .product-title,
+            .platform-name {
                 font-size: 0.9rem;
                 margin-bottom: 0.3rem;
                 line-height: 1.3;
@@ -2160,7 +2310,8 @@
                 display: none;
             }
             
-            .category-count {
+            .category-count,
+            .platform-services-count {
                 font-size: 0.75rem;
                 margin: 0.2rem 0;
             }
@@ -2320,18 +2471,21 @@
             }
             
             .categories-grid,
-            .products-grid {
+            .products-grid,
+            .platforms-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 0.6rem;
             }
             
             .category-img-container,
-            .product-img-container {
+            .product-img-container,
+            .platform-header {
                 height: 115px;
             }
             
             .category-title,
-            .product-title {
+            .product-title,
+            .platform-name {
                 font-size: 0.8rem;
                 height: 2.1rem;
             }
@@ -2477,6 +2631,45 @@
                 </div>
                 
                 <button class="submit-order-btn" id="confirmCreditBtn">
+                    <i class="fas fa-check"></i> تأكيد وإضافة للسلة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إدخال بيانات شحن الألعاب (جديدة) -->
+    <div class="quantity-modal" id="gameModal">
+        <div class="quantity-container">
+            <div class="quantity-header">
+                <h3><i class="fas fa-gamepad"></i> شحن ألعاب</h3>
+                <button class="quantity-close" id="gameClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="quantity-body">
+                <div class="quantity-info">
+                    <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
+                    <span id="selectedGameName">شحن لعبة</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="gameAmount">اختر الكمية *</label>
+                    <select id="gameAmount" class="form-control" required>
+                        <option value="">-- اختر الكمية --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="gamePlayerId" id="gamePlayerIdLabel">رقم اللاعب *</label>
+                    <input type="text" id="gamePlayerId" class="form-control" placeholder="أدخل المطلوب منك تحت المستطيل :" required>
+                    <small style="color: var(--gray); font-size: 0.85rem;" id="gamePlayerIdHelp">أدخل رقم اللاعب الخاص بك (User ID)</small>
+                </div>
+                
+                <div class="price-preview" id="gamePricePreview">
+                    <p style="color: var(--gray); margin-bottom: 0.5rem;">السعر:</p>
+                    <span id="calculatedGamePrice">0.00$</span>
+                    <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem;">* الكمية: <span id="selectedGameValue">0</span></p>
+                </div>
+                
+                <button class="submit-order-btn" id="confirmGameBtn">
                     <i class="fas fa-check"></i> تأكيد وإضافة للسلة
                 </button>
             </div>
@@ -3011,6 +3204,137 @@
         // تهيئة مكتبة الصور المتحركة
         AOS.init({ duration: 800, once: true });
         
+        // ==================== بيانات الألعاب الذكية (سهلة التعديل) ====================
+        const gamesData = [
+            {
+                id: 75,
+                name: "ببجي - UC",
+                category: "games",
+                description: "شدات ببجي - UC : اختر الكمية التي تريدها",
+                image: "ببجي.jpg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 60, price: 1.25, display: "60 شدة" },
+                    { value: 325, price: 5.50, display: "325 شدة" },
+                    { value: 660, price: 10, display: "660 شدة" },
+                    { value: 1800, price: 26, display: "1800 شدة" },
+                    { value: 3850, price: 50, display: "3850 شدة" },
+                    { value: 8100, price: 94, display: "8100 شدة" }
+                ]
+            },
+            {
+                id: 76,
+                name: "فري فاير - جواهر",
+                category: "games",
+                description: "جواهر فري فاير : اختر الكمية التي تريدها",
+                image: "فري فاير.jpeg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 110, price: 1.25, display: "110 جوهرة" },
+                    { value: 210 + 21, price: 2.50, display: "210 + 21 جوهرة" },
+                    { value: 520 + 52, price: 5.50, display: "520 + 52 جوهرة" },
+                    { value: 1060 + 106, price: 11, display: "1060 + 106 جوهرة" },
+                    { value: 2180 + 218, price: 23, display: "2180 + 218 جوهرة" },
+                ]
+            },
+            {
+                id: 77,
+                name: "جواكر - عملات",
+                category: "games",
+                description: "عملات جواكر : اختر الكمية التي تريدها",
+                image: "جواكر.png",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 10000, price: 1.50, display: "10000 عملة" },
+                    { value: 25000, price: 3.50, display: "25000 عملة" },
+                    { value: 50000, price: 6.60, display: "50000 عملة" },
+                    { value: 100000, price: 12.60, display: "100000 عملة" },
+                    { value: 150000, price: 17.40, display: "150000 عملة" },
+                    { value: 200000, price: 24.20, display: "200000 عملة" },
+                    { value: 250000, price: 30.50, display: "250000 عملة" },
+                    { value: 350000, price: 43, display: "350000 عملة" },
+                    { value: 500000, price: 61, display: "500000 عملة" },
+                    { value: 750000, price: 92, display: "750000 عملة" },
+                    { value: 1000000, price: 125, display: "1000000 عملة" },
+                ]
+            },
+            {
+                id: 78,
+                name: "انتقام السلاطين - العملة السلطانية",
+                category: "games",
+                description: "العملة السلطانية : اختر الفئة التي تريدها",
+                image: "انتقام السلاطين.png",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 20, price: 2.30, display: "20 عملة" },
+                    { value: 30, price: 3.20, display: "30 عملة" },
+                    { value: 50, price: 6.40, display: "50 عملة" },
+                    { value: 100, price: 10.30, display: "100 عملة" },
+                    { value: 500, price: 49, display: "500 عملة" },
+                    { value: 1000, price: 96, display: "1000 عملة" },
+                ]
+            },
+            {
+                id: 79,
+                name: "كلاش اوف كلانس - جواهر",
+                category: "games",
+                description: "جواهر كلاش اوف كلانس : اختر الفئة التي تريدها",
+                image: "كلاش اوف كلانس.jpg",
+                inputLabel: "أدخل ايميل سوبر سيل", // ✅ نص مخصص لكلاش اوف كلانس
+                amounts: [
+                    { value: 80, price: 1.50, display: "80 جوهرة" },
+                    { value: 500, price: 6.40, display: "500 جوهرة" },
+                    { value: 1200, price: 11.70, display: "1200 جوهرة" },
+                    { value: 1850, price: 17.60, display: "1850 جوهرة" },
+                    { value: 2500, price: 24.30, display: "2500 جوهرة" },
+                    { value: 6500, price: 58, display: "6500 جوهرة" }
+                ]
+            },
+            {
+                id: 80,
+                name: "كلاش رويال - جواهر",
+                category: "games",
+                description: "كلاش رويال - جواهر : اختر الفئة التي تريدها",
+                image: "كلاش رويال.png",
+                inputLabel: "ادخل ايميل سوبر سيل", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 80, price: 1.25, display: "80 جوهرة" },
+                    { value: 500, price: 6.40, display: "500 جوهرة" },
+                    { value: 1200, price: 11.70, display: "1200 جوهرة" },
+                    { value: 2500, price: 24.30, display: "2500 جوهرة" },
+                    { value: 6500, price: 58, display: "6500 جوهرة" },
+                ]
+            },
+            {
+                id: 81,
+                name: "ديلتا فورس - CP",
+                category: "games",
+                description: "ديلتا فورس العالمية : اختر الفئة التي تريدها",
+                image: "ديلتا فورس.jpg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 60, price: 1.25, display: "60" },
+                    { value: 320, price: 4.85, display: "320" },
+                    { value: 750, price: 9, display: "750" },
+                    { value: 1480, price: 18, display: "1480" },
+                    { value: 1980, price: 23, display: "1980" }
+                ]
+            },
+            {
+                id: 82,
+                name: "فورتنايت - كود",
+                category: "games",
+                description: "فورتنايت - كود : اختر الفئة التي تريدها",
+                image: "فورتنايت.jpg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 2800, price: 27.50, display: "2800" },
+                    { value: 5000, price: 45, display: "5000" },
+                    { value: 13500, price: 110, display: "13500" },
+                ]
+            }
+        ];
+
         // -------------------- بيانات المنتجات مع صور خاصة لكل منتج --------------------
         const products = [
             // أكسسوارات الهاتف - مع صور خاصة
@@ -3383,11 +3707,12 @@
                 image: "حبوب لقاح النحل.webp"
             },
             
-            // خدمات سوشال ميديا - مع تحديث جميع الحدود الدنيا والقصوى
+            // خدمات سوشال ميديا - مع تحديث جميع الحدود الدنيا والقصوى وإضافة platform
             { 
                 id: 46, 
                 name: "متابعين إنستغرام وهمي", 
                 category: "social-media", 
+                platform: "instagram",
                 basePrice: 2.3,
                 price: 1,
                 description: "متابعين وهمي إنستغرام - سعر الألف: 2.3$", 
@@ -3400,6 +3725,7 @@
                 id: 47, 
                 name: "متابعين إنستغرام حقيقي", 
                 category: "social-media", 
+                platform: "instagram",
                 basePrice: 3.5,
                 price: 10,
                 description: "متابعين حقيقي إنستغرام - سعر الألف: 3.5$", 
@@ -3412,6 +3738,7 @@
                 id: 48, 
                 name: "لايكات إنستغرام", 
                 category: "social-media", 
+                platform: "instagram",
                 basePrice: 0.8,
                 price: 7,
                 description: "لايكات إنستغرام - سعر الألف: 0.8$", 
@@ -3424,6 +3751,7 @@
                 id: 49, 
                 name: "مشاهدات إنستغرام", 
                 category: "social-media", 
+                platform: "instagram",
                 basePrice: 0.15,
                 price: 10,
                 description: "مشاهدات إنستغرام - سعر الألف: 0.15$", 
@@ -3436,6 +3764,7 @@
                 id: 50, 
                 name: "مشاركات إنستغرام", 
                 category: "social-media", 
+                platform: "instagram",
                 basePrice: 0.25,
                 price: 10,
                 description: "مشاركات إنستغرام - سعر الألف: 0.25$", 
@@ -3448,6 +3777,7 @@
                 id: 51, 
                 name: "متابعين فيسبوك", 
                 category: "social-media", 
+                platform: "facebook",
                 basePrice: 1.7,
                 price: 10,
                 description: "متابعين فيسبوك - سعر الألف: 1.7$", 
@@ -3460,6 +3790,7 @@
                 id: 52, 
                 name: "اعضاء كروبات فيسبوك", 
                 category: "social-media", 
+                platform: "facebook",
                 basePrice: 1.5,
                 price: 10,
                 description: "اعضاء كروبات فيسبوك - سعر الألف: 1.5$", 
@@ -3472,6 +3803,7 @@
                 id: 53, 
                 name: "تفاعل لايكات فيسبوك", 
                 category: "social-media", 
+                platform: "facebook",
                 basePrice: 0.8,
                 price: 10,
                 description: "تفاعل لايكات للمنشورات - سعر الألف: 0.8$", 
@@ -3484,6 +3816,7 @@
                 id: 54, 
                 name: "تفاعل قلوب فيسبوك", 
                 category: "social-media", 
+                platform: "facebook",
                 basePrice: 0.9,
                 price: 10,
                 description: "تفاعل قلوب للمنشورات - سعر الألف: 0.9$", 
@@ -3496,6 +3829,7 @@
                 id: 55, 
                 name: "مشاهدات فيسبوك", 
                 category: "social-media", 
+                platform: "facebook",
                 basePrice: 0.15,
                 price: 10,
                 description: "مشاهدات فيسبوك - سعر الألف: 0.15$", 
@@ -3508,6 +3842,7 @@
                 id: 56, 
                 name: "متابعين تيك توك وهمي", 
                 category: "social-media", 
+                platform: "tiktok",
                 basePrice: 2.3,
                 price: 10,
                 description: "متابعين وهمي تيك توك - سعر الألف: 2.3$", 
@@ -3520,6 +3855,7 @@
                 id: 57, 
                 name: "متابعين تيك توك حقيقي", 
                 category: "social-media", 
+                platform: "tiktok",
                 basePrice: 3.5,
                 price: 10,
                 description: "متابعين حقيقي تيك توك - سعر الألف: 3.5$", 
@@ -3532,6 +3868,7 @@
                 id: 58, 
                 name: "مشاهدات تيك توك", 
                 category: "social-media", 
+                platform: "tiktok",
                 basePrice: 0.2,
                 price: 10,
                 description: "مشاهدات تيك توك - سعر الألف: 0.2$", 
@@ -3544,6 +3881,7 @@
                 id: 59, 
                 name: "لايكات تيك توك", 
                 category: "social-media", 
+                platform: "tiktok",
                 basePrice: 0.7,
                 price: 10,
                 description: "لايكات تيك توك - سعر الألف: 0.7$", 
@@ -3556,6 +3894,7 @@
                 id: 60, 
                 name: "مشاركات تيك توك", 
                 category: "social-media", 
+                platform: "tiktok",
                 basePrice: 0.25,
                 price: 10,
                 description: "مشاركات تيك توك - سعر الألف: 0.25$", 
@@ -3568,6 +3907,7 @@
                 id: 61, 
                 name: "نقاط معركة تيك توك", 
                 category: "social-media", 
+                platform: "tiktok",
                 basePrice: 0.5,
                 price: 10,
                 description: "نقاط معركة تيك توك - سعر الألف: 0.5$", 
@@ -3580,6 +3920,7 @@
                 id: 62, 
                 name: "اعضاء تليغرام", 
                 category: "social-media", 
+                platform: "telegram",
                 basePrice: 2.3,
                 price: 10,
                 description: "اعضاء تليغرام - سعر الألف: 2.3$", 
@@ -3592,6 +3933,7 @@
                 id: 63, 
                 name: "مشاهدات تليغرام", 
                 category: "social-media", 
+                platform: "telegram",
                 basePrice: 0.1,
                 price: 10,
                 description: "مشاهدات تليغرام - سعر الألف: 0.1$", 
@@ -3604,6 +3946,7 @@
                 id: 64, 
                 name: "تفاعلات ايجابي تليغرام", 
                 category: "social-media", 
+                platform: "telegram",
                 basePrice: 0.6,
                 price: 10,
                 description: "تفاعلات ايجابي تليغرام - سعر الألف: 0.6$", 
@@ -3616,6 +3959,7 @@
                 id: 65, 
                 name: "تفاعلات سلبي تليغرام", 
                 category: "social-media", 
+                platform: "telegram",
                 basePrice: 0.6,
                 price: 10,
                 description: "تفاعلات سلبي تليغرام - سعر الألف: 0.6$", 
@@ -3628,6 +3972,7 @@
                 id: 66, 
                 name: "مشتركين يوتيوب", 
                 category: "social-media", 
+                platform: "youtube",
                 basePrice: 28,
                 price: 10,
                 description: "مشتركين يوتيوب - سعر الألف: 28$", 
@@ -3640,6 +3985,7 @@
                 id: 67, 
                 name: "مشاهدات يوتيوب", 
                 category: "social-media", 
+                platform: "youtube",
                 basePrice: 2.5,
                 price: 10,
                 description: "مشاهدات يوتيوب - سعر الألف: 2.5$", 
@@ -3652,6 +3998,7 @@
                 id: 68, 
                 name: "لايكات يوتيوب", 
                 category: "social-media", 
+                platform: "youtube",
                 basePrice: 1,
                 price: 10,
                 description: "لايكات يوتيوب - سعر الألف: 1$", 
@@ -3664,6 +4011,7 @@
                 id: 69, 
                 name: "مشاركات يوتيوب", 
                 category: "social-media", 
+                platform: "youtube",
                 basePrice: 0.9,
                 price: 10,
                 description: "مشاركات يوتيوب - سعر الألف: 0.9$", 
@@ -3671,6 +4019,60 @@
                 minQuantity: 300,
                 maxQuantity: 1000000,
                 image: "يوتيوب.png"
+            },
+            
+            // إضافة منتجات تويتر وسناب شات
+            { 
+                id: 83, 
+                name: "متابعين تويتر", 
+                category: "social-media", 
+                platform: "twitter",
+                basePrice: 2.5,
+                price: 10,
+                description: "متابعين تويتر - سعر الألف: 2.5$", 
+                perThousand: 10,
+                minQuantity: 300,
+                maxQuantity: 1000000,
+                image: "تويتر.png"
+            },
+            { 
+                id: 84, 
+                name: "ريتويت تويتر", 
+                category: "social-media", 
+                platform: "twitter",
+                basePrice: 1.5,
+                price: 10,
+                description: "ريتويت لتغريدات تويتر - سعر الألف: 1.5$", 
+                perThousand: 10,
+                minQuantity: 300,
+                maxQuantity: 1000000,
+                image: "تويتر.png"
+            },
+            { 
+                id: 85, 
+                name: "متابعين سناب شات", 
+                category: "social-media", 
+                platform: "snapchat",
+                basePrice: 3.0,
+                price: 10,
+                description: "متابعين سناب شات - سعر الألف: 3.0$", 
+                perThousand: 10,
+                minQuantity: 300,
+                maxQuantity: 1000000,
+                image: "سناب شات.png"
+            },
+            { 
+                id: 86, 
+                name: "مشاهدات سناب شات", 
+                category: "social-media", 
+                platform: "snapchat",
+                basePrice: 0.5,
+                price: 10,
+                description: "مشاهدات قصص سناب شات - سعر الألف: 0.5$", 
+                perThousand: 10,
+                minQuantity: 300,
+                maxQuantity: 1000000,
+                image: "سناب شات.png"
             },
             
             // الذكاء الاصطناعي
@@ -3715,73 +4117,30 @@
                 price: 0, 
                 description: "شحن رصيد MTN - اختر الكمية المناسبة", 
                 image: "mtn1.png"
-            },
-            // شحن الالعاب
-            { 
-                id: 18, 
-                name: "ببجي - UC", 
-                category: "games", 
-                price: 0, 
-                description: "شدات ببجي - UC : اختر الكمية التي تريدها",
-                image: "ببجي.jpg"
-            },
-            { 
-                id: 18, 
-                name: "فري فاير - جواهر", 
-                category: "games", 
-                price: 0, 
-                description: "جواهر فري فاير : اختر الكمية التي تريدها",
-                image: "فري فاير.jpeg"
-            },
-            { 
-                id: 18, 
-                name: "جواكر - عملات", 
-                category: "games", 
-                price: 0, 
-                description: "عملات جواكر : اختر الكمية التي تريدها",
-                image: "جواكر.png"
-            },
-            { 
-                id: 18, 
-                name: "انتقام السلاطين - العملة السلطانية", 
-                category: "games", 
-                price: 0, 
-                description: "العملة السلطانية : اختر الفئة التي تريدها",
-                image: "انتقام السلاطين.png"
-            },
-            { 
-                id: 18, 
-                name: "كلاش اوف كلانس - جواهر", 
-                category: "games",
-                price: 0, 
-                description: "جواهر كلاش اوف كلانس : اختر الفئة التي تريدها",
-                image: "كلاش اوف كلانس.jpg"
-            },     
-            { 
-                id: 18, 
-                name: "كلاش رويال - جواهر", 
-                category: "games",
-                price: 0, 
-                description: "كلاش رويال - جواهر : اختر الفئة التي تريدها",
-                image: "كلاش رويال.png"       
-            },
-            { 
-                id: 18, 
-                name: "ديلتا فورس - CP", 
-                category: "games", 
-                price: 0, 
-                description: "ديلتا فورس العالمية : اختر الفئة التي تريدها",
-                image: "ديلتا فورس.jpg"
-            },
-            { 
-                id: 18, 
-                name: "فورتنايت - كود", 
-                category: "games", 
-                price: 0, 
-                description: "فورتنايت - كود : اختر الفئة التي تريدها",
-                image: "فورتنايت.jpg"
-            },
-            
+            }
+        ];
+
+        // إضافة الألعاب من gamesData إلى مصفوفة المنتجات تلقائياً
+        gamesData.forEach(game => {
+            products.push({
+                id: game.id,
+                name: game.name,
+                category: game.category,
+                price: 0,
+                description: game.description,
+                image: game.image
+            });
+        });
+
+        // بيانات المنصات (لخدمات السوشيال ميديا)
+        const platforms = [
+            { id: "instagram", name: "إنستغرام", icon: "fab fa-instagram", color: "#E1306C" },
+            { id: "facebook", name: "فيسبوك", icon: "fab fa-facebook", color: "#1877F2" },
+            { id: "tiktok", name: "تيك توك", icon: "fab fa-tiktok", color: "#000000" },
+            { id: "youtube", name: "يوتيوب", icon: "fab fa-youtube", color: "#FF0000" },
+            { id: "twitter", name: "تويتر", icon: "fab fa-twitter", color: "#1DA1F2" },
+            { id: "snapchat", name: "سناب شات", icon: "fab fa-snapchat", color: "#FFFC00" },
+            { id: "telegram", name: "تليغرام", icon: "fab fa-telegram", color: "#26A5E4" }
         ];
 
         // بيانات التصنيفات
@@ -3805,7 +4164,7 @@
                 name: "شحن ألعاب",
                 description: "ببجي , فري فاير",
                 image: "شحن العاب.jpg",
-                count: 4 
+                count: gamesData.length // عدد الألعاب تلقائياً
             },
             {
                 id: "app",
@@ -3861,24 +4220,42 @@
         // بيانات فئات الرصيد والأسعار لكل شركة على حدة
         const creditAmounts = {
             syriatel: [
-                { value: 62.50, price: 0.80 },
-                { value: 72.11, price: 0.95 },
-                { value: 81.73, price: 1.10 },
-                { value: 86.53, price: 1.20 },
-                { value: 96.15, price: 1.35 },
-                { value: 100.96, price: 1.45 },
-                { value: 105.76, price: 1.55 },
-                { value: 115.38, price: 1.80 },
-                { value: 125, price: 2.20 },
-                { value: 144.23, price: 2.50 },
-                { value: 211.53, price: 3.10 },
-                { value: 288.46, price: 3.60 },
-                { value: 370.19, price: 4 },
-                { value: 480.76, price: 5.20 },
-                { value: 576.92, price: 6.10 },
-                { value: 769.23, price: 8 },
-                { value: 951.92, price: 10.20 },
-
+                { value: 52.88, price: 0.24 },
+                { value: 62.50, price: 0.37 },
+                { value: 68.26, price: 0.45 },
+                { value: 72.11, price: 0.50 },
+                { value: 77.88, price: 0.59 },
+                { value: 81.73, price: 0.19 },
+                { value: 86.53, price: 0.77 },
+                { value: 96.15, price: 0.91 },
+                { value: 100.96, price: 0.93 },
+                { value: 105.76, price: 1.09 },
+                { value: 115.38, price: 1.16 },
+                { value: 125, price: 1.37 },
+                { value: 130.76, price: 1.55 },
+                { value: 144.23, price: 1.74 },
+                { value: 160.57, price: 2.28 },
+                { value: 163.46, price: 2.74 },
+                { value: 137.07, price: 2.74 },
+                { value: 183.65, price: 2.74 },
+                { value: 192.30, price: 2.74 },
+                { value: 211.53, price: 2.74 },
+                { value: 240.38, price: 2.74 },
+                { value: 288.46, price: 2.74 },
+                { value: 317.30, price: 2.74 },
+                { value: 370.19, price: 2.74 },
+                { value: 432.76, price: 2.74 },
+                { value: 480.76, price: 2.74 },
+                { value: 576.92, price: 2.74 },
+                { value: 625, price: 2.74 },
+                { value: 721.15, price: 2.74 },
+                { value: 769.23, price: 2.74 },
+                { value: 1057.69, price: 2.74 },
+                { value: 1250 , price: 2.74 },
+                { value: 1923.07, price: 2.74 },
+                { value: 2115.38, price: 2.74 },
+                { value: 2403.84, price: 2.74 },
+                { value: 163.46, price: 2.74 },
             ],
             mtn: [
                 { value: 50, price: 0.65 },
@@ -3923,8 +4300,13 @@
         let currentStep = 1;
         let hasSocialMediaProduct = false;
         let hasCreditProduct = false;
+        let hasGameProduct = false;
         let selectedSocialProduct = null;
         let selectedCreditProduct = null;
+        let selectedGameProduct = null;
+        
+        // متغير جديد لتتبع المنصة المحددة
+        let selectedPlatform = null;
         
         // عناصر DOM
         const categoriesSection = document.getElementById('categories');
@@ -3976,6 +4358,15 @@
         const calculatedCreditPrice = document.getElementById('calculatedCreditPrice');
         const selectedCreditValue = document.getElementById('selectedCreditValue');
         const confirmCreditBtn = document.getElementById('confirmCreditBtn');
+        
+        const gameModal = document.getElementById('gameModal');
+        const gameClose = document.getElementById('gameClose');
+        const selectedGameName = document.getElementById('selectedGameName');
+        const gameAmount = document.getElementById('gameAmount');
+        const gamePlayerId = document.getElementById('gamePlayerId');
+        const calculatedGamePrice = document.getElementById('calculatedGamePrice');
+        const selectedGameValue = document.getElementById('selectedGameValue');
+        const confirmGameBtn = document.getElementById('confirmGameBtn');
         
         const paymentModal = document.getElementById('paymentModal');
         const paymentClose = document.getElementById('paymentClose');
@@ -4253,7 +4644,7 @@
             });
         }
         
-        // -------------------- عرض منتجات التصنيف --------------------
+        // -------------------- عرض منتجات التصنيف (معدلة) --------------------
         function showCategoryProducts(categoryId) {
             currentCategory = categoryId;
             
@@ -4270,11 +4661,18 @@
                 behavior: 'smooth'
             });
             
-            renderCategoryFilters();
-            renderProductsByCategory(categoryId);
+            // إذا كان التصنيف هو "خدمات سوشال ميديا"، نعرض المنصات أولاً
+            if (categoryId === 'social-media') {
+                renderPlatforms();
+                productFilters.style.display = 'none'; // إخفاء أزرار الفلاتر
+            } else {
+                productFilters.style.display = 'flex';
+                renderCategoryFilters();
+                renderProductsByCategory(categoryId);
+            }
         }
         
-        // -------------------- إنشاء أزرار الفلاتر --------------------
+        // -------------------- إنشاء أزرار الفلاتر (معدلة) --------------------
         function renderCategoryFilters() {
             productFilters.innerHTML = '';
             
@@ -4299,14 +4697,19 @@
                     this.classList.add('active');
                     
                     const filterType = this.dataset.filter;
-                    renderProductsByCategory(currentCategory, filterType);
+                    // إذا كنا في منصة محددة، نطبق الفلتر على منتجاتها
+                    if (selectedPlatform) {
+                        renderProductsByPlatform(selectedPlatform, filterType);
+                    } else {
+                        renderProductsByCategory(currentCategory, filterType);
+                    }
                 });
                 
                 productFilters.appendChild(filterBtn);
             });
         }
         
-        // -------------------- عرض منتجات التصنيف مع التصفية --------------------
+        // -------------------- عرض منتجات التصنيف (بدون تغيير) --------------------
         function renderProductsByCategory(categoryId, filter = 'all') {
             productsGrid.innerHTML = '';
             
@@ -4314,14 +4717,14 @@
             
             if (filter === 'lowest-price') {
                 filteredProducts.sort((a, b) => {
-                    if (a.category === 'rased') return 0;
-                    if (b.category === 'rased') return 0;
+                    if (a.category === 'rased' || a.category === 'games') return 0;
+                    if (b.category === 'rased' || b.category === 'games') return 0;
                     return a.price - b.price;
                 });
             } else if (filter === 'highest-price') {
                 filteredProducts.sort((a, b) => {
-                    if (a.category === 'rased') return 0;
-                    if (b.category === 'rased') return 0;
+                    if (a.category === 'rased' || a.category === 'games') return 0;
+                    if (b.category === 'rased' || b.category === 'games') return 0;
                     return b.price - a.price;
                 });
             }
@@ -4347,13 +4750,12 @@
                 let priceDisplay = '';
                 if (product.category === 'social-media') {
                     priceDisplay = `${product.basePrice || product.price}$ لـ 1k`;
-                } else if (product.category === 'rased') {
+                } else if (product.category === 'rased' || product.category === 'games') {
                     priceDisplay = 'اختر الكمية';
                 } else {
                     priceDisplay = product.price > 0 ? `${product.price}$` : 'قريباً';
                 }
                 
-                // ترتيب الأزرار: تفاصيل، ثم اضف للسلة، ثم استفسار (الترتيب في HTML)
                 productCard.innerHTML = `
                     <div class="product-img-container">
                         <img src="${imageUrl}" 
@@ -4370,7 +4772,7 @@
                         <h3 class="product-title">${product.name}</h3>
                         <p class="product-price">${priceDisplay}</p>
                         <div class="product-actions">
-                            ${product.price > 0 || product.category === 'rased' ? `
+                            ${product.price > 0 || product.category === 'rased' || product.category === 'games' ? `
                                 <button class="product-details-btn" data-id="${product.id}">
                                     <i class="fas fa-info-circle"></i> تفاصيل المنتج
                                 </button>
@@ -4410,6 +4812,8 @@
                         openQuantityModal(product);
                     } else if (product.category === 'rased') {
                         openCreditModal(product);
+                    } else if (product.category === 'games') {
+                        openGameModal(product);
                     } else {
                         addToCart(productId);
                     }
@@ -4429,6 +4833,8 @@
                             message += `\nالحد الأدنى: 300 - الحد الأقصى: 1,000,000`;
                         } else if (product.category === 'rased') {
                             message += `\nأريد شحن رصيد ${product.name}`;
+                        } else if (product.category === 'games') {
+                            message += `\nأريد شحن ${product.name}`;
                         } else {
                             message += ` بسعر ${product.price}$ من زودني`;
                         }
@@ -4436,6 +4842,161 @@
                         window.open(`https://wa.me/963982199738?text=${encodeURIComponent(message)}`, '_blank');
                     }
                 });
+            });
+        }
+        
+        // -------------------- دالة عرض كروت المنصات (جديدة) --------------------
+        function renderPlatforms() {
+            productsGrid.innerHTML = '';
+            selectedPlatform = null;
+
+            platforms.forEach(platform => {
+                const servicesCount = products.filter(p => p.category === 'social-media' && p.platform === platform.id).length;
+                const sampleServices = products
+                    .filter(p => p.category === 'social-media' && p.platform === platform.id)
+                    .slice(0, 3)
+                    .map(p => p.name.split(' ').slice(0, 2).join(' '));
+
+                const platformCard = document.createElement('div');
+                platformCard.className = 'platform-card';
+                platformCard.dataset.platform = platform.id;
+                platformCard.setAttribute('data-aos', 'fade-up');
+
+                platformCard.innerHTML = `
+                    <div class="platform-header" style="background: linear-gradient(135deg, ${platform.color}22, var(--primary));">
+                        <i class="${platform.icon} platform-icon" style="color: ${platform.color};"></i>
+                    </div>
+                    <div class="platform-body">
+                        <h3 class="platform-name">${platform.name}</h3>
+                        <p class="platform-services-count">${servicesCount} خدمة متاحة</p>
+                        <div class="platform-services-preview">
+                            ${sampleServices.map(s => `<span class="service-tag">${s}</span>`).join('')}
+                            ${servicesCount > 3 ? '<span class="service-tag">...</span>' : ''}
+                        </div>
+                    </div>
+                `;
+
+                productsGrid.appendChild(platformCard);
+            });
+
+            document.querySelectorAll('.platform-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const platformId = this.dataset.platform;
+                    showPlatformProducts(platformId);
+                });
+            });
+        }
+
+        // -------------------- دالة عرض منتجات منصة معينة (جديدة) --------------------
+        function showPlatformProducts(platformId) {
+            selectedPlatform = platformId;
+            const platform = platforms.find(p => p.id === platformId);
+            if (!platform) return;
+
+            categoryProductsTitle.textContent = `خدمات ${platform.name}`;
+            
+            // إظهار أزرار الفلاتر (لأننا سنعرض منتجات)
+            productFilters.style.display = 'flex';
+            // إعادة تعيين الفلتر إلى "الكل"
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            const allFilter = document.querySelector('.filter-btn[data-filter="all"]');
+            if (allFilter) allFilter.classList.add('active');
+            
+            renderProductsByPlatform(platformId);
+        }
+
+        // -------------------- دالة عرض منتجات منصة معينة مع الفلتر (جديدة) --------------------
+        function renderProductsByPlatform(platformId, filter = 'all') {
+            productsGrid.innerHTML = '';
+
+            let filteredProducts = products.filter(p => p.category === 'social-media' && p.platform === platformId);
+
+            if (filter === 'lowest-price') {
+                filteredProducts.sort((a, b) => (a.basePrice || a.price) - (b.basePrice || b.price));
+            } else if (filter === 'highest-price') {
+                filteredProducts.sort((a, b) => (b.basePrice || b.price) - (a.basePrice || b.price));
+            }
+
+            if (filteredProducts.length === 0) {
+                productsGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--gray);">
+                        <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <h3 style="margin-bottom: 1rem;">لا توجد خدمات متاحة لهذه المنصة حالياً</h3>
+                        <p>سيتم إضافة خدمات قريباً</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // زر العودة إلى المنصات
+            const backButton = document.createElement('div');
+            backButton.style.gridColumn = '1 / -1';
+            backButton.innerHTML = `
+                <button class="back-to-platforms" id="backToPlatformsBtn">
+                    <i class="fas fa-arrow-right"></i> العودة إلى المنصات
+                </button>
+            `;
+            productsGrid.appendChild(backButton);
+
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.setAttribute('data-aos', 'fade-up');
+
+                const imageUrl = product.image || "images/placeholder.jpg";
+                const priceDisplay = `${product.basePrice || product.price}$ لـ 1k`;
+
+                productCard.innerHTML = `
+                    <div class="product-img-container">
+                        <img src="${imageUrl}" class="product-img" alt="${product.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">خدمة</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-price">${priceDisplay}</p>
+                        <div class="product-actions">
+                            <button class="product-details-btn" data-id="${product.id}"><i class="fas fa-info-circle"></i> تفاصيل</button>
+                            <button class="add-to-cart-btn" data-id="${product.id}"><i class="fas fa-cart-plus"></i> أضف للسلة</button>
+                            <button class="whatsapp-btn-product" data-id="${product.id}"><i class="fab fa-whatsapp"></i> استفسار</button>
+                        </div>
+                    </div>
+                `;
+
+                productsGrid.appendChild(productCard);
+            });
+
+            // إعادة ربط الأحداث للأزرار
+            document.querySelectorAll('.product-details-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    showProductDetails(productId);
+                });
+            });
+
+            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    const product = products.find(p => p.id === productId);
+                    openQuantityModal(product);
+                });
+            });
+
+            document.querySelectorAll('.whatsapp-btn-product').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    const product = products.find(p => p.id === productId);
+                    if (product) {
+                        let message = `اريد الاستفسار عن ${product.name}\nأريد خدمة: ${product.name}\nالسعر: ${product.basePrice || product.price}$ لكل 1000\nالحد الأدنى: 300 - الحد الأقصى: 1,000,000`;
+                        window.open(`https://wa.me/963982199738?text=${encodeURIComponent(message)}`, '_blank');
+                    }
+                });
+            });
+
+            // ربط حدث زر العودة
+            document.getElementById('backToPlatformsBtn')?.addEventListener('click', function() {
+                renderPlatforms();
+                categoryProductsTitle.textContent = 'خدمات السوشيال ميديا';
+                productFilters.style.display = 'none'; // إخفاء الفلاتر عند العودة للمنصات
             });
         }
         
@@ -4468,7 +5029,7 @@
             }
         }
         
-        // -------------------- فتح نافذة إدخال بيانات رصيد الموبايل (معدل لأسعار منفصلة) --------------------
+        // -------------------- فتح نافذة إدخال بيانات رصيد الموبايل --------------------
         function openCreditModal(product) {
             selectedCreditProduct = product;
             
@@ -4515,8 +5076,68 @@
             }
         }
         
-        // -------------------- إضافة منتج إلى السلة (معدل لأسعار منفصلة) --------------------
-        function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null) {
+        // -------------------- فتح نافذة إدخال بيانات شحن الألعاب (ذكية) --------------------
+        function openGameModal(product) {
+            selectedGameProduct = product;
+            
+            selectedGameName.textContent = product.name;
+            
+            // تفريغ وتعبئة قائمة الكميات حسب نوع اللعبة
+            gameAmount.innerHTML = '<option value="">-- اختر الكمية --</option>';
+            
+            // البحث عن بيانات اللعبة في gamesData
+            const gameData = gamesData.find(g => g.name === product.name);
+            
+            if (gameData && gameData.amounts) {
+                // إضافة الخيارات تلقائياً من بيانات اللعبة
+                gameData.amounts.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.value;
+                    option.setAttribute('data-price', item.price);
+                    option.textContent = `${item.display} - ${item.price}$`;
+                    gameAmount.appendChild(option);
+                });
+                
+                // ✅ تحديث النص في حقل الإدخال بناءً على inputLabel الخاص باللعبة
+                const gamePlayerIdLabel = document.querySelector('label[for="gamePlayerId"]');
+                if (gamePlayerIdLabel && gameData.inputLabel) {
+                    gamePlayerIdLabel.textContent = gameData.inputLabel + ' *';
+                }
+                
+                // تحديث نص المساعدة
+                const helpText = document.querySelector('#gamePlayerId + small');
+                if (helpText) {
+                    if (gameData.inputLabel && gameData.inputLabel.includes('ايميل')) {
+                        helpText.textContent = 'أدخل البريد الإلكتروني المرتبط بحساب سوبر سيل';
+                    } else {
+                        helpText.textContent = 'أدخل رقم اللاعب الخاص بك (User ID)';
+                    }
+                }
+            }
+            
+            gamePlayerId.value = '';
+            calculatedGamePrice.textContent = '0.00$';
+            selectedGameValue.textContent = '0';
+            
+            gameModal.classList.add('active');
+        }
+        
+        // -------------------- تحديث معاينة سعر اللعبة --------------------
+        function updateGamePricePreview() {
+            const selectedOption = gameAmount.options[gameAmount.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                const price = selectedOption.getAttribute('data-price');
+                const value = selectedOption.value;
+                calculatedGamePrice.textContent = `${parseFloat(price).toFixed(2)}$`;
+                selectedGameValue.textContent = value;
+            } else {
+                calculatedGamePrice.textContent = '0.00$';
+                selectedGameValue.textContent = '0';
+            }
+        }
+        
+        // -------------------- إضافة منتج إلى السلة --------------------
+        function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null, gameAmount_ = null, playerId = null) {
             const product = products.find(p => p.id === productId);
             if (!product) return;
             
@@ -4578,6 +5199,30 @@
                     category: product.category,
                     phoneNumber: phoneNumber
                 });
+            } else if (product.category === 'games') {
+                if (!gameAmount_ || !playerId) {
+                    showToast('يرجى اختيار الكمية وإدخال رقم اللاعب');
+                    return;
+                }
+                
+                // البحث عن بيانات اللعبة
+                const gameData = gamesData.find(g => g.name === product.name);
+                const gameInfo = gameData.amounts.find(a => a.value == gameAmount_);
+                
+                if (!gameInfo) return;
+                
+                itemPrice = gameInfo.price;
+                
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: itemPrice,
+                    gameValue: gameInfo.value,
+                    gameDisplay: gameInfo.display,
+                    quantity: 1,
+                    category: product.category,
+                    playerId: playerId
+                });
             } else {
                 const existingItem = cart.find(item => item.id === productId);
                 
@@ -4596,6 +5241,7 @@
             
             checkForSocialMediaProducts();
             checkForCreditProducts();
+            checkForGameProducts();
             
             localStorage.setItem('zoodnyCart', JSON.stringify(cart));
             updateCartUI();
@@ -4626,6 +5272,14 @@
             hasCreditProduct = cart.some(item => {
                 const product = products.find(p => p.id === item.id);
                 return product && product.category === 'rased';
+            });
+        }
+        
+        // -------------------- التحقق من وجود منتجات ألعاب --------------------
+        function checkForGameProducts() {
+            hasGameProduct = cart.some(item => {
+                const product = products.find(p => p.id === item.id);
+                return product && product.category === 'games';
             });
         }
         
@@ -4700,6 +5354,7 @@
                 const product = products.find(p => p.id === item.id);
                 const isSocialMedia = product && product.category === 'social-media';
                 const isCredit = product && product.category === 'rased';
+                const isGame = product && product.category === 'games';
                 const customQty = item.customQuantity || 300;
                 
                 const cartItem = document.createElement('div');
@@ -4723,6 +5378,15 @@
                             <p style="color: var(--gray); font-size: 0.85rem;">رقم الهاتف: ${item.phoneNumber}</p>
                         </div>
                     `;
+                } else if (isGame) {
+                    detailsHtml = `
+                        <div style="flex: 1;">
+                            <h4 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.3rem;">${item.name}</h4>
+                            <p style="color: var(--accent); font-weight: 700;">${item.price.toFixed(2)}$</p>
+                            <p style="color: var(--gray); font-size: 0.85rem;">الكمية: ${item.gameDisplay || item.gameValue}</p>
+                            <p style="color: var(--gray); font-size: 0.85rem;">رقم اللاعب: ${item.playerId}</p>
+                        </div>
+                    `;
                 } else {
                     detailsHtml = `
                         <div style="flex: 1;">
@@ -4735,11 +5399,11 @@
                 
                 cartItem.innerHTML = `
                     <div style="width: 70px; height: 70px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                        <i class="${isSocialMedia ? 'fab fa-instagram' : isCredit ? 'fas fa-phone-alt' : 'fas fa-box'}" style="font-size: 1.5rem; color: ${isSocialMedia ? '#E1306C' : isCredit ? '#2ECC71' : '#666'};"></i>
+                        <i class="${isSocialMedia ? 'fab fa-instagram' : isCredit ? 'fas fa-phone-alt' : isGame ? 'fas fa-gamepad' : 'fas fa-box'}" style="font-size: 1.5rem; color: ${isSocialMedia ? '#E1306C' : isCredit ? '#2ECC71' : isGame ? '#FF6B6B' : '#666'};"></i>
                     </div>
                     ${detailsHtml}
                     <div class="cart-item-actions" style="display: flex; align-items: center; gap: 0.8rem;">
-                        ${!isSocialMedia && !isCredit ? `
+                        ${!isSocialMedia && !isCredit && !isGame ? `
                             <button class="quantity-btn decrease" data-id="${item.id}" style="background: var(--light); border: 1px solid #ddd; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">-</button>
                             <span style="font-weight: 600; min-width: 25px; text-align: center;">${item.quantity}</span>
                             <button class="quantity-btn increase" data-id="${item.id}" style="background: var(--light); border: 1px solid #ddd; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">+</button>
@@ -4780,7 +5444,7 @@
             const product = products.find(p => p.id === productId);
             
             if (itemIndex !== -1) {
-                if (product && (product.category === 'social-media' || product.category === 'rased')) {
+                if (product && (product.category === 'social-media' || product.category === 'rased' || product.category === 'games')) {
                     showToast('لتعديل الكمية، يرجى إزالة المنتج وإضافته مرة أخرى');
                     return;
                 }
@@ -4793,6 +5457,7 @@
                 
                 checkForSocialMediaProducts();
                 checkForCreditProducts();
+                checkForGameProducts();
                 
                 localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                 updateCartUI();
@@ -4805,6 +5470,7 @@
             
             checkForSocialMediaProducts();
             checkForCreditProducts();
+            checkForGameProducts();
             
             localStorage.setItem('zoodnyCart', JSON.stringify(cart));
             updateCartUI();
@@ -4824,6 +5490,7 @@
                 const itemTotal = item.price * item.quantity;
                 const isSocialMedia = item.category === 'social-media';
                 const isCredit = item.category === 'rased';
+                const isGame = item.category === 'games';
                 const customQty = item.customQuantity || 300;
                 
                 const summaryItem = document.createElement('div');
@@ -4837,6 +5504,11 @@
                 } else if (isCredit) {
                     summaryItem.innerHTML = `
                         <span>${item.name} - ${item.creditValue} ل.س (هاتف: ${item.phoneNumber})</span>
+                        <span>${(item.price * item.quantity).toFixed(2)}$</span>
+                    `;
+                } else if (isGame) {
+                    summaryItem.innerHTML = `
+                        <span>${item.name} - ${item.gameDisplay || item.gameValue} (لاعب: ${item.playerId})</span>
                         <span>${(item.price * item.quantity).toFixed(2)}$</span>
                     `;
                 } else {
@@ -5008,6 +5680,18 @@
                 });
             }
             
+            if (hasGameProduct) {
+                message += `\n🎮 معلومات شحن الألعاب:\n`;
+                
+                const gameItems = cart.filter(item => item.category === 'games');
+                gameItems.forEach((item, index) => {
+                    message += `\nاللعبة ${index + 1}: ${item.name}\n`;
+                    message += `   الكمية: ${item.gameDisplay || item.gameValue}\n`;
+                    message += `   رقم اللاعب: ${item.playerId}\n`;
+                    message += `   السعر: ${item.price.toFixed(2)}$\n`;
+                });
+            }
+            
             message += `\n💳 معلومات الدفع:\n`;
             message += `رقم التحويل: ${currentPaymentData.transferNumber}\n`;
             message += `المبلغ المدفوع: ${currentPaymentData.paidAmount}$\n`;
@@ -5059,6 +5743,11 @@
                     message += `   قيمة الرصيد: ${item.creditValue} ل.س\n`;
                     message += `   رقم الهاتف: ${item.phoneNumber}\n`;
                     message += `   السعر: ${item.price.toFixed(2)}$\n\n`;
+                } else if (item.category === 'games') {
+                    message += `${index + 1}. ${item.name}\n`;
+                    message += `   الكمية: ${item.gameDisplay || item.gameValue}\n`;
+                    message += `   رقم اللاعب: ${item.playerId}\n`;
+                    message += `   السعر: ${item.price.toFixed(2)}$\n\n`;
                 } else {
                     const itemTotal = item.price * item.quantity;
                     message += `${index + 1}. ${item.name}\n`;
@@ -5081,6 +5770,7 @@
                 cart = [];
                 hasSocialMediaProduct = false;
                 hasCreditProduct = false;
+                hasGameProduct = false;
                 localStorage.removeItem('zoodnyCart');
                 updateCartUI();
                 
@@ -5104,6 +5794,7 @@
                 cart = [];
                 hasSocialMediaProduct = false;
                 hasCreditProduct = false;
+                hasGameProduct = false;
                 localStorage.removeItem('zoodnyCart');
                 updateCartUI();
                 
@@ -5147,6 +5838,7 @@
                 
                 checkForSocialMediaProducts();
                 checkForCreditProducts();
+                checkForGameProducts();
                 updateCartUI();
             }
         }
@@ -5155,6 +5847,7 @@
         function backToCategoriesView() {
             categoriesSection.style.display = 'block';
             productsSection.style.display = 'none';
+            selectedPlatform = null; // إعادة تعيين المنصة المحددة
             
             window.scrollTo({
                 top: categoriesSection.offsetTop - 80,
@@ -5177,7 +5870,7 @@
             
             if (product.category === 'social-media') {
                 priceDisplay = `${product.basePrice || product.price}$ لـ 1k`;
-            } else if (product.category === 'rased') {
+            } else if (product.category === 'rased' || product.category === 'games') {
                 priceDisplay = 'اختر الكمية';
             } else {
                 priceDisplay = product.price > 0 ? `${product.price}$` : 'قريباً';
@@ -5202,6 +5895,12 @@
                     <li><i class="fas fa-check-circle"></i> يتم الإرسال خلال 5 دقائق</li>
                     <li><i class="fas fa-check-circle"></i> تحتاج إدخال رقم الهاتف</li>
                     <li><i class="fas fa-check-circle"></i> متوفر لجميع الخطوط</li>
+                `;
+            } else if (product.category === 'games') {
+                featuresHtml = `
+                    <li><i class="fas fa-check-circle"></i> شحن فوري</li>
+                    <li><i class="fas fa-check-circle"></i> تحتاج إدخال رقم اللاعب</li>
+                    <li><i class="fas fa-check-circle"></i> متوفر لجميع الخوادم</li>
                 `;
             } else {
                 featuresHtml = `
@@ -5259,6 +5958,9 @@
                         } else if (p.category === 'rased') {
                             productDetailsModal.classList.remove('active');
                             openCreditModal(p);
+                        } else if (p.category === 'games') {
+                            productDetailsModal.classList.remove('active');
+                            openGameModal(p);
                         } else {
                             addToCart(pid);
                             productDetailsModal.classList.remove('active');
@@ -5278,6 +5980,8 @@
                                 message += `\nالحد الأدنى: 300 - الحد الأقصى: 1,000,000`;
                             } else if (p.category === 'rased') {
                                 message += `\nأريد شحن رصيد ${p.name}`;
+                            } else if (p.category === 'games') {
+                                message += `\nأريد شحن ${p.name}`;
                             } else {
                                 message += ` بسعر ${p.price}$ من زودني`;
                             }
@@ -5370,6 +6074,43 @@
                 if (e.target === creditModal) {
                     creditModal.classList.remove('active');
                     selectedCreditProduct = null;
+                }
+            });
+            
+            // أحداث نافذة الألعاب
+            gameAmount.addEventListener('change', updateGamePricePreview);
+            
+            confirmGameBtn.addEventListener('click', function() {
+                if (!selectedGameProduct) return;
+                
+                const amount = gameAmount.value;
+                const playerId = gamePlayerId.value.trim();
+                
+                if (!amount) {
+                    showToast('يرجى اختيار الكمية');
+                    return;
+                }
+                
+                if (!playerId) {
+                    showToast('يرجى إدخال رقم اللاعب');
+                    return;
+                }
+                
+                addToCart(selectedGameProduct.id, null, null, null, null, amount, playerId);
+                
+                gameModal.classList.remove('active');
+                selectedGameProduct = null;
+            });
+            
+            gameClose.addEventListener('click', () => {
+                gameModal.classList.remove('active');
+                selectedGameProduct = null;
+            });
+            
+            gameModal.addEventListener('click', function(e) {
+                if (e.target === gameModal) {
+                    gameModal.classList.remove('active');
+                    selectedGameProduct = null;
                 }
             });
             

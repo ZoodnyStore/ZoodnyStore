@@ -10,7 +10,7 @@
     <!-- إضافة Axios للتعامل مع طلبات API -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
-        /* جميع الأنماط CSS كما هي دون تغيير — فقط التعديل المطلوب في عرض البطاقات وتحسين صف المنتجات */
+        /* جميع الأنماط CSS كما هي دون تغيير — فقط إضافة أنماط كروت المنصات في الأسفل */
         :root {
             --primary: #2A3F54;
             --secondary: #F7C873;
@@ -1594,6 +1594,151 @@
             background: #1ebe57;
         }
 
+        /* أنماط كروت المنصات (جديدة) */
+        .platforms-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .platform-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid rgba(247, 200, 115, 0.3);
+        }
+
+        .platform-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(247, 200, 115, 0.2);
+            border-color: var(--secondary);
+        }
+
+        .platform-header {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), #1E2B38);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(247, 200, 115, 0.2) 1px, transparent 1px);
+            background-size: 20px 20px;
+            transform: rotate(45deg);
+            opacity: 0.3;
+        }
+
+        .platform-icon {
+            font-size: 3.5rem;
+            color: var(--secondary);
+            z-index: 1;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        }
+
+        .platform-body {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .platform-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .platform-services-count {
+            color: var(--gray);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .platform-services-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .service-tag {
+            background: rgba(247, 200, 115, 0.2);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .back-to-platforms {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-to-platforms:hover {
+            background: #1e2e3f;
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .platforms-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 1.5rem;
+            }
+            .platform-header {
+                height: 100px;
+            }
+            .platform-icon {
+                font-size: 2.5rem;
+            }
+            .platform-name {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .platforms-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+            .platform-body {
+                padding: 1rem;
+            }
+            .platform-name {
+                font-size: 1rem;
+            }
+            .service-tag {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.5rem;
+            }
+        }
+
         .branches {
             padding: 8rem 5%;
             background: #ffffff;
@@ -2513,9 +2658,9 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="gamePlayerId" id="gamePlayerIdLabel">رقم اللاعب *</label>
-                    <input type="text" id="gamePlayerId" class="form-control" placeholder="أدخل المطلوب منك تحت المستطيل :" required>
-                    <small style="color: var(--gray); font-size: 0.85rem;" id="gamePlayerIdHelp">أدخل رقم اللاعب الخاص بك (User ID)</small>
+                    <label for="gamePlayerId">رقم اللاعب *</label>
+                    <input type="text" id="gamePlayerId" class="form-control" placeholder="أدخل رقم اللاعب أو معرف الحساب" required>
+                    <small style="color: var(--gray); font-size: 0.85rem;">أدخل رقم اللاعب الخاص بك (User ID)</small>
                 </div>
                 
                 <div class="price-preview" id="gamePricePreview">
@@ -2735,6 +2880,20 @@
                         <input type="date" id="transferDate" required>
                     </div>
                     
+                    <div class="form-group">
+                        <label>رفع لقطة شاشة للتحويل *</label>
+                        <div class="file-upload" id="screenshotUpload">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>انقر لرفع لقطة شاشة للتحويل</p>
+                            <p style="color: var(--gray); font-size: 0.9rem;">(PNG, JPG, JPEG - الحد الأقصى 5MB)</p>
+                            <input type="file" id="screenshotFile" accept=".png,.jpg,.jpeg" required>
+                        </div>
+                        <div class="file-preview" id="screenshotPreview">
+                            <img id="screenshotPreviewImg" src="#" alt="لقطة الشاشة">
+                            <p id="screenshotFileName"></p>
+                        </div>
+                    </div>
+                    
                     <div class="form-actions">
                         <button class="back-btn" id="backStep2">
                             <i class="fas fa-arrow-right"></i> السابق
@@ -2782,9 +2941,9 @@
                     
                     <div style="background: #f0fff4; padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0;">
                         <h4 style="color: var(--success); margin-bottom: 0.5rem;">
-                            <i class="fas fa-check-circle"></i> تأكيد التحويل
+                            <i class="fas fa-check-circle"></i> تم رفع لقطة الشاشة
                         </h4>
-                        <p style="color: var(--gray);">تم تأكيد بيانات التحويل بنجاح</p>
+                        <p id="screenshotStatus" style="color: var(--gray);">لقطة الشاشة جاهزة للإرسال</p>
                     </div>
                     
                     <div class="form-actions">
@@ -3053,7 +3212,6 @@
                 category: "games",
                 description: "شدات ببجي - UC : اختر الكمية التي تريدها",
                 image: "ببجي.jpg",
-                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
                     { value: 60, price: 1.25, display: "60 شدة" },
                     { value: 325, price: 5.50, display: "325 شدة" },
@@ -3069,13 +3227,12 @@
                 category: "games",
                 description: "جواهر فري فاير : اختر الكمية التي تريدها",
                 image: "فري فاير.jpeg",
-                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
-                    { value: 110, price: 1.25, display: "110 جوهرة" },
-                    { value: 210 + 21, price: 2.50, display: "210 + 21 جوهرة" },
-                    { value: 520 + 52, price: 5.50, display: "520 + 52 جوهرة" },
-                    { value: 1060 + 106, price: 11, display: "1060 + 106 جوهرة" },
-                    { value: 2180 + 218, price: 23, display: "2180 + 218 جوهرة" },
+                    { value: 110, price: 1.25, display: "110 جواهر" },
+                    { value: 210 + 21, price: 2.50, display: "210 + 21 جواهر" },
+                    { value: 520 + 52, price: 5.50, display: "520 + 52 جواهر" },
+                    { value: 1060 + 106, price: 11, display: "1060 + 106 جواهر" },
+                    { value: 2180 + 218, price: 23, display: "2180 + 218 جواهر" },
                 ]
             },
             {
@@ -3084,7 +3241,6 @@
                 category: "games",
                 description: "عملات جواكر : اختر الكمية التي تريدها",
                 image: "جواكر.png",
-                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
                     { value: 10000, price: 1.50, display: "10000 عملة" },
                     { value: 25000, price: 3.50, display: "25000 عملة" },
@@ -3105,14 +3261,11 @@
                 category: "games",
                 description: "العملة السلطانية : اختر الفئة التي تريدها",
                 image: "انتقام السلاطين.png",
-                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
-                    { value: 20, price: 2.30, display: "20 عملة" },
-                    { value: 30, price: 3.20, display: "30 عملة" },
-                    { value: 50, price: 6.40, display: "50 عملة" },
-                    { value: 100, price: 10.30, display: "100 عملة" },
-                    { value: 500, price: 49, display: "500 عملة" },
-                    { value: 1000, price: 96, display: "1000 عملة" },
+                    { value: 100, price: 1.50, display: "100 سلطانية" },
+                    { value: 300, price: 4.00, display: "300 سلطانية" },
+                    { value: 500, price: 6.50, display: "500 سلطانية" },
+                    { value: 1000, price: 12.00, display: "1000 سلطانية" }
                 ]
             },
             {
@@ -3121,14 +3274,13 @@
                 category: "games",
                 description: "جواهر كلاش اوف كلانس : اختر الفئة التي تريدها",
                 image: "كلاش اوف كلانس.jpg",
-                inputLabel: "أدخل ايميل سوبر سيل", // ✅ نص مخصص لكلاش اوف كلانس
                 amounts: [
-                    { value: 80, price: 1.50, display: "80 جوهرة" },
-                    { value: 500, price: 6.40, display: "500 جوهرة" },
-                    { value: 1200, price: 11.70, display: "1200 جوهرة" },
-                    { value: 1850, price: 17.60, display: "1850 جوهرة" },
-                    { value: 2500, price: 24.30, display: "2500 جوهرة" },
-                    { value: 6500, price: 58, display: "6500 جوهرة" }
+                    { value: 80, price: 1.50, display: "80 جواهر" },
+                    { value: 500, price: 8.50, display: "500 جواهر" },
+                    { value: 1200, price: 19.00, display: "1200 جواهر" },
+                    { value: 2500, price: 38.00, display: "2500 جواهر" },
+                    { value: 6500, price: 95.00, display: "6500 جواهر" },
+                    { value: 14000, price: 190.00, display: "14000 جواهر" }
                 ]
             },
             {
@@ -3137,13 +3289,11 @@
                 category: "games",
                 description: "كلاش رويال - جواهر : اختر الفئة التي تريدها",
                 image: "كلاش رويال.png",
-                inputLabel: "ادخل ايميل سوبر سيل", // النص المخصص لحقل الإدخال
                 amounts: [
-                    { value: 80, price: 1.25, display: "80 جوهرة" },
-                    { value: 500, price: 6.40, display: "500 جوهرة" },
-                    { value: 1200, price: 11.70, display: "1200 جوهرة" },
-                    { value: 2500, price: 24.30, display: "2500 جوهرة" },
-                    { value: 6500, price: 58, display: "6500 جوهرة" },
+                    { value: 60, price: 1.20, display: "60 جواهر" },
+                    { value: 300, price: 5.50, display: "300 جواهر" },
+                    { value: 700, price: 12.00, display: "700 جواهر" },
+                    { value: 1500, price: 25.00, display: "1500 جواهر" }
                 ]
             },
             {
@@ -3152,13 +3302,12 @@
                 category: "games",
                 description: "ديلتا فورس العالمية : اختر الفئة التي تريدها",
                 image: "ديلتا فورس.jpg",
-                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
-                    { value: 60, price: 1.25, display: "60" },
-                    { value: 320, price: 4.85, display: "320" },
-                    { value: 750, price: 9, display: "750" },
-                    { value: 1480, price: 18, display: "1480" },
-                    { value: 1980, price: 23, display: "1980" }
+                    { value: 60, price: 1.00, display: "60 CP" },
+                    { value: 300, price: 4.50, display: "300 CP" },
+                    { value: 600, price: 8.50, display: "600 CP" },
+                    { value: 1500, price: 20.00, display: "1500 CP" },
+                    { value: 3000, price: 38.00, display: "3000 CP" }
                 ]
             },
             {
@@ -3167,16 +3316,17 @@
                 category: "games",
                 description: "فورتنايت - كود : اختر الفئة التي تريدها",
                 image: "فورتنايت.jpg",
-                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
-                    { value: 2800, price: 27.50, display: "2800" },
-                    { value: 5000, price: 45, display: "5000" },
-                    { value: 13500, price: 110, display: "13500" },
+                    { value: 1000, price: 10.00, display: "1000 V-Bucks" },
+                    { value: 2800, price: 25.00, display: "2800 V-Bucks" },
+                    { value: 5000, price: 45.00, display: "5000 V-Bucks" },
+                    { value: 13500, price: 110.00, display: "13500 V-Bucks" }
                 ]
             }
         ];
 
         // -------------------- بيانات المنتجات مع صور خاصة لكل منتج --------------------
+        // تم تعديل منتجات السوشيال ميديا بإضافة خاصية platform
         const products = [
             // أكسسوارات الهاتف - مع صور خاصة
             { 
@@ -3993,10 +4143,17 @@
                 image: "خدمات سوشال ميديا.jpg",
                 count: 24
             },
+                {
+                id: "sell acconts intagram",
+                name: " بيع حسابات انستغرام ",
+                description: "متابعين لا يقل عن 10k",
+                image: "خدمات سوشال ميديا.jpg",
+                count: 0
+            },
             {
                 id: "chat",
                 name: "الذكاء الاصطناعي",
-                description: "Chat GPT , Gemini ",
+                description: "Chat GPT , Gemini ",  
                 image: "gpt & gemini.webp",
                 count: 3
             },
@@ -4130,10 +4287,14 @@
             ]
         };
 
+        // مفتاح ImgBB API
+        const IMGBB_API_KEY = "31321101ec3bd35ce08d26a9a01d40b1";
+
         // -------------------- حالة التطبيق --------------------
         let currentCategory = null;
         let cart = [];
         let currentPaymentData = {};
+        let screenshotFile = null;
         let currentStep = 1;
         let hasSocialMediaProduct = false;
         let hasCreditProduct = false;
@@ -4231,6 +4392,11 @@
         const confirmRequiredAmount = document.getElementById('confirmRequiredAmount');
         const paidAmount = document.getElementById('paidAmount');
         const transferDate = document.getElementById('transferDate');
+        const screenshotUpload = document.getElementById('screenshotUpload');
+        const screenshotFileInput = document.getElementById('screenshotFile');
+        const screenshotPreview = document.getElementById('screenshotPreview');
+        const screenshotPreviewImg = document.getElementById('screenshotPreviewImg');
+        const screenshotFileName = document.getElementById('screenshotFileName');
         const backStep2 = document.getElementById('backStep2');
         const nextStep2 = document.getElementById('nextStep2');
         
@@ -4239,6 +4405,7 @@
         const finalPaidAmount = document.getElementById('finalPaidAmount');
         const finalTransferDate = document.getElementById('finalTransferDate');
         const finalRequiredAmount = document.getElementById('finalRequiredAmount');
+        const screenshotStatus = document.getElementById('screenshotStatus');
         const backStep3 = document.getElementById('backStep3');
         const submitPayment = document.getElementById('submitPayment');
         
@@ -4272,6 +4439,33 @@
             const price = (quantity / 1000) * basePrice;
             
             return Math.round(price * 100) / 100;
+        }
+
+        // -------------------- دالة رفع الصورة إلى ImgBB --------------------
+        async function uploadImageToImgBB(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data && data.data) {
+                    return {
+                        url: data.data.url,
+                        display_url: data.data.display_url,
+                        thumb_url: data.data.thumb ? data.data.thumb.url : data.data.url
+                    };
+                }
+                throw new Error('فشل رفع الصورة');
+            } catch (error) {
+                console.error('خطأ في رفع الصورة:', error);
+                throw error;
+            }
         }
 
         // دالة مساعدة لفتح واتساب بشكل متوافق مع iPhone
@@ -4653,19 +4847,22 @@
         function renderPlatforms() {
             productsGrid.innerHTML = '';
             selectedPlatform = null;
-
+            
             platforms.forEach(platform => {
+                // حساب عدد الخدمات لهذه المنصة
                 const servicesCount = products.filter(p => p.category === 'social-media' && p.platform === platform.id).length;
+                
+                // الحصول على أسماء بعض الخدمات كعينة (أول 3)
                 const sampleServices = products
                     .filter(p => p.category === 'social-media' && p.platform === platform.id)
                     .slice(0, 3)
                     .map(p => p.name.split(' ').slice(0, 2).join(' '));
-
+                
                 const platformCard = document.createElement('div');
                 platformCard.className = 'platform-card';
                 platformCard.dataset.platform = platform.id;
                 platformCard.setAttribute('data-aos', 'fade-up');
-
+                
                 platformCard.innerHTML = `
                     <div class="platform-header" style="background: linear-gradient(135deg, ${platform.color}22, var(--primary));">
                         <i class="${platform.icon} platform-icon" style="color: ${platform.color};"></i>
@@ -4679,10 +4876,10 @@
                         </div>
                     </div>
                 `;
-
+                
                 productsGrid.appendChild(platformCard);
             });
-
+            
             document.querySelectorAll('.platform-card').forEach(card => {
                 card.addEventListener('click', function() {
                     const platformId = this.dataset.platform;
@@ -4690,37 +4887,31 @@
                 });
             });
         }
-
+        
         // -------------------- دالة عرض منتجات منصة معينة (جديدة) --------------------
         function showPlatformProducts(platformId) {
             selectedPlatform = platformId;
             const platform = platforms.find(p => p.id === platformId);
             if (!platform) return;
-
+            
             categoryProductsTitle.textContent = `خدمات ${platform.name}`;
             
-            // إظهار أزرار الفلاتر (لأننا سنعرض منتجات)
-            productFilters.style.display = 'flex';
-            // إعادة تعيين الفلتر إلى "الكل"
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            const allFilter = document.querySelector('.filter-btn[data-filter="all"]');
-            if (allFilter) allFilter.classList.add('active');
-            
+            // عرض منتجات المنصة
             renderProductsByPlatform(platformId);
         }
-
+        
         // -------------------- دالة عرض منتجات منصة معينة مع الفلتر (جديدة) --------------------
         function renderProductsByPlatform(platformId, filter = 'all') {
             productsGrid.innerHTML = '';
-
+            
             let filteredProducts = products.filter(p => p.category === 'social-media' && p.platform === platformId);
-
+            
             if (filter === 'lowest-price') {
                 filteredProducts.sort((a, b) => (a.basePrice || a.price) - (b.basePrice || b.price));
             } else if (filter === 'highest-price') {
                 filteredProducts.sort((a, b) => (b.basePrice || b.price) - (a.basePrice || b.price));
             }
-
+            
             if (filteredProducts.length === 0) {
                 productsGrid.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--gray);">
@@ -4731,7 +4922,7 @@
                 `;
                 return;
             }
-
+            
             // زر العودة إلى المنصات
             const backButton = document.createElement('div');
             backButton.style.gridColumn = '1 / -1';
@@ -4741,15 +4932,15 @@
                 </button>
             `;
             productsGrid.appendChild(backButton);
-
+            
             filteredProducts.forEach(product => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.setAttribute('data-aos', 'fade-up');
-
+                
                 const imageUrl = product.image || "images/placeholder.jpg";
                 const priceDisplay = `${product.basePrice || product.price}$ لـ 1k`;
-
+                
                 productCard.innerHTML = `
                     <div class="product-img-container">
                         <img src="${imageUrl}" class="product-img" alt="${product.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
@@ -4765,10 +4956,10 @@
                         </div>
                     </div>
                 `;
-
+                
                 productsGrid.appendChild(productCard);
             });
-
+            
             // إعادة ربط الأحداث للأزرار
             document.querySelectorAll('.product-details-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -4776,7 +4967,7 @@
                     showProductDetails(productId);
                 });
             });
-
+            
             document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const productId = parseInt(this.getAttribute('data-id'));
@@ -4784,7 +4975,7 @@
                     openQuantityModal(product);
                 });
             });
-
+            
             document.querySelectorAll('.whatsapp-btn-product').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const productId = parseInt(this.getAttribute('data-id'));
@@ -4795,12 +4986,11 @@
                     }
                 });
             });
-
+            
             // ربط حدث زر العودة
             document.getElementById('backToPlatformsBtn')?.addEventListener('click', function() {
                 renderPlatforms();
                 categoryProductsTitle.textContent = 'خدمات السوشيال ميديا';
-                productFilters.style.display = 'none'; // إخفاء الفلاتر عند العودة للمنصات
             });
         }
         
@@ -4901,22 +5091,6 @@
                     option.textContent = `${item.display} - ${item.price}$`;
                     gameAmount.appendChild(option);
                 });
-                
-                // ✅ تحديث النص في حقل الإدخال بناءً على inputLabel الخاص باللعبة
-                const gamePlayerIdLabel = document.querySelector('label[for="gamePlayerId"]');
-                if (gamePlayerIdLabel && gameData.inputLabel) {
-                    gamePlayerIdLabel.textContent = gameData.inputLabel + ' *';
-                }
-                
-                // تحديث نص المساعدة
-                const helpText = document.querySelector('#gamePlayerId + small');
-                if (helpText) {
-                    if (gameData.inputLabel && gameData.inputLabel.includes('ايميل')) {
-                        helpText.textContent = 'أدخل البريد الإلكتروني المرتبط بحساب سوبر سيل';
-                    } else {
-                        helpText.textContent = 'أدخل رقم اللاعب الخاص بك (User ID)';
-                    }
-                }
             }
             
             gamePlayerId.value = '';
@@ -5349,10 +5523,13 @@
         function resetPaymentForm() {
             currentStep = 1;
             currentPaymentData = {};
+            screenshotFile = null;
             
             transferNumber.value = '';
             paidAmount.value = '';
             transferDate.value = new Date().toISOString().split('T')[0];
+            screenshotFileInput.value = '';
+            screenshotPreview.style.display = 'none';
             
             accountUrl.value = '';
             
@@ -5441,11 +5618,12 @@
                     finalTransferNumber.textContent = currentPaymentData.transferNumber || '-';
                     finalPaidAmount.textContent = (currentPaymentData.paidAmount || '0') + '$';
                     finalTransferDate.textContent = currentPaymentData.transferDate || '-';
+                    screenshotStatus.textContent = screenshotFile ? 'لقطة الشاشة جاهزة للإرسال' : 'لم يتم رفع لقطة الشاشة';
                     break;
             }
         }
         
-        // -------------------- إرسال طلب شام كاش (بدون رفع صورة) --------------------
+        // -------------------- إرسال طلب شام كاش مع رابط الصورة (معدل للعمل على iPhone) --------------------
         async function submitShamCashOrder(customerData) {
             showToast('جاري تجهيز الطلب...');
             
@@ -5497,6 +5675,38 @@
             message += `المبلغ المدفوع: ${currentPaymentData.paidAmount}$\n`;
             message += `تاريخ التحويل: ${currentPaymentData.transferDate}\n`;
             message += `المبلغ المطلوب: ${currentPaymentData.requiredAmount}$\n`;
+            
+            // محاولة رفع الصورة إذا كانت موجودة
+            let imageUrl = '';
+            if (screenshotFile) {
+                try {
+                    showToast('جاري رفع الصورة...');
+                    
+                    // استخدام Fetch API بدلاً من Axios (أفضل توافق مع iPhone)
+                    const formData = new FormData();
+                    formData.append('image', screenshotFile);
+                    
+                    const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data && data.data) {
+                        imageUrl = data.data.display_url || data.data.url;
+                        message += `\n📸 **صورة التحويل**\n`;
+                        message += `رابط الصورة: ${imageUrl}\n\n`;
+                        showToast('✅ تم رفع الصورة بنجاح!');
+                    } else {
+                        throw new Error('فشل رفع الصورة');
+                    }
+                } catch (error) {
+                    console.error('خطأ في رفع الصورة:', error);
+                    message += `\n⚠️ **لم يتم رفع الصورة تلقائياً**\n`;
+                    message += `يرجى إرسال الصورة يدوياً بعد هذه الرسالة\n\n`;
+                }
+            }
             
             message += `\n🛒 المنتجات المطلوبة:\n`;
             
@@ -6025,6 +6235,40 @@
                 goToStep(2);
             });
             
+            screenshotUpload.addEventListener('click', () => {
+                screenshotFileInput.click();
+            });
+            
+            screenshotFileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        showToast('حجم الملف كبير جداً. الحد الأقصى 5MB');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+                    if (!validTypes.includes(file.type)) {
+                        showToast('نوع الملف غير مدعوم. يرجى رفع صورة (PNG, JPG, JPEG)');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    screenshotFile = file;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        screenshotPreviewImg.src = e.target.result;
+                        screenshotFileName.textContent = file.name;
+                        screenshotPreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                    
+                    showToast('تم رفع لقطة الشاشة بنجاح');
+                }
+            });
+            
             backStep2.addEventListener('click', () => {
                 goToStep(1);
             });
@@ -6037,6 +6281,11 @@
                 
                 if (!transferDate.value) {
                     showToast('يرجى تحديد تاريخ التحويل');
+                    return;
+                }
+                
+                if (!screenshotFile) {
+                    showToast('يرجى رفع لقطة شاشة للتحويل');
                     return;
                 }
                 

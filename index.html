@@ -9,13 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- إضافة Axios للتعامل مع طلبات API -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <!-- إضافة Firebase SDK (باستخدام الإصدار المتوافق) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
     <style>
-        /* جميع الأنماط CSS كما هي - سأضعها هنا */
+        /* جميع الأنماط CSS كما هي دون تغيير — فقط التعديل المطلوب في عرض البطاقات وتحسين صف المنتجات */
         :root {
             --primary: #2A3F54;
             --secondary: #F7C873;
@@ -1533,6 +1528,7 @@
             align-items: center;
         }
 
+        /* ترتيب الأزرار: تفاصيل، اضف للسلة، استفسار */
         .product-details-btn {
             background: #F7C873 !important;
             color: var(--primary) !important;
@@ -1598,6 +1594,7 @@
             background: #1ebe57;
         }
 
+        /* أنماط كروت المنصات (جديدة) */
         .platforms-grid {
             max-width: 1400px;
             margin: 0 auto;
@@ -2245,6 +2242,7 @@
             }
         }
 
+        /* التعديل الرئيسي: جعل كل كرتين في سطر واحد (شاشات 480 فما دون) مع ترتيب الأزرار */
         @media (max-width: 480px) {
             .hero h1 {
                 font-size: 1.8rem;
@@ -2264,6 +2262,7 @@
                 font-size: 0.9rem;
             }
             
+            /* 2 كولوم grid */
             .categories-grid,
             .products-grid,
             .platforms-grid {
@@ -2327,6 +2326,7 @@
                 font-weight: 700;
             }
             
+            /* ترتيب الأزرار عمودياً (تفاصيل -> اضف للسلة -> استفسار) */
             .product-actions {
                 display: flex;
                 flex-direction: column;
@@ -2347,6 +2347,7 @@
                 margin: 0 auto;
             }
             
+            /* ترتيب أزرار المنتج: تفاصيل أولاً، ثم أضف للسلة، ثم استفسار */
             .product-details-btn {
                 order: 1;
             }
@@ -2509,394 +2510,6 @@
                 font-size: 1.2rem;
             }
         }
-
-        .auth-buttons {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .auth-btn {
-            background: var(--secondary);
-            color: var(--primary);
-            border: none;
-            padding: 0.4rem 1rem;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.9rem;
-        }
-
-        .auth-btn:hover {
-            background: #e6b55c;
-            transform: translateY(-2px);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            color: white;
-        }
-
-        .user-name {
-            font-weight: 600;
-            color: var(--secondary);
-        }
-
-        .logout-btn {
-            background: none;
-            border: 1px solid var(--secondary);
-            color: white;
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.8rem;
-        }
-
-        .logout-btn:hover {
-            background: var(--secondary);
-            color: var(--primary);
-        }
-
-        .auth-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1600;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .auth-modal.active {
-            display: flex;
-        }
-
-        .auth-container {
-            background: white;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 400px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-        }
-
-        .auth-header {
-            background: linear-gradient(135deg, var(--primary), #1E2B38);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 15px 15px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .auth-header h3 {
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .auth-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .auth-body {
-            padding: 2rem;
-        }
-
-        .auth-tabs {
-            display: flex;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #eee;
-        }
-
-        .auth-tab {
-            flex: 1;
-            text-align: center;
-            padding: 0.8rem;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--gray);
-            transition: all 0.3s;
-        }
-
-        .auth-tab.active {
-            color: var(--primary);
-            border-bottom: 2px solid var(--secondary);
-        }
-
-        .auth-form {
-            display: none;
-        }
-
-        .auth-form.active {
-            display: block;
-        }
-
-        .auth-form .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .auth-form .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .auth-form .form-group input {
-            width: 100%;
-            padding: 0.9rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border 0.3s;
-        }
-
-        .auth-form .form-group input:focus {
-            border-color: var(--secondary);
-            outline: none;
-        }
-
-        .auth-form .submit-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 1rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 1rem;
-        }
-
-        .auth-form .submit-btn:hover {
-            background: #1e2e3f;
-        }
-
-        .admin-panel {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1700;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .admin-panel.active {
-            display: flex;
-        }
-
-        .admin-container {
-            background: white;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-        }
-
-        .admin-header {
-            background: linear-gradient(135deg, #c0392b, #e74c3c);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 15px 15px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .admin-header h3 {
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .admin-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .admin-body {
-            padding: 2rem;
-        }
-
-        .admin-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--light);
-            border-radius: 10px;
-            padding: 1.2rem;
-            text-align: center;
-            border-right: 3px solid var(--secondary);
-        }
-
-        .stat-card i {
-            font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-card h4 {
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .stat-card .stat-number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.5rem;
-        }
-
-        .admin-table th {
-            background: var(--primary);
-            color: white;
-            padding: 0.8rem;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .admin-table td {
-            padding: 0.8rem;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-        }
-
-        .admin-table tr:hover {
-            background: #f5f5f5;
-        }
-
-        .admin-login-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1800;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .admin-login-modal.active {
-            display: flex;
-        }
-
-        .admin-login-container {
-            background: white;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 350px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-        }
-
-        .admin-login-header {
-            background: linear-gradient(135deg, #c0392b, #e74c3c);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 15px 15px 0 0;
-            text-align: center;
-        }
-
-        .admin-login-header h3 {
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .admin-login-body {
-            padding: 2rem;
-        }
-
-        .admin-login-body .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .admin-login-body .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .admin-login-body .form-group input {
-            width: 100%;
-            padding: 0.9rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .admin-login-body .form-group input:focus {
-            border-color: var(--secondary);
-            outline: none;
-        }
-
-        .admin-login-body .submit-btn {
-            background: #c0392b;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 1rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .admin-login-body .submit-btn:hover {
-            background: #e74c3c;
-        }
     </style>
 </head>
 <body>
@@ -2916,19 +2529,6 @@
                 <a href="#branches">فروعنا</a>
                 <a href="#about">من نحن</a>
                 <a href="#contact">اتصل بنا</a>
-                
-                <!-- أزرار تسجيل الدخول والمستخدم -->
-                <div class="auth-buttons" id="authButtons">
-                    <button class="auth-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> دخول</button>
-                    <button class="auth-btn" id="registerBtn"><i class="fas fa-user-plus"></i> حساب جديد</button>
-                </div>
-                
-                <!-- معلومات المستخدم بعد تسجيل الدخول -->
-                <div class="user-info" id="userInfo" style="display: none;">
-                    <span class="user-name" id="displayUserName"></span>
-                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> خروج</button>
-                </div>
-                
                 <div class="cart-icon-container">
                     <i class="fas fa-shopping-cart cart-icon" id="cartToggle"></i>
                     <span class="cart-count" id="cartCount">0</span>
@@ -3378,131 +2978,6 @@
         </div>
     </div>
 
-    <!-- نافذة تسجيل الدخول وإنشاء حساب -->
-    <div class="auth-modal" id="authModal">
-        <div class="auth-container">
-            <div class="auth-header">
-                <h3><i class="fas fa-user-circle"></i> <span id="authModalTitle">تسجيل الدخول</span></h3>
-                <button class="auth-close" id="authClose"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="auth-body">
-                <div class="auth-tabs">
-                    <div class="auth-tab active" id="loginTab" data-tab="login">تسجيل الدخول</div>
-                    <div class="auth-tab" id="registerTab" data-tab="register">حساب جديد</div>
-                </div>
-                
-                <!-- نموذج تسجيل الدخول -->
-                <form class="auth-form active" id="loginForm">
-                    <div class="form-group">
-                        <label for="loginUsername">اسم المستخدم *</label>
-                        <input type="text" id="loginUsername" placeholder="أدخل اسم المستخدم" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">كلمة السر *</label>
-                        <input type="password" id="loginPassword" placeholder="أدخل كلمة السر" required>
-                    </div>
-                    <div id="loginErrorMessage" style="color: #e74c3c; margin-bottom: 1rem; display: none;"></div>
-                    <button type="submit" class="submit-btn" id="loginSubmit">
-                        <i class="fas fa-sign-in-alt"></i> دخول
-                    </button>
-                </form>
-                
-                <!-- نموذج إنشاء حساب جديد -->
-                <form class="auth-form" id="registerForm">
-                    <div class="form-group">
-                        <label for="registerFullName">الاسم الكامل *</label>
-                        <input type="text" id="registerFullName" placeholder="أدخل اسمك الكامل" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerUsername">اسم المستخدم *</label>
-                        <input type="text" id="registerUsername" placeholder="اختر اسم مستخدم" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPassword">كلمة السر *</label>
-                        <input type="password" id="registerPassword" placeholder="أدخل كلمة السر (6 أحرف على الأقل)" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPhone">رقم الهاتف</label>
-                        <input type="tel" id="registerPhone" placeholder="09xxxxxxxx">
-                    </div>
-                    <div id="registerErrorMessage" style="color: #e74c3c; margin-bottom: 1rem; display: none;"></div>
-                    <button type="submit" class="submit-btn" id="registerSubmit">
-                        <i class="fas fa-user-plus"></i> إنشاء حساب
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة تسجيل دخول الأدمن -->
-    <div class="admin-login-modal" id="adminLoginModal">
-        <div class="admin-login-container">
-            <div class="admin-login-header">
-                <h3><i class="fas fa-lock"></i> دخول المدير</h3>
-            </div>
-            <div class="admin-login-body">
-                <form id="adminLoginForm">
-                    <div class="form-group">
-                        <label for="adminUsername">اسم المستخدم</label>
-                        <input type="text" id="adminUsername" value="admin" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="adminPassword">كلمة السر</label>
-                        <input type="password" id="adminPassword" placeholder="أدخل كلمة سر المدير" required>
-                    </div>
-                    <div id="adminErrorMessage" style="color: #e74c3c; margin-bottom: 1rem; display: none;"></div>
-                    <button type="submit" class="submit-btn">دخول</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- لوحة تحكم الأدمن -->
-    <div class="admin-panel" id="adminPanel">
-        <div class="admin-container">
-            <div class="admin-header">
-                <h3><i class="fas fa-crown"></i> لوحة تحكم المدير</h3>
-                <button class="admin-close" id="adminClose"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="admin-body">
-                <div class="admin-stats">
-                    <div class="stat-card">
-                        <i class="fas fa-users"></i>
-                        <h4>إجمالي المستخدمين</h4>
-                        <div class="stat-number" id="totalUsers">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-shopping-cart"></i>
-                        <h4>إجمالي الطلبات</h4>
-                        <div class="stat-number" id="totalOrders">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-dollar-sign"></i>
-                        <h4>إجمالي المبيعات</h4>
-                        <div class="stat-number" id="totalSales">0$</div>
-                    </div>
-                </div>
-                
-                <h4 style="color: var(--primary); margin-bottom: 1rem;"><i class="fas fa-list"></i> قائمة المستخدمين</h4>
-                <table class="admin-table" id="usersTable">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>الاسم الكامل</th>
-                            <th>اسم المستخدم</th>
-                            <th>كلمة السر</th>
-                            <th>رقم الهاتف</th>
-                            <th>تاريخ التسجيل</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                        <!-- سيتم تعبئتها ديناميكياً -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
     <!-- قسم الهيرو -->
     <section class="hero" id="home">
         <div class="hero-content">
@@ -3743,34 +3218,10 @@
 
     <!-- مكتبات JS -->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         // تهيئة مكتبة الصور المتحركة
         AOS.init({ duration: 800, once: true });
-        
-        // تهيئة Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAPaRTcwltypt89C_Iejg_JPnFVmFcxb38",
-            authDomain: "zoodny---store.firebaseapp.com",
-            projectId: "zoodny---store",
-            storageBucket: "zoodny---store.firebasestorage.app",
-            messagingSenderId: "245590143621",
-            appId: "1:245590143621:web:14f0b1894bad468bd96fec",
-            measurementId: "G-FBLSG3GRQC"
-        };
-
-        // تهيئة Firebase
-        firebase.initializeApp(firebaseConfig);
-        
-        // الحصول على مراجع للخدمات
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        
-        // تمكين analytics
-        firebase.analytics();
-
-        // بيانات الأدمن الثابتة
-        const ADMIN_USERNAME = "admin";
-        const ADMIN_PASSWORD = "admin123"; // يمكنك تغيير كلمة السر هنا
         
         // ==================== بيانات التطبيقات للشحن (APP) - مع حد أدنى وأقصى وسعر للقطعة ====================
         const appsData = [
@@ -4941,159 +4392,6 @@
         // مفتاح ImgBB API
         const IMGBB_API_KEY = "31321101ec3bd35ce08d26a9a01d40b1";
 
-        // -------------------- نظام المستخدمين مع Firebase --------------------
-        let currentUser = JSON.parse(localStorage.getItem('zoodny_current_user')) || null;
-
-        // دوال Firebase
-        async function registerWithFirebase(fullName, username, password, phone) {
-            try {
-                // إنشاء حساب باستخدام البريد الإلكتروني (نستخدم username + @zoodny.local)
-                const email = `${username}@zoodny.local`;
-                
-                // إنشاء المستخدم في Firebase Authentication
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-                
-                // تخزين معلومات إضافية في Firestore
-                await db.collection('users').doc(user.uid).set({
-                    fullName: fullName,
-                    username: username,
-                    phone: phone || '',
-                    registeredAt: new Date().toLocaleDateString('ar-EG'),
-                    email: email,
-                    password: password // ملاحظة: هذا غير آمن، للتجربة فقط
-                });
-                
-                // إرسال بيانات المستخدم إلى واتساب المدير
-                sendNewUserToAdmin({
-                    fullName,
-                    username,
-                    password,
-                    phone,
-                    registeredAt: new Date().toLocaleDateString('ar-EG')
-                });
-                
-                return { success: true, user: user };
-            } catch (error) {
-                console.error('خطأ في التسجيل:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        async function loginWithFirebase(username, password) {
-            try {
-                // تسجيل الدخول باستخدام البريد الإلكتروني الوهمي
-                const email = `${username}@zoodny.local`;
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                
-                // جلب المعلومات الإضافية من Firestore
-                const userDoc = await db.collection('users').doc(userCredential.user.uid).get();
-                const userData = userDoc.data();
-                
-                if (!userData) {
-                    return { success: false, error: 'بيانات المستخدم غير موجودة' };
-                }
-                
-                // دمج بيانات المستخدم
-                const user = {
-                    uid: userCredential.user.uid,
-                    fullName: userData.fullName,
-                    username: userData.username,
-                    phone: userData.phone,
-                    registeredAt: userData.registeredAt
-                };
-                
-                return { success: true, user: user };
-            } catch (error) {
-                console.error('خطأ في تسجيل الدخول:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        function logoutFromFirebase() {
-            return auth.signOut();
-        }
-
-        // مراقبة حالة تسجيل الدخول
-        auth.onAuthStateChanged(async (firebaseUser) => {
-            console.log('Auth state changed:', firebaseUser ? 'logged in' : 'logged out');
-            if (firebaseUser) {
-                // المستخدم مسجل الدخول - جلب بياناته من Firestore
-                try {
-                    const userDoc = await db.collection('users').doc(firebaseUser.uid).get();
-                    const userData = userDoc.data();
-                    
-                    if (userData) {
-                        currentUser = {
-                            uid: firebaseUser.uid,
-                            fullName: userData.fullName,
-                            username: userData.username,
-                            phone: userData.phone,
-                            registeredAt: userData.registeredAt
-                        };
-                        localStorage.setItem('zoodny_current_user', JSON.stringify(currentUser));
-                        updateUserUI();
-                        showToast(`مرحباً بعودتك ${currentUser.fullName}`);
-                    }
-                } catch (error) {
-                    console.error('خطأ في جلب بيانات المستخدم:', error);
-                }
-            } else {
-                // المستخدم غير مسجل الدخول
-                currentUser = null;
-                localStorage.removeItem('zoodny_current_user');
-                updateUserUI();
-            }
-        });
-
-        // دالة إرسال إشعار للمدير عند تسجيل مستخدم جديد
-        function sendNewUserToAdmin(userData) {
-            const message = `👤 مستخدم جديد في المتجر:
-━━━━━━━━━━━━━━━━━━━
-📋 الاسم: ${userData.fullName}
-🔑 اسم المستخدم: ${userData.username}
-🔐 كلمة السر: ${userData.password}
-📱 الهاتف: ${userData.phone || 'غير مدخل'}
-📅 تاريخ التسجيل: ${userData.registeredAt}
-━━━━━━━━━━━━━━━━━━━
-تم إنشاء حساب جديد في متجر زودني`;
-
-            window.open(`https://wa.me/963982199738?text=${encodeURIComponent(message)}`, '_blank');
-        }
-
-        // دالة عرض لوحة تحكم الأدمن (معدلة)
-        async function renderAdminPanel() {
-            try {
-                // جلب جميع المستخدمين من Firestore
-                const usersSnapshot = await db.collection('users').get();
-                const usersList = [];
-                usersSnapshot.forEach(doc => {
-                    usersList.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // تحديث الإحصائيات
-                totalUsers.textContent = usersList.length;
-                
-                // عرض قائمة المستخدمين
-                usersTableBody.innerHTML = '';
-                usersList.forEach((user, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${user.fullName || '-'}</td>
-                        <td>${user.username}</td>
-                        <td>${user.password || '********'}</td>
-                        <td>${user.phone || '-'}</td>
-                        <td>${user.registeredAt || 'غير معروف'}</td>
-                    `;
-                    usersTableBody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('خطأ في جلب المستخدمين:', error);
-                showToast('حدث خطأ في جلب بيانات المستخدمين');
-            }
-        }
-
         // -------------------- حالة التطبيق --------------------
         let currentCategory = null;
         let cart = [];
@@ -5102,11 +4400,11 @@
         let hasSocialMediaProduct = false;
         let hasCreditProduct = false;
         let hasGameProduct = false;
-        let hasAppProduct = false;
+        let hasAppProduct = false; // متغير جديد لتتبع وجود منتجات تطبيقات
         let selectedSocialProduct = null;
         let selectedCreditProduct = null;
         let selectedGameProduct = null;
-        let selectedAppProduct = null;
+        let selectedAppProduct = null; // متغير جديد للمنتج المختار من التطبيقات
         
         // متغير جديد لتتبع المنصة المحددة
         let selectedPlatform = null;
@@ -5221,44 +4519,6 @@
         const backStep3 = document.getElementById('backStep3');
         const submitPayment = document.getElementById('submitPayment');
         
-        // عناصر نظام الحسابات
-        const authModal = document.getElementById('authModal');
-        const authClose = document.getElementById('authClose');
-        const authModalTitle = document.getElementById('authModalTitle');
-        const loginTab = document.getElementById('loginTab');
-        const registerTab = document.getElementById('registerTab');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const loginSubmit = document.getElementById('loginSubmit');
-        const registerSubmit = document.getElementById('registerSubmit');
-        const loginUsername = document.getElementById('loginUsername');
-        const loginPassword = document.getElementById('loginPassword');
-        const registerFullName = document.getElementById('registerFullName');
-        const registerUsername = document.getElementById('registerUsername');
-        const registerPassword = document.getElementById('registerPassword');
-        const registerPhone = document.getElementById('registerPhone');
-        const loginErrorMessage = document.getElementById('loginErrorMessage');
-        const registerErrorMessage = document.getElementById('registerErrorMessage');
-        const authButtons = document.getElementById('authButtons');
-        const userInfo = document.getElementById('userInfo');
-        const displayUserName = document.getElementById('displayUserName');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const loginBtn = document.getElementById('loginBtn');
-        const registerBtn = document.getElementById('registerBtn');
-        
-        // عناصر لوحة تحكم الأدمن
-        const adminLoginModal = document.getElementById('adminLoginModal');
-        const adminLoginForm = document.getElementById('adminLoginForm');
-        const adminUsername = document.getElementById('adminUsername');
-        const adminPassword = document.getElementById('adminPassword');
-        const adminErrorMessage = document.getElementById('adminErrorMessage');
-        const adminPanel = document.getElementById('adminPanel');
-        const adminClose = document.getElementById('adminClose');
-        const totalUsers = document.getElementById('totalUsers');
-        const totalOrders = document.getElementById('totalOrders');
-        const totalSales = document.getElementById('totalSales');
-        const usersTableBody = document.getElementById('usersTableBody');
-        
         const menuOverlay = document.createElement('div');
         menuOverlay.className = 'menu-overlay';
         document.body.appendChild(menuOverlay);
@@ -5279,48 +4539,6 @@
         
         window.addEventListener('resize', checkMobileScreen);
         window.addEventListener('load', checkMobileScreen);
-
-        // -------------------- دوال نظام المستخدمين --------------------
-        function updateUserUI() {
-            if (currentUser) {
-                authButtons.style.display = 'none';
-                userInfo.style.display = 'flex';
-                displayUserName.textContent = currentUser.fullName || currentUser.username;
-            } else {
-                authButtons.style.display = 'flex';
-                userInfo.style.display = 'none';
-            }
-        }
-
-        function showToast(message) {
-            toastMessage.textContent = message;
-            successToast.style.display = 'flex';
-            
-            setTimeout(() => {
-                successToast.style.display = 'none';
-            }, 3000);
-        }
-
-        // دالة التحقق من تسجيل الدخول لمنع الطلب
-        function requireLogin() {
-            if (!currentUser) {
-                showToast('يرجى تسجيل الدخول أولاً');
-                openAuthModal('login');
-                return false;
-            }
-            return true;
-        }
-
-        function openAuthModal(tab = 'login') {
-            authModal.classList.add('active');
-            loginErrorMessage.style.display = 'none';
-            registerErrorMessage.style.display = 'none';
-            if (tab === 'login') {
-                loginTab.click();
-            } else {
-                registerTab.click();
-            }
-        }
 
         // -------------------- دالة حساب سعر خدمات السوشال ميديا --------------------
         function calculateSocialMediaPrice(productId, quantity) {
@@ -5500,7 +4718,6 @@
             document.querySelectorAll('.category-card, .category-btn').forEach(element => {
                 element.addEventListener('click', function(e) {
                     e.preventDefault();
-                    if (!requireLogin()) return;
                     const categoryId = this.dataset.category || this.closest('.category-card').dataset.category;
                     showCategoryProducts(categoryId);
                 });
@@ -5751,7 +4968,6 @@
 
             document.querySelectorAll('.platform-card').forEach(card => {
                 card.addEventListener('click', function() {
-                    if (!requireLogin()) return;
                     const platformId = this.dataset.platform;
                     showPlatformProducts(platformId);
                 });
@@ -5873,8 +5089,6 @@
         
         // -------------------- فتح نافذة إدخال الكمية للسوشال ميديا --------------------
         function openQuantityModal(product) {
-            if (!requireLogin()) return;
-            
             selectedSocialProduct = product;
             
             selectedProductName.textContent = product.name;
@@ -5904,8 +5118,6 @@
         
         // -------------------- فتح نافذة إدخال بيانات رصيد الموبايل --------------------
         function openCreditModal(product) {
-            if (!requireLogin()) return;
-            
             selectedCreditProduct = product;
             
             selectedCreditName.textContent = product.name;
@@ -5953,8 +5165,6 @@
         
         // -------------------- فتح نافذة إدخال بيانات شحن التطبيقات (APP) --------------------
         function openAppModal(product) {
-            if (!requireLogin()) return;
-            
             selectedAppProduct = product;
             
             // البحث عن بيانات التطبيق في appsData
@@ -6019,8 +5229,6 @@
         
         // -------------------- فتح نافذة إدخال بيانات شحن الألعاب (ذكية) --------------------
         function openGameModal(product) {
-            if (!requireLogin()) return;
-            
             selectedGameProduct = product;
             
             selectedGameName.textContent = product.name;
@@ -6759,7 +5967,7 @@
                 socialMediaFields.classList.remove('active');
             }, 2000);
         }
-
+        
         // -------------------- إرسال الطلب النهائي --------------------
         function submitOrder(customerData) {
             if (customerData.paymentMethod === 'sham-cash') {
@@ -6785,6 +5993,16 @@
                 
                 showToast('تم إرسال طلبك بنجاح!');
             }
+        }
+        
+        // -------------------- عرض رسالة نجاح --------------------
+        function showToast(message) {
+            toastMessage.textContent = message;
+            successToast.style.display = 'flex';
+            
+            setTimeout(() => {
+                successToast.style.display = 'none';
+            }, 3000);
         }
         
         // -------------------- تهيئة السلة --------------------
@@ -6826,8 +6044,6 @@
         
         // -------------------- عرض تفاصيل المنتج --------------------
         function showProductDetails(productId) {
-            if (!requireLogin()) return;
-            
             const product = products.find(p => p.id === productId);
             if (!product) return;
             
@@ -6988,7 +6204,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             renderCategories();
             initCart();
-            updateUserUI();
             
             // أحداث نافذة السوشال ميديا
             socialQuantity.addEventListener('input', updatePricePreview);
@@ -7199,9 +6414,7 @@
                 cartOverlay.classList.remove('active');
             });
             
-            checkoutBtn.addEventListener('click', function() {
-                if (!requireLogin()) return;
-                
+            checkoutBtn.addEventListener('click', () => {
                 if (cart.length === 0) {
                     showToast('السلة فارغة، أضف منتجات أولاً');
                     return;
@@ -7355,184 +6568,6 @@
                         menuOverlay.classList.remove('active');
                     }
                 });
-            });
-            
-            // أحداث نظام الحسابات
-            loginBtn.addEventListener('click', () => openAuthModal('login'));
-            registerBtn.addEventListener('click', () => openAuthModal('register'));
-            
-            authClose.addEventListener('click', () => {
-                authModal.classList.remove('active');
-                loginErrorMessage.style.display = 'none';
-                registerErrorMessage.style.display = 'none';
-            });
-            
-            authModal.addEventListener('click', (e) => {
-                if (e.target === authModal) {
-                    authModal.classList.remove('active');
-                    loginErrorMessage.style.display = 'none';
-                    registerErrorMessage.style.display = 'none';
-                }
-            });
-            
-            // تبديل علامات التبويب
-            loginTab.addEventListener('click', () => {
-                loginTab.classList.add('active');
-                registerTab.classList.remove('active');
-                loginForm.classList.add('active');
-                registerForm.classList.remove('active');
-                authModalTitle.textContent = 'تسجيل الدخول';
-                loginErrorMessage.style.display = 'none';
-                registerErrorMessage.style.display = 'none';
-            });
-            
-            registerTab.addEventListener('click', () => {
-                registerTab.classList.add('active');
-                loginTab.classList.remove('active');
-                registerForm.classList.add('active');
-                loginForm.classList.remove('active');
-                authModalTitle.textContent = 'حساب جديد';
-                loginErrorMessage.style.display = 'none';
-                registerErrorMessage.style.display = 'none';
-            });
-            
-            // تسجيل الدخول
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const username = loginUsername.value.trim();
-                const password = loginPassword.value.trim();
-                
-                if (!username || !password) {
-                    showToast('يرجى إدخال اسم المستخدم وكلمة السر');
-                    return;
-                }
-                
-                loginSubmit.disabled = true;
-                loginSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
-                
-                const result = await loginWithFirebase(username, password);
-                
-                loginSubmit.disabled = false;
-                loginSubmit.innerHTML = '<i class="fas fa-sign-in-alt"></i> دخول';
-                
-                if (result.success) {
-                    authModal.classList.remove('active');
-                    loginForm.reset();
-                    loginErrorMessage.style.display = 'none';
-                } else {
-                    loginErrorMessage.textContent = result.error.includes('auth/user-not-found') ? 'اسم المستخدم غير موجود' : 
-                                                   result.error.includes('auth/wrong-password') ? 'كلمة السر غير صحيحة' : 
-                                                   'خطأ في تسجيل الدخول. تأكد من البيانات';
-                    loginErrorMessage.style.display = 'block';
-                }
-            });
-            
-            // إنشاء حساب جديد
-            registerForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const fullName = registerFullName.value.trim();
-                const username = registerUsername.value.trim();
-                const password = registerPassword.value.trim();
-                const phone = registerPhone.value.trim();
-                
-                if (!fullName || !username || !password) {
-                    showToast('يرجى ملء جميع الحقول المطلوبة');
-                    return;
-                }
-                
-                // التحقق من طول كلمة السر (Firebase يتطلب 6 أحرف على الأقل)
-                if (password.length < 6) {
-                    registerErrorMessage.textContent = 'كلمة السر يجب أن تكون 6 أحرف على الأقل';
-                    registerErrorMessage.style.display = 'block';
-                    return;
-                }
-                
-                registerSubmit.disabled = true;
-                registerSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء الحساب...';
-                
-                const result = await registerWithFirebase(fullName, username, password, phone);
-                
-                registerSubmit.disabled = false;
-                registerSubmit.innerHTML = '<i class="fas fa-user-plus"></i> إنشاء حساب';
-                
-                if (result.success) {
-                    authModal.classList.remove('active');
-                    registerForm.reset();
-                    registerErrorMessage.style.display = 'none';
-                    showToast('تم إنشاء الحساب بنجاح!');
-                } else {
-                    if (result.error.includes('auth/email-already-in-use')) {
-                        registerErrorMessage.textContent = 'اسم المستخدم موجود بالفعل';
-                    } else if (result.error.includes('auth/weak-password')) {
-                        registerErrorMessage.textContent = 'كلمة السر ضعيفة، يجب أن تكون 6 أحرف على الأقل';
-                    } else {
-                        registerErrorMessage.textContent = 'حدث خطأ: ' + (result.error || 'يرجى المحاولة مرة أخرى');
-                    }
-                    registerErrorMessage.style.display = 'block';
-                }
-            });
-            
-            // تسجيل الخروج
-            logoutBtn.addEventListener('click', async () => {
-                await logoutFromFirebase();
-                showToast('تم تسجيل الخروج بنجاح');
-                cart = [];
-                localStorage.removeItem('zoodnyCart');
-                updateCartUI();
-            });
-            
-            // أحداث الأدمن - الضغط على اللوجو 5 مرات
-            let logoClickCount = 0;
-            let logoClickTimer;
-            
-            document.querySelector('.logo').addEventListener('click', (e) => {
-                e.preventDefault();
-                logoClickCount++;
-                
-                clearTimeout(logoClickTimer);
-                logoClickTimer = setTimeout(() => {
-                    logoClickCount = 0;
-                }, 2000);
-                
-                if (logoClickCount >= 5) {
-                    adminLoginModal.classList.add('active');
-                    logoClickCount = 0;
-                }
-            });
-            
-            // تسجيل دخول الأدمن
-            adminLoginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const username = adminUsername.value;
-                const password = adminPassword.value;
-                
-                // إخفاء رسالة الخطأ السابقة
-                adminErrorMessage.style.display = 'none';
-                
-                if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-                    adminLoginModal.classList.remove('active');
-                    await renderAdminPanel();
-                    adminPanel.classList.add('active');
-                    adminLoginForm.reset();
-                    showToast('مرحباً بك في لوحة التحكم');
-                } else {
-                    adminErrorMessage.textContent = 'اسم المستخدم أو كلمة السر غير صحيحة';
-                    adminErrorMessage.style.display = 'block';
-                }
-            });
-            
-            // إغلاق لوحة تحكم الأدمن
-            adminClose.addEventListener('click', () => {
-                adminPanel.classList.remove('active');
-            });
-            
-            adminPanel.addEventListener('click', (e) => {
-                if (e.target === adminPanel) {
-                    adminPanel.classList.remove('active');
-                }
             });
             
             checkMobileScreen();

@@ -15,7 +15,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
     <style>
-        /* جميع الأنماط CSS كما هي - سأضعها هنا */
+        /* جميع الأنماط CSS كما هي دون تغيير — فقط التعديل المطلوب في عرض البطاقات وتحسين صف المنتجات */
         :root {
             --primary: #2A3F54;
             --secondary: #F7C873;
@@ -4985,27 +4985,43 @@
                 // تسجيل الدخول باستخدام البريد الإلكتروني الوهمي
                 const email = `${username}@zoodny.local`;
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
                 
                 // جلب المعلومات الإضافية من Firestore
-                const userDoc = await db.collection('users').doc(userCredential.user.uid).get();
-                const userData = userDoc.data();
+                let userDoc = await db.collection('users').doc(user.uid).get();
+                let userData = userDoc.data();
                 
+                // إذا لم توجد بيانات المستخدم في Firestore، نقوم بإنشائها
                 if (!userData) {
-                    return { success: false, error: 'بيانات المستخدم غير موجودة' };
+                    // محاولة استخراج الاسم من البريد الإلكتروني
+                    const displayName = user.displayName || username;
+                    
+                    userData = {
+                        fullName: displayName,
+                        username: username,
+                        phone: '',
+                        registeredAt: new Date().toLocaleDateString('ar-EG'),
+                        email: email,
+                        password: '******' // لا نخزن كلمة السر الحقيقية لأمان
+                    };
+                    
+                    // إنشاء وثيقة المستخدم في Firestore
+                    await db.collection('users').doc(user.uid).set(userData);
+                    console.log('✅ تم إنشاء وثيقة مستخدم جديدة في Firestore');
                 }
                 
                 // دمج بيانات المستخدم
-                const user = {
-                    uid: userCredential.user.uid,
+                const userInfo = {
+                    uid: user.uid,
                     fullName: userData.fullName,
                     username: userData.username,
                     phone: userData.phone,
                     registeredAt: userData.registeredAt
                 };
                 
-                return { success: true, user: user };
+                return { success: true, user: userInfo };
             } catch (error) {
-                console.error('خطأ في تسجيل الدخول:', error);
+                console.error('❌ خطأ في تسجيل الدخول:', error);
                 return { success: false, error: error.message };
             }
         }
@@ -5067,6 +5083,7 @@
                 // جلب جميع المستخدمين من Firestore
                 const usersSnapshot = await db.collection('users').get();
                 const usersList = [];
+                
                 usersSnapshot.forEach(doc => {
                     usersList.push({ id: doc.id, ...doc.data() });
                 });
@@ -5076,21 +5093,29 @@
                 
                 // عرض قائمة المستخدمين
                 usersTableBody.innerHTML = '';
+                
+                if (usersList.length === 0) {
+                    usersTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">لا يوجد مستخدمين مسجلين بعد</td></tr>';
+                    return;
+                }
+                
                 usersList.forEach((user, index) => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${user.fullName || '-'}</td>
-                        <td>${user.username}</td>
+                        <td>${user.fullName || 'غير معروف'}</td>
+                        <td>${user.username || 'غير معروف'}</td>
                         <td>${user.password || '********'}</td>
-                        <td>${user.phone || '-'}</td>
-                        <td>${user.registeredAt || 'غير معروف'}</td>
+                        <td>${user.phone || 'غير مدخل'}</td>
+                        <td>${user.registeredAt || new Date().toLocaleDateString('ar-EG')}</td>
                     `;
                     usersTableBody.appendChild(row);
                 });
+                
+                console.log('✅ تم تحميل', usersList.length, 'مستخدم من Firestore');
             } catch (error) {
-                console.error('خطأ في جلب المستخدمين:', error);
-                showToast('حدث خطأ في جلب بيانات المستخدمين');
+                console.error('❌ خطأ في جلب المستخدمين:', error);
+                usersTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">حدث خطأ في تحميل المستخدمين</td></tr>';
             }
         }
 

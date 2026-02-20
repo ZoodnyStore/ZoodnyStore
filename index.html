@@ -2637,7 +2637,47 @@
         </div>
     </div>
 
-    <!-- نافذة إدخال بيانات شحن الألعاب (جديدة) -->
+    <!-- ==================== نافذة شحن التطبيقات (معدلة) ==================== -->
+    <div class="quantity-modal" id="appModal">
+        <div class="quantity-container">
+            <div class="quantity-header">
+                <h3><i class="fas fa-mobile-alt"></i> شحن تطبيقات</h3>
+                <button class="quantity-close" id="appClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="quantity-body">
+                <div class="quantity-info">
+                    <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
+                    <span id="selectedAppName">شحن تطبيق</span>
+                </div>
+                
+                <!-- حقل الكمية -->
+                <div class="form-group">
+                    <label for="appQuantity">الكمية المطلوبة *</label>
+                    <input type="number" id="appQuantity" class="form-control" placeholder="أدخل الكمية المطلوبة" step="1" required>
+                    <small style="color: var(--gray); font-size: 0.85rem;" id="appQuantityHelp">الحد الأدنى: 1 - الحد الأقصى: 100</small>
+                </div>
+                
+                <!-- حقل رقم اللاعب (معرف الحساب) -->
+                <div class="form-group">
+                    <label for="appPlayerId" id="appPlayerIdLabel">رقم اللاعب *</label>
+                    <input type="text" id="appPlayerId" class="form-control" placeholder="أدخل رقم اللاعب الخاص بك" required>
+                    <small style="color: var(--gray); font-size: 0.85rem;" id="appPlayerIdHelp">أدخل رقم اللاعب (User ID) الخاص بحسابك</small>
+                </div>
+                
+                <div class="price-preview" id="appPricePreview">
+                    <p style="color: var(--gray); margin-bottom: 0.5rem;">السعر:</p>
+                    <span id="calculatedAppPrice">0.00$</span>
+                    <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem;">* سعر القطعة: <span id="unitPrice">0.00$</span></p>
+                </div>
+                
+                <button class="submit-order-btn" id="confirmAppBtn">
+                    <i class="fas fa-check"></i> تأكيد وإضافة للسلة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة شحن الألعاب (قائمة منسدلة) - بقيت كما هي للألعاب -->
     <div class="quantity-modal" id="gameModal">
         <div class="quantity-container">
             <div class="quantity-header">
@@ -2659,8 +2699,8 @@
                 
                 <div class="form-group">
                     <label for="gamePlayerId" id="gamePlayerIdLabel">رقم اللاعب *</label>
-                    <input type="text" id="gamePlayerId" class="form-control" placeholder="أدخل المطلوب منك تحت المستطيل :" required>
-                    <small style="color: var(--gray); font-size: 0.85rem;" id="gamePlayerIdHelp">أدخل رقم اللاعب الخاص بك (User ID)</small>
+                    <input type="text" id="gamePlayerId" class="form-control" placeholder="" required>
+                    <small style="color: var(--gray); font-size: 0.85rem;" id="gamePlayerIdHelp">أدخل رقم اللاعب (User ID) الخاص بحسابك</small>
                 </div>
                 
                 <div class="price-preview" id="gamePricePreview">
@@ -2795,12 +2835,12 @@
                 
                 <div id="paymentStep1">
                     <div class="payment-qr">
-    <h4>امسح الباركود عبر تطبيق شام كاش</h4>
-    <div class="qr-code">
-        <img src="qr-sham-cash.jpeg" alt="باركود شام كاش" style="width: 100%; height: auto; display: block;">
-    </div>
-    <p style="color: var(--gray); font-size: 0.9rem;">امسح الباركود لتحويل المبلغ</p>
-</div>
+                        <h4>امسح الباركود عبر تطبيق شام كاش</h4>
+                        <div class="qr-code">
+                            <img src="qr-sham-cash.jpeg" alt="باركود شام كاش" style="width: 100%; height: auto; display: block;">
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem;">امسح الباركود لتحويل المبلغ</p>
+                    </div>
                     
                     <div class="payment-info">
                         <h4><i class="fas fa-info-circle"></i> معلومات الحساب</h4>
@@ -3183,6 +3223,94 @@
         // تهيئة مكتبة الصور المتحركة
         AOS.init({ duration: 800, once: true });
         
+        // ==================== بيانات التطبيقات للشحن (APP) - مع حد أدنى وأقصى وسعر للقطعة ====================
+        const appsData = [
+            {
+                id: 200,
+                name: "اهلاً شات",
+                category: "app",
+                description: "عملات اهلا شات : ادخل الكمية التي تريدها (",
+                image: "شحن تطبيقات.webp",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                unitPrice: 0.00048, // سعر القطعة الواحدة (العملة الواحدة) - 5 سنت
+                minQuantity: 2000,
+                maxQuantity: 1000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 201,
+                name: "لايكي",
+                category: "app",
+                description: "عملات تطبيق لايكي : ادخل الكمية التي تريدها",
+                image: "لايكي.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.023, // 4 سنت للعملة
+                minQuantity: 50,
+                maxQuantity: 25000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 202,
+                name: "بيغو لايف",
+                category: "app",
+                description: "عملات بيغو لايف : ادخل الكمية التي تريدها",
+                image: "بيغو لايف.webp",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.022, // 7 سنت للعملة
+                minQuantity: 50,
+                maxQuantity: 10000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 203,
+                name: "سوشيال",
+                category: "app",
+                description: "عملات كرستال : ادخل الكمية التي تريدها",
+                image: "سوشيال.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.0021, // 6 سنت للعملة
+                minQuantity: 1000,
+                maxQuantity: 150000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 204,
+                name: "يوهو شات",
+                category: "app",
+                description: "عملات يوهو شات : ادخل الكمية التي تريدها",
+                image: "يوهو شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00015, // 4.5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 5000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 205,
+                name: "ليغو لايف",
+                category: "app",
+                description: "عملات ليغو لايف: ادخل الكمية التي تريدها",
+                image: "ليغو لايف.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.0017, // 5.5 سنت للعملة
+                minQuantity: 1000,
+                maxQuantity: 100000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "سول ستار",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "سول ستار.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            }
+        ];
+
         // ==================== بيانات الألعاب الذكية (سهلة التعديل) ====================
         const gamesData = [
             {
@@ -4111,6 +4239,18 @@
             });
         });
 
+        // إضافة التطبيقات من appsData إلى مصفوفة المنتجات
+        appsData.forEach(app => {
+            products.push({
+                id: app.id,
+                name: app.name,
+                category: app.category,
+                price: 0,
+                description: app.description,
+                image: app.image
+            });
+        });
+
         // بيانات المنصات (لخدمات السوشيال ميديا)
         const platforms = [
             { id: "instagram", name: "إنستغرام", icon: "fab fa-instagram", color: "#E1306C" },
@@ -4148,9 +4288,9 @@
             {
                 id: "app",
                 name: "شحن التطبيقات",
-                description: "شحن لكافة التطبيقات",
+                description: "اهلا شات , سوشيال , تيك توك , بيغو لايف , لايكي , موبو , لامو",
                 image: "شحن تطبيقات.webp",
-                count: 0
+                count: appsData.length // عدد التطبيقات تلقائياً
             },
             {
                 id: "rased",
@@ -4260,9 +4400,11 @@
         let hasSocialMediaProduct = false;
         let hasCreditProduct = false;
         let hasGameProduct = false;
+        let hasAppProduct = false; // متغير جديد لتتبع وجود منتجات تطبيقات
         let selectedSocialProduct = null;
         let selectedCreditProduct = null;
         let selectedGameProduct = null;
+        let selectedAppProduct = null; // متغير جديد للمنتج المختار من التطبيقات
         
         // متغير جديد لتتبع المنصة المحددة
         let selectedPlatform = null;
@@ -4317,6 +4459,19 @@
         const calculatedCreditPrice = document.getElementById('calculatedCreditPrice');
         const selectedCreditValue = document.getElementById('selectedCreditValue');
         const confirmCreditBtn = document.getElementById('confirmCreditBtn');
+        
+        // عناصر نافذة التطبيقات
+        const appModal = document.getElementById('appModal');
+        const appClose = document.getElementById('appClose');
+        const selectedAppName = document.getElementById('selectedAppName');
+        const appQuantity = document.getElementById('appQuantity');
+        const appPlayerId = document.getElementById('appPlayerId');
+        const appPlayerIdLabel = document.getElementById('appPlayerIdLabel');
+        const appQuantityHelp = document.getElementById('appQuantityHelp');
+        const appPlayerIdHelp = document.getElementById('appPlayerIdHelp');
+        const calculatedAppPrice = document.getElementById('calculatedAppPrice');
+        const unitPrice = document.getElementById('unitPrice');
+        const confirmAppBtn = document.getElementById('confirmAppBtn');
         
         const gameModal = document.getElementById('gameModal');
         const gameClose = document.getElementById('gameClose');
@@ -4642,14 +4797,14 @@
             
             if (filter === 'lowest-price') {
                 filteredProducts.sort((a, b) => {
-                    if (a.category === 'rased' || a.category === 'games') return 0;
-                    if (b.category === 'rased' || b.category === 'games') return 0;
+                    if (a.category === 'rased' || a.category === 'games' || a.category === 'app') return 0;
+                    if (b.category === 'rased' || b.category === 'games' || b.category === 'app') return 0;
                     return a.price - b.price;
                 });
             } else if (filter === 'highest-price') {
                 filteredProducts.sort((a, b) => {
-                    if (a.category === 'rased' || a.category === 'games') return 0;
-                    if (b.category === 'rased' || b.category === 'games') return 0;
+                    if (a.category === 'rased' || a.category === 'games' || a.category === 'app') return 0;
+                    if (b.category === 'rased' || b.category === 'games' || b.category === 'app') return 0;
                     return b.price - a.price;
                 });
             }
@@ -4675,11 +4830,18 @@
                 let priceDisplay = '';
                 if (product.category === 'social-media') {
                     priceDisplay = `${product.basePrice || product.price}$ لـ 1k`;
-                } else if (product.category === 'rased' || product.category === 'games') {
+                } else if (product.category === 'rased' || product.category === 'games' || product.category === 'app') {
                     priceDisplay = 'اختر الكمية';
                 } else {
                     priceDisplay = product.price > 0 ? `${product.price}$` : 'قريباً';
                 }
+                
+                let badgeText = '';
+                if (product.category === 'food') badgeText = 'طبيعي';
+                else if (product.category === 'games') badgeText = 'رقمي';
+                else if (product.category === 'social-media') badgeText = 'خدمة';
+                else if (product.category === 'rased') badgeText = 'رصيد';
+                else if (product.category === 'app') badgeText = 'تطبيق';
                 
                 productCard.innerHTML = `
                     <div class="product-img-container">
@@ -4688,16 +4850,13 @@
                              alt="${product.name}"
                              loading="lazy"
                              onerror="this.src='images/placeholder.jpg'">
-                        ${product.category === 'food' ? '<span class="product-badge">طبيعي</span>' : 
-                          product.category === 'games' ? '<span class="product-badge">رقمي</span>' : 
-                          product.category === 'social-media' ? '<span class="product-badge">خدمة</span>' :
-                          product.category === 'rased' ? '<span class="product-badge">رصيد</span>' : ''}
+                        ${badgeText ? `<span class="product-badge">${badgeText}</span>` : ''}
                     </div>
                     <div class="product-info">
                         <h3 class="product-title">${product.name}</h3>
                         <p class="product-price">${priceDisplay}</p>
                         <div class="product-actions">
-                            ${product.price > 0 || product.category === 'rased' || product.category === 'games' ? `
+                            ${product.price > 0 || product.category === 'rased' || product.category === 'games' || product.category === 'app' ? `
                                 <button class="product-details-btn" data-id="${product.id}">
                                     <i class="fas fa-info-circle"></i> تفاصيل المنتج
                                 </button>
@@ -4718,13 +4877,7 @@
             document.querySelectorAll('.product-details-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const productId = parseInt(this.getAttribute('data-id'));
-                    const product = products.find(p => p.id === productId);
-                    
-                    if (product.category === 'rased') {
-                        showProductDetails(productId);
-                    } else {
-                        showProductDetails(productId);
-                    }
+                    showProductDetails(productId);
                 });
             });
             
@@ -4739,6 +4892,8 @@
                         openCreditModal(product);
                     } else if (product.category === 'games') {
                         openGameModal(product);
+                    } else if (product.category === 'app') {
+                        openAppModal(product); // فتح نافذة التطبيقات
                     } else {
                         addToCart(productId);
                     }
@@ -4760,6 +4915,13 @@
                             message += `\nأريد شحن رصيد ${product.name}`;
                         } else if (product.category === 'games') {
                             message += `\nأريد شحن ${product.name}`;
+                        } else if (product.category === 'app') {
+                            const appData = appsData.find(a => a.name === product.name);
+                            if (appData) {
+                                message += `\nأريد شحن ${product.name}`;
+                                message += `\nالسعر: ${appData.unitPrice}$ للعملة الواحدة`;
+                                message += `\nالحد الأدنى: ${appData.minQuantity} - الحد الأقصى: ${appData.maxQuantity}`;
+                            }
                         } else {
                             message += ` بسعر ${product.price}$ من زودني`;
                         }
@@ -5001,6 +5163,70 @@
             }
         }
         
+        // -------------------- فتح نافذة إدخال بيانات شحن التطبيقات (APP) --------------------
+        function openAppModal(product) {
+            selectedAppProduct = product;
+            
+            // البحث عن بيانات التطبيق في appsData
+            const appData = appsData.find(a => a.name === product.name);
+            
+            if (!appData) return;
+            
+            selectedAppName.textContent = product.name;
+            
+            // تحديث نص حقل الإدخال والمساعدات
+            if (appPlayerIdLabel) {
+                appPlayerIdLabel.textContent = appData.inputLabel + ' *';
+            }
+            
+            if (appPlayerId) {
+                appPlayerId.placeholder = appData.inputPlaceholder || 'أدخل رقم اللاعب';
+            }
+            
+            if (appPlayerIdHelp) {
+                appPlayerIdHelp.textContent = 'أدخل رقم اللاعب (User ID) الخاص بحسابك';
+            }
+            
+            // تحديث نص المساعدة للكمية
+            if (appQuantityHelp) {
+                appQuantityHelp.textContent = `الحد الأدنى: ${appData.minQuantity} - الحد الأقصى: ${appData.maxQuantity}`;
+            }
+            
+            // تحديث سعر القطعة
+            if (unitPrice) {
+                unitPrice.textContent = `${appData.unitPrice.toFixed(2)}$`;
+            }
+            
+            // تعيين الحدود لحقل الإدخال
+            if (appQuantity) {
+                appQuantity.min = appData.minQuantity;
+                appQuantity.max = appData.maxQuantity;
+                appQuantity.value = appData.minQuantity; // تعيين القيمة الافتراضية
+            }
+            
+            appPlayerId.value = '';
+            updateAppPricePreview();
+            
+            appModal.classList.add('active');
+        }
+        
+        // -------------------- تحديث معاينة سعر التطبيق --------------------
+        function updateAppPricePreview() {
+            if (!selectedAppProduct || !appQuantity) return;
+            
+            const appData = appsData.find(a => a.name === selectedAppProduct.name);
+            if (!appData) return;
+            
+            const quantity = parseInt(appQuantity.value);
+            
+            if (quantity && quantity >= appData.minQuantity && quantity <= appData.maxQuantity) {
+                const price = quantity * appData.unitPrice;
+                calculatedAppPrice.textContent = `${price.toFixed(2)}$`;
+            } else {
+                calculatedAppPrice.textContent = '0.00$';
+            }
+        }
+        
         // -------------------- فتح نافذة إدخال بيانات شحن الألعاب (ذكية) --------------------
         function openGameModal(product) {
             selectedGameProduct = product;
@@ -5062,7 +5288,7 @@
         }
         
         // -------------------- إضافة منتج إلى السلة --------------------
-        function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null, gameAmount_ = null, playerId = null) {
+        function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null, gameAmount_ = null, playerId = null, appQuantity_ = null) {
             const product = products.find(p => p.id === productId);
             if (!product) return;
             
@@ -5148,6 +5374,28 @@
                     category: product.category,
                     playerId: playerId
                 });
+            } else if (product.category === 'app') {
+                if (!appQuantity_ || !playerId) {
+                    showToast('يرجى إدخال الكمية ورقم اللاعب');
+                    return;
+                }
+                
+                // البحث عن بيانات التطبيق
+                const appData = appsData.find(a => a.name === product.name);
+                if (!appData) return;
+                
+                itemPrice = appData.unitPrice * appQuantity_;
+                
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: itemPrice,
+                    appValue: appQuantity_,
+                    unitPrice: appData.unitPrice,
+                    quantity: 1,
+                    category: product.category,
+                    playerId: playerId
+                });
             } else {
                 const existingItem = cart.find(item => item.id === productId);
                 
@@ -5167,6 +5415,7 @@
             checkForSocialMediaProducts();
             checkForCreditProducts();
             checkForGameProducts();
+            checkForAppProducts(); // دالة جديدة للتحقق من وجود تطبيقات
             
             localStorage.setItem('zoodnyCart', JSON.stringify(cart));
             updateCartUI();
@@ -5205,6 +5454,14 @@
             hasGameProduct = cart.some(item => {
                 const product = products.find(p => p.id === item.id);
                 return product && product.category === 'games';
+            });
+        }
+        
+        // -------------------- التحقق من وجود منتجات تطبيقات --------------------
+        function checkForAppProducts() {
+            hasAppProduct = cart.some(item => {
+                const product = products.find(p => p.id === item.id);
+                return product && product.category === 'app';
             });
         }
         
@@ -5280,6 +5537,7 @@
                 const isSocialMedia = product && product.category === 'social-media';
                 const isCredit = product && product.category === 'rased';
                 const isGame = product && product.category === 'games';
+                const isApp = product && product.category === 'app';
                 const customQty = item.customQuantity || 300;
                 
                 const cartItem = document.createElement('div');
@@ -5312,6 +5570,15 @@
                             <p style="color: var(--gray); font-size: 0.85rem;">رقم اللاعب: ${item.playerId}</p>
                         </div>
                     `;
+                } else if (isApp) {
+                    detailsHtml = `
+                        <div style="flex: 1;">
+                            <h4 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.3rem;">${item.name}</h4>
+                            <p style="color: var(--accent); font-weight: 700;">${item.price.toFixed(2)}$</p>
+                            <p style="color: var(--gray); font-size: 0.85rem;">الكمية: ${item.appValue} (${item.unitPrice}$ للعملة)</p>
+                            <p style="color: var(--gray); font-size: 0.85rem;">رقم اللاعب: ${item.playerId}</p>
+                        </div>
+                    `;
                 } else {
                     detailsHtml = `
                         <div style="flex: 1;">
@@ -5324,11 +5591,11 @@
                 
                 cartItem.innerHTML = `
                     <div style="width: 70px; height: 70px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                        <i class="${isSocialMedia ? 'fab fa-instagram' : isCredit ? 'fas fa-phone-alt' : isGame ? 'fas fa-gamepad' : 'fas fa-box'}" style="font-size: 1.5rem; color: ${isSocialMedia ? '#E1306C' : isCredit ? '#2ECC71' : isGame ? '#FF6B6B' : '#666'};"></i>
+                        <i class="${isSocialMedia ? 'fab fa-instagram' : isCredit ? 'fas fa-phone-alt' : isGame ? 'fas fa-gamepad' : isApp ? 'fas fa-mobile-alt' : 'fas fa-box'}" style="font-size: 1.5rem; color: ${isSocialMedia ? '#E1306C' : isCredit ? '#2ECC71' : isGame ? '#FF6B6B' : isApp ? '#3498db' : '#666'};"></i>
                     </div>
                     ${detailsHtml}
                     <div class="cart-item-actions" style="display: flex; align-items: center; gap: 0.8rem;">
-                        ${!isSocialMedia && !isCredit && !isGame ? `
+                        ${!isSocialMedia && !isCredit && !isGame && !isApp ? `
                             <button class="quantity-btn decrease" data-id="${item.id}" style="background: var(--light); border: 1px solid #ddd; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">-</button>
                             <span style="font-weight: 600; min-width: 25px; text-align: center;">${item.quantity}</span>
                             <button class="quantity-btn increase" data-id="${item.id}" style="background: var(--light); border: 1px solid #ddd; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">+</button>
@@ -5369,7 +5636,7 @@
             const product = products.find(p => p.id === productId);
             
             if (itemIndex !== -1) {
-                if (product && (product.category === 'social-media' || product.category === 'rased' || product.category === 'games')) {
+                if (product && (product.category === 'social-media' || product.category === 'rased' || product.category === 'games' || product.category === 'app')) {
                     showToast('لتعديل الكمية، يرجى إزالة المنتج وإضافته مرة أخرى');
                     return;
                 }
@@ -5383,6 +5650,7 @@
                 checkForSocialMediaProducts();
                 checkForCreditProducts();
                 checkForGameProducts();
+                checkForAppProducts();
                 
                 localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                 updateCartUI();
@@ -5396,6 +5664,7 @@
             checkForSocialMediaProducts();
             checkForCreditProducts();
             checkForGameProducts();
+            checkForAppProducts();
             
             localStorage.setItem('zoodnyCart', JSON.stringify(cart));
             updateCartUI();
@@ -5416,6 +5685,7 @@
                 const isSocialMedia = item.category === 'social-media';
                 const isCredit = item.category === 'rased';
                 const isGame = item.category === 'games';
+                const isApp = item.category === 'app';
                 const customQty = item.customQuantity || 300;
                 
                 const summaryItem = document.createElement('div');
@@ -5434,6 +5704,11 @@
                 } else if (isGame) {
                     summaryItem.innerHTML = `
                         <span>${item.name} - ${item.gameDisplay || item.gameValue} (لاعب: ${item.playerId})</span>
+                        <span>${(item.price * item.quantity).toFixed(2)}$</span>
+                    `;
+                } else if (isApp) {
+                    summaryItem.innerHTML = `
+                        <span>${item.name} - ${item.appValue} عملة (لاعب: ${item.playerId})</span>
                         <span>${(item.price * item.quantity).toFixed(2)}$</span>
                     `;
                 } else {
@@ -5613,6 +5888,19 @@
                 });
             }
             
+            if (hasAppProduct) {
+                message += `\n📱 معلومات شحن التطبيقات:\n`;
+                
+                const appItems = cart.filter(item => item.category === 'app');
+                appItems.forEach((item, index) => {
+                    message += `\nالتطبيق ${index + 1}: ${item.name}\n`;
+                    message += `   الكمية: ${item.appValue} عملة\n`;
+                    message += `   رقم اللاعب: ${item.playerId}\n`;
+                    message += `   سعر العملة: ${item.unitPrice}$\n`;
+                    message += `   السعر الإجمالي: ${item.price.toFixed(2)}$\n`;
+                });
+            }
+            
             message += `\n💳 معلومات الدفع:\n`;
             message += `رقم التحويل: ${currentPaymentData.transferNumber}\n`;
             message += `المبلغ المدفوع: ${currentPaymentData.paidAmount}$\n`;
@@ -5635,6 +5923,11 @@
                 } else if (item.category === 'games') {
                     message += `${index + 1}. ${item.name}\n`;
                     message += `   الكمية: ${item.gameDisplay || item.gameValue}\n`;
+                    message += `   رقم اللاعب: ${item.playerId}\n`;
+                    message += `   السعر: ${item.price.toFixed(2)}$\n\n`;
+                } else if (item.category === 'app') {
+                    message += `${index + 1}. ${item.name}\n`;
+                    message += `   الكمية: ${item.appValue} عملة\n`;
                     message += `   رقم اللاعب: ${item.playerId}\n`;
                     message += `   السعر: ${item.price.toFixed(2)}$\n\n`;
                 } else {
@@ -5660,6 +5953,7 @@
                 hasSocialMediaProduct = false;
                 hasCreditProduct = false;
                 hasGameProduct = false;
+                hasAppProduct = false;
                 localStorage.removeItem('zoodnyCart');
                 updateCartUI();
                 
@@ -5684,6 +5978,7 @@
                 hasSocialMediaProduct = false;
                 hasCreditProduct = false;
                 hasGameProduct = false;
+                hasAppProduct = false;
                 localStorage.removeItem('zoodnyCart');
                 updateCartUI();
                 
@@ -5728,6 +6023,7 @@
                 checkForSocialMediaProducts();
                 checkForCreditProducts();
                 checkForGameProducts();
+                checkForAppProducts();
                 updateCartUI();
             }
         }
@@ -5759,7 +6055,7 @@
             
             if (product.category === 'social-media') {
                 priceDisplay = `${product.basePrice || product.price}$ لـ 1k`;
-            } else if (product.category === 'rased' || product.category === 'games') {
+            } else if (product.category === 'rased' || product.category === 'games' || product.category === 'app') {
                 priceDisplay = 'اختر الكمية';
             } else {
                 priceDisplay = product.price > 0 ? `${product.price}$` : 'قريباً';
@@ -5770,6 +6066,7 @@
             else if (product.category === 'games') badgeText = 'رقمي';
             else if (product.category === 'social-media') badgeText = 'خدمة';
             else if (product.category === 'rased') badgeText = 'رصيد';
+            else if (product.category === 'app') badgeText = 'تطبيق';
             
             let featuresHtml = '';
             if (product.category === 'social-media') {
@@ -5786,10 +6083,20 @@
                     <li><i class="fas fa-check-circle"></i> متوفر لجميع الخطوط</li>
                 `;
             } else if (product.category === 'games') {
+                const gameData = gamesData.find(g => g.name === product.name);
                 featuresHtml = `
                     <li><i class="fas fa-check-circle"></i> شحن فوري</li>
                     <li><i class="fas fa-check-circle"></i> تحتاج إدخال رقم اللاعب</li>
                     <li><i class="fas fa-check-circle"></i> متوفر لجميع الخوادم</li>
+                    ${gameData ? `<li><i class="fas fa-check-circle"></i> الخيارات المتاحة: ${gameData.amounts.length} خيار</li>` : ''}
+                `;
+            } else if (product.category === 'app') {
+                const appData = appsData.find(a => a.name === product.name);
+                featuresHtml = `
+                    <li><i class="fas fa-check-circle"></i> سعر العملة: ${appData ? appData.unitPrice.toFixed(2) : ''}$</li>
+                    <li><i class="fas fa-check-circle"></i> الحد الأدنى: ${appData ? appData.minQuantity : 1} عملة</li>
+                    <li><i class="fas fa-check-circle"></i> الحد الأقصى: ${appData ? appData.maxQuantity : 100} عملة</li>
+                    <li><i class="fas fa-check-circle"></i> تحتاج إدخال رقم اللاعب</li>
                 `;
             } else {
                 featuresHtml = `
@@ -5850,6 +6157,9 @@
                         } else if (p.category === 'games') {
                             productDetailsModal.classList.remove('active');
                             openGameModal(p);
+                        } else if (p.category === 'app') {
+                            productDetailsModal.classList.remove('active');
+                            openAppModal(p);
                         } else {
                             addToCart(pid);
                             productDetailsModal.classList.remove('active');
@@ -5871,6 +6181,13 @@
                                 message += `\nأريد شحن رصيد ${p.name}`;
                             } else if (p.category === 'games') {
                                 message += `\nأريد شحن ${p.name}`;
+                            } else if (p.category === 'app') {
+                                const appData = appsData.find(a => a.name === p.name);
+                                if (appData) {
+                                    message += `\nأريد شحن ${p.name}`;
+                                    message += `\nالسعر: ${appData.unitPrice}$ للعملة الواحدة`;
+                                    message += `\nالحد الأدنى: ${appData.minQuantity} - الحد الأقصى: ${appData.maxQuantity}`;
+                                }
                             } else {
                                 message += ` بسعر ${p.price}$ من زودني`;
                             }
@@ -5966,6 +6283,48 @@
                 }
             });
             
+            // أحداث نافذة التطبيقات
+            if (appQuantity) {
+                appQuantity.addEventListener('input', updateAppPricePreview);
+            }
+            
+            confirmAppBtn.addEventListener('click', function() {
+                if (!selectedAppProduct) return;
+                
+                const appData = appsData.find(a => a.name === selectedAppProduct.name);
+                if (!appData) return;
+                
+                const quantity = parseInt(appQuantity.value);
+                const playerIdValue = appPlayerId.value.trim();
+                
+                if (!quantity || quantity < appData.minQuantity || quantity > appData.maxQuantity) {
+                    showToast(`الكمية يجب أن تكون بين ${appData.minQuantity} و ${appData.maxQuantity}`);
+                    return;
+                }
+                
+                if (!playerIdValue) {
+                    showToast('يرجى إدخال رقم اللاعب');
+                    return;
+                }
+                
+                addToCart(selectedAppProduct.id, null, null, null, null, null, playerIdValue, quantity);
+                
+                appModal.classList.remove('active');
+                selectedAppProduct = null;
+            });
+            
+            appClose.addEventListener('click', () => {
+                appModal.classList.remove('active');
+                selectedAppProduct = null;
+            });
+            
+            appModal.addEventListener('click', function(e) {
+                if (e.target === appModal) {
+                    appModal.classList.remove('active');
+                    selectedAppProduct = null;
+                }
+            });
+            
             // أحداث نافذة الألعاب
             gameAmount.addEventListener('change', updateGamePricePreview);
             
@@ -5973,19 +6332,19 @@
                 if (!selectedGameProduct) return;
                 
                 const amount = gameAmount.value;
-                const playerId = gamePlayerId.value.trim();
+                const playerIdValue = gamePlayerId.value.trim();
                 
                 if (!amount) {
                     showToast('يرجى اختيار الكمية');
                     return;
                 }
                 
-                if (!playerId) {
+                if (!playerIdValue) {
                     showToast('يرجى إدخال رقم اللاعب');
                     return;
                 }
                 
-                addToCart(selectedGameProduct.id, null, null, null, null, amount, playerId);
+                addToCart(selectedGameProduct.id, null, null, null, null, amount, playerIdValue);
                 
                 gameModal.classList.remove('active');
                 selectedGameProduct = null;

@@ -3226,14 +3226,26 @@
         // ==================== بيانات التطبيقات للشحن (APP) - مع حد أدنى وأقصى وسعر للقطعة ====================
         const appsData = [
             {
+                id: 206,
+                name: "عملات تيك توك",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "تيك توك.avif",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
                 id: 200,
-                name: "اهلاً شات",
+                name: "اهلا شات",
                 category: "app",
                 description: "عملات اهلا شات : ادخل الكمية التي تريدها (",
-                image: "شحن تطبيقات.webp",
+                image: "اهلا شات.png",
                 inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
-                unitPrice: 0.00048, // سعر القطعة الواحدة (العملة الواحدة) - 5 سنت
-                minQuantity: 2000,
+                unitPrice: 0.000456, // سعر القطعة الواحدة (العملة الواحدة) - 5 سنت
+                minQuantity: 2500,
                 maxQuantity: 1000000,
                 inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
             },
@@ -3244,9 +3256,9 @@
                 description: "عملات تطبيق لايكي : ادخل الكمية التي تريدها",
                 image: "لايكي.png",
                 inputLabel: "رقم اللاعب (User ID)",
-                unitPrice: 0.023, // 4 سنت للعملة
-                minQuantity: 50,
-                maxQuantity: 25000,
+                unitPrice: 0.0235, // 4 سنت للعملة
+                minQuantity: 100,
+                maxQuantity: 500000,
                 inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
             },
             {
@@ -3254,33 +3266,33 @@
                 name: "بيغو لايف",
                 category: "app",
                 description: "عملات بيغو لايف : ادخل الكمية التي تريدها",
-                image: "بيغو لايف.webp",
+                image: "بيغو لايف 1.jpg",
                 inputLabel: "رقم اللاعب (User ID)",
-                unitPrice: 0.022, // 7 سنت للعملة
+                unitPrice: 0.0225, // 7 سنت للعملة
                 minQuantity: 50,
-                maxQuantity: 10000,
+                maxQuantity: 15000,
                 inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
             },
             {
                 id: 203,
-                name: "سوشيال",
+                name: "سول شيل",
                 category: "app",
                 description: "عملات كرستال : ادخل الكمية التي تريدها",
-                image: "سوشيال.jpg",
+                image: "سول شيل.png",
                 inputLabel: "رقم اللاعب (User ID)",
-                unitPrice: 0.0021, // 6 سنت للعملة
+                unitPrice: 0.00225, // 6 سنت للعملة
                 minQuantity: 1000,
-                maxQuantity: 150000,
+                maxQuantity: 500000,
                 inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
             },
             {
                 id: 204,
-                name: "يوهو شات",
+                name: "يوهو واكا شات",
                 category: "app",
                 description: "عملات يوهو شات : ادخل الكمية التي تريدها",
                 image: "يوهو شات.jpg",
                 inputLabel: "رقم اللاعب (User ID)",
-                unitPrice: 0.00015, // 4.5 سنت للعملة
+                unitPrice: 0.00017, // 4.5 سنت للعملة
                 minQuantity: 10000,
                 maxQuantity: 5000000,
                 inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
@@ -3290,11 +3302,11 @@
                 name: "ليغو لايف",
                 category: "app",
                 description: "عملات ليغو لايف: ادخل الكمية التي تريدها",
-                image: "ليغو لايف.png",
+                image: "ليغو لايف 1.png",
                 inputLabel: "رقم اللاعب (User ID)",
-                unitPrice: 0.0017, // 5.5 سنت للعملة
+                unitPrice: 0.00175, // 5.5 سنت للعملة
                 minQuantity: 1000,
-                maxQuantity: 100000,
+                maxQuantity: 500000,
                 inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
             },
             {
@@ -3306,9 +3318,1077 @@
                 inputLabel: "رقم اللاعب (User ID)",
                 unitPrice: 0.00019, // 5 سنت للعملة
                 minQuantity: 10000,
+                maxQuantity: 2000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "هامي بارتي",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "هامي بارتي.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00017, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 5000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "كوكو لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "كوكو لايف.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00017, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 10000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "فور فان شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "فور فان شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00011, // 5 سنت للعملة
+                minQuantity: 20000,
+                maxQuantity: 10000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "يويو شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "يويو شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00095, // 5 سنت للعملة
+                minQuantity: 1000,
+                maxQuantity: 500000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ازال لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ازال لايف.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.0011, // 5 سنت للعملة
+                minQuantity: 1000,
+                maxQuantity: 1000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "جيمي لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "جيمي لايف.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00018, // 5 سنت للعملة
+                minQuantity: 1000,
+                maxQuantity: 5000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ميكو لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ميكو لايف.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00199, // 5 سنت للعملة
+                minQuantity: 1000,
+                maxQuantity: 4500000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "واهو لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "واهو لايف.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00017, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 5000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "توب توب شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "توب توب شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00012, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 5000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "بوبو لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "بوبو لايف.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00015, // 5 سنت للعملة
+                minQuantity: 15000,
+                maxQuantity: 5000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "بينمو شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "بينمو شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00072, // 5 سنت للعملة
+                minQuantity: 3000,
+                maxQuantity: 2000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "يووي شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "يووي شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00015, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 500000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "لاما شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "لاما شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
                 maxQuantity: 4000000,
                 inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
-            }
+            },
+            {
+                id: 206,
+                name: "ويجو بارتي",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ويغو بارتي.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "هوبي شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "هوبي شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "اولاميت",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "اولاميت.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "تادا شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "تادا شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "هوا شات.png",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "هوا شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "سو ماتش",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "سو ماتش.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "هابي شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "هابي شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "تامي شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "تامي شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "يو بارتي",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "يو بارتي.webp",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ديمو شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ديمو شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "واكي ستار",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "واكي ستار.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "كيتي لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "كيتي لايف.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "جانكو شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "جانكو شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ليلى شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ليلى شات.webp",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ايمو",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ايمو.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ليونس شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ليونس شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "بيلا شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "بيلا شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "حكي شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "حكي شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "هوني جار",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "هوني جار.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "اوهلا شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "اوهلا شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "هيجو لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "هيجو لايف.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "زينا لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "زينا لايف.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ميجو لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ميجو لايف.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "فانسي لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "فانسي لايف.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "سوغو شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "سوغو شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ليت شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ليث شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "سوبر لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "سوبر لايف.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "روستار شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "روستار شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "مي يو شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "مي يو شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "يا اهلن شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "يا اهلن شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "سول شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "سول شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ديتو شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ديتو شات 1.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "شاميت لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "شاميت لايف.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "صبا شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "صبا شات 1.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "هيا شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "هيا شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "اب لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "اب لايف.webp",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "سلام شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "سلام شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "الو شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "الو شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "تالك تالك",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "تالك تالك.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "بارتي ستار",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "بارتي ستار.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "بوتا لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "بوتا لايف.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "فن اب",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "فن اب.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "فوكا شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "فوكا شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "كلوز شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "كلوز شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "اصوات شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "اصوات شات.webp",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "هوكي لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "هوكي لايف.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "سايا شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "سايا شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "يوكي شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "يوكي شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "هوبي ستار",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "هوبي ستار 1.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ون ار شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ون ار شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "اور تالك شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "اور تالك شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "دولي لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "دولي لايف.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "مومو لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "مومو لايف.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "نادي ستار",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "نادي ستار.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "تاكا لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "تاكا لايف.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ايومي شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ايومي شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "واوو شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "واوو شات 1.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "تانغو لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "تانغو لايف.webp",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "اموو شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "امو شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "هارت لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "هارت لايف.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ويل شيل شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ويل شيل شات.webp",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "هلا مي",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "هلا مي.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "اشا لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "اشا لايف.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "وياك شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "وياك شات 1.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "فوفو شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "فوفو شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "سويو شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "سويو شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "سما شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "سما شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "كيو لايف",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "كيو لايف 1.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "ديكا شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "ديكا شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "كواي",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "كواي.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "سهرة شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "سهرة شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "عمار شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "عمار شات.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "4 بارتي شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "4 بارتي شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "نحكي شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "نحكي شات.png",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "يوهو ستار",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "يوهو ستار.jpg",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
+            {
+                id: 206,
+                name: "هالا شات",
+                category: "app",
+                description: "عملات سول ستار: ادخل الكمية التي تريدها",
+                image: "هالا شات.webp",
+                inputLabel: "رقم اللاعب (User ID)",
+                unitPrice: 0.00019, // 5 سنت للعملة
+                minQuantity: 10000,
+                maxQuantity: 4000000,
+                inputPlaceholder: "أدخل رقم اللاعب الخاص بك"
+            },
         ];
 
         // ==================== بيانات الألعاب الذكية (سهلة التعديل) ====================
@@ -3318,7 +4398,7 @@
                 name: "ببجي - UC",
                 category: "games",
                 description: "شدات ببجي - UC : اختر الكمية التي تريدها",
-                image: "ببجي.jpg",
+                image: "ببجي 1.jpg",
                 inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
                     { value: 60, price: 1.25, display: "60 شدة" },
@@ -3386,7 +4466,7 @@
                 name: "كلاش اوف كلانس - جواهر",
                 category: "games",
                 description: "جواهر كلاش اوف كلانس : اختر الفئة التي تريدها",
-                image: "كلاش اوف كلانس.jpg",
+                image: "كلاش اوف كلانس 1.webp",
                 inputLabel: "أدخل ايميل سوبر سيل", // ✅ نص مخصص لكلاش اوف كلانس
                 amounts: [
                     { value: 80, price: 1.50, display: "80 جوهرة" },
@@ -3402,7 +4482,7 @@
                 name: "كلاش رويال - جواهر",
                 category: "games",
                 description: "كلاش رويال - جواهر : اختر الفئة التي تريدها",
-                image: "كلاش رويال.png",
+                image: "كلاش رويال 1.jpg",
                 inputLabel: "ادخل ايميل سوبر سيل", // النص المخصص لحقل الإدخال
                 amounts: [
                     { value: 80, price: 1.25, display: "80 جوهرة" },
@@ -3416,15 +4496,15 @@
                 id: 81,
                 name: "ديلتا فورس - CP",
                 category: "games",
-                description: "ديلتا فورس العالمية : اختر الفئة التي تريدها",
+                description: "ديلتا فورس العالمية - CP : اختر الفئة التي تريدها",
                 image: "ديلتا فورس.jpg",
                 inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
-                    { value: 60, price: 1.25, display: "60" },
-                    { value: 320, price: 4.85, display: "320" },
-                    { value: 750, price: 9, display: "750" },
-                    { value: 1480, price: 18, display: "1480" },
-                    { value: 1980, price: 23, display: "1980" }
+                    { value: 60, price: 1.25, display: "60 عملة" },
+                    { value: 320, price: 4.85, display: "320 عملة" },
+                    { value: 750, price: 9, display: "750 عملة" },
+                    { value: 1480, price: 18, display: "1480 عملة" },
+                    { value: 1980, price: 23, display: "1980 عملة" }
                 ]
             },
             {
@@ -3435,11 +4515,320 @@
                 image: "فورتنايت.jpg",
                 inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
                 amounts: [
-                    { value: 2800, price: 27.50, display: "2800" },
-                    { value: 5000, price: 45, display: "5000" },
-                    { value: 13500, price: 110, display: "13500" },
+                    { value: 2800, price: 27.50, display: "2800 كود" },
+                    { value: 5000, price: 45, display: "5000 كود" },
+                    { value: 13500, price: 110, display: "13500 كود" },
                 ]
-            }
+            },
+            {
+                id: 81,
+                name: "بلود سترايك - عالمية",
+                category: "games",
+                description: "بلود سترايك - عالمية : اختر الفئة التي تريدها",
+                image: "بلود سترايك.jpg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 51, price: 0.60, display: "51 ذهب" },
+                    { value: 105, price: 1.20, display: "105 ذهب" },
+                    { value: 320, price: 2.75, display: "320 ذهب" },
+                    { value: 540, price: 4.30, display: "540 ذهب" },
+                    { value: 1100, price: 8.10, display: "1100 ذهب" },
+                    { value: 2260, price: 16, display: "2260 ذهب" },
+                ]
+            },
+            {
+                id: 81,
+                name: "بلود سترايك - مينا",
+                category: "games",
+                description: "بلود سترايك - مينا : اختر الفئة التي تريدها",
+                image: "بلود سترايك.jpg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 51, price: 0.70, display: "51 ذهب" },
+                    { value: 105, price: 1.35, display: "105 ذهب" },
+                    { value: 320, price: 2.90, display: "320 ذهب" },
+                    { value: 540, price: 4.50, display: "540 ذهب" },
+                    { value: 1100, price: 8.30, display: "1100 ذهب" },
+                    { value: 2260, price: 16.70, display: "2260 ذهب" },
+                    { value: 5800, price: 40, display: "5800 ذهب" },
+                ]
+            },
+            {
+                id: 81,
+                name: "النجاة في الصقيع",
+                category: "games",
+                description: "النجاة في الصقيع : اختر الفئة التي تريدها",
+                image: "النجاة في الصقيع.jpg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 99, price: 1.70, display: "99 جوهرة" },
+                    { value: 299, price: 4.10, display: "299 جوهرة" },
+                    { value: 499, price: 6.40, display: "499 جوهرة" },
+                    { value: 999, price: 12.50, display: "999 جوهرة" },
+                    { value: 1999, price: 25, display: "1999 جوهرة" },
+                    { value: 4999, price: 61, display: "4999 جوهرة" }
+                ]
+            },
+            {
+                id: 81,
+                name: "بلياردو 8 - كوينز",
+                category: "games",
+                description: "دبلياردو 8 : اختر الفئة التي تريدها",
+                image: "بلياردو 8.png",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 20000, price: 0.60, display: "20,000 كوينز" },
+                    { value: 52000, price: 1.20, display: "52,000 كوينز" },
+                    { value: 112000, price: 2.15, display: "112,000 كوينز" },
+                    { value: 256000, price: 3.90, display: "256,000 كوينز" },
+                    { value: 800000, price: 8.90, display: "800,000 كوينز" },
+                    { value: 2000000, price: 19.20, display: "2 مليون كوينز" }
+                ]
+            },
+            {
+                id: 81,
+                name: "بلياردو 8 - شدات",
+                category: "games",
+                description: "بلياردو 8 : اختر الفئة التي تريدها",
+                image: "بلياردو 8.png",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 20, price: 0.65, display: "20 شدة" },
+                    { value: 50, price: 1.30, display: "50 شدة" },
+                    { value: 100, price: 2.20, display: "100 شدة" },
+                    { value: 250, price: 4, display: "250 شدة" },
+                    { value: 800, price: 8.95, display: "800 شدة" },
+                    { value: 2000, price: 20, display: "2000 شدة" }
+                ]
+            },
+            {
+                id: 81,
+                name: "بلياردو 8 - عضويات",
+                category: "games",
+                description: "بلياردو 8 : اختر الفئة التي تريدها",
+                image: "بلياردو 8.png",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 1, price: 8, display: "تصريح مميز" },
+                    { value: 2, price: 15.50, display: "تصريح النخبة" }
+                ]
+            },
+            {
+                id: 81,
+                name: "نداء الحرب 3",
+                category: "games",
+                description: "نداء الحرب : اختر الفئة التي تريدها",
+                image: "نداء الحرب.webp",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 500, price: 5.75, display: "500 عملة" },
+                    { value: 1000, price: 10.70, display: "1,000 عملة" },
+                    { value: 2000, price: 21.50, display: "2,000 عملة" },
+                    { value: 5000, price: 52, display: "5,000 عملة" },
+                    { value: 10000, price: 100, display: "10,000 عملة" }
+                ]
+            },
+            {
+                id: 81,
+                name: "موبايل ليجند - عالمية",
+                category: "games",
+                description: "موبايل ليجند - عالمية : اختر الفئة التي تريدها",
+                image: "موبايل ليجند.webp",
+                inputLabel: "رقم اللاعب (User ID) + رقم سيرفر اللاعب", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 86, price: 2, display: "86 جوهرة" },
+                    { value: 172, price: 3.45, display: "172 جوهرة" },
+                    { value: 257, price: 4.70, display: "257 جوهرة" },
+                    { value: 570, price: 10, display: "570 جوهرة" },
+                    { value: 706, price: 12, display: "706 جوهرة" },
+                    { value: 1163, price: 19.50, display: "1163 جوهرة" },
+                    { value: 2195, price: 33, display: "2195 جوهرة" },
+                    { value: 3688, price: 55, display: "3688 جوهرة" }
+                ]
+            },
+            {
+                id: 81,
+                name: "موبايل ليجند - آسيا",
+                category: "games",
+                description: "موبايل ليجند - اسيا : اختر الفئة التي تريدها",
+                image: "موبايل ليجند.webp",
+                inputLabel: "رقم اللاعب (User ID) + رقم سيرفر اللاعب", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 56, price: 1.40, display: "56 جوهرة" },
+                    { value: 112, price: 2.40, display: "112 جوهرة" },
+                    { value: 223, price: 4.20, display: "223 جوهرة" },
+                    { value: 336, price: 6, display: "336 جوهرة" },
+                    { value: 570, price: 9.80, display: "570 جوهرة" },
+                    { value: 1163, price: 20.50, display: "1163 جوهرة" },
+                    { value: 2398, price: 38, display: "2398 جوهرة" },
+                    { value: 6042, price: 96, display: "6042 جوهرة" },
+                ]
+            },
+            {
+                id: 81,
+                name: "موبايل ليجند - تركيا",
+                category: "games",
+                description: "موبايل ليجند - تركيا : اختر الفئة التي تريدها",
+                image: "موبايل ليجند.webp",
+                inputLabel: "رقم اللاعب (User ID) + رقم سيرفر اللاعب", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 42, price: 1.20, display: "42 جوهرة" },
+                    { value: 70, price: 1.80, display: "70 جوهرة" },
+                    { value: 140, price: 3.30, display: "140 جوهرة" },
+                    { value: 284, price: 5.95, display: "284 جوهرة" },
+                    { value: 355, price: 7.40, display: "355 جوهرة" },
+                    { value: 429, price: 8.70, display: "429 جوهرة" },
+                    { value: 716, price: 14.70, display: "716 جوهرة" },
+                    { value: 1446, price: 29, display: "1446 جوهرة" },
+                ]
+            },
+            {
+                id: 81,
+                name: "روبلوكس - كود",
+                category: "games",
+                description: "روبلوكس : اختر الفئة التي تريدها",
+                image: "روبلوكس.webp",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 10, price: 10.85, display: "10$ كود" },
+                    { value: 15, price: 16.70, display: "15$ كود" },
+                    { value: 20, price: 21.70, display: "20 $ كود" },
+                    { value: 25, price: 27, display: "25$ كود" },
+                    { value: 50, price: 53.50, display: "50$ كود" },
+                    { value: 100, price: 105, display: "100$ كود" }
+                ]
+            },
+            {
+                id: 81,
+                name: "ارينا بريك اوت",
+                category: "games",
+                description: "ارينا بريك اوت : اختر الفئة التي تريدها",
+                image: "ارينا بريك اوت.jpg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 66, price: 1.35, display: "66 عملة" },
+                    { value: 335, price: 5.20, display: "335 عملة" },
+                    { value: 675, price: 10, display: "675 عملة" },
+                    { value: 1690, price: 24, display: "1690 عملة" },
+                    { value: 3400, price: 48, display: "3400 عملة" },
+                    { value: 6820, price: 96, display: "6820 عملة" }
+                ]
+            },
+            {
+                id: 81,
+                name: "برول ستارز",
+                category: "games",
+                description: "برول ستارز : اختر الفئة التي تريدها",
+                image: "برول ستارز.webp",
+                inputLabel: "ادخل ايميل سوبر سيل", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 30, price: 3, display: "30 جوهرة" },
+                    { value: 80, price: 5.30, display: "80 جوهرة" },
+                    { value: 170, price: 12, display: "170 جوهرة" },
+                    { value: 360, price: 24, display: "360 جوهرة" },
+                    { value: 950, price: 58, display: "950 جوهرة" }
+                ]
+            },
+            {
+                id: 81,
+                name: "يلا لودو - ذهب",
+                category: "games",
+                description: "يلا لودو : اختر الفئة التي تريدها",
+                image: "يلا لودو.webp",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 68500, price: 2.50, display: "68,500 ذهب" },
+                    { value: 223700, price: 5.70, display: "223,700 ذهب" },
+                    { value: 146332, price: 10.20, display: "1,463,32 ذهب" },
+                    { value: 3666470, price: 27, display: "3,666,470 ذهب" },
+                    { value: 9973990, price: 51, display: "9,973,990 ذهب" },
+                    { value: 25236460, price: 107.50, display: "25,236,460 ذهب" }
+                ]
+            },
+            {
+                id: 81,
+                name: "يلا لودو - ألماس",
+                category: "games",
+                description: "يلا لودو : اختر الفئة التي تريدها",
+                image: "يلا لودو.webp",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 830, price: 2.50, display: "830 الماسة" },
+                    { value: 2320, price: 6, display: "2,320 الماسة" },
+                    { value: 5150, price: 10.70, display: "5,150 الماسة" },
+                    { value: 13580, price: 28, display: "13,580 الماسة" },
+                    { value: 27640, price: 53.30, display: "27,640 الماسة" },
+                    { value: 55800, price: 105, display: "55,800 الماسة" }
+                ]
+            },
+            {
+                id: 81,
+                name: "دومز داي",
+                category: "games",
+                description: "دومز داي : اختر الفئة التي تريدها",
+                image: "دومز داي.jpg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 200, price: 3.50, display: "200 ذهب" },
+                    { value: 400, price: 5.80, display: "400 ذهب" },
+                    { value: 800, price: 11, display: "800 ذهب" }
+                ]
+            },
+            {
+                id: 81,
+                name: "الحرب  الاخيرة",
+                category: "games",
+                description: "الحرب الاخيرة : اختر الفئة التي تريدها",
+                image: "الحرب الاخيرة.jpg",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 500, price: 7.50, display: "500 ذهب" },
+                    { value: 1000, price: 13.70, display: "1,000 ذهب" },
+                    { value: 2000, price: 28, display: "2,000 ذهب" },
+                    { value: 2500, price: 32.60, display: "2,500 ذهب" },
+                    { value: 5000, price: 64.90, display: "5,000 ذهب" }
+                ]
+            },
+            {
+                id: 81,
+                name: "فارلايت 84",
+                category: "games",
+                description: "دفارلايت 84 : اختر الفئة التي تريدها",
+                image: "فارلايت.png",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 80, price: 1.25, display: "80 جوهرة" },
+                    { value: 100, price: 1.50, display: "100 جوهرة" },
+                    { value: 165, price: 2, display: "165 جوهرة" },
+                    { value: 220, price: 2.60, display: "220 جوهرة" },
+                    { value: 330, price: 3.60, display: "330 جوهرة" },
+                    { value: 880, price: 8.60, display: "880 جوهرة" },
+                    { value: 2240, price: 22, display: "2,240 جوهرة" },
+                    { value: 4700, price: 43, display: "4,700 جوهرة" },
+                ]
+            },
+            {
+                id: 81,
+                name: "غينشين امباكت",
+                category: "games",
+                description: "غينشين امباكت : اختر الفئة التي تريدها",
+                image: "غينشين امباكت.png",
+                inputLabel: "رقم اللاعب (User ID)", // النص المخصص لحقل الإدخال
+                amounts: [
+                    { value: 60, price: 1.20, display: "60 كريستال" },
+                    { value: 330, price: 4.20, display: "330 كريستال" },
+                    { value: 1090, price: 12, display: "1,090 كريستال" },
+                    { value: 2240, price: 25, display: "2,240 كريستال" },
+                    { value: 3880, price: 40.50, display: "3,880 كريستال" },
+                    { value: 8080, price: 76.30, display: "8,080 كريستال" },
+                    { value: 60, price: 1.30, display: "60 رابط زمني" },
+                    { value: 330, price: 4.40, display: "330 رابط زمني" },
+                    { value: 1090, price: 13.50, display: "1,090 رابط زمني" },
+                    { value: 2240, price: 27.10, display: "2,240 رابط زمني" },
+                    { value: 3880, price: 41.50, display: "3,880 رابط زمني" },
+                    { value: 8080, price: 77.10, display: "8,080 رابط زمني" },
+                ]
+            },
         ];
 
         // -------------------- بيانات المنتجات مع صور خاصة لكل منتج --------------------

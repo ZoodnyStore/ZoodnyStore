@@ -7192,9 +7192,9 @@
                 });
 
                 card.innerHTML = `
-                    <div class="platform-header" style="background: linear-gradient(135deg, ${app.color}33, var(--primary));">
+                    <div class="platform-header" style="background: linear-gradient(135deg, ${app.color}33, var(--primary)); position:relative; overflow:hidden;">
                         <img src="${app.image}" alt="${app.name}"
-                             style="width:70px;height:70px;object-fit:contain;border-radius:12px;z-index:1;filter:drop-shadow(0 5px 15px rgba(0,0,0,0.3));"
+                             style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;"
                              onerror="this.style.display='none'">
                     </div>
                     <div class="platform-body">
@@ -7247,7 +7247,7 @@
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.setAttribute('data-aos', 'fade-up');
-                const imageUrl = product.image ? product.image : 'images/placeholder.jpg';
+                const imageUrl = product.image ? `images/${product.image}` : 'images/placeholder.jpg';
                 const priceDisplay = product.price > 0 ? `${product.price}$` : 'قريباً';
                 productCard.innerHTML = `
                     <div class="product-img-container">

@@ -3188,7 +3188,7 @@
                 <div style="text-align: center;">
                     <i class="fas fa-envelope" style="font-size: 2rem; margin-bottom: 1rem; color: var(--secondary);"></i>
                     <h3 style="margin-bottom: 0.5rem;">البريد الإلكتروني</h3>
-                    <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b4cedbdbd0dacdc7c0dbc6d1f4d3d9d5ddd89ad7dbd9">zoodnystore@gmail.com</a></p>
+                    <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b4cedbdbd0dacdc7c0dbc6d1f4d3d9d5ddd89ad7dbd9"><span class="__cf_email__" data-cfemail="92e8fdfdf6fcebe1e6fde0f7d2f5fff3fbfebcf1fdff">[email&#160;protected]</span></a></p>
                 </div>
                 
                 <div style="text-align: center;">
@@ -3217,7 +3217,7 @@
     </div>
 
     <!-- مكتبات JS -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         // تهيئة مكتبة الصور المتحركة
@@ -7193,7 +7193,7 @@
 
                 card.innerHTML = `
                     <div class="platform-header" style="background: linear-gradient(135deg, ${app.color}33, var(--primary));">
-                        <img src="images/${app.image}" alt="${app.name}"
+                        <img src="${app.image}" alt="${app.name}"
                              style="width:70px;height:70px;object-fit:contain;border-radius:12px;z-index:1;filter:drop-shadow(0 5px 15px rgba(0,0,0,0.3));"
                              onerror="this.style.display='none'">
                     </div>
@@ -7247,7 +7247,7 @@
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.setAttribute('data-aos', 'fade-up');
-                const imageUrl = product.image ? `images/${product.image}` : 'images/placeholder.jpg';
+                const imageUrl = product.image ? product.image : 'images/placeholder.jpg';
                 const priceDisplay = product.price > 0 ? `${product.price}$` : 'قريباً';
                 productCard.innerHTML = `
                     <div class="product-img-container">

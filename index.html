@@ -3188,7 +3188,7 @@
                 <div style="text-align: center;">
                     <i class="fas fa-envelope" style="font-size: 2rem; margin-bottom: 1rem; color: var(--secondary);"></i>
                     <h3 style="margin-bottom: 0.5rem;">البريد الإلكتروني</h3>
-                    <p>zoodnystore@gmail.com</p>
+                    <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b4cedbdbd0dacdc7c0dbc6d1f4d3d9d5ddd89ad7dbd9">zoodnystore@gmail.com</a></p>
                 </div>
                 
                 <div style="text-align: center;">
@@ -3217,7 +3217,7 @@
     </div>
 
     <!-- مكتبات JS -->
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         // تهيئة مكتبة الصور المتحركة
@@ -6440,6 +6440,26 @@
             { id: "telegram", name: "تليغرام", icon: "fab fa-telegram", color: "#26A5E4" }
         ];
 
+        // بيانات مجموعات أرقام التطبيقات
+        const appGroups = [
+            { id: "تويتر", name: "تويتر (X)", image: "تويتر.png", color: "#1DA1F2" },
+            { id: "انستغرام", name: "انستغرام", image: "انستغرام 1.webp", color: "#E1306C" },
+            { id: "فيسبوك", name: "فيسبوك", image: "فيسبوك.jpg", color: "#1877F2" },
+            { id: "تيك توك", name: "تيك توك", image: "تيك توك.avif", color: "#010101" },
+            { id: "جيميل", name: "جيميل", image: "جيميل 1.avif", color: "#EA4335" },
+            { id: "سناب شات", name: "سناب شات", image: "سناب شات.png", color: "#FFFC00" },
+            { id: "ايمو", name: "ايمو", image: "ايمو.png", color: "#0099FF" },
+            { id: "Chat GPT", name: "Chat GPT", image: "plus.png", color: "#10A37F" },
+            { id: "سكايب", name: "سكايب", image: "سكايب.png", color: "#00AFF0" },
+            { id: "ايكلود", name: "ايكلود", image: "ايكلود.png", color: "#555555" },
+            { id: "Line", name: "Line", image: "لاين.webp", color: "#06C755" },
+            { id: "وي شات", name: "وي شات", image: "وي شات.webp", color: "#09B83E" },
+            { id: "سيغنال", name: "سيغنال", image: "سيغنال.png", color: "#3A76F0" },
+            { id: "مايكروسوفت", name: "مايكروسوفت", image: "مايكروسوفت.webp", color: "#00A4EF" },
+            { id: "ياهوو", name: "ياهوو", image: "ياهوو.png", color: "#6001D2" },
+            { id: "فايبر", name: "فايبر", image: "فايبر.png", color: "#7360F2" },
+        ];
+
         // بيانات التصنيفات
         const categories = [
             {
@@ -6621,6 +6641,7 @@
         
         // متغير جديد لتتبع المنصة المحددة
         let selectedPlatform = null;
+        let selectedAppGroup = null;
         
         // عناصر DOM
         const categoriesSection = document.getElementById('categories');
@@ -6958,6 +6979,9 @@
             if (categoryId === 'social-media') {
                 renderPlatforms();
                 productFilters.style.display = 'none'; // إخفاء أزرار الفلاتر
+            } else if (categoryId === 'ارقام للتطبيقات') {
+                renderAppGroups();
+                productFilters.style.display = 'none';
             } else {
                 productFilters.style.display = 'flex';
                 renderCategoryFilters();
@@ -6993,6 +7017,8 @@
                     // إذا كنا في منصة محددة، نطبق الفلتر على منتجاتها
                     if (selectedPlatform) {
                         renderProductsByPlatform(selectedPlatform, filterType);
+                    } else if (selectedAppGroup) {
+                        renderAppGroupProducts(selectedAppGroup, filterType);
                     } else {
                         renderProductsByCategory(currentCategory, filterType);
                     }
@@ -7145,6 +7171,123 @@
             });
         }
         
+        // -------------------- دالة عرض كروت مجموعات أرقام التطبيقات --------------------
+        function renderAppGroups() {
+            productsGrid.innerHTML = '';
+            selectedAppGroup = null;
+
+            appGroups.forEach(app => {
+                const appProducts = products.filter(p => p.category === 'ارقام للتطبيقات' && p.name.startsWith(app.id));
+                if (appProducts.length === 0) return;
+
+                const card = document.createElement('div');
+                card.className = 'platform-card';
+                card.dataset.appgroup = app.id;
+                card.setAttribute('data-aos', 'fade-up');
+
+                const countLabel = `${appProducts.length} أرقام متاحة`;
+                const sampleTags = appProducts.slice(0, 3).map(p => {
+                    const parts = p.name.split('رقم');
+                    return parts.length > 1 ? 'رقم ' + parts[1].trim() : p.name;
+                });
+
+                card.innerHTML = `
+                    <div class="platform-header" style="background: linear-gradient(135deg, ${app.color}33, var(--primary));">
+                        <img src="images/${app.image}" alt="${app.name}"
+                             style="width:70px;height:70px;object-fit:contain;border-radius:12px;z-index:1;filter:drop-shadow(0 5px 15px rgba(0,0,0,0.3));"
+                             onerror="this.style.display='none'">
+                    </div>
+                    <div class="platform-body">
+                        <h3 class="platform-name">${app.name}</h3>
+                        <p class="platform-services-count">${countLabel}</p>
+                        <div class="platform-services-preview">
+                            ${sampleTags.map(t => `<span class="service-tag">${t}</span>`).join('')}
+                            ${appProducts.length > 3 ? '<span class="service-tag">...</span>' : ''}
+                        </div>
+                    </div>
+                `;
+                productsGrid.appendChild(card);
+            });
+
+            document.querySelectorAll('[data-appgroup]').forEach(card => {
+                card.addEventListener('click', function() {
+                    showAppGroupProducts(this.dataset.appgroup);
+                });
+            });
+        }
+
+        function showAppGroupProducts(appId) {
+            selectedAppGroup = appId;
+            const app = appGroups.find(a => a.id === appId);
+            if (!app) return;
+            categoryProductsTitle.textContent = `أرقام تفعيل ${app.name}`;
+            productFilters.style.display = 'flex';
+            renderCategoryFilters();
+            renderAppGroupProducts(appId);
+        }
+
+        function renderAppGroupProducts(appId, filter = 'all') {
+            productsGrid.innerHTML = '';
+            let filteredProducts = products.filter(p => p.category === 'ارقام للتطبيقات' && p.name.startsWith(appId));
+
+            if (filter === 'lowest-price') filteredProducts.sort((a, b) => a.price - b.price);
+            else if (filter === 'highest-price') filteredProducts.sort((a, b) => b.price - a.price);
+
+            if (filteredProducts.length === 0) {
+                productsGrid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--gray);"><i class="fas fa-box-open" style="font-size:3rem;margin-bottom:1rem;"></i><h3>لا توجد أرقام متاحة حالياً</h3></div>`;
+                return;
+            }
+
+            const backDiv = document.createElement('div');
+            backDiv.style.gridColumn = '1 / -1';
+            backDiv.innerHTML = `<button class="back-to-platforms" id="backToAppGroupsBtn"><i class="fas fa-arrow-right"></i> العودة إلى التطبيقات</button>`;
+            productsGrid.appendChild(backDiv);
+
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.setAttribute('data-aos', 'fade-up');
+                const imageUrl = product.image ? `images/${product.image}` : 'images/placeholder.jpg';
+                const priceDisplay = product.price > 0 ? `${product.price}$` : 'قريباً';
+                productCard.innerHTML = `
+                    <div class="product-img-container">
+                        <img src="${imageUrl}" class="product-img" alt="${product.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-price">${priceDisplay}</p>
+                        <div class="product-actions">
+                            ${product.price > 0 ? `
+                                <button class="product-details-btn" data-id="${product.id}"><i class="fas fa-info-circle"></i> تفاصيل المنتج</button>
+                                <button class="add-to-cart-btn" data-id="${product.id}"><i class="fas fa-cart-plus"></i> أضف للسلة</button>
+                                <button class="whatsapp-btn-product" data-id="${product.id}"><i class="fab fa-whatsapp"></i> استفسار</button>
+                            ` : '<p style="color:var(--gray);text-align:center;width:100%;padding:1rem;">قريباً</p>'}
+                        </div>
+                    </div>`;
+                productsGrid.appendChild(productCard);
+            });
+
+            document.getElementById('backToAppGroupsBtn')?.addEventListener('click', () => {
+                categoryProductsTitle.textContent = 'منتجات أرقام لتفعيل كافة التطبيقات';
+                productFilters.style.display = 'none';
+                selectedAppGroup = null;
+                renderAppGroups();
+            });
+
+            document.querySelectorAll('.product-details-btn').forEach(btn => {
+                btn.addEventListener('click', function() { showProductDetails(parseInt(this.getAttribute('data-id'))); });
+            });
+            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                btn.addEventListener('click', function() { addToCart(parseInt(this.getAttribute('data-id'))); });
+            });
+            document.querySelectorAll('.whatsapp-btn-product').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const product = products.find(p => p.id === parseInt(this.getAttribute('data-id')));
+                    if (product) window.open(`https://wa.me/963982199738?text=${encodeURIComponent('مرحباً، أريد الاستفسار عن: ' + product.name)}`, '_blank');
+                });
+            });
+        }
+
         // -------------------- دالة عرض كروت المنصات (جديدة) --------------------
         function renderPlatforms() {
             productsGrid.innerHTML = '';
@@ -8782,8 +8925,13 @@
                     }
                 });
             });
-            
-            checkMobileScreen();
+
+            AOS.init({
+                duration: 800,
+                once: true,
+                offset: 100
+            });
+
         });
     </script>
 </body>

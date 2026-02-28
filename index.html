@@ -2906,6 +2906,251 @@
             #globalSearchInput { font-size: 0.9rem; }
             .search-tag { font-size: 0.78rem; padding: 0.25rem 0.7rem; }
         }
+        /* ===== كروت مجموعات الألعاب ===== */
+        .game-group-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.10);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .game-group-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.16);
+        }
+
+        .game-group-img-wrap {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            background: var(--dark);
+        }
+
+        .game-group-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .game-group-card:hover .game-group-img-wrap img {
+            transform: scale(1.07);
+        }
+
+        /* شريط لوني مائل فوق الصورة مثل الصورة */
+        .game-group-img-wrap::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -10%;
+            width: 55%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 40%, rgba(247,200,115,0.55) 100%);
+            pointer-events: none;
+        }
+
+        .game-group-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--primary);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.7rem;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+
+        .game-group-info {
+            padding: 1.4rem 1.6rem 1.6rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+        }
+
+        .game-group-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .game-group-subtitle {
+            font-size: 0.88rem;
+            color: var(--gray);
+            margin-bottom: 0.9rem;
+        }
+
+        .game-group-count {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.1rem;
+        }
+
+        .game-group-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.4rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .game-group-btn:hover { background: #1e2e3f; }
+
+        /* كرت المنتج داخل اللعبة */
+        .game-product-card {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 35px rgba(0,0,0,0.13);
+        }
+
+        .game-product-img {
+            height: 160px;
+            overflow: hidden;
+            background: var(--dark);
+            position: relative;
+        }
+
+        .game-product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+
+        .game-product-card:hover .game-product-img img {
+            transform: scale(1.07);
+        }
+
+        .game-product-body {
+            padding: 1.2rem 1.4rem 1.4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            gap: 0.5rem;
+        }
+
+        .game-product-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .game-product-desc {
+            font-size: 0.82rem;
+            color: var(--gray);
+        }
+
+        .game-product-price-label {
+            font-size: 0.82rem;
+            color: var(--gray);
+        }
+
+        .game-product-price {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .game-product-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .game-product-charge-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: background 0.3s;
+        }
+
+        .game-product-charge-btn:hover { background: #1e2e3f; }
+
+        .game-product-whatsapp-btn {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 0.65rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: background 0.3s;
+        }
+
+        .game-product-whatsapp-btn:hover { background: #1ebe57; }
+
+        .back-to-games {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary);
+            color: white;
+            padding: 0.7rem 1.3rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-to-games:hover { background: #1e2e3f; }
     </style>
 </head>
 <body>
@@ -3612,7 +3857,7 @@
                 <div style="text-align: center;">
                     <i class="fas fa-envelope" style="font-size: 2rem; margin-bottom: 1rem; color: var(--secondary);"></i>
                     <h3 style="margin-bottom: 0.5rem;">البريد الإلكتروني</h3>
-                    <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4a3025252e2433393e25382f0a2d272b232664292527">zoodnystore@gmail.com</a></p>
+                    <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4a3025252e2433393e25382f0a2d272b232664292527">[email&#160;protected]</a></p>
                 </div>
                 
                 <div style="text-align: center;">
@@ -7626,15 +7871,165 @@
                 behavior: 'smooth'
             });
             
+            // إذا كان التصنيف هو "شحن ألعاب"، نعرض كروت الألعاب
+            if (categoryId === 'games') {
+                productFilters.style.display = 'none';
+                categoryProductsTitle.textContent = 'شحن ألعاب';
+                renderGameGroups();
             // إذا كان التصنيف هو "خدمات سوشال ميديا"، نعرض المنصات أولاً
-            if (categoryId === 'social-media') {
+            } else if (categoryId === 'social-media') {
                 renderPlatforms();
-                productFilters.style.display = 'none'; // إخفاء أزرار الفلاتر
+                productFilters.style.display = 'none';
             } else {
                 productFilters.style.display = 'flex';
                 renderCategoryFilters();
                 renderProductsByCategory(categoryId);
             }
+        }
+
+        // -------------------- بناء مجموعات الألعاب --------------------
+        function buildGameGroups() {
+            const groups = {};
+            gamesData.forEach(game => {
+                // استخرج اسم اللعبة الأساسي (قبل " - ")
+                const baseName = game.name.split(' - ')[0].trim();
+                if (!groups[baseName]) {
+                    groups[baseName] = {
+                        baseName,
+                        image: game.image,
+                        games: []
+                    };
+                }
+                groups[baseName].games.push(game);
+            });
+            return Object.values(groups);
+        }
+
+        // -------------------- عرض كروت الألعاب --------------------
+        function renderGameGroups() {
+            productsGrid.innerHTML = '';
+            const groups = buildGameGroups();
+
+            // شريط البحث
+            injectCardSearchBar(productsGrid, groups, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .game-group-card').forEach(card => {
+                    const name = card.querySelector('.game-group-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+                });
+            });
+
+            groups.forEach((group, idx) => {
+                const card = document.createElement('div');
+                card.className = 'game-group-card';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+
+                const subtitles = group.games.map(g => {
+                    const part = g.name.includes(' - ') ? g.name.split(' - ')[1] : g.name;
+                    return part;
+                });
+                const subtitleText = subtitles.slice(0, 3).join(' · ') + (subtitles.length > 3 ? ' ...' : '');
+                const productCount = group.games.length;
+
+                card.innerHTML = `
+                    <div class="game-group-img-wrap">
+                        <img src="${group.image}" alt="${group.baseName}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="game-group-badge">رقمي</span>
+                    </div>
+                    <div class="game-group-info">
+                        <h3 class="game-group-title">${group.baseName}</h3>
+                        <p class="game-group-subtitle">${subtitleText}</p>
+                        <p class="game-group-count">${productCount} منتج</p>
+                        <button class="game-group-btn">
+                            <i class="fas fa-shopping-bag"></i> عرض المنتجات
+                        </button>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => showGameProducts(group));
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // -------------------- عرض منتجات لعبة محددة --------------------
+        function showGameProducts(group) {
+            productsGrid.innerHTML = '';
+            categoryProductsTitle.textContent = group.baseName;
+            productFilters.style.display = 'none';
+
+            // زر العودة لكروت الألعاب
+            const backWrap = document.createElement('div');
+            backWrap.style.gridColumn = '1 / -1';
+            backWrap.innerHTML = `
+                <button class="back-to-games" id="backToGamesBtn">
+                    <i class="fas fa-arrow-right"></i> العودة إلى الألعاب
+                </button>
+            `;
+            productsGrid.appendChild(backWrap);
+            backWrap.querySelector('#backToGamesBtn').addEventListener('click', () => {
+                categoryProductsTitle.textContent = 'شحن ألعاب';
+                renderGameGroups();
+            });
+
+            // شريط البحث
+            injectCardSearchBar(productsGrid, group.games, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .game-product-card').forEach(card => {
+                    const name = card.querySelector('.game-product-name')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+                });
+            });
+
+            group.games.forEach((game, idx) => {
+                const card = document.createElement('div');
+                card.className = 'game-product-card';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+
+                const productName = game.name.includes(' - ')
+                    ? game.name.split(' - ').slice(1).join(' - ')
+                    : game.name;
+                const minPrice = Math.min(...game.amounts.map(a => a.price));
+                const maxPrice = Math.max(...game.amounts.map(a => a.price));
+                const priceRange = minPrice === maxPrice
+                    ? `${minPrice}$`
+                    : `${minPrice}$ - ${maxPrice}$`;
+
+                card.innerHTML = `
+                    <div class="game-product-img">
+                        <img src="${game.image}" alt="${game.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                    </div>
+                    <div class="game-product-body">
+                        <div class="game-product-name">${productName}</div>
+                        <div class="game-product-desc">${game.description}</div>
+                        <div class="game-product-price-label">السعر يبدأ من</div>
+                        <div class="game-product-price">${priceRange}</div>
+                        <div class="game-product-actions">
+                            <button class="game-product-charge-btn" data-game-id="${game.id}">
+                                <i class="fas fa-bolt"></i> اشحن الآن
+                            </button>
+                            <button class="game-product-whatsapp-btn" data-game-id="${game.id}">
+                                <i class="fab fa-whatsapp"></i> استفسار
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // زر الشحن — يفتح نافذة الألعاب
+                card.querySelector('.game-product-charge-btn').addEventListener('click', () => {
+                    const product = products.find(p => p.id === game.id);
+                    if (product) openGameModal(product);
+                });
+
+                // زر واتساب
+                card.querySelector('.game-product-whatsapp-btn').addEventListener('click', () => {
+                    const msg = `أريد الاستفسار عن شحن ${game.name}\nالسعر يبدأ من ${minPrice}$`;
+                    openWhatsApp(msg);
+                });
+
+                productsGrid.appendChild(card);
+            });
         }
         
         // -------------------- إنشاء أزرار الفلاتر (معدلة) --------------------

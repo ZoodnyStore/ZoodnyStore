@@ -2927,9 +2927,12 @@
 
         .game-group-img-wrap {
             position: relative;
-            height: 200px;
+            height: 220px;
             overflow: hidden;
-            background: var(--dark);
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .game-group-img-wrap img {
@@ -2940,19 +2943,7 @@
         }
 
         .game-group-card:hover .game-group-img-wrap img {
-            transform: scale(1.07);
-        }
-
-        /* شريط لوني مائل فوق الصورة مثل الصورة */
-        .game-group-img-wrap::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: -10%;
-            width: 55%;
-            height: 100%;
-            background: linear-gradient(135deg, transparent 40%, rgba(247,200,115,0.55) 100%);
-            pointer-events: none;
+            transform: scale(1.05);
         }
 
         .game-group-badge {
@@ -3019,119 +3010,7 @@
 
         .game-group-btn:hover { background: #1e2e3f; }
 
-        /* كرت المنتج داخل اللعبة */
-        .game-product-card {
-            background: white;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-            transition: transform 0.3s, box-shadow 0.3s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .game-product-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 14px 35px rgba(0,0,0,0.13);
-        }
-
-        .game-product-img {
-            height: 160px;
-            overflow: hidden;
-            background: var(--dark);
-            position: relative;
-        }
-
-        .game-product-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s;
-        }
-
-        .game-product-card:hover .game-product-img img {
-            transform: scale(1.07);
-        }
-
-        .game-product-body {
-            padding: 1.2rem 1.4rem 1.4rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            flex: 1;
-            gap: 0.5rem;
-        }
-
-        .game-product-name {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .game-product-desc {
-            font-size: 0.82rem;
-            color: var(--gray);
-        }
-
-        .game-product-price-label {
-            font-size: 0.82rem;
-            color: var(--gray);
-        }
-
-        .game-product-price {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .game-product-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            width: 100%;
-            margin-top: auto;
-        }
-
-        .game-product-charge-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.9rem;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            transition: background 0.3s;
-        }
-
-        .game-product-charge-btn:hover { background: #1e2e3f; }
-
-        .game-product-whatsapp-btn {
-            background: #25D366;
-            color: white;
-            border: none;
-            padding: 0.65rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.9rem;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            transition: background 0.3s;
-        }
-
-        .game-product-whatsapp-btn:hover { background: #1ebe57; }
+        /* كروت المنتجات الداخلية للألعاب — تستخدم نفس كلاسات product-card */
 
         .back-to-games {
             display: inline-flex;
@@ -5062,6 +4941,36 @@
 
         // ==================== بيانات الألعاب الذكية (سهلة التعديل) ====================
         const gamesData = [
+        // ╔══════════════════════════════════════════════════════════════════════════════╗
+        // ║   🎮 دليل إضافة الألعاب والمنتجات — اقرأ هذا قبل التعديل                 ║
+        // ╠══════════════════════════════════════════════════════════════════════════════╣
+        // ║                                                                              ║
+        // ║  📌 لإضافة لعبة جديدة (كرت خارجي مستقل):                                  ║
+        // ║     انسخ الكتلة التالية وعدّل قيمها وضعها هنا:                             ║
+        // ║                                                                              ║
+        // ║  {                                                                           ║
+        // ║    id: 999,               ← رقم فريد (اختر أي رقم غير مستخدم)             ║
+        // ║    name: "اسم اللعبة",   ← اسم اللعبة بدون " - " (سيظهر كعنوان الكرت)   ║
+        // ║    category: "games",     ← لا تغيّر هذا                                  ║
+        // ║    description: "وصف",   ← يظهر في نافذة تفاصيل المنتج                    ║
+        // ║    image: "صورة.jpg",    ← اسم ملف الصورة (ضعه في نفس مجلد index.html)   ║
+        // ║    inputLabel: "رقم اللاعب (User ID)",                                      ║
+        // ║    amounts: [                                                                ║
+        // ║      { value: 100, price: 2.50, display: "100 جوهرة" },                    ║
+        // ║      { value: 500, price: 10.00, display: "500 جوهرة" },                   ║
+        // ║    ]                                                                         ║
+        // ║  },                                                                          ║
+        // ║                                                                              ║
+        // ║  📌 لإضافة منتج داخل لعبة موجودة (يُضاف للكرت الخارجي تلقائياً):          ║
+        // ║     استخدم نفس اسم اللعبة قبل " - " ثم اكتب نوع المنتج:                   ║
+        // ║     name: "بلياردو 8 - كوينز"   ← موجود                                   ║
+        // ║     name: "بلياردو 8 - ذهب"     ← جديد، سيُضاف للكرت الخارجي تلقائياً   ║
+        // ║                                                                              ║
+        // ║  📌 لتغيير صورة لعبة:                                                      ║
+        // ║     عدّل قيمة image في أول منتج من مجموعة اللعبة                           ║
+        // ║     مثال: image: "صورة_جديدة.jpg"                                          ║
+        // ║                                                                              ║
+        // ╚══════════════════════════════════════════════════════════════════════════════╝
             {
                 id: 75,
                 name: "ببجي - UC",
@@ -7975,57 +7884,80 @@
             // شريط البحث
             injectCardSearchBar(productsGrid, group.games, function(query) {
                 const q = query.trim().toLowerCase();
-                document.querySelectorAll('#productsGrid .game-product-card').forEach(card => {
-                    const name = card.querySelector('.game-product-name')?.textContent.toLowerCase() || '';
-                    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+                document.querySelectorAll('#productsGrid .product-card[data-game-id]').forEach(card => {
+                    const title = card.querySelector('.product-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || title.includes(q)) ? '' : 'none';
                 });
             });
 
             group.games.forEach((game, idx) => {
+                // ===== نفس HTML لـ product-card الأصلي تماماً =====
                 const card = document.createElement('div');
-                card.className = 'game-product-card';
+                card.className = 'product-card';
                 card.setAttribute('data-aos', 'fade-up');
                 card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+                card.setAttribute('data-game-id', String(game.id));
 
-                const productName = game.name.includes(' - ')
+                // اسم العرض: الجزء بعد " - " أو الاسم كاملاً
+                const displayName = game.name.includes(' - ')
                     ? game.name.split(' - ').slice(1).join(' - ')
                     : game.name;
-                const minPrice = Math.min(...game.amounts.map(a => a.price));
-                const maxPrice = Math.max(...game.amounts.map(a => a.price));
-                const priceRange = minPrice === maxPrice
-                    ? `${minPrice}$`
-                    : `${minPrice}$ - ${maxPrice}$`;
+
+                // تقييم ثابت بناءً على id
+                const avgRaw = 3.5 + (game.id % 10) * 0.15;
+                const avg = Math.min(5, avgRaw);
+                const ratingCount = 20 + (game.id % 180);
+                const starsHtml = [1,2,3,4,5].map(i => {
+                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
+                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
+                    return '<i class="far fa-star"></i>';
+                }).join('');
 
                 card.innerHTML = `
-                    <div class="game-product-img">
-                        <img src="${game.image}" alt="${game.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                    <div class="product-img-container">
+                        <img src="${game.image}"
+                             class="product-img"
+                             alt="${game.name}"
+                             loading="lazy"
+                             onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">رقمي</span>
                     </div>
-                    <div class="game-product-body">
-                        <div class="game-product-name">${productName}</div>
-                        <div class="game-product-desc">${game.description}</div>
-                        <div class="game-product-price-label">السعر يبدأ من</div>
-                        <div class="game-product-price">${priceRange}</div>
-                        <div class="game-product-actions">
-                            <button class="game-product-charge-btn" data-game-id="${game.id}">
-                                <i class="fas fa-bolt"></i> اشحن الآن
+                    <div class="product-info">
+                        <h3 class="product-title">${displayName}</h3>
+                        <p class="product-price">اختر الكمية</p>
+                        <div class="product-rating">
+                            <div class="stars">${starsHtml}</div>
+                            <span class="rating-count">(${ratingCount})</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="product-details-btn gp-details">
+                                <i class="fas fa-info-circle"></i> تفاصيل المنتج
                             </button>
-                            <button class="game-product-whatsapp-btn" data-game-id="${game.id}">
+                            <button class="add-to-cart-btn gp-charge">
+                                <i class="fas fa-shopping-cart"></i> أضف للسلة
+                            </button>
+                            <button class="whatsapp-btn-product gp-wa">
                                 <i class="fab fa-whatsapp"></i> استفسار
                             </button>
                         </div>
                     </div>
                 `;
 
-                // زر الشحن — يفتح نافذة الألعاب
-                card.querySelector('.game-product-charge-btn').addEventListener('click', () => {
+                // زر تفاصيل
+                card.querySelector('.gp-details').addEventListener('click', () => {
+                    const product = products.find(p => p.id === game.id);
+                    if (product) showProductDetails(product.id);
+                });
+
+                // زر أضف للسلة — يفتح نافذة الشحن
+                card.querySelector('.gp-charge').addEventListener('click', () => {
                     const product = products.find(p => p.id === game.id);
                     if (product) openGameModal(product);
                 });
 
-                // زر واتساب
-                card.querySelector('.game-product-whatsapp-btn').addEventListener('click', () => {
-                    const msg = `أريد الاستفسار عن شحن ${game.name}\nالسعر يبدأ من ${minPrice}$`;
-                    openWhatsApp(msg);
+                // زر استفسار واتساب
+                card.querySelector('.gp-wa').addEventListener('click', () => {
+                    openWhatsApp(`أريد الاستفسار عن شحن ${game.name}`);
                 });
 
                 productsGrid.appendChild(card);

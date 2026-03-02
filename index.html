@@ -1292,7 +1292,7 @@
             background: white;
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             transition: all 0.3s;
             display: flex;
             flex-direction: column;
@@ -1303,24 +1303,24 @@
         }
 
         .category-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
         }
 
+        /* الصورة تملأ عرض الكرت كاملاً */
         .category-img-container {
             position: relative;
             overflow: hidden;
-            height: 220px;
+            width: 100%;
+            aspect-ratio: 4 / 3;
             background: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .category-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
             transition: transform 0.5s;
         }
 
@@ -1329,60 +1329,60 @@
         }
 
         .category-info {
-            padding: 1.8rem;
+            padding: 1rem 1rem 1.2rem;
             display: flex;
             flex-direction: column;
             flex: 1;
             text-align: center;
             align-items: center;
-            justify-content: center;
+            gap: 0.3rem;
         }
 
         .category-title {
-            font-size: 1.5rem;
+            font-size: 1.15rem;
             color: var(--dark) !important;
-            margin-bottom: 0.8rem;
             line-height: 1.3;
             font-weight: 700;
             width: 100%;
             text-align: center;
+            margin: 0;
         }
 
         .category-description {
             color: var(--gray);
-            font-size: 1rem;
-            margin-bottom: 1.2rem;
-            line-height: 1.5;
-            flex: 1;
+            font-size: 0.85rem;
+            line-height: 1.4;
             text-align: center;
             width: 100%;
+            margin: 0;
         }
 
         .category-count {
             color: var(--accent);
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 700;
-            margin: 0.8rem 0;
             text-align: center;
             width: 100%;
+            margin: 1.2rem 0 0.2rem;
         }
 
         .category-btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 0.9rem 1.5rem;
+            padding: 0.7rem 1rem;
             border-radius: 8px;
             font-weight: 600;
+            font-family: 'Cairo', sans-serif;
             cursor: pointer;
             transition: background 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin-top: 1rem;
+            gap: 6px;
+            margin-top: 0.4rem;
             width: 100%;
-            max-width: 200px;
+            font-size: 0.9rem;
         }
 
         .category-btn:hover {
@@ -2254,78 +2254,71 @@
 
         /* التعديل الرئيسي: جعل كل كرتين في سطر واحد (شاشات 480 فما دون) مع ترتيب الأزرار */
         @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-            
-            .welcome-text {
-                font-size: 1.5rem;
-            }
-            
-            .section-title {
-                font-size: 1.8rem;
-            }
-            
-            .filter-btn {
-                margin: 5px;
-                padding: 8px 15px;
-                font-size: 0.9rem;
-            }
-            
-            /* 2 كولوم grid */
+            .hero h1 { font-size: 1.8rem; }
+            .welcome-text { font-size: 1.5rem; }
+            .section-title { font-size: 1.8rem; }
+            .filter-btn { margin: 5px; padding: 8px 15px; font-size: 0.9rem; }
+
+            /* شبكة عمودين */
             .categories-grid,
             .products-grid,
             .platforms-grid {
                 grid-template-columns: repeat(2, 1fr) !important;
                 gap: 0.8rem;
             }
-            
+
             .category-card,
             .product-card,
-            .platform-card {
+            .platform-card,
+            .game-group-card {
                 width: 100%;
                 margin: 0;
             }
-            
+
+            /* صورة الكروت: نسبة ثابتة تملأ العرض */
             .category-img-container,
-            .product-img-container,
-            .platform-header {
-                height: 130px;
+            .product-img-container {
+                height: auto;
+                aspect-ratio: 4 / 3;
             }
-            
+
+            .platform-header {
+                height: 110px;
+            }
+
+            /* padding المحتوى */
             .category-info,
             .product-info,
             .platform-body {
-                padding: 0.8rem 0.5rem;
+                padding: 0.6rem 0.5rem 0.8rem;
+                gap: 0.2rem;
             }
-            
+
+            /* حجم العنوان */
             .category-title,
             .product-title,
             .platform-name {
-                font-size: 0.9rem;
-                margin-bottom: 0.3rem;
+                font-size: 0.85rem;
                 line-height: 1.3;
-                height: 2.4rem;
+                font-weight: 700;
                 overflow: hidden;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
                 white-space: normal;
-                text-overflow: ellipsis;
-                word-break: break-word;
-                font-weight: 700;
+                margin: 0;
             }
-            
+
             .category-description {
                 display: none;
             }
-            
+
             .category-count,
             .platform-services-count {
                 font-size: 0.75rem;
-                margin: 0.2rem 0;
+                margin: 0.1rem 0;
             }
-            
+
             .product-price {
                 font-size: 0.9rem;
                 margin: 0.3rem 0;
@@ -2335,8 +2328,7 @@
                 color: var(--accent);
                 font-weight: 700;
             }
-            
-            /* ترتيب الأزرار عمودياً (تفاصيل -> اضف للسلة -> استفسار) */
+
             .product-actions {
                 display: flex;
                 flex-direction: column;
@@ -2344,7 +2336,7 @@
                 margin-top: 0.5rem;
                 width: 100%;
             }
-            
+
             .product-details-btn,
             .category-btn,
             .add-to-cart-btn,
@@ -2356,158 +2348,81 @@
                 border-radius: 6px;
                 margin: 0 auto;
             }
-            
-            /* ترتيب أزرار المنتج: تفاصيل أولاً، ثم أضف للسلة، ثم استفسار */
-            .product-details-btn {
-                order: 1;
-            }
-            .add-to-cart-btn {
-                order: 2;
-            }
-            .whatsapp-btn-product {
-                order: 3;
-            }
-            
+
+            .product-details-btn { order: 1; }
+            .add-to-cart-btn { order: 2; }
+            .whatsapp-btn-product { order: 3; }
+
             .product-details-btn i,
             .add-to-cart-btn i,
             .whatsapp-btn-product i {
                 font-size: 0.75rem;
                 margin-left: 0.3rem;
             }
-            
-            .product-badge {
+
+            .product-badge,
+            .game-group-badge {
                 top: 5px;
                 right: 5px;
                 padding: 0.15rem 0.4rem;
                 font-size: 0.55rem;
                 border-radius: 10px;
             }
-            
-            .nav-content {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-            
-            .menu-toggle {
-                order: 1;
-                margin-left: 0;
-            }
-            
-            .logo {
-                order: 2;
-                margin-right: 0;
-                font-size: 1.3rem;
-            }
-            
-            .cart-icon-container {
-                order: 3;
-                margin-right: 0;
-                margin-bottom: 0;
-                display: block !important;
-            }
-            
-            .cart-icon {
-                font-size: 1.4rem;
-            }
-            
-            .nav-links .cart-icon-container {
-                display: none !important;
-            }
-            
-            .cart-sidebar {
-                width: 95%;
-            }
-            
-            .cart-sidebar.active {
-                left: 2.5%;
-            }
-            
-            .payment-steps::before {
-                right: 20%;
-                left: 20%;
-            }
-            
-            .account-id-container {
-                padding: 0.6rem;
-                margin-top: 0.6rem;
-            }
-            
-            .account-id-value {
-                font-size: 0.75rem;
-                padding: 0.5rem;
-                word-break: break-word;
-            }
-            
-            .copy-account-id {
-                padding: 0.5rem 0.7rem;
-                font-size: 0.8rem;
-            }
-            
-            .payment-body {
-                padding: 1.5rem;
-            }
-            
-            .quantity-body {
-                padding: 1.5rem;
-            }
-            
-            .product-details-body {
-                padding: 1.5rem;
-            }
-            
-            .product-details-title {
-                font-size: 1.3rem;
-            }
-            
-            .product-details-price {
-                font-size: 1.6rem;
-            }
-        }
 
+            .nav-content { display: flex; align-items: center; justify-content: space-between; }
+            .menu-toggle { order: 1; margin-left: 0; }
+            .logo { order: 2; margin-right: 0; font-size: 1.3rem; }
+            .cart-icon-container { order: 3; margin-right: 0; margin-bottom: 0; display: block !important; }
+            .cart-icon { font-size: 1.4rem; }
+            .nav-links .cart-icon-container { display: none !important; }
+            .cart-sidebar { width: 95%; }
+            .cart-sidebar.active { left: 2.5%; }
+            .payment-steps::before { right: 20%; left: 20%; }
+            .account-id-container { padding: 0.6rem; margin-top: 0.6rem; }
+            .account-id-value { font-size: 0.75rem; padding: 0.5rem; word-break: break-word; }
+            .copy-account-id { padding: 0.5rem 0.7rem; font-size: 0.8rem; }
+            .payment-body { padding: 1.5rem; }
+            .quantity-body { padding: 1.5rem; }
+            .product-details-body { padding: 1.5rem; }
+            .product-details-title { font-size: 1.3rem; }
+            .product-details-price { font-size: 1.6rem; }
+        }
         @media (max-width: 360px) {
             .account-id-value {
                 font-size: 0.7rem;
                 padding: 0.4rem;
             }
-            
             .copy-account-id {
                 padding: 0.4rem 0.6rem;
                 font-size: 0.75rem;
             }
-            
-            .payment-info h4 {
-                font-size: 1rem;
-            }
-            
+            .payment-info h4 { font-size: 1rem; }
+
             .categories-grid,
             .products-grid,
             .platforms-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 0.6rem;
             }
-            
+
             .category-img-container,
-            .product-img-container,
-            .platform-header {
-                height: 115px;
+            .product-img-container {
+                height: auto;
+                aspect-ratio: 4 / 3;
             }
-            
+
             .category-title,
             .product-title,
             .platform-name {
-                font-size: 0.8rem;
-                height: 2.1rem;
+                font-size: 0.78rem;
             }
-            
+
             .category-count {
-                font-size: 0.7rem;
+                font-size: 0.68rem;
             }
-            
-            .product-price {
-                font-size: 0.8rem;
-            }
-            
+
+            .product-price { font-size: 0.8rem; }
+
             .product-details-btn,
             .category-btn,
             .add-to-cart-btn,
@@ -2515,10 +2430,12 @@
                 padding: 0.4rem 0.5rem;
                 font-size: 0.65rem;
             }
-            
-            .product-details-header h3 {
-                font-size: 1.2rem;
+
+            .category-info {
+                padding: 0.5rem 0.4rem 0.7rem;
             }
+
+            .product-details-header h3 { font-size: 1.2rem; }
         }
 
         /* ============================================================
@@ -2906,142 +2823,7 @@
             #globalSearchInput { font-size: 0.9rem; }
             .search-tag { font-size: 0.78rem; padding: 0.25rem 0.7rem; }
         }
-        /* ===== كروت مجموعات الألعاب ===== */
-        .game-group-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 28px rgba(0,0,0,0.10);
-            transition: transform 0.3s, box-shadow 0.3s;
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .game-group-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 18px 45px rgba(0,0,0,0.16);
-        }
-
-        .game-group-img-wrap {
-            position: relative;
-            background: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.4rem;
-            padding-bottom: 0.8rem;
-        }
-
-        .game-group-img-wrap img {
-            width: 140px;
-            height: 140px;
-            object-fit: cover;
-            border-radius: 22px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            transition: transform 0.5s;
-            display: block;
-        }
-
-        .game-group-card:hover .game-group-img-wrap img {
-            transform: scale(1.05);
-        }
-
-        .game-group-badge {
-            position: absolute;
-            top: 14px;
-            left: 14px;
-            background: var(--accent);
-            color: white;
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            z-index: 2;
-        }
-
-        /* تنسيق الصورة داخل كروت منتجات الألعاب — مربع صغير مع padding وزوايا دائرية */
-        .game-inner-img {
-            height: auto !important;
-            padding: 1.4rem 1.4rem 0.8rem;
-        }
-
-        .game-inner-img .product-img {
-            width: 140px;
-            height: 140px;
-            object-fit: cover;
-            border-radius: 22px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-        }
-
-        @media (max-width: 768px) {
-            .game-inner-img { padding: 1rem 1rem 0.6rem; }
-            .game-inner-img .product-img { width: 120px; height: 120px; }
-            .game-group-img-wrap img { width: 120px; height: 120px; }
-        }
-
-        .game-group-info {
-            padding: 1.8rem;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            text-align: center;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .game-group-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--dark) !important;
-            margin-bottom: 0.8rem;
-            line-height: 1.3;
-            width: 100%;
-            text-align: center;
-        }
-
-        .game-group-subtitle {
-            font-size: 1rem;
-            color: var(--gray);
-            margin-bottom: 1.2rem;
-            line-height: 1.5;
-            flex: 1;
-            text-align: center;
-            width: 100%;
-        }
-
-        .game-group-count {
-            color: var(--accent);
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin: 0.8rem 0;
-            text-align: center;
-            width: 100%;
-        }
-
-        .game-group-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.9rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-family: 'Cairo', sans-serif;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 1rem;
-            width: 100%;
-            max-width: 200px;
-        }
-
-        .game-group-btn:hover { background: #1e2e3f; }
+        /* كروت الألعاب تستخدم نفس كلاسات category-card */
 
         /* كروت المنتجات الداخلية للألعاب — تستخدم نفس كلاسات product-card */
 
@@ -7855,15 +7637,16 @@
             // شريط البحث
             injectCardSearchBar(productsGrid, groups, function(query) {
                 const q = query.trim().toLowerCase();
-                document.querySelectorAll('#productsGrid .game-group-card').forEach(card => {
-                    const name = card.querySelector('.game-group-title')?.textContent.toLowerCase() || '';
+                document.querySelectorAll('#productsGrid .category-card').forEach(card => {
+                    const name = card.querySelector('.category-title')?.textContent.toLowerCase() || '';
                     card.style.display = (!q || name.includes(q)) ? '' : 'none';
                 });
             });
 
             groups.forEach((group, idx) => {
-                const card = document.createElement('div');
-                card.className = 'game-group-card';
+                const card = document.createElement('a');
+                card.className = 'category-card';
+                card.href = '#';
                 card.setAttribute('data-aos', 'fade-up');
                 card.setAttribute('data-aos-delay', String((idx % 4) * 80));
 
@@ -7875,21 +7658,21 @@
                 const productCount = group.games.length;
 
                 card.innerHTML = `
-                    <div class="game-group-img-wrap">
-                        <img src="${group.image}" alt="${group.baseName}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
-                        <span class="game-group-badge">رقمي</span>
+                    <div class="category-img-container">
+                        <img src="${group.image}" class="category-img" alt="${group.baseName}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">رقمي</span>
                     </div>
-                    <div class="game-group-info">
-                        <h3 class="game-group-title">${group.baseName}</h3>
-                        <p class="game-group-subtitle">${subtitleText}</p>
-                        <p class="game-group-count">${productCount} منتج</p>
-                        <button class="game-group-btn">
+                    <div class="category-info">
+                        <h3 class="category-title">${group.baseName}</h3>
+                        <p class="category-description">${subtitleText}</p>
+                        <p class="category-count">${productCount} منتج</p>
+                        <button class="category-btn">
                             <i class="fas fa-shopping-bag"></i> عرض المنتجات
                         </button>
                     </div>
                 `;
 
-                card.addEventListener('click', () => showGameProducts(group));
+                card.addEventListener('click', (e) => { e.preventDefault(); showGameProducts(group); });
                 productsGrid.appendChild(card);
             });
         }

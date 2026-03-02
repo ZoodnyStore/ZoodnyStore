@@ -7613,6 +7613,11 @@
                 productFilters.style.display = 'none';
                 categoryProductsTitle.textContent = 'شحن ألعاب';
                 renderGameGroups();
+            // أرقام لتفعيل كافة التطبيقات — نظام كروت مجمّعة
+            } else if (categoryId === 'ارقام للتطبيقات') {
+                productFilters.style.display = 'none';
+                categoryProductsTitle.textContent = 'أرقام لتفعيل كافة التطبيقات';
+                renderAppGroups();
             // إذا كان التصنيف هو "خدمات سوشال ميديا"، نعرض المنصات أولاً
             } else if (categoryId === 'social-media') {
                 renderPlatforms();
@@ -7793,6 +7798,189 @@
             });
         }
         
+        // ╔══════════════════════════════════════════════════════════════════════════╗
+        // ║  📱 نظام أرقام التطبيقات — نفس منطق كروت الألعاب تماماً             ║
+        // ╠══════════════════════════════════════════════════════════════════════════╣
+        // ║  📌 لإضافة تطبيق جديد (كرت خارجي مستقل):                            ║
+        // ║     أضف منتجاً جديداً في products:                                   ║
+        // ║     { id: 999, name: "واتساب رقم فرنسي",                             ║
+        // ║       category: "ارقام للتطبيقات", price: 1.20,                      ║
+        // ║       description: "...", image: "واتساب.png" }                       ║
+        // ║     ← يُجمَّع تلقائياً في كرت "واتساب"                               ║
+        // ║                                                                        ║
+        // ║  📌 لإضافة تطبيق بكرت مستقل (اسم جديد كلياً):                       ║
+        // ║     أضف اسمه في قائمة APP_BASE_NAMES أدناه                           ║
+        // ║                                                                        ║
+        // ║  📌 لتغيير صورة كرت تطبيق:                                           ║
+        // ║     عدّل image في أي منتج من منتجات ذلك التطبيق                      ║
+        // ╚══════════════════════════════════════════════════════════════════════════╝
+
+        // قائمة أسماء التطبيقات — يُستخدم لاستخراج اسم التطبيق من اسم المنتج
+        // 📌 أضف أي تطبيق جديد هنا حتى يُجمَّع بشكل صحيح
+        const APP_BASE_NAMES = [
+            'تويتر', 'انستغرام', 'فيسبوك', 'تيك توك', 'جيميل',
+            'سناب شات', 'ايمو', 'Chat GPT', 'سكايب', 'ايكلود',
+            'Line', 'وي شات', 'سيغنال', 'مايكروسوفت', 'ياهوو', 'فايبر'
+        ];
+
+        function getAppBaseName(productName) {
+            for (const appName of APP_BASE_NAMES) {
+                if (productName.startsWith(appName)) return appName;
+            }
+            // fallback: أول كلمتين
+            const words = productName.trim().split(' ');
+            return words.slice(0, 2).join(' ');
+        }
+
+        function buildAppGroups() {
+            const appProducts = products.filter(p => p.category === 'ارقام للتطبيقات');
+            const groups = {};
+            appProducts.forEach(product => {
+                const baseName = getAppBaseName(product.name);
+                if (!groups[baseName]) {
+                    groups[baseName] = { baseName, image: product.image, items: [] };
+                }
+                groups[baseName].items.push(product);
+            });
+            return Object.values(groups);
+        }
+
+        // -------------------- عرض كروت التطبيقات --------------------
+        function renderAppGroups() {
+            productsGrid.innerHTML = '';
+            const groups = buildAppGroups();
+
+            injectCardSearchBar(productsGrid, groups, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .category-card').forEach(card => {
+                    const name = card.querySelector('.category-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+                });
+            });
+
+            groups.forEach((group, idx) => {
+                const card = document.createElement('a');
+                card.className = 'category-card';
+                card.href = '#';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+
+                // النص الثانوي: أنواع الأرقام المتوفرة
+                const subtitles = group.items.map(p => p.name.replace(group.baseName, '').trim() || p.name);
+                const subtitleText = subtitles.slice(0, 3).join(' · ') + (subtitles.length > 3 ? ' ...' : '');
+
+                card.innerHTML = `
+                    <div class="category-img-container">
+                        <img src="${group.image}" class="category-img" alt="${group.baseName}"
+                             loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">رقمي</span>
+                    </div>
+                    <div class="category-info">
+                        <h3 class="category-title">${group.baseName}</h3>
+                        <p class="category-description">${subtitleText}</p>
+                        <p class="category-count">${group.items.length} منتج</p>
+                        <button class="category-btn">
+                            <i class="fas fa-mobile-alt"></i> عرض الأرقام
+                        </button>
+                    </div>
+                `;
+
+                card.addEventListener('click', (e) => { e.preventDefault(); showAppProducts(group); });
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // -------------------- عرض منتجات تطبيق محدد --------------------
+        function showAppProducts(group) {
+            productsGrid.innerHTML = '';
+            categoryProductsTitle.textContent = group.baseName;
+            productFilters.style.display = 'none';
+
+            // زر العودة
+            const backWrap = document.createElement('div');
+            backWrap.style.gridColumn = '1 / -1';
+            backWrap.innerHTML = `
+                <button class="back-to-games" id="backToAppsBtn">
+                    <i class="fas fa-arrow-right"></i> العودة إلى التطبيقات
+                </button>
+            `;
+            productsGrid.appendChild(backWrap);
+            backWrap.querySelector('#backToAppsBtn').addEventListener('click', () => {
+                categoryProductsTitle.textContent = 'أرقام لتفعيل كافة التطبيقات';
+                renderAppGroups();
+            });
+
+            // شريط البحث
+            injectCardSearchBar(productsGrid, group.items, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .product-card[data-app-id]').forEach(card => {
+                    const title = card.querySelector('.product-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || title.includes(q)) ? '' : 'none';
+                });
+            });
+
+            group.items.forEach((product, idx) => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+                card.setAttribute('data-app-id', String(product.id));
+
+                // اسم العرض: احذف اسم التطبيق وأبقِ نوع الرقم فقط
+                const displayName = product.name.replace(group.baseName, '').trim() || product.name;
+
+                const avgRaw = 3.5 + (product.id % 10) * 0.15;
+                const avg    = Math.min(5, avgRaw);
+                const ratingCount = 20 + (product.id % 180);
+                const starsHtml = [1,2,3,4,5].map(i => {
+                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
+                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
+                    return '<i class="far fa-star"></i>';
+                }).join('');
+
+                const priceDisplay = product.price ? `${product.price}$` : 'تواصل معنا';
+
+                card.innerHTML = `
+                    <div class="product-img-container game-inner-img">
+                        <img src="${product.image}" class="product-img" alt="${product.name}"
+                             loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">رقمي</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${displayName}</h3>
+                        <p class="product-price">${priceDisplay}</p>
+                        <div class="product-rating">
+                            <div class="stars">${starsHtml}</div>
+                            <span class="rating-count">(${ratingCount})</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="product-details-btn ap-details">
+                                <i class="fas fa-info-circle"></i> تفاصيل المنتج
+                            </button>
+                            <button class="add-to-cart-btn ap-cart">
+                                <i class="fas fa-shopping-cart"></i> أضف للسلة
+                            </button>
+                            <button class="whatsapp-btn-product ap-wa">
+                                <i class="fab fa-whatsapp"></i> استفسار
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                card.querySelector('.ap-details').addEventListener('click', () => {
+                    showProductDetails(product.id);
+                });
+                card.querySelector('.ap-cart').addEventListener('click', () => {
+                    addToCart(product);
+                });
+                card.querySelector('.ap-wa').addEventListener('click', () => {
+                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
+                });
+
+                productsGrid.appendChild(card);
+            });
+        }
+
         // -------------------- إنشاء أزرار الفلاتر (معدلة) --------------------
         function renderCategoryFilters() {
             productFilters.innerHTML = '';

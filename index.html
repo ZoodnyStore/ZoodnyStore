@@ -8068,7 +8068,7 @@
                     showProductDetails(product.id);
                 });
                 card.querySelector('.ap-cart').addEventListener('click', () => {
-                    addToCart(product);
+                    addToCart(product.id);
                 });
                 card.querySelector('.ap-wa').addEventListener('click', () => {
                     openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);

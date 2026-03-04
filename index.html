@@ -3077,6 +3077,37 @@
         </div>
     </div>
 
+    <!-- نافذة تفعيلات البريميوم -->
+    <div class="quantity-modal" id="premiumModal">
+        <div class="quantity-container">
+            <div class="quantity-header">
+                <h3><i class="fas fa-crown"></i> تفعيل البريميوم</h3>
+                <button class="quantity-close" id="premiumClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="quantity-body">
+                <div class="quantity-info">
+                    <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
+                    <span id="selectedPremiumName">تفعيل</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="premiumInput" id="premiumInputLabel">أدخل البيانات المطلوبة *</label>
+                    <input type="text" id="premiumInput" class="form-control" placeholder="" required>
+                    <small style="color: var(--gray); font-size: 0.85rem;" id="premiumInputHelp"></small>
+                </div>
+                
+                <div class="price-preview" id="premiumPricePreview">
+                    <p style="color: var(--gray); margin-bottom: 0.5rem;">السعر:</p>
+                    <span id="calculatedPremiumPrice">0.00$</span>
+                </div>
+                
+                <button class="submit-order-btn" id="confirmPremiumBtn">
+                    <i class="fas fa-check"></i> تأكيد وإضافة للسلة
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- نافذة تفاصيل المنتج -->
     <div class="product-details-modal" id="productDetailsModal">
         <div class="product-details-container">
@@ -6534,7 +6565,7 @@
                 description: "ارقام لتفعيل تطبيق فايبر",
                 image: "فايبر.png"
             },
-            // تفعيلات بريميوم
+            // تفعيلات البريميوم
             {
                 id: 471,
                 name: "تليغرام مميز - 3 اشهر",
@@ -6542,7 +6573,218 @@
                 price: 17.50,
                 description: "تليغرام مميز - 3 اشهر",
                 image: "تليغرام.png",
-                inputLabel: "ادخل معرفك التليغرام مع (@)",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الخاص بك مع علامة @"
+            },
+            {
+                id: 472,
+                name: "تليغرام مميز - 6 اشهر",
+                category: "تفعيلات بريميوم",
+                price: 24.50,
+                description: "تليغرام مميز - 6 اشهر",
+                image: "تليغرام.png",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الخاص بك مع علامة @"
+            },    
+            {
+                id: 473,
+                name: "تليغرام مميز - سنة",
+                category: "تفعيلات بريميوم",
+                price: 38.70,
+                description: "تليغرام مميز - سنة",
+                image: "تليغرام.png",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الخاص بك مع علامة @"
+            },
+            {
+                id: 474,
+                name: "يوتيوب بريميوم - شهر",
+                category: "تفعيلات بريميوم",
+                price: 8.70,
+                description: "يوتيوب بريميوم - شهر",
+                image: "يوتيوب.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني الذي تريد تفعيل يوتيوب بريميوم عليه"
+            },
+            {
+                id: 475,
+                name: "يوتيوب بريميوم - 3 اشهر",
+                category: "تفعيلات بريميوم",
+                price: 21,
+                description: "يوتيوب بريميوم - 3 اشهر",
+                image: "يوتيوب.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني الذي تريد تفعيل يوتيوب بريميوم عليه"
+            },
+            {
+                id: 476,
+                name: "يوتيوب بريميوم - 6 اشهر",
+                category: "تفعيلات بريميوم",
+                price: 29.10,
+                description: "يوتيوب بريميوم - 6 اشهر",
+                image: "يوتيوب.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني الذي تريد تفعيل يوتيوب بريميوم عليه"
+            },
+            {
+                id: 477,
+                name: "يوتيوب بريميوم - سنة",
+                category: "تفعيلات بريميوم",
+                price: 50.70,
+                description: "يوتيوب بريميوم - سنة",
+                image: "يوتيوب.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني الذي تريد تفعيل يوتيوب بريميوم عليه"
+            },
+            {
+                id: 478,
+                name: "سناب شات بلس - 3 اشهر",
+                category: "تفعيلات بريميوم",
+                price: 9.70,
+                description: "سناب شات بلس - 3 اشهر",
+                image: "سناب شات.png",
+                inputLabel: "أدخل اسم المستخدم",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل اسم المستخدم في سناب شات بدون @"
+            },
+            {
+                id: 479,
+                name: "سناب شات بلس - 6 اشهر",
+                category: "تفعيلات بريميوم",
+                price: 16.20,
+                description: "سناب شات بلس - 6 اشهر",
+                image: "سناب شات.png",
+                inputLabel: "أدخل اسم المستخدم",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل اسم المستخدم في سناب شات بدون @"
+            },
+            {
+                id: 480,
+                name: "سناب شات بلس - سنة",
+                category: "تفعيلات بريميوم",
+                price: 30.10,
+                description: "سناب شات بلس - سنة",
+                image: "سناب شات.png",
+                inputLabel: "أدخل اسم المستخدم",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل اسم المستخدم في سناب شات بدون @"
+            },
+            {
+                id: 481,
+                name: "100 نجمة تليغرام",
+                category: "تفعيلات بريميوم",
+                price: 2.60,
+                description: "نجوم تليغرام عدد 100",
+                image: "نجوم.jpeg",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الذي تريد شراء النجوم له"
+            },
+            {
+                id: 482,
+                name: "150 نجمة تليغرام",
+                category: "تفعيلات بريميوم",
+                price: 3.50,
+                description: "نجوم تليغرام عدد 150",
+                image: "نجوم.jpeg",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الذي تريد شراء النجوم له"
+            },
+            {
+                id: 483,
+                name: "250 نجمة تليغرام",
+                category: "تفعيلات بريميوم",
+                price: 5.50,
+                description: "نجوم تليغرام عدد 250",
+                image: "نجوم.jpeg",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الذي تريد شراء النجوم له"
+            },
+            {
+                id: 484,
+                name: "350 نجمة تليغرام",
+                category: "تفعيلات بريميوم",
+                price: 7.20,
+                description: "نجوم تليغرام عدد 350",
+                image: "نجوم.jpeg",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الذي تريد شراء النجوم له"
+            },
+            {
+                id: 485,
+                name: "500 نجمة تليغرام",
+                category: "تفعيلات بريميوم",
+                price: 9.90,
+                description: "نجوم تليغرام عدد 500",
+                image: "نجوم.jpeg",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الذي تريد شراء النجوم له"
+            },
+            {
+                id: 486,
+                name: "750 نجمة تليغرام",
+                category: "تفعيلات بريميوم",
+                price: 14.20,
+                description: "نجوم تليغرام عدد 750",
+                image: "نجوم.jpeg",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الذي تريد شراء النجوم له"
+            },
+            {
+                id: 487,
+                name: "1000 نجمة تليغرام",
+                category: "تفعيلات بريميوم",
+                price: 19.10,
+                description: "نجوم تليغرام عدد 1000",
+                image: "نجوم.jpeg",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الذي تريد شراء النجوم له"
+            },
+            {
+                id: 488,
+                name: "1500 نجمة تليغرام",
+                category: "تفعيلات بريميوم",
+                price: 28.90,
+                description: "نجوم تليغرام عدد 1500",
+                image: "نجوم.jpeg",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الذي تريد شراء النجوم له"
+            },
+            {
+                id: 489,
+                name: "2500 نجمة تليغرام",
+                category: "تفعيلات بريميوم",
+                price: 47.50,
+                description: "نجوم تليغرام عدد 2500",
+                image: "نجوم.jpeg",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الذي تريد شراء النجوم له"
+            },
+            {
+                id: 490,
+                name: "5000 نجمة تليغرام",
+                category: "تفعيلات بريميوم",
+                price: 91.50,
+                description: "نجوم تليغرام عدد 5000",
+                image: "نجوم.jpeg",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: @username",
+                inputHelp: "أدخل معرف التليغرام الذي تريد شراء النجوم له"
             },
             {
                 id: 472,
@@ -6669,6 +6911,8 @@
                 description: "نجوم تليغرام عدد 500",
                 image: "نجوم.jpeg",
                 inputLabel: "ادخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في تليغرام بدون @"
             },
             {
                 id: 486,
@@ -6678,6 +6922,8 @@
                 description: "نجوم تليغرام عدد 750",
                 image: "نجوم.jpeg",
                 inputLabel: "ادخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في تليغرام بدون @"
             },
             {
                 id: 487,
@@ -6687,6 +6933,8 @@
                 description: "نجوم تليغرام عدد 1000",
                 image: "نجوم.jpeg",
                 inputLabel: "ادخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في تليغرام بدون @"
             },
             {
                 id: 488,
@@ -6696,6 +6944,8 @@
                 description: "نجوم تليغرام عدد 1500",
                 image: "نجوم.jpeg",
                 inputLabel: "ادخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في تليغرام بدون @"
             },
             {
                 id: 489,
@@ -6705,6 +6955,8 @@
                 description: "نجوم تليغرام عدد 2500",
                 image: "نجوم.jpeg",
                 inputLabel: "ادخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في تليغرام بدون @"
             },
             {
                 id: 490,
@@ -6714,6 +6966,8 @@
                 description: "نجوم تليغرام عدد 5000",
                 image: "نجوم.jpeg",
                 inputLabel: "ادخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في تليغرام بدون @"
             },
             // اشتراكات التلفاز
             { 
@@ -7267,11 +7521,12 @@
         let hasSocialMediaProduct = false;
         let hasCreditProduct = false;
         let hasGameProduct = false;
-        let hasAppProduct = false; // متغير جديد لتتبع وجود منتجات تطبيقات
+        let hasAppProduct = false;
+        let hasPremiumProduct = false;
         let selectedSocialProduct = null;
         let selectedCreditProduct = null;
         let selectedGameProduct = null;
-        let selectedAppProduct = null; // متغير جديد للمنتج المختار من التطبيقات
+        let selectedAppProduct = null;
         
         // متغير جديد لتتبع المنصة المحددة
         let selectedPlatform = null;
@@ -7348,6 +7603,13 @@
         const calculatedGamePrice = document.getElementById('calculatedGamePrice');
         const selectedGameValue = document.getElementById('selectedGameValue');
         const confirmGameBtn = document.getElementById('confirmGameBtn');
+        
+        // عناصر نافذة تفعيلات البريميوم
+        const premiumModal = document.getElementById('premiumModal');
+        const premiumClose = document.getElementById('premiumClose');
+        const selectedPremiumName = document.getElementById('selectedPremiumName');
+        const confirmPremiumBtn = document.getElementById('confirmPremiumBtn');
+        let selectedPremiumProduct = null;
         
         const paymentModal = document.getElementById('paymentModal');
         const paymentClose = document.getElementById('paymentClose');
@@ -8249,7 +8511,7 @@
                         <h3 class="product-title">${product.name}</h3>
                         <p class="product-price">${priceDisplay}</p>
                         <div class="product-actions">
-                            ${product.price > 0 || product.category === 'rased' || product.category === 'games' || product.category === 'app' ? `
+                            ${product.price > 0 || product.category === 'rased' || product.category === 'games' || product.category === 'app' || product.category === 'تفعيلات بريميوم' ? `
                                 <button class="product-details-btn" data-id="${product.id}">
                                     <i class="fas fa-info-circle"></i> تفاصيل المنتج
                                 </button>
@@ -8286,7 +8548,9 @@
                     } else if (product.category === 'games') {
                         openGameModal(product);
                     } else if (product.category === 'app') {
-                        openAppModal(product); // فتح نافذة التطبيقات
+                        openAppModal(product);
+                    } else if (product.category === 'تفعيلات بريميوم') {
+                        openPremiumModal(product);
                     } else {
                         addToCart(productId);
                     }
@@ -8695,7 +8959,38 @@
             gameModal.classList.add('active');
         }
         
-        // -------------------- تحديث معاينة سعر اللعبة --------------------
+        // -------------------- فتح نافذة تفعيلات البريميوم --------------------
+        function openPremiumModal(product) {
+            selectedPremiumProduct = product;
+            
+            selectedPremiumName.textContent = product.name;
+            
+            // تحديث نص حقل الإدخال والمساعدة
+            const premiumInputLabel = document.getElementById('premiumInputLabel');
+            const premiumInput = document.getElementById('premiumInput');
+            const premiumInputHelp = document.getElementById('premiumInputHelp');
+            
+            if (premiumInputLabel && product.inputLabel) {
+                premiumInputLabel.textContent = product.inputLabel + ' *';
+            }
+            
+            if (premiumInput && product.inputPlaceholder) {
+                premiumInput.placeholder = product.inputPlaceholder;
+            }
+            
+            if (premiumInputHelp && product.inputHelp) {
+                premiumInputHelp.textContent = product.inputHelp;
+            }
+            
+            // عرض السعر
+            document.getElementById('calculatedPremiumPrice').textContent = product.price.toFixed(2) + '$';
+            
+            premiumInput.value = '';
+            
+            premiumModal.classList.add('active');
+        }
+        
+        // -------------------- تحديث معاينة سعر البريميوم --------------------
         function updateGamePricePreview() {
             const selectedOption = gameAmount.options[gameAmount.selectedIndex];
             if (selectedOption && selectedOption.value) {
@@ -8710,7 +9005,7 @@
         }
         
         // -------------------- إضافة منتج إلى السلة --------------------
-        function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null, gameAmount_ = null, playerId = null, appQuantity_ = null) {
+        function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null, gameAmount_ = null, playerId = null, appQuantity_ = null, premiumInputValue = null) {
             const product = products.find(p => p.id === productId);
             if (!product) return;
             
@@ -8818,6 +9113,20 @@
                     category: product.category,
                     playerId: playerId
                 });
+            } else if (product.category === 'تفعيلات بريميوم') {
+                if (!premiumInputValue) {
+                    showToast('يرجى إدخال البيانات المطلوبة');
+                    return;
+                }
+                
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                    category: product.category,
+                    premiumInput: premiumInputValue
+                });
             } else {
                 const existingItem = cart.find(item => item.id === productId);
                 
@@ -8837,7 +9146,8 @@
             checkForSocialMediaProducts();
             checkForCreditProducts();
             checkForGameProducts();
-            checkForAppProducts(); // دالة جديدة للتحقق من وجود تطبيقات
+            checkForAppProducts();
+            checkForPremiumProducts();
             
             localStorage.setItem('zoodnyCart', JSON.stringify(cart));
             updateCartUI();
@@ -8884,6 +9194,14 @@
             hasAppProduct = cart.some(item => {
                 const product = products.find(p => p.id === item.id);
                 return product && product.category === 'app';
+            });
+        }
+        
+        // -------------------- التحقق من وجود منتجات تفعيلات البريميوم --------------------
+        function checkForPremiumProducts() {
+            hasPremiumProduct = cart.some(item => {
+                const product = products.find(p => p.id === item.id);
+                return product && product.category === 'تفعيلات بريميوم';
             });
         }
         
@@ -8960,6 +9278,7 @@
                 const isCredit = product && product.category === 'rased';
                 const isGame = product && product.category === 'games';
                 const isApp = product && product.category === 'app';
+                const isPremium = product && product.category === 'تفعيلات بريميوم';
                 const customQty = item.customQuantity || 300;
                 
                 const cartItem = document.createElement('div');
@@ -9001,6 +9320,14 @@
                             <p style="color: var(--gray); font-size: 0.85rem;">رقم اللاعب: ${item.playerId}</p>
                         </div>
                     `;
+                } else if (isPremium) {
+                    detailsHtml = `
+                        <div style="flex: 1;">
+                            <h4 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.3rem;">${item.name}</h4>
+                            <p style="color: var(--accent); font-weight: 700;">${item.price.toFixed(2)}$</p>
+                            <p style="color: var(--gray); font-size: 0.85rem;">البيانات: ${item.premiumInput}</p>
+                        </div>
+                    `;
                 } else {
                     detailsHtml = `
                         <div style="flex: 1;">
@@ -9013,11 +9340,11 @@
                 
                 cartItem.innerHTML = `
                     <div style="width: 70px; height: 70px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                        <i class="${isSocialMedia ? 'fab fa-instagram' : isCredit ? 'fas fa-phone-alt' : isGame ? 'fas fa-gamepad' : isApp ? 'fas fa-mobile-alt' : 'fas fa-box'}" style="font-size: 1.5rem; color: ${isSocialMedia ? '#E1306C' : isCredit ? '#2ECC71' : isGame ? '#FF6B6B' : isApp ? '#3498db' : '#666'};"></i>
+                        <i class="${isSocialMedia ? 'fab fa-instagram' : isCredit ? 'fas fa-phone-alt' : isGame ? 'fas fa-gamepad' : isApp ? 'fas fa-mobile-alt' : isPremium ? 'fas fa-crown' : 'fas fa-box'}" style="font-size: 1.5rem; color: ${isSocialMedia ? '#E1306C' : isCredit ? '#2ECC71' : isGame ? '#FF6B6B' : isApp ? '#3498db' : isPremium ? '#FFD700' : '#666'};"></i>
                     </div>
                     ${detailsHtml}
                     <div class="cart-item-actions" style="display: flex; align-items: center; gap: 0.8rem;">
-                        ${!isSocialMedia && !isCredit && !isGame && !isApp ? `
+                        ${!isSocialMedia && !isCredit && !isGame && !isApp && !isPremium ? `
                             <button class="quantity-btn decrease" data-id="${item.id}" style="background: var(--light); border: 1px solid #ddd; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">-</button>
                             <span style="font-weight: 600; min-width: 25px; text-align: center;">${item.quantity}</span>
                             <button class="quantity-btn increase" data-id="${item.id}" style="background: var(--light); border: 1px solid #ddd; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">+</button>
@@ -9108,6 +9435,7 @@
                 const isCredit = item.category === 'rased';
                 const isGame = item.category === 'games';
                 const isApp = item.category === 'app';
+                const isPremium = item.category === 'تفعيلات بريميوم';
                 const customQty = item.customQuantity || 300;
                 
                 const summaryItem = document.createElement('div');
@@ -9131,6 +9459,11 @@
                 } else if (isApp) {
                     summaryItem.innerHTML = `
                         <span>${item.name} - ${item.appValue} عملة (لاعب: ${item.playerId})</span>
+                        <span>${(item.price * item.quantity).toFixed(2)}$</span>
+                    `;
+                } else if (isPremium) {
+                    summaryItem.innerHTML = `
+                        <span>${item.name} (بيانات: ${item.premiumInput})</span>
                         <span>${(item.price * item.quantity).toFixed(2)}$</span>
                     `;
                 } else {
@@ -9323,6 +9656,18 @@
                 });
             }
             
+            const hasPremiumProduct = cart.some(item => item.category === 'تفعيلات بريميوم');
+            if (hasPremiumProduct) {
+                message += `\n⭐ معلومات تفعيلات البريميوم:\n`;
+                
+                const premiumItems = cart.filter(item => item.category === 'تفعيلات بريميوم');
+                premiumItems.forEach((item, index) => {
+                    message += `\nالتفعيل ${index + 1}: ${item.name}\n`;
+                    message += `   البيانات: ${item.premiumInput}\n`;
+                    message += `   السعر: ${item.price.toFixed(2)}$\n`;
+                });
+            }
+            
             message += `\n💳 معلومات الدفع:\n`;
             message += `رقم التحويل: ${currentPaymentData.transferNumber}\n`;
             message += `المبلغ المدفوع: ${currentPaymentData.paidAmount}$\n`;
@@ -9352,6 +9697,10 @@
                     message += `   الكمية: ${item.appValue} عملة\n`;
                     message += `   رقم اللاعب: ${item.playerId}\n`;
                     message += `   السعر: ${item.price.toFixed(2)}$\n\n`;
+                } else if (item.category === 'تفعيلات بريميوم') {
+                    message += `${index + 1}. ${item.name}\n`;
+                    message += `   البيانات: ${item.premiumInput}\n`;
+                    message += `   السعر: ${item.price.toFixed(2)}$\n\n`;
                 } else {
                     const itemTotal = item.price * item.quantity;
                     message += `${index + 1}. ${item.name}\n`;
@@ -9376,6 +9725,7 @@
                 hasCreditProduct = false;
                 hasGameProduct = false;
                 hasAppProduct = false;
+                hasPremiumProduct = false;
                 localStorage.removeItem('zoodnyCart');
                 updateCartUI();
                 
@@ -9401,6 +9751,7 @@
                 hasCreditProduct = false;
                 hasGameProduct = false;
                 hasAppProduct = false;
+                hasPremiumProduct = false;
                 localStorage.removeItem('zoodnyCart');
                 updateCartUI();
                 
@@ -9446,6 +9797,7 @@
                 checkForCreditProducts();
                 checkForGameProducts();
                 checkForAppProducts();
+                checkForPremiumProducts();
                 updateCartUI();
             }
         }
@@ -9781,6 +10133,35 @@
                 if (e.target === gameModal) {
                     gameModal.classList.remove('active');
                     selectedGameProduct = null;
+                }
+            });
+            
+            // أحداث نافذة تفعيلات البريميوم
+            confirmPremiumBtn.addEventListener('click', function() {
+                if (!selectedPremiumProduct) return;
+                
+                const premiumInputValue = document.getElementById('premiumInput').value.trim();
+                
+                if (!premiumInputValue) {
+                    showToast('يرجى إدخال البيانات المطلوبة');
+                    return;
+                }
+                
+                addToCart(selectedPremiumProduct.id, null, null, null, null, null, null, null, premiumInputValue);
+                
+                premiumModal.classList.remove('active');
+                selectedPremiumProduct = null;
+            });
+            
+            premiumClose.addEventListener('click', () => {
+                premiumModal.classList.remove('active');
+                selectedPremiumProduct = null;
+            });
+            
+            premiumModal.addEventListener('click', function(e) {
+                if (e.target === premiumModal) {
+                    premiumModal.classList.remove('active');
+                    selectedPremiumProduct = null;
                 }
             });
             

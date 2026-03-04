@@ -8642,7 +8642,7 @@
             });
 
             group.products.forEach((product, idx) => {
-                const fullProduct = products.find(p => p.id === product.id) || {
+                const premiumProductData = {
                     id: product.id,
                     name: product.name,
                     category: 'تفعيلات بريميوم',
@@ -8697,11 +8697,11 @@
                 `;
 
                 card.querySelector('.premium-details').addEventListener('click', () => {
-                    showProductDetails(fullProduct.id);
+                    showProductDetails(premiumProductData.id);
                 });
 
                 card.querySelector('.premium-cart').addEventListener('click', () => {
-                    openPremiumModal(fullProduct);
+                    openPremiumModal(premiumProductData);
                 });
 
                 card.querySelector('.premium-wa').addEventListener('click', () => {
@@ -9400,6 +9400,11 @@
             
             let itemPrice = product.price;
             let itemQuantity = 1;
+            
+            // إذا تم تمرير سعر مخصص (مثل أسعار البريميوم من premiumActivationsData)
+            if (customPrice !== null) {
+                itemPrice = customPrice;
+            }
             
             if (product.category === 'social-media') {
                 if (!customQuantity) {
@@ -10536,7 +10541,7 @@
                     return;
                 }
                 
-                addToCart(selectedPremiumProduct.id, null, null, null, null, null, null, null, premiumInputValue);
+                addToCart(selectedPremiumProduct.id, null, selectedPremiumProduct.price, null, null, null, null, null, premiumInputValue);
                 
                 premiumModal.classList.remove('active');
                 selectedPremiumProduct = null;

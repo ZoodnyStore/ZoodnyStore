@@ -5336,6 +5336,77 @@
             },
         ];
 
+        // ==================== بيانات تفعيلات البريميوم ====================
+        const premiumActivationsData = [
+            {
+                id: "telegram-premium",
+                name: "تليغرام مميز",
+                category: "تفعيلات بريميوم",
+                description: "تليغرام مميز - تفعيل على معرفك",
+                image: "تليغرام.png",
+                inputLabel: "أدخل معرفك التليغرام",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في تليغرام بدون @",
+                products: [
+                    { id: 521, name: "تليغرام مميز - شهر", price: 3 },
+                    { id: 522, name: "تليغرام مميز - 3 أشهر", price: 7.50 },
+                    { id: 523, name: "تليغرام مميز - سنة", price: 25 },
+                ]
+            },
+            {
+                id: "telegram-stars",
+                name: "نجوم تليغرام",
+                category: "تفعيلات بريميوم",
+                description: "نجوم تليغرام لمعرفك",
+                image: "نجوم.jpeg",
+                inputLabel: "أدخل معرفك التليغرام مع (@)",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في تليغرام بدون @",
+                products: [
+                    { id: 481, name: "100 نجمة تليغرام", price: 2.60 },
+                    { id: 482, name: "150 نجمة تليغرام", price: 3.50 },
+                    { id: 483, name: "250 نجمة تليغرام", price: 5.50 },
+                    { id: 484, name: "350 نجمة تليغرام", price: 7.20 },
+                    { id: 485, name: "500 نجمة تليغرام", price: 9.90 },
+                    { id: 486, name: "750 نجمة تليغرام", price: 14.20 },
+                    { id: 487, name: "1000 نجمة تليغرام", price: 19.10 },
+                    { id: 488, name: "1500 نجمة تليغرام", price: 28.90 },
+                    { id: 489, name: "2500 نجمة تليغرام", price: 47.50 },
+                    { id: 490, name: "5000 نجمة تليغرام", price: 91.50 },
+                ]
+            },
+            {
+                id: "youtube-premium",
+                name: "يوتيوب بريميوم",
+                category: "تفعيلات بريميوم",
+                description: "يوتيوب بريميوم - تفعيل على ايميلك",
+                image: "يوتيوب.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني المرتبط بحسابك في يوتيوب",
+                products: [
+                    { id: 501, name: "يوتيوب بريميوم - شهر", price: 3.50 },
+                    { id: 502, name: "يوتيوب بريميوم - 3 أشهر", price: 9 },
+                    { id: 503, name: "يوتيوب بريميوم - سنة", price: 32 },
+                ]
+            },
+            {
+                id: "snapchat-plus",
+                name: "سناب شات بلس",
+                category: "تفعيلات بريميوم",
+                description: "سناب شات بلس - تفعيل على معرفك",
+                image: "سناب شات.png",
+                inputLabel: "أدخل معرفك في سناب شات",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في سناب شات بدون @",
+                products: [
+                    { id: 480, name: "سناب شات بلس - سنة", price: 30.10 },
+                    { id: 511, name: "سناب شات بلس - شهر", price: 2.50 },
+                    { id: 512, name: "سناب شات بلس - 3 أشهر", price: 6 },
+                ]
+            },
+        ];
+
         // -------------------- بيانات المنتجات مع صور خاصة لكل منتج --------------------
         const products = [
             // أكسسوارات الهاتف - مع صور خاصة
@@ -6969,6 +7040,160 @@
                 inputPlaceholder: "مثال: username",
                 inputHelp: "أدخل معرفك في تليغرام بدون @"
             },
+            {
+                id: 501,
+                name: "يوتيوب بريميوم - شهر",
+                category: "تفعيلات بريميوم",
+                price: 3.50,
+                description: "يوتيوب بريميوم لمدة شهر - تفعيل على ايميلك",
+                image: "يوتيوب.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني المرتبط بحسابك في يوتيوب"
+            },
+            {
+                id: 502,
+                name: "يوتيوب بريميوم - 3 أشهر",
+                category: "تفعيلات بريميوم",
+                price: 9,
+                description: "يوتيوب بريميوم لمدة 3 أشهر - تفعيل على ايميلك",
+                image: "يوتيوب.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني المرتبط بحسابك في يوتيوب"
+            },
+            {
+                id: 503,
+                name: "يوتيوب بريميوم - سنة",
+                category: "تفعيلات بريميوم",
+                price: 32,
+                description: "يوتيوببريميوم لمدة سنة - تفعيل على ايميلك",
+                image: "يوتيوب.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني المرتبط بحسابك في يوتيوب"
+            },
+            {
+                id: 511,
+                name: "سناب شات بلس - شهر",
+                category: "تفعيلات بريميوم",
+                price: 2.50,
+                description: "سناب شات بلس لمدة شهر - تفعيل على معرفك",
+                image: "سناب شات.png",
+                inputLabel: "أدخل معرفك في سناب شات",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في سناب شات بدون @"
+            },
+            {
+                id: 512,
+                name: "سناب شات بلس - 3 أشهر",
+                category: "تفعيلات بريميوم",
+                price: 6,
+                description: "سناب شات بلس لمدة 3 أشهر - تفعيل على معرفك",
+                image: "سناب شات.png",
+                inputLabel: "أدخل معرفك في سناب شات",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في سناب شات بدون @"
+            },
+            {
+                id: 521,
+                name: "تليغرام مميز - شهر",
+                category: "تفعيلات بريميوم",
+                price: 3,
+                description: "تليغرام مميز لمدة شهر - تفعيل على معرفك",
+                image: "تليغرام مميز.png",
+                inputLabel: "أدخل معرفك التليغرام",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في تليغرام بدون @"
+            },
+            {
+                id: 522,
+                name: "تليغرام مميز - 3 أشهر",
+                category: "تفعيلات بريميوم",
+                price: 7.50,
+                description: "تليغرام مميز لمدة 3 أشهر - تفعيل على معرفك",
+                image: "تليغرام مميز.png",
+                inputLabel: "أدخل معرفك التليغرام",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في تليغرام بدون @"
+            },
+            {
+                id: 523,
+                name: "تليغرام مميز - سنة",
+                category: "تفعيلات بريميوم",
+                price: 25,
+                description: "تليغرام مميز لمدة سنة - تفعيل على معرفك",
+                image: "تليغرام مميز.png",
+                inputLabel: "أدخل معرفك التليغرام",
+                inputPlaceholder: "مثال: username",
+                inputHelp: "أدخل معرفك في تليغرام بدون @"
+            },
+            {
+                id: 531,
+                name: "سبوتيفاي بريميوم - شهر",
+                category: "تفعيلات بريميوم",
+                price: 3.50,
+                description: "سبوتيفاي بريميوم لمدة شهر - تفعيل على ايميلك",
+                image: "سبوتيفاي.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني المرتبط بحسابك في سبوتيفاي"
+            },
+            {
+                id: 532,
+                name: "سبوتيفاي بريميوم - 3 أشهر",
+                category: "تفعيلات بريميوم",
+                price: 8,
+                description: "سبوتيفاي بريميوم لمدة 3 أشهر - تفعيل على ايميلك",
+                image: "سبوتيفاي.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني المرتبط بحسابك في سبوتيفاي"
+            },
+            {
+                id: 533,
+                name: "سبوتيفاي بريميوم - سنة",
+                category: "تفعيلات بريميوم",
+                price: 28,
+                description: "سبوتيفاي بريميوم لمدة سنة - تفعيل على ايميلك",
+                image: "سبوتيفاي.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني المرتبط بحسابك في سبوتيفاي"
+            },
+            {
+                id: 541,
+                name: "شات جي بي تي بلس - شهر",
+                category: "تفعيلات بريميوم",
+                price: 20,
+                description: "شات جي بي تي بلس لمدة شهر - تفعيل على ايميلك",
+                image: "شات جي بي تي.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني المرتبط بحسابك في OpenAI"
+            },
+            {
+                id: 542,
+                name: "شات جي بي تي بلس - 3 أشهر",
+                category: "تفعيلات بريميوم",
+                price: 55,
+                description: "شات جي بي تي بلس لمدة 3 أشهر - تفعيل على ايميلك",
+                image: "شات جي بي تي.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني المرتبط بحسابك في OpenAI"
+            },
+            {
+                id: 543,
+                name: "شات جي بي تي بلس - سنة",
+                category: "تفعيلات بريميوم",
+                price: 180,
+                description: "شات جي بي تي بلس لمدة سنة - تفعيل على ايميلك",
+                image: "شات جي بي تي.png",
+                inputLabel: "أدخل الإيميل الذي تريد التفعيل عليه",
+                inputPlaceholder: "مثال: example@gmail.com",
+                inputHelp: "أدخل البريد الإلكتروني المرتبط بحسابك في OpenAI"
+            },
             // اشتراكات التلفاز
             { 
                 id: 491, 
@@ -7875,11 +8100,16 @@
                 productFilters.style.display = 'none';
                 categoryProductsTitle.textContent = 'شحن ألعاب';
                 renderGameGroups();
-            // أرقام لتفعيل كافة التطبيقات — نظام كروت مجمّعة
+            // أرقام لتفعيل التطبيقات — نظام كروت مجمّعة
             } else if (categoryId === 'ارقام للتطبيقات') {
                 productFilters.style.display = 'none';
                 categoryProductsTitle.textContent = 'أرقام لتفعيل كافة التطبيقات';
                 renderAppGroups();
+            // تفعيلات البريميوم — نظام كروت مجمّعة
+            } else if (categoryId === 'تفعيلات بريميوم') {
+                productFilters.style.display = 'none';
+                categoryProductsTitle.textContent = 'تفعيلات بريميوم';
+                renderPremiumGroups();
             // إذا كان التصنيف هو "خدمات سوشال ميديا"، نعرض المنصات أولاً
             } else if (categoryId === 'social-media') {
                 renderPlatforms();
@@ -8334,6 +8564,147 @@
                 });
                 card.querySelector('.ap-wa').addEventListener('click', () => {
                     openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
+                });
+
+                productsGrid.appendChild(card);
+            });
+        }
+        
+        // -------------------- عرض كروت تفعيلات البريميوم --------------------
+        function renderPremiumGroups() {
+            productsGrid.innerHTML = '';
+            const groups = premiumActivationsData;
+
+            injectCardSearchBar(productsGrid, groups, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .category-card').forEach(card => {
+                    const name = card.querySelector('.category-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+                });
+            });
+
+            groups.forEach((group, idx) => {
+                const card = document.createElement('a');
+                card.className = 'category-card';
+                card.href = '#';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+
+                const subtitleText = group.description || 'تفعيل على حسابك';
+                const productCount = group.products ? group.products.length : 0;
+
+                card.innerHTML = `
+                    <div class="category-img-container">
+                        <img src="${group.image}" class="category-img" alt="${group.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">بريميوم</span>
+                    </div>
+                    <div class="category-info">
+                        <h3 class="category-title">${group.name}</h3>
+                        <p class="category-description">${subtitleText}</p>
+                        <p class="category-count">${productCount} منتج</p>
+                        <button class="category-btn">
+                            <i class="fas fa-crown"></i> عرض المنتجات
+                        </button>
+                    </div>
+                `;
+
+                card.addEventListener('click', (e) => { e.preventDefault(); showPremiumProducts(group); });
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // -------------------- عرض منتجات تفعيل بريميوم محددة --------------------
+        function showPremiumProducts(group) {
+            productsGrid.innerHTML = '';
+            categoryProductsTitle.textContent = group.name;
+            productFilters.style.display = 'none';
+
+            const backWrap = document.createElement('div');
+            backWrap.style.gridColumn = '1 / -1';
+            backWrap.innerHTML = `
+                <button class="back-to-games" id="backToPremiumBtn">
+                    <i class="fas fa-arrow-right"></i> العودة لتفعيلات البريميوم
+                </button>
+            `;
+            productsGrid.appendChild(backWrap);
+            backWrap.querySelector('#backToPremiumBtn').addEventListener('click', () => {
+                categoryProductsTitle.textContent = 'تفعيلات بريميوم';
+                renderPremiumGroups();
+            });
+
+            injectCardSearchBar(productsGrid, group.products, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .product-card[data-premium-id]').forEach(card => {
+                    const title = card.querySelector('.product-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || title.includes(q)) ? '' : 'none';
+                });
+            });
+
+            group.products.forEach((product, idx) => {
+                const fullProduct = products.find(p => p.id === product.id) || {
+                    id: product.id,
+                    name: product.name,
+                    category: 'تفعيلات بريميوم',
+                    price: product.price,
+                    description: group.description,
+                    image: group.image,
+                    inputLabel: group.inputLabel,
+                    inputPlaceholder: group.inputPlaceholder,
+                    inputHelp: group.inputHelp
+                };
+
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+                card.setAttribute('data-premium-id', String(product.id));
+
+                const avgRaw = 3.5 + (product.id % 10) * 0.15;
+                const avg = Math.min(5, avgRaw);
+                const ratingCount = 20 + (product.id % 180);
+                const starsHtml = [1,2,3,4,5].map(i => {
+                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
+                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
+                    return '<i class="far fa-star"></i>';
+                }).join('');
+
+                card.innerHTML = `
+                    <div class="product-img-container game-inner-img">
+                        <img src="${group.image}" class="product-img" alt="${product.name}"
+                             loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">بريميوم</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-price">${product.price}$</p>
+                        <div class="product-rating">
+                            <div class="stars">${starsHtml}</div>
+                            <span class="rating-count">(${ratingCount})</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="product-details-btn premium-details">
+                                <i class="fas fa-info-circle"></i> تفاصيل المنتج
+                            </button>
+                            <button class="add-to-cart-btn premium-cart">
+                                <i class="fas fa-shopping-cart"></i> أضف للسلة
+                            </button>
+                            <button class="whatsapp-btn-product premium-wa">
+                                <i class="fab fa-whatsapp"></i> استفسار
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                card.querySelector('.premium-details').addEventListener('click', () => {
+                    showProductDetails(fullProduct.id);
+                });
+
+                card.querySelector('.premium-cart').addEventListener('click', () => {
+                    openPremiumModal(fullProduct);
+                });
+
+                card.querySelector('.premium-wa').addEventListener('click', () => {
+                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${product.price}$`);
                 });
 
                 productsGrid.appendChild(card);
@@ -8961,29 +9332,46 @@
         
         // -------------------- فتح نافذة تفعيلات البريميوم --------------------
         function openPremiumModal(product) {
-            selectedPremiumProduct = product;
+            // الحصول على البيانات الكاملة من premiumActivationsData إذا لم تكن موجودة
+            let fullProductData = product;
+            if (!product.inputLabel || !product.inputPlaceholder) {
+                const premiumGroup = premiumActivationsData.find(p => 
+                    p.products && p.products.some(prod => prod.id === product.id)
+                );
+                if (premiumGroup) {
+                    fullProductData = {
+                        ...product,
+                        inputLabel: product.inputLabel || premiumGroup.inputLabel,
+                        inputPlaceholder: product.inputPlaceholder || premiumGroup.inputPlaceholder,
+                        inputHelp: product.inputHelp || premiumGroup.inputHelp,
+                        image: product.image || premiumGroup.image
+                    };
+                }
+            }
             
-            selectedPremiumName.textContent = product.name;
+            selectedPremiumProduct = fullProductData;
+            
+            selectedPremiumName.textContent = fullProductData.name;
             
             // تحديث نص حقل الإدخال والمساعدة
             const premiumInputLabel = document.getElementById('premiumInputLabel');
             const premiumInput = document.getElementById('premiumInput');
             const premiumInputHelp = document.getElementById('premiumInputHelp');
             
-            if (premiumInputLabel && product.inputLabel) {
-                premiumInputLabel.textContent = product.inputLabel + ' *';
+            if (premiumInputLabel && fullProductData.inputLabel) {
+                premiumInputLabel.textContent = fullProductData.inputLabel + ' *';
             }
             
-            if (premiumInput && product.inputPlaceholder) {
-                premiumInput.placeholder = product.inputPlaceholder;
+            if (premiumInput && fullProductData.inputPlaceholder) {
+                premiumInput.placeholder = fullProductData.inputPlaceholder;
             }
             
-            if (premiumInputHelp && product.inputHelp) {
-                premiumInputHelp.textContent = product.inputHelp;
+            if (premiumInputHelp && fullProductData.inputHelp) {
+                premiumInputHelp.textContent = fullProductData.inputHelp;
             }
             
             // عرض السعر
-            document.getElementById('calculatedPremiumPrice').textContent = product.price.toFixed(2) + '$';
+            document.getElementById('calculatedPremiumPrice').textContent = fullProductData.price.toFixed(2) + '$';
             
             premiumInput.value = '';
             

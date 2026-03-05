@@ -8350,6 +8350,9 @@
             } else if (categoryId === 'social-media') {
                 renderPlatforms();
                 productFilters.style.display = 'none';
+            } else if (categoryId === 'arqam') {
+                productFilters.style.display = 'none';
+                renderArqamGroups('arqam', 'أرقام واتساب وتليغرام مكفولة');
             } else {
                 productFilters.style.display = 'flex';
                 renderCategoryFilters();
@@ -9934,6 +9937,180 @@
         }
 
         // -------------------- عرض منتجات التصنيف (بدون تغيير) --------------------
+
+        // ==================== أرقام واتساب وتليغرام مكفولة — كروت مجمّعة ====================
+
+        // ╔══════════════════════════════════════════════════════════════════╗
+        // ║  🖼️  صور كروت التطبيقات الرئيسية — ضع صورك الخاصة هنا        ║
+        // ╠══════════════════════════════════════════════════════════════════╣
+        // ║  الصيغة:  'اسم التطبيق' : 'اسم_الصورة.png'                   ║
+        // ║  📌 غيّر اسم الصورة بالصورة التي تريدها لكل كرت               ║
+        // ║  📌 الصور يجب أن تكون في نفس مجلد index.html                  ║
+        // ╚══════════════════════════════════════════════════════════════════╝
+        const ARQAM_GROUP_IMAGES = {
+            'واتساب':  'واتساب.png',      // ← ضع هنا اسم صورة كرت واتساب
+            'تليغرام': 'تليغرام.png',     // ← ضع هنا اسم صورة كرت تليغرام
+        };
+
+        // قاموس تحديد التطبيق من اسم المنتج
+        const ARQAM_APP_MAP = [
+            { keywords: ['واتساب', 'whatsapp'], name: 'واتساب' },
+            { keywords: ['تليغرام', 'telegram'], name: 'تليغرام' },
+        ];
+
+        function getArqamAppName(product) {
+            const haystack = product.name.toLowerCase();
+            for (const def of ARQAM_APP_MAP) {
+                if (def.keywords.some(k => haystack.includes(k.toLowerCase()))) {
+                    return def.name;
+                }
+            }
+            return product.name.split(/[-\s]/)[0].trim();
+        }
+
+        function buildArqamGroups(categoryId) {
+            const groups = {};
+            products.filter(p => p.category === categoryId).forEach(p => {
+                const appName = getArqamAppName(p);
+                if (!groups[appName]) {
+                    const customImg = ARQAM_GROUP_IMAGES[appName];
+                    groups[appName] = {
+                        name: appName,
+                        image: customImg || p.image,
+                        products: []
+                    };
+                }
+                groups[appName].products.push(p);
+            });
+            return Object.values(groups);
+        }
+
+        function renderArqamGroups(categoryId, titleText) {
+            productsGrid.innerHTML = '';
+            const groups = buildArqamGroups(categoryId);
+
+            injectCardSearchBar(productsGrid, groups, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .category-card').forEach(card => {
+                    const name = card.querySelector('.category-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+                });
+            });
+
+            groups.forEach((group, idx) => {
+                const card = document.createElement('a');
+                card.className = 'category-card';
+                card.href = '#';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+
+                const subtitleText = group.products.map(p => {
+                    // اسم الدولة فقط (بعد أول مسافة)
+                    const parts = p.name.split(/\s+/);
+                    return parts.slice(1).join(' ') || p.name;
+                }).slice(0, 4).join(' · ') + (group.products.length > 4 ? ' ...' : '');
+
+                card.innerHTML = `
+                    <div class="category-img-container">
+                        <img src="${group.image}" class="category-img" alt="${group.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">رقم</span>
+                    </div>
+                    <div class="category-info">
+                        <h3 class="category-title">${group.name}</h3>
+                        <p class="category-description">${subtitleText}</p>
+                        <p class="category-count">${group.products.length} منتج</p>
+                        <button class="category-btn">
+                            <i class="fab fa-whatsapp"></i> عرض الأرقام
+                        </button>
+                    </div>
+                `;
+                card.addEventListener('click', e => {
+                    e.preventDefault();
+                    showArqamProducts(group, categoryId, titleText);
+                });
+                productsGrid.appendChild(card);
+            });
+        }
+
+        function showArqamProducts(group, categoryId, titleText) {
+            productsGrid.innerHTML = '';
+            categoryProductsTitle.textContent = group.name;
+            productFilters.style.display = 'none';
+
+            const backWrap = document.createElement('div');
+            backWrap.style.gridColumn = '1 / -1';
+            backWrap.innerHTML = `<button class="back-to-games" id="backToArqamBtn"><i class="fas fa-arrow-right"></i> العودة إلى ${titleText}</button>`;
+            productsGrid.appendChild(backWrap);
+            backWrap.querySelector('#backToArqamBtn').addEventListener('click', () => {
+                categoryProductsTitle.textContent = titleText;
+                renderArqamGroups(categoryId, titleText);
+            });
+
+            injectCardSearchBar(productsGrid, group.products, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .product-card[data-arqam-id]').forEach(card => {
+                    const title = card.querySelector('.product-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || title.includes(q)) ? '' : 'none';
+                });
+            });
+
+            group.products.forEach((product, idx) => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+                card.setAttribute('data-arqam-id', String(product.id));
+
+                const avgRaw = 3.5 + (product.id % 10) * 0.15;
+                const avg = Math.min(5, avgRaw);
+                const ratingCount = 20 + (product.id % 180);
+                const starsHtml = [1,2,3,4,5].map(i => {
+                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
+                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
+                    return '<i class="far fa-star"></i>';
+                }).join('');
+
+                const priceDisplay = product.price ? `${product.price}$` : 'تواصل معنا';
+
+                card.innerHTML = `
+                    <div class="product-img-container game-inner-img">
+                        <img src="${product.image}" class="product-img" alt="${product.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">رقم</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-price">${priceDisplay}</p>
+                        <div class="product-rating">
+                            <div class="stars">${starsHtml}</div>
+                            <span class="rating-count">(${ratingCount})</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="product-details-btn arqam-details"><i class="fas fa-info-circle"></i> تفاصيل</button>
+                            <button class="add-to-cart-btn arqam-cart"><i class="fas fa-shopping-cart"></i> أضف للسلة</button>
+                            <button class="whatsapp-btn-product arqam-wa"><i class="fab fa-whatsapp"></i> استفسار</button>
+                        </div>
+                    </div>
+                `;
+
+                card.querySelector('.arqam-details').addEventListener('click', () => {
+                    showPaymentProductDetails({ id: product.id, name: product.name, price: product.price, image: product.image, description: product.description });
+                });
+                card.querySelector('.arqam-cart').addEventListener('click', () => {
+                    const existing = cart.find(i => i.id === product.id);
+                    if (existing) existing.quantity++;
+                    else cart.push({ id: product.id, name: product.name, price: product.price || 0, quantity: 1, image: product.image, category: categoryId });
+                    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
+                    updateCartUI();
+                    showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                });
+                card.querySelector('.arqam-wa').addEventListener('click', () => {
+                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
+                });
+
+                productsGrid.appendChild(card);
+            });
+        }
+
         function renderProductsByCategory(categoryId, filter = 'all') {
             productsGrid.innerHTML = '';
             

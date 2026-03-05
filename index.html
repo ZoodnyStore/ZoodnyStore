@@ -3624,7 +3624,7 @@
     </div>
 
     <!-- مكتبات JS -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         // تهيئة مكتبة الصور المتحركة
@@ -5482,6 +5482,167 @@
                     { id: 533, name: "لاغوفاست - 3 اشهر - للكومبيوتر", price: 23.30 },
                     { id: 534, name: "لاغوفاست - 6 اشهر - للكومبيوتر", price: 40.90 },
                     { id: 535, name: "لاغوفاست - سنة - للكومبيوتر", price: 71.50 },
+                ]
+            },
+        ];
+
+        // ==================== بيانات الدفع electronique ====================
+        const electronicPaymentData = [
+            {
+                id: "visa",
+                name: "فيزا افتراضية",
+                category: "الدفع electronique",
+                description: "بطاقة فيزا افتراضية - رابط",
+                image: "فيزا.jpg",
+                products: [
+                    { id: 533, name: "فيزا افتراضية - 5$", price: 7.60 },
+                    { id: 534, name: "فيزا افتراضية - 10$", price: 12.60 },
+                    { id: 535, name: "فيزا افتراضية - 15$", price: 18 },
+                    { id: 536, name: "فيزا افتراضية - 25$", price: 30 },
+                    { id: 537, name: "فيزا افتراضية - 50$", price: 63 },
+                ]
+            },
+            {
+                id: "itunes-usa",
+                name: "ايتونز امريكا",
+                category: "الدفع electronique",
+                description: "ايتونز امريكا - رصيد حساب",
+                image: "ايتونز امريكي 1.jpg",
+                products: [
+                    { id: 538, name: "ايتونز امريكا - 2$", price: 2.50 },
+                    { id: 539, name: "ايتونز امريكا - 5$", price: 5.70 },
+                    { id: 540, name: "ايتونز امريكا - 10$", price: 11 },
+                    { id: 541, name: "ايتونز امريكا - 15$", price: 16 },
+                    { id: 542, name: "ايتونز امريكا - 20$", price: 22 },
+                    { id: 543, name: "ايتونز امريكا - 25$", price: 28 },
+                    { id: 544, name: "ايتونز امريكا - 50$", price: 54.50 },
+                    { id: 545, name: "ايتونز امريكا - 100$", price: 108 },
+                    { id: 546, name: "ايتونز امريكا - 150$", price: 158 },
+                    { id: 547, name: "ايتونز امريكا - 200$", price: 208 },
+                    { id: 548, name: "ايتونز امريكا - 300$", price: 310 },
+                ]
+            },
+            {
+                id: "itunes-turkey",
+                name: "ايتونز تركيا",
+                category: "الدفع electronique",
+                description: "ايتونز تركيا - رصيد حساب",
+                image: "ايتونز تركي 1.jpg",
+                products: [
+                    { id: 549, name: "ايتونز تركيا - 25 L.T", price: 0.90 },
+                    { id: 550, name: "ايتونز تركيا - 50 L.T", price: 1.70 },
+                    { id: 551, name: "ايتونز تركيا - 100 L.T", price: 3.20 },
+                    { id: 552, name: "ايتونز تركيا - 250 L.T", price: 7.10 },
+                    { id: 553, name: "ايتونز تركيا - 500 L.T", price: 13.70 },
+                    { id: 554, name: "ايتونز تركيا - 1000 L.T", price: 27.40 },
+                    { id: 555, name: "ايتونز تركيا - 1500 L.T", price: 43 },
+                ]
+            },
+            {
+                id: "itunes-uae",
+                name: "ايتونز الامارات",
+                category: "الدفع electronique",
+                description: "ايتونز الامارات - رصيد حساب",
+                image: "ايتونز اماراتي.jpg",
+                products: [
+                    { id: 556, name: "ايتونز الامارات - 50 AED", price: 16.80 },
+                    { id: 557, name: "ايتونز الامارات - 100 AED", price: 33.40 },
+                    { id: 558, name: "ايتونز الامارات - 250 AED", price: 83 },
+                    { id: 559, name: "ايتونز الامارات - 500 AED", price: 161.30 },
+                ]
+            },
+            {
+                id: "steam-usa",
+                name: "ستيم امريكا",
+                category: "الدفع electronique",
+                description: "ستيم امريكا - رصيد حساب",
+                image: "ستيم.webp",
+                products: [
+                    { id: 561, name: "ستيم - USA - 5$", price: 6.25 },
+                    { id: 562, name: "ستيم - USA - 10$", price: 12.10 },
+                    { id: 563, name: "ستيم - USA - 20$", price: 23.20 },
+                    { id: 564, name: "ستيم - USA - 50$", price: 63 },
+                    { id: 565, name: "ستيم - USA - 100$", price: 120 },
+                ]
+            },
+            {
+                id: "steam-aed",
+                name: "ستيم الامارات",
+                category: "الدفع electronique",
+                description: "ستيم الامارات - رصيد حساب",
+                image: "ستيم.webp",
+                products: [
+                    { id: 566, name: "ستيم - AED - 20", price: 7 },
+                    { id: 567, name: "ستيم - AED - 40", price: 13 },
+                    { id: 568, name: "ستيم - AED - 50", price: 15.50 },
+                    { id: 569, name: "ستيم - AED - 75", price: 24.70 },
+                    { id: 570, name: "ستيم - AED - 100", price: 33.20 },
+                    { id: 571, name: "ستيم - AED - 200", price: 63.40 },
+                ]
+            },
+            {
+                id: "steam-saudi",
+                name: "ستيم السعودية",
+                category: "الدفع electronique",
+                description: "ستيم السعودية - رصيد حساب",
+                image: "ستيم.webp",
+                products: [
+                    { id: 572, name: "ستيم - SAR - 20", price: 7 },
+                    { id: 573, name: "ستيم - SAR - 40", price: 13.50 },
+                    { id: 574, name: "ستيم - SAR - 50", price: 16.50 },
+                    { id: 575, name: "ستيم - SAR - 100", price: 34 },
+                    { id: 576, name: "ستيم - SAR - 200", price: 65.30 },
+                    { id: 577, name: "ستيم - SAR - 400", price: 123.40 },
+                ]
+            },
+            {
+                id: "steam-eur",
+                name: "ستيم اوروبا",
+                category: "الدفع electronique",
+                description: "ستيم اوروبا - رصيد حساب",
+                image: "ستيم.webp",
+                products: [
+                    { id: 589, name: "ستيم - EUR - 10€", price: 16.70 },
+                    { id: 590, name: "ستيم - EUR - 20€", price: 30 },
+                    { id: 591, name: "ستيم - EUR - 50€", price: 70 },
+                ]
+            },
+            {
+                id: "steam-try",
+                name: "ستيم تركيا",
+                category: "الدفع electronique",
+                description: "ستيم تركيا - رصيد حساب",
+                image: "ستيم.webp",
+                products: [
+                    { id: 578, name: "ستيم - TRY - 5$", price: 7.30 },
+                    { id: 579, name: "ستيم - TRY - 10$", price: 13.70 },
+                    { id: 580, name: "ستيم - TRY - 25$", price: 32.60 },
+                ]
+            },
+            {
+                id: "psn-uae",
+                name: "PSN الامارات",
+                category: "الدفع electronique",
+                description: "PSN الامارات - رصيد حساب",
+                image: "PSN.jpg",
+                products: [
+                    { id: 581, name: "PSN - 10$ - UAE", price: 12 },
+                    { id: 582, name: "PSN - 20$ - UAE", price: 23 },
+                    { id: 583, name: "PSN - 50$ - UAE", price: 55 },
+                    { id: 584, name: "PSN - 100$ - UAE", price: 107.30 },
+                ]
+            },
+            {
+                id: "psn-usa",
+                name: "PSN امريكا",
+                category: "الدفع electronique",
+                description: "PSN امريكا - رصيد حساب",
+                image: "PSN.jpg",
+                products: [
+                    { id: 585, name: "PSN - 10$ - USA", price: 12 },
+                    { id: 586, name: "PSN - 25$ - USA", price: 28.70 },
+                    { id: 587, name: "PSN - 50$ - USA", price: 56 },
+                    { id: 588, name: "PSN - 100$ - USA", price: 108 },
                 ]
             },
         ];
@@ -8131,36 +8292,27 @@
             document.querySelectorAll('.category-card, .category-btn').forEach(element => {
                 element.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const categoryId = this.dataset.category || this.closest('.category-card').dataset.category;
-                    showCategoryProducts(categoryId);
+                    let categoryId = this.dataset.category;
+                    if (!categoryId && this.closest('.category-card')) {
+                        categoryId = this.closest('.category-card').dataset.category;
+                    }
+                    if (categoryId) {
+                        showCategoryProducts(categoryId);
+                    }
                 });
             });
         }
         
         // -------------------- عرض منتجات التصنيف (معدلة) --------------------
         function showCategoryProducts(categoryId) {
+            // *** إظهار قسم المنتجات وإخفاء قسم التصنيفات ***
             currentCategory = categoryId;
-            
-            const category = categories.find(c => c.id === categoryId);
-            if (!category) return;
-            
-            categoryProductsTitle.textContent = `منتجات ${category.name}`;
-            
             categoriesSection.style.display = 'none';
             productsSection.style.display = 'block';
-            
-            window.scrollTo({
-                top: productsSection.offsetTop - 80,
-                behavior: 'smooth'
-            });
-            
-            // إذا كان التصنيف هو "شحن ألعاب"، نعرض كروت الألعاب
-            if (categoryId === 'games') {
-                productFilters.style.display = 'none';
-                categoryProductsTitle.textContent = 'شحن ألعاب';
-                renderGameGroups();
-            // أرقام لتفعيل التطبيقات — نظام كروت مجمّعة
-            } else if (categoryId === 'ارقام للتطبيقات') {
+            window.scrollTo({ top: productsSection.offsetTop - 80, behavior: 'smooth' });
+
+            // أرقام للتطبيقات — نظام كروت مجمّعة
+            if (categoryId === 'ارقام للتطبيقات') {
                 productFilters.style.display = 'none';
                 categoryProductsTitle.textContent = 'أرقام لتفعيل كافة التطبيقات';
                 renderAppGroups();
@@ -8174,6 +8326,11 @@
                 productFilters.style.display = 'none';
                 categoryProductsTitle.textContent = 'اشتراكات VPN';
                 renderVpnGroups();
+            // الدفع electronique — نظام كروت مجمّعة
+            } else if (categoryId.includes('الدفع') || categoryId === 'الدفع electronique') {
+                productFilters.style.display = 'none';
+                categoryProductsTitle.textContent = 'الدفع الإلكتروني';
+                renderPaymentGroups();
             // إذا كان التصنيف هو "خدمات سوشال ميديا"، نعرض المنصات أولاً
             } else if (categoryId === 'social-media') {
                 renderPlatforms();
@@ -8348,6 +8505,443 @@
                 // زر استفسار واتساب
                 card.querySelector('.gp-wa').addEventListener('click', () => {
                     openWhatsApp(`أريد الاستفسار عن شحن ${game.name}`);
+                });
+
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // -------------------- عرض كروت اشتراكات VPN --------------------
+        function renderVpnGroups() {
+            productsGrid.innerHTML = '';
+            const groups = vpnData;
+
+            injectCardSearchBar(productsGrid, groups, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .category-card').forEach(card => {
+                    const name = card.querySelector('.category-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+                });
+            });
+
+            groups.forEach((group, idx) => {
+                const card = document.createElement('a');
+                card.className = 'category-card';
+                card.href = '#';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+
+                const subtitleText = group.description || 'اشتراك VPN';
+                const productCount = group.products ? group.products.length : 0;
+
+                card.innerHTML = `
+                    <div class="category-img-container">
+                        <img src="${group.image}" class="category-img" alt="${group.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">VPN</span>
+                    </div>
+                    <div class="category-info">
+                        <h3 class="category-title">${group.name}</h3>
+                        <p class="category-description">${subtitleText}</p>
+                        <p class="category-count">${productCount} منتج</p>
+                        <button class="category-btn">
+                            <i class="fas fa-shield-alt"></i> عرض الاشتراكات
+                        </button>
+                    </div>
+                `;
+
+                card.addEventListener('click', (e) => { e.preventDefault(); showVpnProducts(group); });
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // -------------------- عرض منتجات VPN محددة --------------------
+        function showVpnProducts(group) {
+            productsGrid.innerHTML = '';
+            categoryProductsTitle.textContent = group.name;
+            productFilters.style.display = 'none';
+
+            const backWrap = document.createElement('div');
+            backWrap.style.gridColumn = '1 / -1';
+            backWrap.innerHTML = `
+                <button class="back-to-games" id="backToVpnBtn">
+                    <i class="fas fa-arrow-right"></i> العودة إلى اشتراكات VPN
+                </button>
+            `;
+            productsGrid.appendChild(backWrap);
+            backWrap.querySelector('#backToVpnBtn').addEventListener('click', () => {
+                categoryProductsTitle.textContent = 'اشتراكات VPN';
+                renderVpnGroups();
+            });
+
+            injectCardSearchBar(productsGrid, group.products, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .product-card[data-vpn-id]').forEach(card => {
+                    const title = card.querySelector('.product-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || title.includes(q)) ? '' : 'none';
+                });
+            });
+
+            group.products.forEach((product, idx) => {
+                const vpnProductData = {
+                    id: product.id,
+                    name: product.name,
+                    category: 'اشتراكات VPN',
+                    price: product.price,
+                    description: group.description,
+                    image: group.image
+                };
+
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+                card.setAttribute('data-vpn-id', String(product.id));
+
+                const avgRaw = 3.5 + (product.id % 10) * 0.15;
+                const avg = Math.min(5, avgRaw);
+                const ratingCount = 20 + (product.id % 180);
+                const starsHtml = [1,2,3,4,5].map(i => {
+                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
+                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
+                    return '<i class="far fa-star"></i>';
+                }).join('');
+
+                const priceDisplay = product.price ? `${product.price}$` : 'تواصل معنا';
+
+                card.innerHTML = `
+                    <div class="product-img-container game-inner-img">
+                        <img src="${group.image}" class="product-img" alt="${product.name}"
+                             loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">VPN</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-price">${priceDisplay}</p>
+                        <div class="product-rating">
+                            <div class="stars">${starsHtml}</div>
+                            <span class="rating-count">(${ratingCount})</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="product-details-btn vpn-details">
+                                <i class="fas fa-info-circle"></i> تفاصيل المنتج
+                            </button>
+                            <button class="add-to-cart-btn vpn-cart">
+                                <i class="fas fa-shopping-cart"></i> أضف للسلة
+                            </button>
+                            <button class="whatsapp-btn-product vpn-wa">
+                                <i class="fab fa-whatsapp"></i> استفسار
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                card.querySelector('.vpn-details').addEventListener('click', () => {
+                    showPaymentProductDetails(vpnProductData);
+                });
+
+                card.querySelector('.vpn-cart').addEventListener('click', () => {
+                    const cartItem = {
+                        id: vpnProductData.id,
+                        name: vpnProductData.name,
+                        price: product.price || 0,
+                        quantity: 1,
+                        image: group.image,
+                        category: 'اشتراكات VPN'
+                    };
+                    const existing = cart.find(i => i.id === cartItem.id);
+                    if (existing) existing.quantity++;
+                    else cart.push(cartItem);
+                    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
+                    updateCartUI();
+                    showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                });
+
+                card.querySelector('.vpn-wa').addEventListener('click', () => {
+                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
+                });
+
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // -------------------- بناء مجموعات الدفع الإلكتروني حسب الفئة الرئيسية --------------------
+        function buildPaymentSuperGroups() {
+            // تجميع electronicPaymentData في مجموعات رئيسية بناءً على اسم المنتج
+            const superGroupDefs = [
+                {
+                    key: 'visa',
+                    name: 'فيزا افتراضية',
+                    icon: 'fa-credit-card',
+                    color: '#1A1F71',
+                    image: 'فيزا.jpg',
+                    keywords: ['visa', 'فيزا']
+                },
+                {
+                    key: 'itunes',
+                    name: 'ايتونز',
+                    icon: 'fa-apple',
+                    color: '#FC3C44',
+                    image: 'ايتونز امريكي 1.jpg',
+                    keywords: ['itunes', 'ايتونز']
+                },
+                {
+                    key: 'steam',
+                    name: 'ستيم',
+                    icon: 'fa-steam',
+                    color: '#1b2838',
+                    image: 'ستيم.webp',
+                    keywords: ['steam', 'ستيم']
+                },
+                {
+                    key: 'psn',
+                    name: 'PSN بلايستيشن',
+                    icon: 'fa-playstation',
+                    color: '#003087',
+                    image: 'PSN.jpg',
+                    keywords: ['psn', 'بلايستيشن']
+                },
+            ];
+
+            const superGroups = superGroupDefs.map(def => ({
+                ...def,
+                subGroups: electronicPaymentData.filter(g => {
+                    const nameLower = g.name.toLowerCase();
+                    return def.keywords.some(kw => nameLower.includes(kw));
+                })
+            })).filter(sg => sg.subGroups.length > 0);
+
+            // أي مجموعة لم تُصنَّف تُضاف كمجموعة مستقلة
+            const classifiedIds = new Set(superGroups.flatMap(sg => sg.subGroups.map(g => g.id)));
+            const unclassified = electronicPaymentData.filter(g => !classifiedIds.has(g.id));
+            if (unclassified.length > 0) {
+                superGroups.push({
+                    key: 'other',
+                    name: 'منتجات أخرى',
+                    icon: 'fa-wallet',
+                    color: '#555',
+                    image: unclassified[0].image,
+                    subGroups: unclassified
+                });
+            }
+
+            return superGroups;
+        }
+
+        // -------------------- عرض كروت الدفع electronique (فئات رئيسية) --------------------
+        function renderPaymentGroups() {
+            productsGrid.innerHTML = '';
+            const superGroups = buildPaymentSuperGroups();
+
+            injectCardSearchBar(productsGrid, superGroups, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .category-card').forEach(card => {
+                    const name = card.querySelector('.category-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+                });
+            });
+
+            superGroups.forEach((sg, idx) => {
+                const totalProducts = sg.subGroups.reduce((sum, g) => sum + (g.products ? g.products.length : 0), 0);
+                const subNames = sg.subGroups.map(g => g.name).slice(0, 3).join(' · ') + (sg.subGroups.length > 3 ? ' ...' : '');
+
+                const card = document.createElement('a');
+                card.className = 'category-card';
+                card.href = '#';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+
+                card.innerHTML = `
+                    <div class="category-img-container">
+                        <img src="${sg.image}" class="category-img" alt="${sg.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">دفع</span>
+                    </div>
+                    <div class="category-info">
+                        <h3 class="category-title">${sg.name}</h3>
+                        <p class="category-description">${subNames}</p>
+                        <p class="category-count">${totalProducts} منتج</p>
+                        <button class="category-btn">
+                            <i class="fas fa-credit-card"></i> عرض المنتجات
+                        </button>
+                    </div>
+                `;
+
+                card.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showPaymentSuperGroup(sg);
+                });
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // -------------------- عرض كروت الفئة الفرعية للدفع --------------------
+        function showPaymentSuperGroup(sg) {
+            productsGrid.innerHTML = '';
+            categoryProductsTitle.textContent = sg.name;
+            productFilters.style.display = 'none';
+
+            // زر العودة
+            const backWrap = document.createElement('div');
+            backWrap.style.gridColumn = '1 / -1';
+            backWrap.innerHTML = `
+                <button class="back-to-games" id="backToPaymentMainBtn">
+                    <i class="fas fa-arrow-right"></i> العودة للدفع الإلكتروني
+                </button>
+            `;
+            productsGrid.appendChild(backWrap);
+            backWrap.querySelector('#backToPaymentMainBtn').addEventListener('click', () => {
+                categoryProductsTitle.textContent = 'الدفع electronique';
+                renderPaymentGroups();
+            });
+
+            injectCardSearchBar(productsGrid, sg.subGroups, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .category-card[data-subgroup]').forEach(card => {
+                    const name = card.querySelector('.category-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+                });
+            });
+
+            sg.subGroups.forEach((group, idx) => {
+                const productCount = group.products ? group.products.length : 0;
+                const subCard = document.createElement('a');
+                subCard.className = 'category-card';
+                subCard.href = '#';
+                subCard.setAttribute('data-subgroup', group.id);
+                subCard.setAttribute('data-aos', 'fade-up');
+                subCard.setAttribute('data-aos-delay', String((idx % 4) * 80));
+
+                subCard.innerHTML = `
+                    <div class="category-img-container">
+                        <img src="${group.image}" class="category-img" alt="${group.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">دفع</span>
+                    </div>
+                    <div class="category-info">
+                        <h3 class="category-title">${group.name}</h3>
+                        <p class="category-description">${group.description || ''}</p>
+                        <p class="category-count">${productCount} منتج</p>
+                        <button class="category-btn">
+                            <i class="fas fa-credit-card"></i> عرض المنتجات
+                        </button>
+                    </div>
+                `;
+
+                subCard.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showPaymentProducts(group, sg);
+                });
+                productsGrid.appendChild(subCard);
+            });
+        }
+
+        // -------------------- عرض منتجات الدفع محددة --------------------
+        function showPaymentProducts(group, parentSg) {
+            productsGrid.innerHTML = '';
+            categoryProductsTitle.textContent = group.name;
+            productFilters.style.display = 'none';
+
+            const backWrap = document.createElement('div');
+            backWrap.style.gridColumn = '1 / -1';
+            backWrap.innerHTML = `
+                <button class="back-to-games" id="backToPaymentBtn">
+                    <i class="fas fa-arrow-right"></i> ${parentSg ? 'العودة إلى ' + parentSg.name : 'العودة للدفع الإلكتروني'}
+                </button>
+            `;
+            productsGrid.appendChild(backWrap);
+            backWrap.querySelector('#backToPaymentBtn').addEventListener('click', () => {
+                if (parentSg) {
+                    categoryProductsTitle.textContent = parentSg.name;
+                    showPaymentSuperGroup(parentSg);
+                } else {
+                    categoryProductsTitle.textContent = 'الدفع electronique';
+                    renderPaymentGroups();
+                }
+            });
+
+            injectCardSearchBar(productsGrid, group.products, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .product-card[data-payment-id]').forEach(card => {
+                    const title = card.querySelector('.product-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || title.includes(q)) ? '' : 'none';
+                });
+            });
+
+            group.products.forEach((product, idx) => {
+                const paymentProductData = {
+                    id: product.id,
+                    name: product.name,
+                    category: 'الدفع electronique',
+                    price: product.price,
+                    description: group.description,
+                    image: group.image
+                };
+
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+                card.setAttribute('data-payment-id', String(product.id));
+
+                const avgRaw = 3.5 + (product.id % 10) * 0.15;
+                const avg = Math.min(5, avgRaw);
+                const ratingCount = 20 + (product.id % 180);
+                const starsHtml = [1,2,3,4,5].map(i => {
+                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
+                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
+                    return '<i class="far fa-star"></i>';
+                }).join('');
+
+                const priceDisplay = product.price ? `${product.price}$` : 'تواصل معنا';
+
+                card.innerHTML = `
+                    <div class="product-img-container game-inner-img">
+                        <img src="${group.image}" class="product-img" alt="${product.name}"
+                             loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">دفع</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-price">${priceDisplay}</p>
+                        <div class="product-rating">
+                            <div class="stars">${starsHtml}</div>
+                            <span class="rating-count">(${ratingCount})</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="product-details-btn payment-details">
+                                <i class="fas fa-info-circle"></i> تفاصيل المنتج
+                            </button>
+                            <button class="add-to-cart-btn payment-cart">
+                                <i class="fas fa-shopping-cart"></i> أضف للسلة
+                            </button>
+                            <button class="whatsapp-btn-product payment-wa">
+                                <i class="fab fa-whatsapp"></i> استفسار
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                card.querySelector('.payment-details').addEventListener('click', () => {
+                    showPaymentProductDetails(paymentProductData);
+                });
+
+                card.querySelector('.payment-cart').addEventListener('click', () => {
+                    const cartItem = {
+                        id: paymentProductData.id,
+                        name: paymentProductData.name,
+                        price: product.price || 0,
+                        quantity: 1,
+                        image: group.image,
+                        category: 'الدفع الالكتروني'
+                    };
+                    const existing = cart.find(i => i.id === cartItem.id);
+                    if (existing) existing.quantity++;
+                    else cart.push(cartItem);
+                    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
+                    updateCartUI();
+                    showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                });
+
+                card.querySelector('.payment-wa').addEventListener('click', () => {
+                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
                 });
 
                 productsGrid.appendChild(card);
@@ -8900,11 +9494,24 @@
                 `;
 
                 card.querySelector('.vpn-details').addEventListener('click', () => {
-                    showProductDetails(vpnProductData.id);
+                    showPaymentProductDetails(vpnProductData);
                 });
 
                 card.querySelector('.vpn-cart').addEventListener('click', () => {
-                    addToCart(vpnProductData.id);
+                    const cartItem = {
+                        id: vpnProductData.id,
+                        name: vpnProductData.name,
+                        price: product.price || 0,
+                        quantity: 1,
+                        image: group.image,
+                        category: 'اشتراكات VPN'
+                    };
+                    const existing = cart.find(i => i.id === cartItem.id);
+                    if (existing) existing.quantity++;
+                    else cart.push(cartItem);
+                    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
+                    updateCartUI();
+                    showToast('تمت إضافة المنتج إلى السلة بنجاح!');
                 });
 
                 card.querySelector('.vpn-wa').addEventListener('click', () => {

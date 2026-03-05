@@ -9684,7 +9684,7 @@
                 `;
 
                 card.querySelector('.premium-details').addEventListener('click', () => {
-                    showProductDetails(premiumProductData.id);
+                    showPaymentProductDetails(premiumProductData);
                 });
 
                 card.querySelector('.premium-cart').addEventListener('click', () => {
@@ -11701,6 +11701,122 @@
             productDetailsModal.classList.add('active');
         }
         
+
+        // -------------------- عرض تفاصيل منتجات الدفع / VPN / التلفاز / التصميم / الأرقام --------------------
+        function showPaymentProductDetails(paymentProduct) {
+            if (!paymentProduct) return;
+
+            const priceDisplay = paymentProduct.price ? `${paymentProduct.price}$` : 'تواصل معنا';
+            const imageUrl = paymentProduct.image || 'images/placeholder.jpg';
+            const desc = paymentProduct.description || paymentProduct.name;
+
+            // استخراج اسم التصنيف من الكائن إن وُجد
+            const catName = paymentProduct.category || 'منتج';
+
+            // ميزات مناسبة حسب التصنيف
+            let featuresHtml = `
+                <li><i class="fas fa-check-circle"></i> توصيل فوري بعد التأكيد</li>
+                <li><i class="fas fa-check-circle"></i> دفع آمن عبر شام كاش</li>
+                <li><i class="fas fa-check-circle"></i> دعم 24/7 عبر واتساب</li>
+            `;
+            const catL = catName.toLowerCase();
+            if (catL.includes('vpn')) {
+                featuresHtml = `
+                    <li><i class="fas fa-check-circle"></i> حماية كاملة للخصوصية</li>
+                    <li><i class="fas fa-check-circle"></i> سرعات عالية بدون تقليل</li>
+                    <li><i class="fas fa-check-circle"></i> يعمل على جميع الأجهزة</li>
+                    <li><i class="fas fa-check-circle"></i> دعم فوري عبر واتساب</li>
+                `;
+            } else if (catL.includes('تلفاز') || catL.includes('نيتفليكس') || catL.includes('شاهد')) {
+                featuresHtml = `
+                    <li><i class="fas fa-check-circle"></i> جودة بث عالية</li>
+                    <li><i class="fas fa-check-circle"></i> يعمل على جميع الأجهزة</li>
+                    <li><i class="fas fa-check-circle"></i> تسليم فوري بعد الدفع</li>
+                    <li><i class="fas fa-check-circle"></i> دعم عبر واتساب</li>
+                `;
+            } else if (catL.includes('تصميم') || catL.includes('كانفا') || catL.includes('كاب')) {
+                featuresHtml = `
+                    <li><i class="fas fa-check-circle"></i> ترخيص أصلي</li>
+                    <li><i class="fas fa-check-circle"></i> يعمل على جميع الأجهزة</li>
+                    <li><i class="fas fa-check-circle"></i> تسليم فوري بعد الدفع</li>
+                    <li><i class="fas fa-check-circle"></i> دعم عبر واتساب</li>
+                `;
+            } else if (catL.includes('واتساب') || catL.includes('تليغرام') || catL.includes('arqam')) {
+                featuresHtml = `
+                    <li><i class="fas fa-check-circle"></i> رقم مكفول من الحظر</li>
+                    <li><i class="fas fa-check-circle"></i> تسليم فوري</li>
+                    <li><i class="fas fa-check-circle"></i> دعم عبر واتساب</li>
+                `;
+            }
+
+            productDetailsBody.innerHTML = `
+                <div class="product-details-image">
+                    <img src="${imageUrl}" alt="${paymentProduct.name}" onerror="this.src='images/placeholder.jpg'">
+                </div>
+                <div class="product-details-info">
+                    <h2 class="product-details-title">${paymentProduct.name}</h2>
+                    <span class="product-details-category">${catName}</span>
+
+                    <div class="product-details-price-box">
+                        <div class="product-details-price">${priceDisplay}</div>
+                        <div class="product-details-price-label">السعر بالدولار</div>
+                    </div>
+
+                    <div class="product-details-description">
+                        <strong>وصف المنتج:</strong><br>
+                        ${desc}
+                    </div>
+
+                    <ul class="product-details-features">
+                        ${featuresHtml}
+                    </ul>
+
+                    <div class="product-details-actions">
+                        <button class="product-details-add-to-cart" id="payDetAddCart">
+                            <i class="fas fa-cart-plus"></i> أضف للسلة
+                        </button>
+                        <button class="product-details-whatsapp" id="payDetWa">
+                            <i class="fab fa-whatsapp"></i> استفسار
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            productDetailsModal.classList.add('active');
+
+            setTimeout(() => {
+                const addBtn = document.getElementById('payDetAddCart');
+                const waBtn  = document.getElementById('payDetWa');
+
+                if (addBtn) {
+                    addBtn.addEventListener('click', () => {
+                        const cartItem = {
+                            id: paymentProduct.id,
+                            name: paymentProduct.name,
+                            price: paymentProduct.price || 0,
+                            quantity: 1,
+                            image: paymentProduct.image,
+                            category: paymentProduct.category || 'منتج'
+                        };
+                        const existing = cart.find(i => i.id === cartItem.id);
+                        if (existing) existing.quantity++;
+                        else cart.push(cartItem);
+                        localStorage.setItem('zoodnyCart', JSON.stringify(cart));
+                        updateCartUI();
+                        productDetailsModal.classList.remove('active');
+                        showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                    });
+                }
+
+                if (waBtn) {
+                    waBtn.addEventListener('click', () => {
+                        const msg = `أريد الاستفسار عن: ${paymentProduct.name} - السعر: ${priceDisplay}`;
+                        window.open('https://wa.me/963982199738?text=' + encodeURIComponent(msg), '_blank');
+                    });
+                }
+            }, 50);
+        }
+
         // -------------------- تهيئة الصفحة --------------------
         document.addEventListener('DOMContentLoaded', function() {
             renderCategories();

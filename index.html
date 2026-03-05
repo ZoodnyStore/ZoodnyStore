@@ -5408,6 +5408,84 @@
             },
         ];
 
+        // ==================== بيانات اشتراكات VPN ====================
+        const vpnData = [
+            {
+                id: "proton-vpn",
+                name: "بروتون VPN",
+                category: "اشتراكات VPN",
+                description: "بروتون VPN - حساب جاهز",
+                image: "بروتون.jpg",
+                products: [
+                    { id: 507, name: "بروتون VPN - شهر", price: 5.70 },
+                    { id: 508, name: "بروتون VPN - شهرين", price: 8.90 },
+                    { id: 509, name: "بروتون VPN - 3 اشهر", price: 13 },
+                    { id: 510, name: "بروتون VPN - 6 اشهر", price: 21.50 },
+                    { id: 511, name: "بروتون VPN - سنة", price: 36 },
+                    { id: 512, name: "بروتون VPN - سنتين", price: 63 },
+                ]
+            },
+            {
+                id: "jer-vpn",
+                name: "جير اب بوستر",
+                category: "اشتراكات VPN",
+                description: "جير اب بوستر - اكواد استرداد",
+                image: "جير اب بوستر.png",
+                products: [
+                    { id: 513, name: "جير اب بوستر - اسبوع - للهاتف", price: "" },
+                    { id: 514, name: "جير اب بوستر - شهر - للهاتف", price: 2.70 },
+                    { id: 515, name: "جير اب بوستر - 3 اشهر - للهاتف", price: 7 },
+                    { id: 516, name: "جير اب بوستر - سنة - للهاتف", price: 21.20 },
+                    { id: 517, name: "جير اب بوستر - شهر - للكومبيوتر", price: 6 },
+                    { id: 518, name: "جير اب بوستر - 3 اشهر - للكومبيوتر", price: 16.50 },
+                    { id: 519, name: "جير اب بوستر - سنة - للكومبيوتر", price: 59.20 },
+                ]
+            },
+            {
+                id: "express-vpn",
+                name: "اكسبريس VPN",
+                category: "اشتراكات VPN",
+                description: "اكسبريس VPN - حساب جاهز خاص",
+                image: "اكسبريس.png",
+                products: [
+                    { id: 520, name: "اكسبريس VPN - شهر - للهاتف", price: 4 },
+                    { id: 521, name: "اكسبريس VPN - 3 اشهر - للهاتف", price: 10 },
+                    { id: 522, name: "اكسبريس VPN - 6 اشهر - للهاتف", price: 19 },
+                    { id: 523, name: "اكسبريس VPN - سنة - للهاتف", price: 30 },
+                    { id: 524, name: "اكسبريس VPN - شهر - للكومبيوتر", price: 4.50 },
+                ]
+            },
+            {
+                id: "pia-vpn",
+                name: "بيا VPN",
+                category: "اشتراكات VPN",
+                description: "bia VPN - حساب جاهز",
+                image: "بيا.jpg",
+                products: [
+                    { id: 525, name: "bia VPN - شهر", price: 3 },
+                    { id: 526, name: "bia VPN - 3 اشهر", price: 7.60 },
+                    { id: 527, name: "bia VPN - 6 اشهر", price: 13 },
+                    { id: 528, name: "bia VPN - سنة", price: 24 },
+                    { id: 529, name: "bia VPN - سنتين", price: 40 },
+                ]
+            },
+            {
+                id: "lago-vpn",
+                name: "لاغوفاست بوستر",
+                category: "اشتراكات VPN",
+                description: "لاغوفاست بوستر - كود استرداد",
+                image: "لاغوفاست هاتف.png",
+                products: [
+                    { id: 530, name: "لاغوفاست - شهر - للهاتف", price: 7 },
+                    { id: 531, name: "لاغوفاست - سنة - للهاتف", price: 42 },
+                    { id: 532, name: "لاغوفاست - شهر - للكومبيوتر", price: 9 },
+                    { id: 533, name: "لاغوفاست - 3 اشهر - للكومبيوتر", price: 23.30 },
+                    { id: 534, name: "لاغوفاست - 6 اشهر - للكومبيوتر", price: 40.90 },
+                    { id: 535, name: "لاغوفاست - سنة - للكومبيوتر", price: 71.50 },
+                ]
+            },
+        ];
+
         // -------------------- بيانات المنتجات مع صور خاصة لكل منتج --------------------
         const products = [
             // أكسسوارات الهاتف - مع صور خاصة
@@ -7827,6 +7905,11 @@
                 productFilters.style.display = 'none';
                 categoryProductsTitle.textContent = 'تفعيلات بريميوم';
                 renderPremiumGroups();
+            // اشتراكات VPN — نظام كروت مجمّعة
+            } else if (categoryId === 'اشتراكات VPN') {
+                productFilters.style.display = 'none';
+                categoryProductsTitle.textContent = 'اشتراكات VPN';
+                renderVpnGroups();
             // إذا كان التصنيف هو "خدمات سوشال ميديا"، نعرض المنصات أولاً
             } else if (categoryId === 'social-media') {
                 renderPlatforms();
@@ -8422,6 +8505,146 @@
 
                 card.querySelector('.premium-wa').addEventListener('click', () => {
                     openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${product.price}$`);
+                });
+
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // -------------------- عرض كروت اشتراكات VPN --------------------
+        function renderVpnGroups() {
+            productsGrid.innerHTML = '';
+            const groups = vpnData;
+
+            injectCardSearchBar(productsGrid, groups, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .category-card').forEach(card => {
+                    const name = card.querySelector('.category-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+                });
+            });
+
+            groups.forEach((group, idx) => {
+                const card = document.createElement('a');
+                card.className = 'category-card';
+                card.href = '#';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+
+                const subtitleText = group.description || 'اشتراك VPN';
+                const productCount = group.products ? group.products.length : 0;
+
+                card.innerHTML = `
+                    <div class="category-img-container">
+                        <img src="${group.image}" class="category-img" alt="${group.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">VPN</span>
+                    </div>
+                    <div class="category-info">
+                        <h3 class="category-title">${group.name}</h3>
+                        <p class="category-description">${subtitleText}</p>
+                        <p class="category-count">${productCount} منتج</p>
+                        <button class="category-btn">
+                            <i class="fas fa-shield-alt"></i> عرض الاشتراكات
+                        </button>
+                    </div>
+                `;
+
+                card.addEventListener('click', (e) => { e.preventDefault(); showVpnProducts(group); });
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // -------------------- عرض منتجات VPN محددة --------------------
+        function showVpnProducts(group) {
+            productsGrid.innerHTML = '';
+            categoryProductsTitle.textContent = group.name;
+            productFilters.style.display = 'none';
+
+            const backWrap = document.createElement('div');
+            backWrap.style.gridColumn = '1 / -1';
+            backWrap.innerHTML = `
+                <button class="back-to-games" id="backToVpnBtn">
+                    <i class="fas fa-arrow-right"></i> العودة إلى اشتراكات VPN
+                </button>
+            `;
+            productsGrid.appendChild(backWrap);
+            backWrap.querySelector('#backToVpnBtn').addEventListener('click', () => {
+                categoryProductsTitle.textContent = 'اشتراكات VPN';
+                renderVpnGroups();
+            });
+
+            injectCardSearchBar(productsGrid, group.products, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .product-card[data-vpn-id]').forEach(card => {
+                    const title = card.querySelector('.product-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || title.includes(q)) ? '' : 'none';
+                });
+            });
+
+            group.products.forEach((product, idx) => {
+                const vpnProductData = {
+                    id: product.id,
+                    name: product.name,
+                    category: 'اشتراكات VPN',
+                    price: product.price,
+                    description: group.description,
+                    image: group.image
+                };
+
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+                card.setAttribute('data-vpn-id', String(product.id));
+
+                const avgRaw = 3.5 + (product.id % 10) * 0.15;
+                const avg = Math.min(5, avgRaw);
+                const ratingCount = 20 + (product.id % 180);
+                const starsHtml = [1,2,3,4,5].map(i => {
+                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
+                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
+                    return '<i class="far fa-star"></i>';
+                }).join('');
+
+                const priceDisplay = product.price ? `${product.price}$` : 'تواصل معنا';
+
+                card.innerHTML = `
+                    <div class="product-img-container game-inner-img">
+                        <img src="${group.image}" class="product-img" alt="${product.name}"
+                             loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">VPN</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-price">${priceDisplay}</p>
+                        <div class="product-rating">
+                            <div class="stars">${starsHtml}</div>
+                            <span class="rating-count">(${ratingCount})</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="product-details-btn vpn-details">
+                                <i class="fas fa-info-circle"></i> تفاصيل المنتج
+                            </button>
+                            <button class="add-to-cart-btn vpn-cart">
+                                <i class="fas fa-shopping-cart"></i> أضف للسلة
+                            </button>
+                            <button class="whatsapp-btn-product vpn-wa">
+                                <i class="fab fa-whatsapp"></i> استفسار
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                card.querySelector('.vpn-details').addEventListener('click', () => {
+                    showProductDetails(vpnProductData.id);
+                });
+
+                card.querySelector('.vpn-cart').addEventListener('click', () => {
+                    addToCart(vpnProductData.id);
+                });
+
+                card.querySelector('.vpn-wa').addEventListener('click', () => {
+                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
                 });
 
                 productsGrid.appendChild(card);
@@ -9111,7 +9334,26 @@
         
         // -------------------- إضافة منتج إلى السلة --------------------
         function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null, gameAmount_ = null, playerId = null, appQuantity_ = null, premiumInputValue = null) {
-            const product = products.find(p => p.id === productId);
+            let product = products.find(p => p.id === productId);
+            
+            // إذا لم يُعثر على المنتج، ابحث في vpnData
+            if (!product) {
+                for (const vpnGroup of vpnData) {
+                    const found = vpnGroup.products.find(p => p.id === productId);
+                    if (found) {
+                        product = {
+                            id: found.id,
+                            name: found.name,
+                            category: 'اشتراكات VPN',
+                            price: found.price,
+                            description: vpnGroup.description,
+                            image: vpnGroup.image
+                        };
+                        break;
+                    }
+                }
+            }
+            
             if (!product) return;
             
             let itemPrice = product.price;

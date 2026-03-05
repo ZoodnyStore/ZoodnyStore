@@ -8382,6 +8382,11 @@
                 productFilters.style.display = 'none';
                 categoryProductsTitle.textContent = 'اشتراكات برامج التصميم';
                 renderDesignGroups();
+            // شحن الألعاب — نظام كروت منفصلة
+            } else if (categoryId === 'games') {
+                productFilters.style.display = 'none';
+                categoryProductsTitle.textContent = 'شحن ألعاب';
+                renderGameGroups();
             // إذا كان التصنيف هو "خدمات سوشال ميديا"، نعرض المنصات أولاً
             } else if (categoryId === 'social-media') {
                 renderPlatforms();
@@ -8396,16 +8401,17 @@
             }
         }
 
-        // -------------------- بناء مجموعات الألعاب --------------------
+        // -------------------- بناء مجموعات الألعاب (كل لعبة单独的 كرت) --------------------
         function buildGameGroups() {
             const groups = {};
             gamesData.forEach(game => {
-                // استخرج اسم اللعبة الأساسي (قبل " - ")
                 const baseName = game.name.split(' - ')[0].trim();
                 if (!groups[baseName]) {
                     groups[baseName] = {
                         baseName,
                         image: game.image,
+                        description: game.description,
+                        inputLabel: game.inputLabel,
                         games: []
                     };
                 }
@@ -8419,7 +8425,6 @@
             productsGrid.innerHTML = '';
             const groups = buildGameGroups();
 
-            // شريط البحث
             injectCardSearchBar(productsGrid, groups, function(query) {
                 const q = query.trim().toLowerCase();
                 document.querySelectorAll('#productsGrid .category-card').forEach(card => {
@@ -8435,12 +8440,16 @@
                 card.setAttribute('data-aos', 'fade-up');
                 card.setAttribute('data-aos-delay', String((idx % 4) * 80));
 
+                let productCount = 0;
+                group.games.forEach(g => {
+                    if (g.amounts) productCount += g.amounts.length;
+                });
+
                 const subtitles = group.games.map(g => {
                     const part = g.name.includes(' - ') ? g.name.split(' - ')[1] : g.name;
                     return part;
                 });
                 const subtitleText = subtitles.slice(0, 3).join(' · ') + (subtitles.length > 3 ? ' ...' : '');
-                const productCount = group.games.length;
 
                 card.innerHTML = `
                     <div class="category-img-container">
@@ -8449,26 +8458,28 @@
                     </div>
                     <div class="category-info">
                         <h3 class="category-title">${group.baseName}</h3>
-                        <p class="category-description">${subtitleText}</p>
-                        <p class="category-count">${productCount} منتج</p>
+                        <p class="category-description">${subtitleText || group.description || 'شحن الألعاب'}</p>
+                        <p class="category-count">${productCount} باقة</p>
                         <button class="category-btn">
                             <i class="fas fa-shopping-bag"></i> عرض المنتجات
                         </button>
                     </div>
                 `;
 
-                card.addEventListener('click', (e) => { e.preventDefault(); showGameProducts(group); });
+                card.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    showGameTypes(group);
+                });
                 productsGrid.appendChild(card);
             });
         }
 
-        // -------------------- عرض منتجات لعبة محددة --------------------
-        function showGameProducts(group) {
+        // -------------------- عرض الأنواع الداخلية للألعاب (شدات، كوينز، الخ) --------------------
+        function showGameTypes(group) {
             productsGrid.innerHTML = '';
             categoryProductsTitle.textContent = group.baseName;
             productFilters.style.display = 'none';
 
-            // زر العودة لكروت الألعاب
             const backWrap = document.createElement('div');
             backWrap.style.gridColumn = '1 / -1';
             backWrap.innerHTML = `
@@ -8482,85 +8493,37 @@
                 renderGameGroups();
             });
 
-            // شريط البحث
-            injectCardSearchBar(productsGrid, group.games, function(query) {
-                const q = query.trim().toLowerCase();
-                document.querySelectorAll('#productsGrid .product-card[data-game-id]').forEach(card => {
-                    const title = card.querySelector('.product-title')?.textContent.toLowerCase() || '';
-                    card.style.display = (!q || title.includes(q)) ? '' : 'none';
-                });
-            });
-
             group.games.forEach((game, idx) => {
-                // ===== نفس HTML لـ product-card الأصلي تماماً =====
-                const card = document.createElement('div');
-                card.className = 'product-card';
+                const card = document.createElement('a');
+                card.className = 'category-card';
+                card.href = '#';
                 card.setAttribute('data-aos', 'fade-up');
                 card.setAttribute('data-aos-delay', String((idx % 4) * 80));
-                card.setAttribute('data-game-id', String(game.id));
 
-                // اسم العرض: الجزء بعد " - " أو الاسم كاملاً
-                const displayName = game.name.includes(' - ')
+                const typeName = game.name.includes(' - ')
                     ? game.name.split(' - ').slice(1).join(' - ')
                     : game.name;
-
-                // تقييم ثابت بناءً على id
-                const avgRaw = 3.5 + (game.id % 10) * 0.15;
-                const avg = Math.min(5, avgRaw);
-                const ratingCount = 20 + (game.id % 180);
-                const starsHtml = [1,2,3,4,5].map(i => {
-                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
-                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
-                    return '<i class="far fa-star"></i>';
-                }).join('');
+                const productCount = game.amounts ? game.amounts.length : 0;
 
                 card.innerHTML = `
-                    <div class="product-img-container game-inner-img">
-                        <img src="${game.image}"
-                             class="product-img"
-                             alt="${game.name}"
-                             loading="lazy"
-                             onerror="this.src='images/placeholder.jpg'">
+                    <div class="category-img-container">
+                        <img src="${game.image}" class="category-img" alt="${typeName}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
                         <span class="product-badge">رقمي</span>
                     </div>
-                    <div class="product-info">
-                        <h3 class="product-title">${displayName}</h3>
-                        <p class="product-price">اختر الكمية</p>
-                        <div class="product-rating">
-                            <div class="stars">${starsHtml}</div>
-                            <span class="rating-count">(${ratingCount})</span>
-                        </div>
-                        <div class="product-actions">
-                            <button class="product-details-btn gp-details">
-                                <i class="fas fa-info-circle"></i> تفاصيل المنتج
-                            </button>
-                            <button class="add-to-cart-btn gp-charge">
-                                <i class="fas fa-shopping-cart"></i> أضف للسلة
-                            </button>
-                            <button class="whatsapp-btn-product gp-wa">
-                                <i class="fab fa-whatsapp"></i> استفسار
-                            </button>
-                        </div>
+                    <div class="category-info">
+                        <h3 class="category-title">${typeName}</h3>
+                        <p class="category-description">${game.description || 'شحن ' + typeName}</p>
+                        <p class="category-count">${productCount} باقة</p>
+                        <button class="category-btn">
+                            <i class="fas fa-shopping-bag"></i> اختر الباقة
+                        </button>
                     </div>
                 `;
 
-                // زر تفاصيل
-                card.querySelector('.gp-details').addEventListener('click', () => {
-                    const product = products.find(p => p.id === game.id);
-                    if (product) showProductDetails(product.id);
+                card.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    openGameModal(game);
                 });
-
-                // زر أضف للسلة — يفتح نافذة الشحن
-                card.querySelector('.gp-charge').addEventListener('click', () => {
-                    const product = products.find(p => p.id === game.id);
-                    if (product) openGameModal(product);
-                });
-
-                // زر استفسار واتساب
-                card.querySelector('.gp-wa').addEventListener('click', () => {
-                    openWhatsApp(`أريد الاستفسار عن شحن ${game.name}`);
-                });
-
                 productsGrid.appendChild(card);
             });
         }
@@ -10685,7 +10648,7 @@
             
             gameModal.classList.add('active');
         }
-        
+
         // -------------------- فتح نافذة تفعيلات البريميوم --------------------
         function openPremiumModal(product) {
             // الحصول على البيانات الكاملة من premiumActivationsData إذا لم تكن موجودة
@@ -10738,8 +10701,27 @@
         function updateGamePricePreview() {
             const selectedOption = gameAmount.options[gameAmount.selectedIndex];
             if (selectedOption && selectedOption.value) {
-                const price = selectedOption.getAttribute('data-price');
-                const value = selectedOption.value;
+                let price, value;
+                
+                try {
+                    const data = JSON.parse(selectedOption.value);
+                    if (data.gameId !== undefined) {
+                        price = data.price;
+                        value = data.value;
+                        selectedGameProduct = { 
+                            id: data.gameId, 
+                            selectedAmount: data,
+                            groupName: selectedGameProduct?.baseName || selectedGameProduct?.name
+                        };
+                    } else {
+                        price = selectedOption.getAttribute('data-price');
+                        value = selectedOption.value;
+                    }
+                } catch(e) {
+                    price = selectedOption.getAttribute('data-price');
+                    value = selectedOption.value;
+                }
+                
                 calculatedGamePrice.textContent = `${parseFloat(price).toFixed(2)}$`;
                 selectedGameValue.textContent = value;
             } else {
@@ -12034,8 +12016,20 @@
                     return;
                 }
                 
-                addToCart(selectedGameProduct.id, null, null, null, null, amount, playerIdValue);
+                let productId = selectedGameProduct.id;
+                let productName = selectedGameProduct.name || selectedGameProduct.baseName;
+                let productPrice = null;
+                let amountDisplay = '';
                 
+                if (selectedGameProduct.selectedAmount) {
+                    productId = selectedGameProduct.id + '_' + selectedGameProduct.selectedAmount.value;
+                    productName = `${selectedGameProduct.groupName} - ${selectedGameProduct.selectedAmount.display}`;
+                    productPrice = selectedGameProduct.selectedAmount.price;
+                    amountDisplay = selectedGameProduct.selectedAmount.display;
+                }
+                
+                addToCart(productId, null, productPrice, null, null, amount, playerIdValue);
+                showToast('تمت إضافة المنتج إلى السلة بنجاح!');
                 gameModal.classList.remove('active');
                 selectedGameProduct = null;
             });

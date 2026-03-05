@@ -8331,6 +8331,16 @@
                 productFilters.style.display = 'none';
                 categoryProductsTitle.textContent = 'الدفع الإلكتروني';
                 renderPaymentGroups();
+            // اشتراكات التلفاز — نظام كروت مجمّعة
+            } else if (categoryId === 'اشتراكات التلفاز') {
+                productFilters.style.display = 'none';
+                categoryProductsTitle.textContent = 'اشتراكات التلفاز';
+                renderTvGroups();
+            // برامج التصميم — نظام كروت مجمّعة
+            } else if (categoryId === 'برامج التصميم') {
+                productFilters.style.display = 'none';
+                categoryProductsTitle.textContent = 'اشتراكات برامج التصميم';
+                renderDesignGroups();
             // إذا كان التصنيف هو "خدمات سوشال ميديا"، نعرض المنصات أولاً
             } else if (categoryId === 'social-media') {
                 renderPlatforms();
@@ -8947,7 +8957,319 @@
                 productsGrid.appendChild(card);
             });
         }
-        
+
+        // ==================== اشتراكات التلفاز — كروت مجمّعة ====================
+        const TV_GROUP_MAP = [
+            { keywords: ['نيتفليكس', 'netflix'],       name: 'نيتفليكس'     },
+            { keywords: ['شاهد', 'vip', 'shahid'],      name: 'شاهد VIP'     },
+            { keywords: ['ديزني', 'disney'],             name: 'ديزني بلس'    },
+            { keywords: ['hbo'],                         name: 'HBO Max'      },
+            { keywords: ['prime', 'برايم', 'amazon'],   name: 'Amazon Prime' },
+            { keywords: ['osn'],                         name: 'OSN+'         },
+            { keywords: ['iptv', 'مشاهدة'],              name: 'IPTV'         },
+        ];
+
+        function getGroupNameForTv(product) {
+            const haystack = (product.name + ' ' + (product.image || '')).toLowerCase();
+            for (const def of TV_GROUP_MAP) {
+                if (def.keywords.some(k => haystack.includes(k.toLowerCase()))) {
+                    return def.name;
+                }
+            }
+            return product.name.split(/[-–\s]/)[0].trim();
+        }
+
+        function buildTvGroups() {
+            const groups = {};
+            products.filter(p => p.category === 'اشتراكات التلفاز').forEach(p => {
+                const baseName = getGroupNameForTv(p);
+                if (!groups[baseName]) {
+                    groups[baseName] = { name: baseName, image: p.image, products: [] };
+                }
+                groups[baseName].products.push(p);
+            });
+            return Object.values(groups);
+        }
+
+        function renderTvGroups() {
+            productsGrid.innerHTML = '';
+            const groups = buildTvGroups();
+
+            injectCardSearchBar(productsGrid, groups, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .category-card').forEach(card => {
+                    const name = card.querySelector('.category-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+                });
+            });
+
+            groups.forEach((group, idx) => {
+                const card = document.createElement('a');
+                card.className = 'category-card';
+                card.href = '#';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+
+                const subtitleText = group.products.map(p => {
+                    const part = p.name.includes('-') ? p.name.split('-').slice(1).join('-').trim() : p.name;
+                    return part;
+                }).slice(0, 3).join(' · ') + (group.products.length > 3 ? ' ...' : '');
+
+                card.innerHTML = `
+                    <div class="category-img-container">
+                        <img src="${group.image}" class="category-img" alt="${group.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">اشتراك</span>
+                    </div>
+                    <div class="category-info">
+                        <h3 class="category-title">${group.name}</h3>
+                        <p class="category-description">${subtitleText}</p>
+                        <p class="category-count">${group.products.length} منتج</p>
+                        <button class="category-btn">
+                            <i class="fas fa-tv"></i> عرض الاشتراكات
+                        </button>
+                    </div>
+                `;
+                card.addEventListener('click', e => { e.preventDefault(); showTvProducts(group); });
+                productsGrid.appendChild(card);
+            });
+        }
+
+        function showTvProducts(group) {
+            productsGrid.innerHTML = '';
+            categoryProductsTitle.textContent = group.name;
+            productFilters.style.display = 'none';
+
+            const backWrap = document.createElement('div');
+            backWrap.style.gridColumn = '1 / -1';
+            backWrap.innerHTML = `<button class="back-to-games" id="backToTvBtn"><i class="fas fa-arrow-right"></i> العودة إلى اشتراكات التلفاز</button>`;
+            productsGrid.appendChild(backWrap);
+            backWrap.querySelector('#backToTvBtn').addEventListener('click', () => {
+                categoryProductsTitle.textContent = 'اشتراكات التلفاز';
+                renderTvGroups();
+            });
+
+            injectCardSearchBar(productsGrid, group.products, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .product-card[data-tv-id]').forEach(card => {
+                    const title = card.querySelector('.product-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || title.includes(q)) ? '' : 'none';
+                });
+            });
+
+            group.products.forEach((product, idx) => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+                card.setAttribute('data-tv-id', String(product.id));
+
+                const avgRaw = 3.5 + (product.id % 10) * 0.15;
+                const avg = Math.min(5, avgRaw);
+                const ratingCount = 20 + (product.id % 180);
+                const starsHtml = [1,2,3,4,5].map(i => {
+                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
+                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
+                    return '<i class="far fa-star"></i>';
+                }).join('');
+
+                // عرض اسم المنتج كاملاً
+                const displayName = product.name;
+                const priceDisplay = product.price > 0 ? `${product.price}$` : 'تواصل معنا';
+
+                card.innerHTML = `
+                    <div class="product-img-container game-inner-img">
+                        <img src="${product.image}" class="product-img" alt="${product.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">اشتراك</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${displayName}</h3>
+                        <p class="product-price">${priceDisplay}</p>
+                        <div class="product-rating">
+                            <div class="stars">${starsHtml}</div>
+                            <span class="rating-count">(${ratingCount})</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="product-details-btn tv-details"><i class="fas fa-info-circle"></i> تفاصيل المنتج</button>
+                            <button class="add-to-cart-btn tv-cart"><i class="fas fa-shopping-cart"></i> أضف للسلة</button>
+                            <button class="whatsapp-btn-product tv-wa"><i class="fab fa-whatsapp"></i> استفسار</button>
+                        </div>
+                    </div>
+                `;
+
+                card.querySelector('.tv-details').addEventListener('click', () => {
+                    showPaymentProductDetails({ id: product.id, name: product.name, price: product.price, image: product.image, description: product.description });
+                });
+                card.querySelector('.tv-cart').addEventListener('click', () => {
+                    const existing = cart.find(i => i.id === product.id);
+                    if (existing) existing.quantity++;
+                    else cart.push({ id: product.id, name: product.name, price: product.price || 0, quantity: 1, image: product.image, category: 'اشتراكات التلفاز' });
+                    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
+                    updateCartUI();
+                    showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                });
+                card.querySelector('.tv-wa').addEventListener('click', () => {
+                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
+                });
+
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // ==================== برامج التصميم — كروت مجمّعة ====================
+        const DESIGN_GROUP_MAP = [
+            { keywords: ['كانفا', 'canva'],           name: 'كانفا برو',  image: 'كانفا.jpg'       },
+            { keywords: ['كاب كات', 'capcut'],         name: 'كاب كات',    image: 'كاب كات.png'     },
+            { keywords: ['بيكس ارت', 'picsart'],       name: 'بيكس ارت',   image: 'بيكس ارت1.jpg'  },
+            { keywords: ['أدوبي', 'adobe', 'ادوبي'],   name: 'أدوبي',      image: 'ادوبي.png'       },
+            { keywords: ['فيجما', 'figma'],             name: 'فيجما',      image: 'فيجما.png'       },
+            { keywords: ['فوتوشوب', 'photoshop'],       name: 'فوتوشوب',    image: 'فوتوشوب.png'     },
+        ];
+
+        function getGroupNameForDesign(product) {
+            const haystack = (product.name + ' ' + (product.image || '')).toLowerCase();
+            for (const def of DESIGN_GROUP_MAP) {
+                if (def.keywords.some(k => haystack.includes(k.toLowerCase()))) {
+                    return { name: def.name, image: def.image };
+                }
+            }
+            const fallback = product.name.split(/[-–]/)[0].trim();
+            return { name: fallback, image: product.image };
+        }
+
+        function buildDesignGroups() {
+            const groups = {};
+            products.filter(p => p.category === 'برامج التصميم').forEach(p => {
+                const { name: baseName, image: baseImage } = getGroupNameForDesign(p);
+                if (!groups[baseName]) {
+                    groups[baseName] = { name: baseName, image: baseImage, products: [] };
+                }
+                groups[baseName].products.push(p);
+            });
+            return Object.values(groups);
+        }
+
+        function renderDesignGroups() {
+            productsGrid.innerHTML = '';
+            const groups = buildDesignGroups();
+
+            injectCardSearchBar(productsGrid, groups, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .category-card').forEach(card => {
+                    const name = card.querySelector('.category-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || name.includes(q)) ? '' : 'none';
+                });
+            });
+
+            groups.forEach((group, idx) => {
+                const card = document.createElement('a');
+                card.className = 'category-card';
+                card.href = '#';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+
+                const subtitleText = group.products.map(p => {
+                    return p.name.includes('-') ? p.name.split('-').slice(1).join('-').trim() : p.name;
+                }).slice(0, 3).join(' · ') + (group.products.length > 3 ? ' ...' : '');
+
+                card.innerHTML = `
+                    <div class="category-img-container">
+                        <img src="${group.image}" class="category-img" alt="${group.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">تصميم</span>
+                    </div>
+                    <div class="category-info">
+                        <h3 class="category-title">${group.name}</h3>
+                        <p class="category-description">${subtitleText}</p>
+                        <p class="category-count">${group.products.length} منتج</p>
+                        <button class="category-btn">
+                            <i class="fas fa-paint-brush"></i> عرض الاشتراكات
+                        </button>
+                    </div>
+                `;
+                card.addEventListener('click', e => { e.preventDefault(); showDesignProducts(group); });
+                productsGrid.appendChild(card);
+            });
+        }
+
+        function showDesignProducts(group) {
+            productsGrid.innerHTML = '';
+            categoryProductsTitle.textContent = group.name;
+            productFilters.style.display = 'none';
+
+            const backWrap = document.createElement('div');
+            backWrap.style.gridColumn = '1 / -1';
+            backWrap.innerHTML = `<button class="back-to-games" id="backToDesignBtn"><i class="fas fa-arrow-right"></i> العودة إلى برامج التصميم</button>`;
+            productsGrid.appendChild(backWrap);
+            backWrap.querySelector('#backToDesignBtn').addEventListener('click', () => {
+                categoryProductsTitle.textContent = 'اشتراكات برامج التصميم';
+                renderDesignGroups();
+            });
+
+            injectCardSearchBar(productsGrid, group.products, function(query) {
+                const q = query.trim().toLowerCase();
+                document.querySelectorAll('#productsGrid .product-card[data-design-id]').forEach(card => {
+                    const title = card.querySelector('.product-title')?.textContent.toLowerCase() || '';
+                    card.style.display = (!q || title.includes(q)) ? '' : 'none';
+                });
+            });
+
+            group.products.forEach((product, idx) => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', String((idx % 4) * 80));
+                card.setAttribute('data-design-id', String(product.id));
+
+                const avgRaw = 3.5 + (product.id % 10) * 0.15;
+                const avg = Math.min(5, avgRaw);
+                const ratingCount = 20 + (product.id % 180);
+                const starsHtml = [1,2,3,4,5].map(i => {
+                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
+                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
+                    return '<i class="far fa-star"></i>';
+                }).join('');
+
+                const displayName = product.name;
+                const priceDisplay = product.price > 0 ? `${product.price}$` : 'تواصل معنا';
+
+                card.innerHTML = `
+                    <div class="product-img-container game-inner-img">
+                        <img src="${product.image}" class="product-img" alt="${product.name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                        <span class="product-badge">تصميم</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${displayName}</h3>
+                        <p class="product-price">${priceDisplay}</p>
+                        <div class="product-rating">
+                            <div class="stars">${starsHtml}</div>
+                            <span class="rating-count">(${ratingCount})</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="product-details-btn design-details"><i class="fas fa-info-circle"></i> تفاصيل المنتج</button>
+                            <button class="add-to-cart-btn design-cart"><i class="fas fa-shopping-cart"></i> أضف للسلة</button>
+                            <button class="whatsapp-btn-product design-wa"><i class="fab fa-whatsapp"></i> استفسار</button>
+                        </div>
+                    </div>
+                `;
+
+                card.querySelector('.design-details').addEventListener('click', () => {
+                    showPaymentProductDetails({ id: product.id, name: product.name, price: product.price, image: product.image, description: product.description });
+                });
+                card.querySelector('.design-cart').addEventListener('click', () => {
+                    const existing = cart.find(i => i.id === product.id);
+                    if (existing) existing.quantity++;
+                    else cart.push({ id: product.id, name: product.name, price: product.price || 0, quantity: 1, image: product.image, category: 'برامج التصميم' });
+                    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
+                    updateCartUI();
+                    showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                });
+                card.querySelector('.design-wa').addEventListener('click', () => {
+                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
+                });
+
+                productsGrid.appendChild(card);
+            });
+        }
+
         // ╔══════════════════════════════════════════════════════════════════════════╗
         // ║  📱 نظام أرقام التطبيقات — نفس منطق كروت الألعاب تماماً             ║
         // ╠══════════════════════════════════════════════════════════════════════════╣

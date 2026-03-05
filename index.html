@@ -3108,6 +3108,42 @@
         </div>
     </div>
 
+
+    <!-- نافذة إدخال الإيميل لمنتجات التصميم (كانفا وغيرها) -->
+    <div class="quantity-modal" id="designEmailModal">
+        <div class="quantity-container">
+            <div class="quantity-header">
+                <h3><i class="fas fa-paint-brush"></i> تفعيل اشتراك التصميم</h3>
+                <button class="quantity-close" id="designEmailClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="quantity-body">
+                <div class="quantity-info">
+                    <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
+                    <span id="selectedDesignName">المنتج</span>
+                </div>
+
+                <div class="form-group" style="margin-top: 1.2rem;">
+                    <label for="designEmailInput" id="designEmailLabel">أدخل الإيميل *</label>
+                    <input type="email" id="designEmailInput" class="form-control"
+                           placeholder="example@gmail.com" required
+                           style="direction: ltr; text-align: left;">
+                    <small style="color: var(--gray); font-size: 0.85rem;" id="designEmailHelp">
+                        سيتم تفعيل الاشتراك على هذا الإيميل
+                    </small>
+                </div>
+
+                <div class="price-preview" id="designPricePreview">
+                    <p style="color: var(--gray); margin-bottom: 0.5rem;">السعر:</p>
+                    <span id="calculatedDesignPrice">0.00$</span>
+                </div>
+
+                <button class="submit-order-btn" id="confirmDesignEmailBtn">
+                    <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- نافذة تفاصيل المنتج -->
     <div class="product-details-modal" id="productDetailsModal">
         <div class="product-details-container">
@@ -9263,12 +9299,17 @@
                     showPaymentProductDetails({ id: product.id, name: product.name, price: product.price, image: product.image, description: product.description });
                 });
                 card.querySelector('.design-cart').addEventListener('click', () => {
-                    const existing = cart.find(i => i.id === product.id);
-                    if (existing) existing.quantity++;
-                    else cart.push({ id: product.id, name: product.name, price: product.price || 0, quantity: 1, image: product.image, category: 'برامج التصميم' });
-                    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
-                    updateCartUI();
-                    showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                    // إذا كان المنتج يحتاج إيميل (مثل كانفا) → افتح نافذة الإيميل
+                    if (product.inputLabel) {
+                        openDesignEmailModal(product);
+                    } else {
+                        const existing = cart.find(i => i.id === product.id);
+                        if (existing) existing.quantity++;
+                        else cart.push({ id: product.id, name: product.name, price: product.price || 0, quantity: 1, image: product.image, category: 'برامج التصميم' });
+                        localStorage.setItem('zoodnyCart', JSON.stringify(cart));
+                        updateCartUI();
+                        showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                    }
                 });
                 card.querySelector('.design-wa').addEventListener('click', () => {
                     openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
@@ -11817,6 +11858,38 @@
             }, 50);
         }
 
+
+        // ==================== نافذة إدخال الإيميل لمنتجات التصميم ====================
+        let selectedDesignProduct = null;
+
+        function openDesignEmailModal(product) {
+            selectedDesignProduct = product;
+
+            // اسم المنتج
+            document.getElementById('selectedDesignName').textContent = product.name;
+
+            // نص الحقل
+            const labelEl = document.getElementById('designEmailLabel');
+            if (labelEl) labelEl.textContent = (product.inputLabel || 'أدخل الإيميل') + ' *';
+
+            // placeholder
+            const inputEl = document.getElementById('designEmailInput');
+            if (inputEl) {
+                inputEl.value = '';
+                inputEl.placeholder = product.inputPlaceholder || 'example@gmail.com';
+            }
+
+            // نص المساعدة
+            const helpEl = document.getElementById('designEmailHelp');
+            if (helpEl) helpEl.textContent = product.inputHelp || 'سيتم تفعيل الاشتراك على هذا الإيميل';
+
+            // السعر
+            document.getElementById('calculatedDesignPrice').textContent =
+                product.price ? product.price.toFixed(2) + '$' : '0.00$';
+
+            document.getElementById('designEmailModal').classList.add('active');
+        }
+
         // -------------------- تهيئة الصفحة --------------------
         document.addEventListener('DOMContentLoaded', function() {
             renderCategories();
@@ -12005,6 +12078,65 @@
                 if (e.target === premiumModal) {
                     premiumModal.classList.remove('active');
                     selectedPremiumProduct = null;
+                }
+            });
+
+            // ==================== أحداث نافذة إيميل التصميم ====================
+            const designEmailModal  = document.getElementById('designEmailModal');
+            const designEmailClose  = document.getElementById('designEmailClose');
+            const confirmDesignEmailBtn = document.getElementById('confirmDesignEmailBtn');
+
+            confirmDesignEmailBtn.addEventListener('click', function() {
+                if (!selectedDesignProduct) return;
+
+                const emailVal = document.getElementById('designEmailInput').value.trim();
+
+                if (!emailVal) {
+                    showToast('يرجى إدخال الإيميل أولاً');
+                    return;
+                }
+
+                // التحقق من صيغة الإيميل
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(emailVal)) {
+                    showToast('يرجى إدخال إيميل صحيح');
+                    return;
+                }
+
+                // إضافة للسلة مع حفظ الإيميل في اسم المنتج
+                const cartItem = {
+                    id: selectedDesignProduct.id,
+                    name: selectedDesignProduct.name + ' | إيميل: ' + emailVal,
+                    price: selectedDesignProduct.price || 0,
+                    quantity: 1,
+                    image: selectedDesignProduct.image,
+                    category: 'برامج التصميم',
+                    email: emailVal
+                };
+                const existing = cart.find(i => i.id === cartItem.id);
+                if (existing) {
+                    existing.quantity++;
+                    existing.email = emailVal;
+                    existing.name = cartItem.name;
+                } else {
+                    cart.push(cartItem);
+                }
+                localStorage.setItem('zoodnyCart', JSON.stringify(cart));
+                updateCartUI();
+                designEmailModal.classList.remove('active');
+                selectedDesignProduct = null;
+                showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+            });
+
+            designEmailClose.addEventListener('click', () => {
+                designEmailModal.classList.remove('active');
+                selectedDesignProduct = null;
+            });
+
+            designEmailModal.addEventListener('click', function(e) {
+                if (e.target === designEmailModal) {
+                    designEmailModal.classList.remove('active');
+                    selectedDesignProduct = null;
                 }
             });
             

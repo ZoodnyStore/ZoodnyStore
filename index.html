@@ -8289,7 +8289,8 @@
                 categoriesGrid.appendChild(categoryCard);
             });
             
-            document.querySelectorAll('.category-card, .category-btn').forEach(element => {
+            // فقط كروت قسم التصنيفات الرئيسية — لا تشمل الكروت الداخلية
+            document.querySelectorAll('#categoriesGrid .category-card, #categoriesGrid .category-btn').forEach(element => {
                 element.addEventListener('click', function(e) {
                     e.preventDefault();
                     let categoryId = this.dataset.category;
@@ -8310,6 +8311,10 @@
             categoriesSection.style.display = 'none';
             productsSection.style.display = 'block';
             window.scrollTo({ top: productsSection.offsetTop - 80, behavior: 'smooth' });
+
+            // *** ضبط عنوان التصنيف من مصفوفة categories ***
+            const categoryObj = categories.find(c => c.id === categoryId);
+            if (categoryObj) categoryProductsTitle.textContent = categoryObj.name;
 
             // أرقام للتطبيقات — نظام كروت مجمّعة
             if (categoryId === 'ارقام للتطبيقات') {

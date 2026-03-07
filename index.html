@@ -12517,5 +12517,48 @@
 
         });
     </script>
+
+    <!-- زر خدمة العملاء الثابت -->
+    <a href="https://wa.me/963982199738" class="wa-float-btn" target="_blank" title="تواصل مع خدمة العملاء">
+        <i class="fas fa-headset"></i>
+    </a>
+
+    <style>
+        .wa-float-btn {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #F7C873;
+            color: #2A3F54 !important;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(247, 200, 115, 0.55);
+            transition: transform 0.25s, box-shadow 0.25s;
+            animation: wa-pulse 2.5s infinite;
+        }
+        .wa-float-btn i {
+            font-size: 1.7rem;
+        }
+        .wa-float-btn:hover {
+            transform: translateY(-4px) scale(1.08);
+            box-shadow: 0 10px 28px rgba(247, 200, 115, 0.7);
+            animation: none;
+        }
+        @keyframes wa-pulse {
+            0%, 100% { box-shadow: 0 6px 20px rgba(247, 200, 115, 0.55); }
+            50%       { box-shadow: 0 6px 30px rgba(247, 200, 115, 0.85); }
+        }
+        @media (max-width: 480px) {
+            .wa-float-btn { bottom: 18px; right: 14px; width: 52px; height: 52px; }
+            .wa-float-btn i { font-size: 1.45rem; }
+        }
+    </style>
+
 </body>
 </html>

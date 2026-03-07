@@ -8733,9 +8733,6 @@
                             <button class="add-to-cart-btn vpn-cart">
                                 <i class="fas fa-shopping-cart"></i> أضف للسلة
                             </button>
-                            <button class="whatsapp-btn-product vpn-wa">
-                                <i class="fab fa-whatsapp"></i> استفسار
-                            </button>
                         </div>
                     </div>
                 `;
@@ -8761,9 +8758,6 @@
                     showToast('تمت إضافة المنتج إلى السلة بنجاح!');
                 });
 
-                card.querySelector('.vpn-wa').addEventListener('click', () => {
-                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
-                });
 
                 productsGrid.appendChild(card);
             });
@@ -9017,9 +9011,6 @@
                             <button class="add-to-cart-btn payment-cart">
                                 <i class="fas fa-shopping-cart"></i> أضف للسلة
                             </button>
-                            <button class="whatsapp-btn-product payment-wa">
-                                <i class="fab fa-whatsapp"></i> استفسار
-                            </button>
                         </div>
                     </div>
                 `;
@@ -9045,9 +9036,6 @@
                     showToast('تمت إضافة المنتج إلى السلة بنجاح!');
                 });
 
-                card.querySelector('.payment-wa').addEventListener('click', () => {
-                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
-                });
 
                 productsGrid.appendChild(card);
             });
@@ -9186,7 +9174,6 @@
                         <div class="product-actions">
                             <button class="product-details-btn tv-details"><i class="fas fa-info-circle"></i> تفاصيل المنتج</button>
                             <button class="add-to-cart-btn tv-cart"><i class="fas fa-shopping-cart"></i> أضف للسلة</button>
-                            <button class="whatsapp-btn-product tv-wa"><i class="fab fa-whatsapp"></i> استفسار</button>
                         </div>
                     </div>
                 `;
@@ -9201,9 +9188,6 @@
                     localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                     updateCartUI();
                     showToast('تمت إضافة المنتج إلى السلة بنجاح!');
-                });
-                card.querySelector('.tv-wa').addEventListener('click', () => {
-                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
                 });
 
                 productsGrid.appendChild(card);
@@ -9341,7 +9325,6 @@
                         <div class="product-actions">
                             <button class="product-details-btn design-details"><i class="fas fa-info-circle"></i> تفاصيل المنتج</button>
                             <button class="add-to-cart-btn design-cart"><i class="fas fa-shopping-cart"></i> أضف للسلة</button>
-                            <button class="whatsapp-btn-product design-wa"><i class="fab fa-whatsapp"></i> استفسار</button>
                         </div>
                     </div>
                 `;
@@ -9361,9 +9344,6 @@
                         updateCartUI();
                         showToast('تمت إضافة المنتج إلى السلة بنجاح!');
                     }
-                });
-                card.querySelector('.design-wa').addEventListener('click', () => {
-                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
                 });
 
                 productsGrid.appendChild(card);
@@ -9629,9 +9609,6 @@
                             <button class="add-to-cart-btn ap-cart">
                                 <i class="fas fa-shopping-cart"></i> أضف للسلة
                             </button>
-                            <button class="whatsapp-btn-product ap-wa">
-                                <i class="fab fa-whatsapp"></i> استفسار
-                            </button>
                         </div>
                     </div>
                 `;
@@ -9641,9 +9618,6 @@
                 });
                 card.querySelector('.ap-cart').addEventListener('click', () => {
                     addToCart(product.id);
-                });
-                card.querySelector('.ap-wa').addEventListener('click', () => {
-                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
                 });
 
                 productsGrid.appendChild(card);
@@ -9768,9 +9742,6 @@
                             <button class="add-to-cart-btn premium-cart">
                                 <i class="fas fa-shopping-cart"></i> أضف للسلة
                             </button>
-                            <button class="whatsapp-btn-product premium-wa">
-                                <i class="fab fa-whatsapp"></i> استفسار
-                            </button>
                         </div>
                     </div>
                 `;
@@ -9783,9 +9754,6 @@
                     openPremiumModal(premiumProductData);
                 });
 
-                card.querySelector('.premium-wa').addEventListener('click', () => {
-                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${product.price}$`);
-                });
 
                 productsGrid.appendChild(card);
             });
@@ -9908,9 +9876,6 @@
                             <button class="add-to-cart-btn vpn-cart">
                                 <i class="fas fa-shopping-cart"></i> أضف للسلة
                             </button>
-                            <button class="whatsapp-btn-product vpn-wa">
-                                <i class="fab fa-whatsapp"></i> استفسار
-                            </button>
                         </div>
                     </div>
                 `;
@@ -9936,9 +9901,6 @@
                     showToast('تمت إضافة المنتج إلى السلة بنجاح!');
                 });
 
-                card.querySelector('.vpn-wa').addEventListener('click', () => {
-                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
-                });
 
                 productsGrid.appendChild(card);
             });
@@ -10179,7 +10141,6 @@
                         <div class="product-actions">
                             <button class="product-details-btn arqam-details"><i class="fas fa-info-circle"></i> تفاصيل</button>
                             <button class="add-to-cart-btn arqam-cart"><i class="fas fa-shopping-cart"></i> أضف للسلة</button>
-                            <button class="whatsapp-btn-product arqam-wa"><i class="fab fa-whatsapp"></i> استفسار</button>
                         </div>
                     </div>
                 `;
@@ -10194,9 +10155,6 @@
                     localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                     updateCartUI();
                     showToast('تمت إضافة المنتج إلى السلة بنجاح!');
-                });
-                card.querySelector('.arqam-wa').addEventListener('click', () => {
-                    openWhatsApp(`أريد الاستفسار عن: ${product.name} - السعر: ${priceDisplay}`);
                 });
 
                 productsGrid.appendChild(card);
@@ -10296,9 +10254,6 @@
                                 <button class="add-to-cart-btn" data-id="${product.id}">
                                     <i class="fas fa-cart-plus"></i> أضف للسلة
                                 </button>
-                                <button class="whatsapp-btn-product" data-id="${product.id}">
-                                    <i class="fab fa-whatsapp"></i> استفسار
-                                </button>
                             ` : '<p style="color: var(--gray); text-align: center; width: 100%; padding: 1rem;">قريباً</p>'}
                         </div>
                     </div>
@@ -10331,37 +10286,6 @@
                         openPremiumModal(product);
                     } else {
                         addToCart(productId);
-                    }
-                });
-            });
-            
-            document.querySelectorAll('.whatsapp-btn-product').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const productId = parseInt(this.getAttribute('data-id'));
-                    const product = products.find(p => p.id === productId);
-                    if (product) {
-                        let message = `اريد الاستفسار عن ${product.name}`;
-                        
-                        if (product.category === 'social-media') {
-                            message += `\nأريد خدمة: ${product.name}`;
-                            message += `\nالسعر: ${product.basePrice || product.price}$ لكل 1000`;
-                            message += `\nالحد الأدنى: 300 - الحد الأقصى: 1,000,000`;
-                        } else if (product.category === 'rased') {
-                            message += `\nأريد شحن رصيد ${product.name}`;
-                        } else if (product.category === 'games') {
-                            message += `\nأريد شحن ${product.name}`;
-                        } else if (product.category === 'app') {
-                            const appData = appsData.find(a => a.name === product.name);
-                            if (appData) {
-                                message += `\nأريد شحن ${product.name}`;
-                                message += `\nالسعر: ${appData.unitPrice}$ للعملة الواحدة`;
-                                message += `\nالحد الأدنى: ${appData.minQuantity} - الحد الأقصى: ${appData.maxQuantity}`;
-                            }
-                        } else {
-                            message += ` بسعر ${product.price}$ من زودني`;
-                        }
-                        
-                        window.open(`https://wa.me/963982199738?text=${encodeURIComponent(message)}`, '_blank');
                     }
                 });
             });
@@ -10508,7 +10432,7 @@
                         <div class="product-actions">
                             <button class="product-details-btn" data-id="${product.id}"><i class="fas fa-info-circle"></i> تفاصيل</button>
                             <button class="add-to-cart-btn" data-id="${product.id}"><i class="fas fa-cart-plus"></i> أضف للسلة</button>
-                            <button class="whatsapp-btn-product" data-id="${product.id}"><i class="fab fa-whatsapp"></i> استفسار</button>
+
                         </div>
                     </div>
                 `;
@@ -10529,17 +10453,6 @@
                     const productId = parseInt(this.getAttribute('data-id'));
                     const product = products.find(p => p.id === productId);
                     openQuantityModal(product);
-                });
-            });
-
-            document.querySelectorAll('.whatsapp-btn-product').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const productId = parseInt(this.getAttribute('data-id'));
-                    const product = products.find(p => p.id === productId);
-                    if (product) {
-                        let message = `اريد الاستفسار عن ${product.name}\nأريد خدمة: ${product.name}\nالسعر: ${product.basePrice || product.price}$ لكل 1000\nالحد الأدنى: 300 - الحد الأقصى: 1,000,000`;
-                        window.open(`https://wa.me/963982199738?text=${encodeURIComponent(message)}`, '_blank');
-                    }
                 });
             });
 
@@ -11744,16 +11657,12 @@
                         <button class="product-details-add-to-cart" data-id="${product.id}">
                             <i class="fas fa-cart-plus"></i> أضف للسلة
                         </button>
-                        <button class="product-details-whatsapp" data-id="${product.id}">
-                            <i class="fab fa-whatsapp"></i> استفسار
-                        </button>
                     </div>
                 </div>
             `;
             
             setTimeout(() => {
                 const detailsAddToCart = document.querySelector('.product-details-add-to-cart');
-                const detailsWhatsapp = document.querySelector('.product-details-whatsapp');
                 
                 if (detailsAddToCart) {
                     detailsAddToCart.addEventListener('click', function() {
@@ -11779,34 +11688,6 @@
                     });
                 }
                 
-                if (detailsWhatsapp) {
-                    detailsWhatsapp.addEventListener('click', function() {
-                        const pid = parseInt(this.getAttribute('data-id'));
-                        const p = products.find(p => p.id === pid);
-                        if (p) {
-                            let message = `اريد الاستفسار عن ${p.name}`;
-                            if (p.category === 'social-media') {
-                                message += `\nأريد خدمة: ${p.name}`;
-                                message += `\nالسعر: ${p.basePrice || p.price}$ لكل 1000`;
-                                message += `\nالحد الأدنى: 300 - الحد الأقصى: 1,000,000`;
-                            } else if (p.category === 'rased') {
-                                message += `\nأريد شحن رصيد ${p.name}`;
-                            } else if (p.category === 'games') {
-                                message += `\nأريد شحن ${p.name}`;
-                            } else if (p.category === 'app') {
-                                const appData = appsData.find(a => a.name === p.name);
-                                if (appData) {
-                                    message += `\nأريد شحن ${p.name}`;
-                                    message += `\nالسعر: ${appData.unitPrice}$ للعملة الواحدة`;
-                                    message += `\nالحد الأدنى: ${appData.minQuantity} - الحد الأقصى: ${appData.maxQuantity}`;
-                                }
-                            } else {
-                                message += ` بسعر ${p.price}$ من زودني`;
-                            }
-                            window.open(`https://wa.me/963982199738?text=${encodeURIComponent(message)}`, '_blank');
-                        }
-                    });
-                }
             }, 100);
             
             productDetailsModal.classList.add('active');
@@ -11886,9 +11767,6 @@
                         <button class="product-details-add-to-cart" id="payDetAddCart">
                             <i class="fas fa-cart-plus"></i> أضف للسلة
                         </button>
-                        <button class="product-details-whatsapp" id="payDetWa">
-                            <i class="fab fa-whatsapp"></i> استفسار
-                        </button>
                     </div>
                 </div>
             `;
@@ -11897,7 +11775,6 @@
 
             setTimeout(() => {
                 const addBtn = document.getElementById('payDetAddCart');
-                const waBtn  = document.getElementById('payDetWa');
 
                 if (addBtn) {
                     addBtn.addEventListener('click', () => {
@@ -11919,12 +11796,6 @@
                     });
                 }
 
-                if (waBtn) {
-                    waBtn.addEventListener('click', () => {
-                        const msg = `أريد الاستفسار عن: ${paymentProduct.name} - السعر: ${priceDisplay}`;
-                        window.open('https://wa.me/963982199738?text=' + encodeURIComponent(msg), '_blank');
-                    });
-                }
             }, 50);
         }
 

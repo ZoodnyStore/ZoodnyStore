@@ -13218,7 +13218,7 @@
         // ── state ────────────────────────────────────────────────────────────
         let currentUser   = null;   // Firebase auth user
         let userData      = null;   // user record from db
-        let adminFilter   = 'all';
+        let adminTopupFilter = 'all';
         let adminOrderFilter = 'all';
         let adminOrders   = [];
         let adminTopups   = [];
@@ -13664,7 +13664,7 @@
             b.addEventListener('click', function() {
                 document.querySelectorAll('[data-f]').forEach(x => x.classList.remove('active'));
                 b.classList.add('active');
-                adminFilter = b.dataset.f;
+                adminTopupFilter = b.dataset.f;
                 renderTopupsTable();
             });
         });
@@ -13789,6 +13789,7 @@
 
                 var btns = '';
                 if (st === 'pending') {
+                    btns += '<button class="adm-act-btn view" onclick="admReviewTopup(\''+t.reqId+'\',\''+t.uid+'\','+parseFloat(t.amount||0)+',\''+encodeURIComponent(JSON.stringify(t))+'\')"><i class="fas fa-eye"></i> مراجعة</button>';
                     btns += '<button class="adm-act-btn accept" onclick="admAcceptTopup(\''+t.reqId+'\',\''+t.uid+'\','+parseFloat(t.amount||0)+')"><i class="fas fa-check"></i> قبول وشحن</button>';
                     btns += '<button class="adm-act-btn reject" onclick="admRejectTopup(\''+t.reqId+'\',\''+t.uid+'\')"><i class="fas fa-times"></i> رفض</button>';
                 }
@@ -13961,6 +13962,37 @@
         };
         window.admDelTopup = function(reqId) {
             dbRef('topup_orders/' + reqId).remove();
+        };
+        window.admReviewTopup = function(reqId, uid, amount, encodedData) {
+            var t = {};
+            try { t = JSON.parse(decodeURIComponent(encodedData)); } catch(e) {}
+            var amt = parseFloat(amount).toFixed(2);
+            var html = '<div style="direction:rtl;font-family:Cairo,sans-serif;padding:1rem">'
+                + '<h3 style="color:#2A3F54;margin-bottom:1rem;font-size:1.1rem"><i class="fas fa-search-dollar" style="color:#F7C873"></i> مراجعة طلب الشحن</h3>'
+                + '<table style="width:100%;border-collapse:collapse;font-size:.9rem">'
+                + '<tr><td style="padding:.4rem .6rem;color:#666;width:40%">رقم الطلب</td><td style="padding:.4rem .6rem;font-weight:700">' + (t.reqId||'-') + '</td></tr>'
+                + '<tr style="background:#f9f9f9"><td style="padding:.4rem .6rem;color:#666">اسم العميل</td><td style="padding:.4rem .6rem;font-weight:700">' + (t.name||'-') + '</td></tr>'
+                + '<tr><td style="padding:.4rem .6rem;color:#666">رقم الهاتف</td><td style="padding:.4rem .6rem;font-weight:700">' + (t.phone||'-') + '</td></tr>'
+                + '<tr style="background:#f9f9f9"><td style="padding:.4rem .6rem;color:#666">المبلغ المطلوب</td><td style="padding:.4rem .6rem;font-weight:700;color:#E74C3C">' + amt + ' $</td></tr>'
+                + '<tr><td style="padding:.4rem .6rem;color:#666">رقم عملية شام كاش</td><td style="padding:.4rem .6rem;font-weight:700">' + (t.txId||t.transferNumber||t.shamCashNumber||'-') + '</td></tr>'
+                + '<tr style="background:#f9f9f9"><td style="padding:.4rem .6rem;color:#666">التاريخ</td><td style="padding:.4rem .6rem">' + (t.date||'-') + '</td></tr>'
+                + '<tr><td style="padding:.4rem .6rem;color:#666">الحالة</td><td style="padding:.4rem .6rem"><span style="background:#FFF3CD;color:#856404;padding:.2rem .6rem;border-radius:4px;font-size:.82rem">⏳ انتظار</span></td></tr>'
+                + '</table>'
+                + '<div style="display:flex;gap:.6rem;margin-top:1.2rem;justify-content:flex-end">'
+                + '<button onclick="admAcceptTopup(\''+reqId+'\',\''+uid+'\','+parseFloat(amount)+');document.getElementById(\'admReviewModal\').remove();document.getElementById(\'admReviewOv\').remove();" style="background:#2ECC71;color:#fff;border:none;padding:.55rem 1.1rem;border-radius:6px;cursor:pointer;font-family:Cairo,sans-serif;font-size:.88rem"><i class="fas fa-check"></i> قبول وشحن</button>'
+                + '<button onclick="admRejectTopup(\''+reqId+'\',\''+uid+'\');document.getElementById(\'admReviewModal\').remove();document.getElementById(\'admReviewOv\').remove();" style="background:#E74C3C;color:#fff;border:none;padding:.55rem 1.1rem;border-radius:6px;cursor:pointer;font-family:Cairo,sans-serif;font-size:.88rem"><i class="fas fa-times"></i> رفض</button>'
+                + '<button onclick="document.getElementById(\'admReviewModal\').remove();document.getElementById(\'admReviewOv\').remove();" style="background:#6C757D;color:#fff;border:none;padding:.55rem 1.1rem;border-radius:6px;cursor:pointer;font-family:Cairo,sans-serif;font-size:.88rem">إغلاق</button>'
+                + '</div></div>';
+            var ov = document.createElement('div');
+            ov.id = 'admReviewOv';
+            ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:6000';
+            ov.onclick = function(e){ if(e.target===ov){ ov.remove(); modal.remove(); } };
+            var modal = document.createElement('div');
+            modal.id = 'admReviewModal';
+            modal.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:6001;max-width:460px;width:90%;max-height:90vh;overflow-y:auto';
+            modal.innerHTML = html;
+            document.body.appendChild(ov);
+            document.body.appendChild(modal);
         };
         window.admUpdateOrderStatus = function(orderId, status) {
             dbRef('store_orders/' + orderId).update({ status: status });

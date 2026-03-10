@@ -12176,27 +12176,10 @@
                     var orderId    = 'ORD-' + Date.now();
                     var totalPrice = total;
                     var orderDate  = new Date().toLocaleString('ar-SY');
-                    // بناء المنتجات بشكل واضح لـ Firebase
-                    var items = {};
-                    cart.forEach(function(i, idx) {
-                        var key = 'item_' + (idx + 1);
-                        var obj = {
-                            productName: i.name,
-                            price:       i.price,
-                            quantity:    i.quantity || 1,
-                            totalItem:   parseFloat((i.price * (i.quantity || 1)).toFixed(2)),
-                            category:    i.category
-                        };
-                        if (i.category === 'games')             { obj.playerId = i.playerId||''; obj.gameValue = i.gameDisplay||i.gameValue||''; }
-                        if (i.category === 'app')               { obj.playerId = i.playerId||''; obj.appValue  = i.appValue||''; }
-                        if (i.category === 'rased')             { obj.phoneNumber = i.phoneNumber||''; obj.creditValue = i.creditValue||''; }
-                        if (i.category === 'social-media')      { obj.customQuantity = i.customQuantity||300; }
-                        if (i.category === 'تفعيلات بريميوم') { obj.premiumInput = i.premiumInput||''; }
-                        items[key] = obj;
-                    });
-                    var uid    = (typeof auth !== 'undefined' && auth.currentUser) ? auth.currentUser.uid : '';
-                    var uname  = (typeof userData !== 'undefined' && userData) ? (userData.name  || '') : '';
-                    var uphone = (typeof userData !== 'undefined' && userData) ? (userData.phone || '') : '';
+                    var items      = cart.map(function(i){ return { name:i.name, price:i.price, quantity:i.quantity||1, category:i.category }; });
+                    var uid        = (typeof auth !== 'undefined' && auth.currentUser) ? auth.currentUser.uid : '';
+                    var uname      = (typeof userData !== 'undefined' && userData) ? (userData.name  || '') : '';
+                    var uphone     = (typeof userData !== 'undefined' && userData) ? (userData.phone || '') : '';
 
                     // ── 1. إغلاق paymentModal تماماً ──
                     var pm = document.getElementById('paymentModal');
@@ -12826,123 +12809,6 @@
         #adminHint{position:fixed;bottom:6px;right:6px;font-size:.6rem;color:rgba(0,0,0,.1);z-index:100;cursor:pointer;user-select:none}
 
 
-
-        /* ══ Order Cards in Admin ══ */
-        .adm-order-card {
-            background:#fff;border-radius:14px;margin-bottom:1rem;
-            box-shadow:0 2px 12px rgba(0,0,0,.07);overflow:hidden;
-            border-right:5px solid #eee;transition:border-color .2s;
-        }
-        .adm-order-card.pending    { border-right-color:#f0ad4e }
-        .adm-order-card.processing { border-right-color:#5bc0de }
-        .adm-order-card.done       { border-right-color:#2ECC71 }
-        .adm-order-card.rejected   { border-right-color:#E74C3C }
-        .adm-oc-header {
-            display:flex;justify-content:space-between;align-items:center;
-            padding:.8rem 1rem;background:#f8f9fa;border-bottom:1px solid #f0f0f0;
-            flex-wrap:wrap;gap:.4rem;
-        }
-        .adm-oc-id   { font-size:.75rem;color:var(--gray);font-family:monospace }
-        .adm-oc-date { font-size:.75rem;color:var(--gray) }
-        .adm-oc-body { padding:1rem }
-        .adm-oc-client {
-            display:flex;gap:1.2rem;flex-wrap:wrap;
-            padding:.6rem .8rem;background:#f0f7ff;border-radius:8px;
-            margin-bottom:.8rem;
-        }
-        .adm-oc-client-item { font-size:.85rem }
-        .adm-oc-client-item i { color:var(--primary);margin-left:4px }
-        .adm-oc-client-item strong { color:var(--dark) }
-        .adm-oc-products { margin-bottom:.8rem }
-        .adm-oc-products-title {
-            font-size:.82rem;font-weight:700;color:var(--primary);
-            margin-bottom:.5rem;display:flex;align-items:center;gap:6px
-        }
-        .adm-product-row {
-            display:flex;justify-content:space-between;align-items:flex-start;
-            padding:.5rem .7rem;background:#fafafa;border-radius:8px;
-            margin-bottom:.4rem;font-size:.83rem;border:1px solid #f0f0f0;
-        }
-        .adm-product-row:last-child { margin-bottom:0 }
-        .adm-product-name { font-weight:700;color:var(--dark);margin-bottom:.15rem }
-        .adm-product-detail { font-size:.76rem;color:var(--gray) }
-        .adm-product-price { font-weight:700;color:var(--primary);white-space:nowrap;padding-right:.5rem }
-        .adm-oc-footer {
-            display:flex;justify-content:space-between;align-items:center;
-            padding:.7rem 1rem;border-top:1px solid #f0f0f0;background:#fafafa;
-            flex-wrap:wrap;gap:.5rem;
-        }
-        .adm-oc-total { font-weight:800;font-size:1rem;color:var(--primary) }
-        .adm-oc-actions { display:flex;gap:6px;flex-wrap:wrap }
-
-
-        /* ══ Admin Cards (Orders + Topups) ══ */
-        .adm-card {
-            background:#fff; border-radius:14px; margin-bottom:1rem;
-            box-shadow:0 2px 14px rgba(0,0,0,.08); overflow:hidden;
-            border-right:5px solid #ddd;
-        }
-        .adm-card.pending    { border-right-color:#f39c12 }
-        .adm-card.processing { border-right-color:#3498db }
-        .adm-card.done       { border-right-color:#2ecc71 }
-        .adm-card.rejected   { border-right-color:#e74c3c }
-        .adm-card.accepted   { border-right-color:#2ecc71 }
-
-        .adm-card-head {
-            display:flex; justify-content:space-between; align-items:center;
-            padding:.7rem 1rem; background:#f8f9fa; border-bottom:1px solid #eee;
-            flex-wrap:wrap; gap:.4rem;
-        }
-        .adm-card-id   { font-size:.72rem; color:#888; font-family:monospace }
-        .adm-card-date { font-size:.72rem; color:#888 }
-
-        .adm-card-body { padding:.9rem 1rem }
-
-        .adm-client-row {
-            display:flex; gap:1rem; flex-wrap:wrap;
-            background:#eaf4ff; border-radius:10px;
-            padding:.55rem .9rem; margin-bottom:.8rem;
-        }
-        .adm-client-item { font-size:.84rem; display:flex; align-items:center; gap:5px }
-        .adm-client-item i { color:var(--primary); font-size:.8rem }
-        .adm-client-item strong { color:#222 }
-
-        .adm-products-wrap { margin-bottom:.8rem }
-        .adm-products-title {
-            font-size:.8rem; font-weight:700; color:var(--primary);
-            margin-bottom:.5rem; display:flex; align-items:center; gap:5px;
-            text-transform:uppercase; letter-spacing:.5px;
-        }
-        .adm-prod-item {
-            display:flex; justify-content:space-between; align-items:flex-start;
-            padding:.5rem .75rem; background:#fafafa;
-            border:1px solid #f0f0f0; border-radius:9px; margin-bottom:.35rem;
-        }
-        .adm-prod-name  { font-weight:700; font-size:.85rem; color:#222; margin-bottom:.18rem }
-        .adm-prod-extra { font-size:.75rem; color:#666; line-height:1.6 }
-        .adm-prod-price { font-weight:800; color:var(--primary); font-size:.88rem; white-space:nowrap; padding-right:.5rem; padding-top:.1rem }
-
-        .adm-card-foot {
-            display:flex; justify-content:space-between; align-items:center;
-            padding:.65rem 1rem; background:#f8f9fa; border-top:1px solid #eee;
-            flex-wrap:wrap; gap:.5rem;
-        }
-        .adm-total-lbl { font-weight:800; font-size:1rem; color:var(--primary) }
-        .adm-card-btns { display:flex; gap:6px; flex-wrap:wrap }
-
-        /* topup card specific */
-        .adm-topup-info {
-            display:grid; grid-template-columns:1fr 1fr; gap:.5rem;
-            margin-bottom:.7rem;
-        }
-        .adm-ti-box {
-            background:#f8f9fa; border-radius:9px; padding:.5rem .75rem;
-            font-size:.83rem; border:1px solid #eee;
-        }
-        .adm-ti-lbl { color:#888; font-size:.72rem; margin-bottom:.15rem }
-        .adm-ti-val { font-weight:700; color:#222 }
-        .adm-ti-amount .adm-ti-val { color:#27ae60; font-size:1.05rem }
-
         /* ══ Order Success Modal ══ */
         #orderSuccessModal {
             max-width: 380px;
@@ -13150,44 +13016,49 @@
             <button class="adm-close-btn" id="adminDashClose"><i class="fas fa-times"></i> خروج</button>
         </div>
         <div class="adm-tabs">
-            <div class="adm-tab active" data-panel="topups"><i class="fas fa-wallet"></i> شحن الرصيد</div>
-            <div class="adm-tab" data-panel="orders"><i class="fas fa-shopping-bag"></i> طلبات المتجر</div>
-            <div class="adm-tab" data-panel="users"><i class="fas fa-users"></i> العملاء</div>
+            <div class="adm-tab active" data-panel="topups">طلبات الشحن</div>
+            <div class="adm-tab" data-panel="orders">طلبات المتجر</div>
+            <div class="adm-tab" data-panel="users">العملاء</div>
         </div>
-
-        <!-- ══ تبويب طلبات الشحن ══ -->
+        <!-- Topups panel -->
         <div class="adm-tab-panel active" id="panel-topups">
-            <div class="adm-stats">
-                <div class="adm-stat s1"><i class="fas fa-list"></i><div><div class="adm-stat-lbl">إجمالي</div><div class="adm-stat-val" id="stTotal">0</div></div></div>
-                <div class="adm-stat s2"><i class="fas fa-clock"></i><div><div class="adm-stat-lbl">انتظار</div><div class="adm-stat-val" id="stPending">0</div></div></div>
+            <div class="adm-stats" id="admStatsTopup">
+                <div class="adm-stat s1"><i class="fas fa-list"></i><div><div class="adm-stat-lbl">إجمالي الطلبات</div><div class="adm-stat-val" id="stTotal">0</div></div></div>
+                <div class="adm-stat s2"><i class="fas fa-clock"></i><div><div class="adm-stat-lbl">قيد الانتظار</div><div class="adm-stat-val" id="stPending">0</div></div></div>
                 <div class="adm-stat s3"><i class="fas fa-check-circle"></i><div><div class="adm-stat-lbl">مقبولة</div><div class="adm-stat-val" id="stAccepted">0</div></div></div>
-                <div class="adm-stat s4"><i class="fas fa-dollar-sign"></i><div><div class="adm-stat-lbl">المشحون</div><div class="adm-stat-val" id="stAmount">0$</div></div></div>
+                <div class="adm-stat s4"><i class="fas fa-dollar-sign"></i><div><div class="adm-stat-lbl">إجمالي المشحون</div><div class="adm-stat-val" id="stAmount">0$</div></div></div>
             </div>
             <div class="adm-filters">
                 <button class="adm-filter-btn active" data-f="all">الكل</button>
-                <button class="adm-filter-btn" data-f="pending">⏳ انتظار</button>
-                <button class="adm-filter-btn" data-f="accepted">✓ مقبولة</button>
-                <button class="adm-filter-btn" data-f="rejected">✕ مرفوضة</button>
+                <button class="adm-filter-btn" data-f="pending">انتظار</button>
+                <button class="adm-filter-btn" data-f="accepted">مقبولة</button>
+                <button class="adm-filter-btn" data-f="rejected">مرفوضة</button>
                 <button class="adm-filter-btn red" id="clearTopupsBtn"><i class="fas fa-trash"></i> مسح الكل</button>
             </div>
-            <div id="topupsCardsWrap" style="padding:.5rem 0"></div>
-            <table style="display:none"><tbody id="topupsBody"></tbody></table>
+            <div class="adm-tbl-wrap">
+                <table class="adm-tbl">
+                    <thead><tr><th>#</th><th>الاسم</th><th>الهاتف</th><th>المبلغ</th><th>رقم شام كاش</th><th>التاريخ</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                    <tbody id="topupsBody"><tr><td colspan="8" class="adm-no-data"><i class="fas fa-spinner fa-spin"></i></td></tr></tbody>
+                </table>
+            </div>
         </div>
-
-        <!-- ══ تبويب طلبات المتجر ══ -->
+        <!-- Store orders panel -->
         <div class="adm-tab-panel" id="panel-orders">
             <div class="adm-filters">
                 <button class="adm-filter-btn active" data-fo="all">الكل</button>
-                <button class="adm-filter-btn" data-fo="pending">🆕 جديد</button>
-                <button class="adm-filter-btn" data-fo="processing">⚙️ تنفيذ</button>
-                <button class="adm-filter-btn" data-fo="done">✓ منجز</button>
-                <button class="adm-filter-btn" data-fo="rejected">✕ مرفوض</button>
+                <button class="adm-filter-btn" data-fo="pending">جديد</button>
+                <button class="adm-filter-btn" data-fo="processing">قيد التنفيذ</button>
+                <button class="adm-filter-btn" data-fo="done">منجز</button>
+                <button class="adm-filter-btn" data-fo="rejected">مرفوض</button>
             </div>
-            <div id="ordersAdmCards" style="padding:.5rem 0"></div>
-            <table style="display:none"><tbody id="ordersAdmBody"></tbody></table>
+            <div class="adm-tbl-wrap">
+                <table class="adm-tbl">
+                    <thead><tr><th>#</th><th>العميل</th><th>الهاتف</th><th>الإجمالي</th><th>طريقة الدفع</th><th>التاريخ</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                    <tbody id="ordersAdmBody"><tr><td colspan="8" class="adm-no-data"><i class="fas fa-spinner fa-spin"></i></td></tr></tbody>
+                </table>
+            </div>
         </div>
-
-        <!-- ══ تبويب العملاء ══ -->
+        <!-- Users panel -->
         <div class="adm-tab-panel" id="panel-users">
             <div class="adm-tbl-wrap">
                 <table class="adm-tbl">
@@ -13755,137 +13626,49 @@
         }
 
         function renderTopupsTable() {
-            var filtered = adminTopupFilter==='all' ? adminTopups : adminTopups.filter(function(t){ return t.status===adminTopupFilter; });
-            var wrap = $('topupsCardsWrap');
-            if (!wrap) return;
-
-            // إحصائيات
-            $('stTotal').textContent    = adminTopups.length;
-            $('stPending').textContent  = adminTopups.filter(function(t){ return t.status==='pending'; }).length;
-            $('stAccepted').textContent = adminTopups.filter(function(t){ return t.status==='accepted'; }).length;
-            var tot = adminTopups.filter(function(t){ return t.status==='accepted'; }).reduce(function(s,t){ return s+parseFloat(t.amount||0); },0);
-            $('stAmount').textContent   = tot.toFixed(2) + '$';
-
-            if (!filtered.length) {
-                wrap.innerHTML = '<div style="text-align:center;padding:2.5rem;color:#aaa"><i class="fas fa-wallet" style="font-size:2.5rem;display:block;margin-bottom:.7rem"></i>لا توجد طلبات شحن</div>';
-                return;
-            }
-
-            var stLabel = { pending:'⏳ انتظار', accepted:'✓ مقبول', rejected:'✕ مرفوض' };
-
-            wrap.innerHTML = filtered.slice().reverse().map(function(t) {
-                var st  = t.status || 'pending';
-                var amt = parseFloat(t.amount||0).toFixed(2);
-
-                var btns = '';
-                if (st === 'pending') {
-                    btns += '<button class="adm-act-btn accept" onclick="admAcceptTopup(\''+t.reqId+'\',\''+t.uid+'\','+parseFloat(t.amount||0)+')"><i class="fas fa-check"></i> قبول وشحن</button>';
-                    btns += '<button class="adm-act-btn reject" onclick="admRejectTopup(\''+t.reqId+'\',\''+t.uid+'\')"><i class="fas fa-times"></i> رفض</button>';
-                }
-                btns += '<button class="adm-act-btn del" onclick="admDelTopup(\''+t.reqId+'\')"><i class="fas fa-trash"></i></button>';
-
-                return '<div class="adm-card ' + st + '">'
-                    + '<div class="adm-card-head">'
-                    + '  <span class="adm-card-id"><i class="fas fa-hashtag"></i> ' + (t.reqId||'-') + '</span>'
-                    + '  <span class="st-badge ' + st + '">' + (stLabel[st]||st) + '</span>'
-                    + '  <span class="adm-card-date"><i class="far fa-clock"></i> ' + (t.date||'-') + '</span>'
-                    + '</div>'
-                    + '<div class="adm-card-body">'
-                    + '  <div class="adm-client-row">'
-                    + '    <div class="adm-client-item"><i class="fas fa-user"></i><strong>' + (t.name||'-') + '</strong></div>'
-                    + '    <div class="adm-client-item"><i class="fas fa-phone-alt"></i><strong>' + (t.phone||'-') + '</strong></div>'
-                    + '  </div>'
-                    + '  <div class="adm-topup-info">'
-                    + '    <div class="adm-ti-box adm-ti-amount"><div class="adm-ti-lbl">المبلغ المطلوب شحنه</div><div class="adm-ti-val">' + amt + ' $</div></div>'
-                    + '    <div class="adm-ti-box"><div class="adm-ti-lbl">رقم عملية شام كاش</div><div class="adm-ti-val">' + (t.transferNumber||t.shamCashNumber||'-') + '</div></div>'
-                    + '  </div>'
-                    + '</div>'
-                    + '<div class="adm-card-foot">'
-                    + '  <div class="adm-total-lbl"><i class="fas fa-dollar-sign"></i> ' + amt + '$</div>'
-                    + '  <div class="adm-card-btns">' + btns + '</div>'
-                    + '</div>'
-                    + '</div>';
+            var filtered = adminFilter==='all' ? adminTopups : adminTopups.filter(o => o.status===adminFilter);
+            var tbody = $('topupsBody');
+            if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="8" class="adm-no-data">لا توجد طلبات</td></tr>'; return; }
+            tbody.innerHTML = filtered.slice().reverse().map(function(o) {
+                var stLabel = o.status==='pending'?'⏳ انتظار':o.status==='accepted'?'✓ مقبول':'✕ مرفوض';
+                return '<tr>'
+                    + '<td><small style="color:var(--gray)">' + o.reqId + '</small></td>'
+                    + '<td><strong>' + o.name + '</strong></td>'
+                    + '<td>' + o.phone + '</td>'
+                    + '<td><strong>' + parseFloat(o.amount).toFixed(2) + '$</strong></td>'
+                    + '<td><code style="background:#f4f4f4;padding:2px 6px;border-radius:4px;font-size:.8rem">' + o.txId + '</code></td>'
+                    + '<td><small>' + o.date + '</small></td>'
+                    + '<td><span class="st-badge ' + o.status + '">' + stLabel + '</span></td>'
+                    + '<td>' + (o.status==='pending'
+                        ? '<button class="adm-act-btn accept" onclick="admAcceptTopup(\'' + o.reqId + '\',\'' + o.uid + '\',' + parseFloat(o.amount) + ')">✓ قبول</button>'
+                        + '<button class="adm-act-btn reject" onclick="admRejectTopup(\'' + o.reqId + '\',\'' + o.uid + '\')">✕ رفض</button>'
+                        : '')
+                    + '<button class="adm-act-btn del" onclick="admDelTopup(\'' + o.reqId + '\')"><i class="fas fa-trash"></i></button>'
+                    + '</td></tr>';
             }).join('');
         }
+
         function renderOrdersTable() {
-            var filtered = adminOrderFilter==='all' ? adminOrders : adminOrders.filter(function(o){ return o.status===adminOrderFilter; });
-            var wrap = $('ordersAdmCards');
-            if (!wrap) return;
-            var stLabel = { pending:'🆕 جديد', processing:'⚙️ قيد التنفيذ', done:'✓ منجز', rejected:'✕ مرفوض' };
-
-            if (!filtered.length) {
-                wrap.innerHTML = '<div style="text-align:center;padding:2.5rem;color:#aaa"><i class="fas fa-box-open" style="font-size:2.5rem;display:block;margin-bottom:.7rem"></i>لا توجد طلبات</div>';
-                return;
-            }
-
-            wrap.innerHTML = filtered.slice().reverse().map(function(o) {
+            var filtered = adminOrderFilter==='all' ? adminOrders : adminOrders.filter(o => o.status===adminOrderFilter);
+            var tbody = $('ordersAdmBody');
+            if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="8" class="adm-no-data">لا توجد طلبات</td></tr>'; return; }
+            tbody.innerHTML = filtered.slice().reverse().map(function(o) {
+                var stMap = { pending:'pending', processing:'processing', done:'done', rejected:'rejected' };
+                var stLabel = { pending:'جديد', processing:'قيد التنفيذ', done:'منجز', rejected:'مرفوض' };
                 var st = o.status || 'pending';
-
-                // ── بناء المنتجات ──
-                var prodsHtml = '';
-                var itemsObj = o.items;
-                if (itemsObj && typeof itemsObj === 'object' && !Array.isArray(itemsObj)) {
-                    prodsHtml = Object.keys(itemsObj).map(function(k) {
-                        var it = itemsObj[k];
-                        var extras = [];
-                        if (it.playerId)       extras.push('<span><i class="fas fa-gamepad"></i> رقم اللاعب: <b>' + it.playerId + '</b></span>');
-                        if (it.gameValue)      extras.push('<span><i class="fas fa-coins"></i> الكمية: <b>' + it.gameValue + '</b></span>');
-                        if (it.appValue)       extras.push('<span><i class="fas fa-mobile-alt"></i> الباقة: <b>' + it.appValue + '</b></span>');
-                        if (it.phoneNumber)    extras.push('<span><i class="fas fa-phone"></i> الهاتف: <b>' + it.phoneNumber + '</b></span>');
-                        if (it.creditValue)    extras.push('<span><i class="fas fa-money-bill"></i> الرصيد: <b>' + it.creditValue + ' ل.س</b></span>');
-                        if (it.customQuantity) extras.push('<span><i class="fas fa-sort-amount-up"></i> الكمية: <b>' + parseInt(it.customQuantity).toLocaleString() + '</b></span>');
-                        if (it.premiumInput)   extras.push('<span><i class="fas fa-key"></i> البيانات: <b>' + it.premiumInput + '</b></span>');
-                        return '<div class="adm-prod-item">'
-                            + '<div style="flex:1">'
-                            + '<div class="adm-prod-name"><i class="fas fa-tag" style="color:var(--secondary);font-size:.72rem;margin-left:4px"></i>' + (it.productName || it.name || '-') + '</div>'
-                            + (extras.length ? '<div class="adm-prod-extra">' + extras.join(' &nbsp;|&nbsp; ') + '</div>' : '')
-                            + '<div class="adm-prod-extra"><i class="fas fa-times-circle" style="color:#ccc"></i> الكمية: ' + (it.quantity||1) + '</div>'
-                            + '</div>'
-                            + '<div class="adm-prod-price">' + parseFloat(it.totalItem || it.price || 0).toFixed(2) + '$</div>'
-                            + '</div>';
-                    }).join('');
-                } else if (Array.isArray(itemsObj)) {
-                    prodsHtml = itemsObj.map(function(it) {
-                        return '<div class="adm-prod-item">'
-                            + '<div class="adm-prod-name">' + (it.productName||it.name||'-') + '</div>'
-                            + '<div class="adm-prod-price">' + parseFloat(it.price||0).toFixed(2) + '$</div>'
-                            + '</div>';
-                    }).join('');
-                }
-
-                // ── بناء أزرار الإجراء حسب الحالة ──
-                var btns = '';
-                if (st === 'pending')    btns += '<button class="adm-act-btn accept" onclick="admUpdateOrderStatus(\''+o.orderId+'\',\'processing\')"><i class="fas fa-cog"></i> بدء التنفيذ</button>';
-                if (st === 'processing') btns += '<button class="adm-act-btn view"   onclick="admUpdateOrderStatus(\''+o.orderId+'\',\'done\')"><i class="fas fa-check"></i> تم</button>';
-                if (st !== 'done' && st !== 'rejected') btns += '<button class="adm-act-btn reject" onclick="admUpdateOrderStatus(\''+o.orderId+'\',\'rejected\')"><i class="fas fa-times"></i> رفض</button>';
-                btns += '<button class="adm-act-btn del" onclick="admDeleteOrder(\''+o.orderId+'\')"><i class="fas fa-trash"></i></button>';
-
-                return '<div class="adm-card ' + st + '">'
-                    // رأس البطاقة
-                    + '<div class="adm-card-head">'
-                    + '  <span class="adm-card-id"><i class="fas fa-hashtag"></i> ' + o.orderId + '</span>'
-                    + '  <span class="st-badge ' + st + '">' + (stLabel[st]||st) + '</span>'
-                    + '  <span class="adm-card-date"><i class="far fa-clock"></i> ' + (o.date||'-') + '</span>'
-                    + '</div>'
-                    // جسم البطاقة
-                    + '<div class="adm-card-body">'
-                    // بيانات العميل
-                    + '  <div class="adm-client-row">'
-                    + '    <div class="adm-client-item"><i class="fas fa-user"></i><strong>' + (o.name||'غير محدد') + '</strong></div>'
-                    + '    <div class="adm-client-item"><i class="fas fa-phone-alt"></i><strong>' + (o.phone||'-') + '</strong></div>'
-                    + '  </div>'
-                    // المنتجات
-                    + '  <div class="adm-products-wrap">'
-                    + '    <div class="adm-products-title"><i class="fas fa-shopping-cart"></i> المنتجات المطلوبة</div>'
-                    + (prodsHtml || '<div style="color:#aaa;font-size:.83rem;padding:.4rem">لا توجد تفاصيل</div>')
-                    + '  </div>'
-                    + '</div>'
-                    // ذيل البطاقة
-                    + '<div class="adm-card-foot">'
-                    + '  <div class="adm-total-lbl"><i class="fas fa-dollar-sign"></i> المجموع: ' + parseFloat(o.total||0).toFixed(2) + '$</div>'
-                    + '  <div class="adm-card-btns">' + btns + '</div>'
-                    + '</div>'
-                    + '</div>';
+                return '<tr>'
+                    + '<td><small style="color:var(--gray)">' + o.orderId + '</small></td>'
+                    + '<td><strong>' + (o.name||'-') + '</strong></td>'
+                    + '<td>' + (o.phone||'-') + '</td>'
+                    + '<td><strong>' + parseFloat(o.total||0).toFixed(2) + '$</strong></td>'
+                    + '<td>' + (o.paymentMethod==='sham-cash'?'شام كاش':'محفظة') + '</td>'
+                    + '<td><small>' + o.date + '</small></td>'
+                    + '<td><span class="st-badge ' + stMap[st] + '">' + (stLabel[st]||st) + '</span></td>'
+                    + '<td>'
+                    + '<button class="adm-act-btn accept" onclick="admUpdateOrderStatus(\'' + o.orderId + '\',\'processing\')">قيد التنفيذ</button>'
+                    + '<button class="adm-act-btn view" onclick="admUpdateOrderStatus(\'' + o.orderId + '\',\'done\')">منجز</button>'
+                    + '<button class="adm-act-btn reject" onclick="admUpdateOrderStatus(\'' + o.orderId + '\',\'rejected\')">رفض</button>'
+                    + '</td></tr>';
             }).join('');
         }
 
@@ -13931,12 +13714,7 @@
             dbRef('topup_orders/' + reqId).remove();
         };
         window.admUpdateOrderStatus = function(orderId, status) {
-            dbRef('store_orders/' + orderId).update({ status: status });
-        };
-        window.admDeleteOrder = function(orderId) {
-            if (confirm('حذف هذا الطلب نهائياً؟')) {
-                dbRef('store_orders/' + orderId).remove();
-            }
+            dbRef('store_orders/' + orderId).update({ status });
         };
         window.admAddBalance = function(uid) {
             var inp = $('topupAmt_' + uid);

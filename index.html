@@ -13725,12 +13725,20 @@
                 snap.forEach(function(c) { adminTopups.push(c.val()); });
                 renderTopupsTable();
                 renderTopupStats();
+            }, function(err) {
+                console.error('topup_orders read error:', err.code, err.message);
+                var w = $('topupsCardsWrap');
+                if (w) w.innerHTML = '<div style="color:red;padding:1rem;text-align:center"><b>خطأ في قراءة البيانات:</b><br>' + err.code + '<br><small>تحقق من قواعد Firebase</small></div>';
             });
             // Store orders
             dbRef('store_orders').on('value', function(snap) {
                 adminOrders = [];
                 snap.forEach(function(c) { adminOrders.push(c.val()); });
                 renderOrdersTable();
+            }, function(err) {
+                console.error('store_orders read error:', err.code, err.message);
+                var w = $('ordersAdmCards');
+                if (w) w.innerHTML = '<div style="color:red;padding:1rem;text-align:center"><b>خطأ في قراءة البيانات:</b><br>' + err.code + '</div>';
             });
             // Users
             dbRef('users').on('value', function(snap) {
@@ -13741,6 +13749,8 @@
                     else if (u) adminUsers.push(Object.assign({}, u, {transactions:undefined, orders:undefined}));
                 });
                 renderUsersTable();
+            }, function(err) {
+                console.error('users read error:', err.code, err.message);
             });
         }
 
@@ -13797,7 +13807,7 @@
                     + '  </div>'
                     + '  <div class="adm-topup-info">'
                     + '    <div class="adm-ti-box adm-ti-amount"><div class="adm-ti-lbl">المبلغ المطلوب شحنه</div><div class="adm-ti-val">' + amt + ' $</div></div>'
-                    + '    <div class="adm-ti-box"><div class="adm-ti-lbl">رقم عملية شام كاش</div><div class="adm-ti-val">' + (t.txId||t.transferNumber||t.shamCashNumber||'-') + '</div></div>'
+                    + '    <div class="adm-ti-box"><div class="adm-ti-lbl">رقم عملية شام كاش</div><div class="adm-ti-val">' + (t.transferNumber||t.shamCashNumber||'-') + '</div></div>'
                     + '  </div>'
                     + '</div>'
                     + '<div class="adm-card-foot">'
@@ -13913,45 +13923,14 @@
 
         // ── Admin actions ────────────────────────────────────────────────────
         window.admAcceptTopup = function(reqId, uid, amount) {
-            amount = parseFloat(amount);  // ضمان أن amount رقم دائماً
-
-            if (!uid || uid === 'undefined' || uid === '') {
-                alert('خطأ: لم يُعثر على UID للمستخدم في هذا الطلب');
-                return;
-            }
-            if (!amount || amount <= 0) {
-                alert('خطأ: المبلغ غير صحيح');
-                return;
-            }
-
-            if (!confirm('قبول الطلب وإضافة ' + amount.toFixed(2) + '$ للمستخدم؟')) return;
-
-            // 1. تحديث حالة الطلب
-            dbRef('topup_orders/' + reqId).update({ status: 'accepted' })
-            .then(function() {
-                // 2. إضافة الرصيد للمستخدم
-                return dbRef('users/' + uid + '/balance').transaction(function(cur) {
-                    return (parseFloat(cur) || 0) + amount;
-                });
-            })
-            .then(function() {
-                // 3. تحديث المعاملة
-                return dbRef('users/' + uid + '/transactions/' + reqId).update({
-                    status: 'completed',
-                    completedAt: Date.now()
-                });
-            })
-            .then(function() {
-                if (typeof balToast === 'function') {
-                    balToast('✓ تمت إضافة ' + amount.toFixed(2) + '$ لحساب المستخدم', true);
-                } else {
-                    alert('✓ تمت إضافة ' + amount.toFixed(2) + '$');
-                }
-            })
-            .catch(function(err) {
-                alert('خطأ أثناء إضافة الرصيد: ' + err.message);
-                console.error('admAcceptTopup error:', err);
+            dbRef('topup_orders/' + reqId).update({ status: 'accepted' });
+            // Add balance to user
+            dbRef('users/' + uid + '/balance').transaction(function(cur) {
+                return (cur || 0) + amount;
             });
+            // Update tx status
+            dbRef('users/' + uid + '/transactions/' + reqId).update({ status: 'completed' });
+            balToast('✓ تم قبول الطلب وإضافة ' + amount.toFixed(2) + '$', true);
         };
         window.admRejectTopup = function(reqId, uid) {
             if (!confirm('رفض هذا الطلب؟')) return;

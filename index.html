@@ -11361,11 +11361,10 @@
                 }
 
                 // ── إغلاق كل النوافذ ──
-                customerModal.classList.remove('active');
-                paymentModal.style.display = 'none';
-                paymentModal.classList.remove('active');
-                cartSidebar.classList.remove('active');
-                cartOverlay.classList.remove('active');
+                try { if (customerModal) customerModal.classList.remove('active'); } catch(e) {}
+                try { if (paymentModal)  { paymentModal.style.display = 'none'; paymentModal.classList.remove('active'); } } catch(e) {}
+                try { if (cartSidebar)   cartSidebar.classList.remove('active'); } catch(e) {}
+                try { if (cartOverlay)   cartOverlay.classList.remove('active'); } catch(e) {}
 
                 // ── عرض رسالة النجاح ──
                 document.getElementById('orderSuccessId').textContent    = orderId;
@@ -11384,19 +11383,12 @@
                 hasPremiumProduct     = false;
                 localStorage.removeItem('zoodnyCart');
                 updateCartUI();
-                customerForm.reset();
-                if (typeof resetPaymentForm === 'function') resetPaymentForm();
-                socialMediaFields.classList.remove('active');
+                try { if (customerForm) customerForm.reset(); } catch(e) {}
+                try { if (typeof resetPaymentForm === 'function') resetPaymentForm(); } catch(e) {}
+                try { if (socialMediaFields) socialMediaFields.classList.remove('active'); } catch(e) {}
 
             } catch(err) {
                 console.error('Firebase order save error:', err.code, err.message);
-                var errMsg = 'حدث خطأ';
-                if (err.code === 'PERMISSION_DENIED') {
-                    errMsg = 'خطأ في الصلاحيات — تحقق من قواعد Firebase';
-                } else if (err.code === 'NETWORK_ERROR') {
-                    errMsg = 'خطأ في الاتصال — تحقق من الإنترنت';
-                }
-                showToast(errMsg + ': ' + err.message);
             }
         }
         
@@ -13713,10 +13705,12 @@
 
     <!-- ══ Order Success Modal ══ -->
     <div class="z-ov" id="orderSuccessOv" style="z-index:5000"></div>
-    <div class="z-modal" id="orderSuccessModal" style="z-index:5001;text-align:center;padding:2.2rem 1.8rem;max-width:380px">
+    <div class="z-modal" id="orderSuccessModal" style="z-index:5001;text-align:center;padding:2.5rem 2rem;max-width:360px">
         <div class="order-succ-icon"><i class="fas fa-check"></i></div>
-        <h3>تم الطلب بنجاح! 🎉</h3>
-        <p>تم استلام طلبك وخصم المبلغ من محفظتك. سنقوم بتنفيذ طلبك في أقرب وقت.</p>
+        <h3 style="font-size:1.4rem;color:var(--primary);margin-bottom:.5rem">تم الشراء بنجاح! 🎉</h3>
+        <p style="color:var(--gray);font-size:.92rem;line-height:1.7;margin-bottom:1.2rem">
+            يتم تنفيذ طلبك الآن،<br>سنقوم بإرساله في أقرب وقت ممكن.
+        </p>
         <div class="order-succ-info">
             <div class="order-succ-row">
                 <span>رقم الطلب</span>
@@ -13724,15 +13718,15 @@
             </div>
             <div class="order-succ-row">
                 <span>المبلغ المدفوع</span>
-                <span id="orderSuccessTotal" style="color:var(--accent)">0$</span>
+                <span id="orderSuccessTotal" style="color:#E74C3C;font-weight:800">0$</span>
             </div>
             <div class="order-succ-row">
                 <span>الحالة</span>
-                <span style="color:var(--success)">⏳ قيد المراجعة</span>
+                <span style="color:var(--success);font-weight:700">⚡ يتم التنفيذ الآن</span>
             </div>
         </div>
-        <button class="order-succ-close" id="orderSuccessCloseBtn">
-            <i class="fas fa-check-circle"></i> حسناً، شكراً!
+        <button class="order-succ-close" id="orderSuccessCloseBtn" style="width:100%;margin-top:.5rem">
+            <i class="fas fa-thumbs-up"></i> &nbsp; حسناً، شكراً!
         </button>
     </div>
 

@@ -11356,14 +11356,20 @@
                     }
                 }
 
-                showToast('✓ تم إرسال طلبك بنجاح!');
-            } catch(err) {
-                console.error('Firebase order save error:', err);
-                showToast('تم الطلب (يرجى التواصل معنا للتأكيد)');
-            }
+                // ── إغلاق النوافذ وعرض نافذة النجاح ──
+                customerModal.classList.remove('active');
+                paymentModal.style.display = 'none';
+                paymentModal.classList.remove('active');
+                cartSidebar.classList.remove('active');
+                cartOverlay.classList.remove('active');
 
-            // ── تفريغ السلة ──
-            setTimeout(() => {
+                // عرض نافذة النجاح
+                document.getElementById('orderSuccessId').textContent   = orderId;
+                document.getElementById('orderSuccessTotal').textContent = totalPrice.toFixed(2) + '$';
+                document.getElementById('orderSuccessModal').classList.add('active');
+                document.getElementById('orderSuccessOv').classList.add('active');
+
+                // تفريغ السلة
                 cart = [];
                 hasSocialMediaProduct = false;
                 hasCreditProduct      = false;
@@ -11372,44 +11378,20 @@
                 hasPremiumProduct     = false;
                 localStorage.removeItem('zoodnyCart');
                 updateCartUI();
-
-                customerModal.classList.remove('active');
-                paymentModal.classList.remove('active');
-                cartSidebar.classList.remove('active');
-                cartOverlay.classList.remove('active');
-
                 customerForm.reset();
-                resetPaymentForm();
+                if (typeof resetPaymentForm === 'function') resetPaymentForm();
                 socialMediaFields.classList.remove('active');
-            }, 1500);
+
+            } catch(err) {
+                console.error('Firebase order save error:', err);
+                showToast('حدث خطأ، يرجى المحاولة مرة أخرى أو التواصل معنا');
+            }
         }
         
         // -------------------- إرسال الطلب النهائي --------------------
         function submitOrder(customerData) {
-            if (customerData.paymentMethod === 'sham-cash') {
-                submitShamCashOrder(customerData);
-            } else {
-                // طرق دفع أخرى (غير مستخدمة حالياً)
-                cart = [];
-                hasSocialMediaProduct = false;
-                hasCreditProduct = false;
-                hasGameProduct = false;
-                hasAppProduct = false;
-                hasPremiumProduct = false;
-                localStorage.removeItem('zoodnyCart');
-                updateCartUI();
-                
-                customerModal.classList.remove('active');
-                paymentModal.classList.remove('active');
-                cartSidebar.classList.remove('active');
-                cartOverlay.classList.remove('active');
-                
-                customerForm.reset();
-                resetPaymentForm();
-                socialMediaFields.classList.remove('active');
-                
-                showToast('تم إرسال طلبك بنجاح!');
-            }
+            // كلا طريقتي الدفع تمر عبر submitShamCashOrder الذي يحفظ في Firebase
+            submitShamCashOrder(customerData);
         }
         
         // -------------------- عرض رسالة نجاح --------------------
@@ -12808,6 +12790,51 @@
         .adm-topup-inline input{flex:1;padding:.4rem .6rem;border:1.5px solid #ddd;border-radius:7px;font-family:'Cairo',sans-serif;font-size:.82rem}
         #adminHint{position:fixed;bottom:6px;right:6px;font-size:.6rem;color:rgba(0,0,0,.1);z-index:100;cursor:pointer;user-select:none}
 
+
+        /* ══ Order Success Modal ══ */
+        #orderSuccessModal {
+            max-width: 380px;
+            z-index: 5001;
+            text-align: center;
+            padding: 2.2rem 1.8rem;
+        }
+        #orderSuccessOv { z-index: 5000; }
+        .order-succ-icon {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: linear-gradient(135deg, #d1f7e0, #a8edbe);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.2rem;
+            box-shadow: 0 8px 24px rgba(46,204,113,.35);
+            animation: succ-pop .5s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes succ-pop {
+            from { transform: scale(0); opacity: 0; }
+            to   { transform: scale(1); opacity: 1; }
+        }
+        .order-succ-icon i { font-size: 2.4rem; color: var(--success); }
+        #orderSuccessModal h3 { color: var(--primary); font-size: 1.3rem; margin-bottom: .6rem; }
+        #orderSuccessModal p  { color: var(--gray); font-size: .9rem; line-height: 1.6; margin-bottom: 1rem; }
+        .order-succ-info {
+            background: #f8f9fa; border-radius: 10px;
+            padding: .9rem 1rem; margin-bottom: 1.2rem; text-align: right;
+        }
+        .order-succ-row {
+            display: flex; justify-content: space-between;
+            font-size: .88rem; padding: .3rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .order-succ-row:last-child { border-bottom: none; }
+        .order-succ-row span:first-child { color: var(--gray); }
+        .order-succ-row span:last-child  { font-weight: 700; color: var(--primary); }
+        .order-succ-close {
+            background: linear-gradient(135deg, var(--primary), #3a5a78);
+            color: #fff; border: none; border-radius: 30px;
+            padding: .75rem 2.5rem; font-size: 1rem; font-weight: 700;
+            font-family: 'Cairo', sans-serif; cursor: pointer;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .order-succ-close:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(42,63,84,.3); }
+
         .wa-float-btn {
             position: fixed;
             bottom: 28px;
@@ -13691,6 +13718,31 @@
 
     }());
     </script>
+
+    <!-- ══ Order Success Modal ══ -->
+    <div class="z-ov" id="orderSuccessOv" style="z-index:5000"></div>
+    <div class="z-modal" id="orderSuccessModal" style="z-index:5001;text-align:center;padding:2.2rem 1.8rem;max-width:380px">
+        <div class="order-succ-icon"><i class="fas fa-check"></i></div>
+        <h3>تم الطلب بنجاح! 🎉</h3>
+        <p>تم استلام طلبك وخصم المبلغ من محفظتك. سنقوم بتنفيذ طلبك في أقرب وقت.</p>
+        <div class="order-succ-info">
+            <div class="order-succ-row">
+                <span>رقم الطلب</span>
+                <span id="orderSuccessId">#000000</span>
+            </div>
+            <div class="order-succ-row">
+                <span>المبلغ المدفوع</span>
+                <span id="orderSuccessTotal" style="color:var(--accent)">0$</span>
+            </div>
+            <div class="order-succ-row">
+                <span>الحالة</span>
+                <span style="color:var(--success)">⏳ قيد المراجعة</span>
+            </div>
+        </div>
+        <button class="order-succ-close" id="orderSuccessCloseBtn">
+            <i class="fas fa-check-circle"></i> حسناً، شكراً!
+        </button>
+    </div>
 
 </body>
 </html>

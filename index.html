@@ -12157,38 +12157,79 @@
             }
 
             submitPayment.addEventListener('click', function() {
-                var total = cart.reduce((s,i) => s+(i.price*(i.quantity||1)), 0);
-                var errEl = document.getElementById('submitPaymentErr');
+                var total  = cart.reduce((s,i) => s+(i.price*(i.quantity||1)), 0);
+                var errEl  = document.getElementById('submitPaymentErr');
+                var btn    = document.getElementById('submitPayment');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التأكيد...';
 
-                var customerData = {
-                    name:          (typeof userData !== 'undefined' && userData) ? userData.name  : '',
-                    phone:         (typeof userData !== 'undefined' && userData) ? userData.phone : '',
-                    city:          'غير محدد',
-                    paymentMethod: 'wallet'
-                };
-                if (hasSocialMediaProduct) {
-                    customerData.accountUrl = accountUrl ? accountUrl.value : '';
-                }
-
-                // Read FRESH balance from Firebase before confirming
-                if (typeof db !== 'undefined' && typeof auth !== 'undefined' && auth.currentUser) {
-                    db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
-                        var bal = parseFloat(snap.val() || 0);
-                        if (typeof userData !== 'undefined' && userData) userData.balance = bal;
-                        if (bal < total) {
-                            errEl.textContent = 'رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$ والمطلوب: ' + total.toFixed(2) + '$';
-                            return;
-                        }
-                        errEl.textContent = '';
-                        submitOrder(customerData);
-                    });
-                } else {
-                    var bal = (typeof getBalance === 'function') ? getBalance() : 0;
+                function doFinish(bal) {
+                    // فحص الرصيد
                     if (bal < total) {
                         errEl.textContent = 'رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$ والمطلوب: ' + total.toFixed(2) + '$';
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد وإتمام الطلب';
                         return;
                     }
-                    submitOrder(customerData);
+
+                    // بناء بيانات الطلب
+                    var orderId    = 'ORD-' + Date.now();
+                    var totalPrice = total;
+                    var orderDate  = new Date().toLocaleString('ar-SY');
+                    var items      = cart.map(function(i){ return { name:i.name, price:i.price, quantity:i.quantity||1, category:i.category }; });
+                    var uid        = (typeof auth !== 'undefined' && auth.currentUser) ? auth.currentUser.uid : '';
+                    var uname      = (typeof userData !== 'undefined' && userData) ? (userData.name  || '') : '';
+                    var uphone     = (typeof userData !== 'undefined' && userData) ? (userData.phone || '') : '';
+
+                    // ── 1. إغلاق paymentModal تماماً ──
+                    var pm = document.getElementById('paymentModal');
+                    if (pm) { pm.style.cssText = 'display:none !important'; pm.classList.remove('active'); }
+
+                    // ── 2. عرض نافذة النجاح ──
+                    document.getElementById('orderSuccessId').textContent    = orderId;
+                    document.getElementById('orderSuccessTotal').textContent = totalPrice.toFixed(2) + '$';
+                    var ov = document.getElementById('orderSuccessOv');
+                    var mo = document.getElementById('orderSuccessModal');
+                    if (ov) { ov.style.display = 'block'; ov.classList.add('on'); }
+                    if (mo) { mo.style.opacity = '1'; mo.style.pointerEvents = 'all'; mo.style.transform = 'translate(-50%,-50%) scale(1)'; mo.classList.add('on'); }
+
+                    // ── 3. تفريغ السلة ──
+                    cart = [];
+                    hasSocialMediaProduct = false;
+                    hasCreditProduct = false;
+                    hasGameProduct = false;
+                    hasAppProduct = false;
+                    hasPremiumProduct = false;
+                    localStorage.removeItem('zoodnyCart');
+                    updateCartUI();
+                    try { cartSidebar.classList.remove('active'); cartOverlay.classList.remove('active'); } catch(e){}
+                    try { customerForm.reset(); } catch(e){}
+                    try { socialMediaFields.classList.remove('active'); } catch(e){}
+
+                    // ── 4. حفظ في Firebase في الخلفية ──
+                    if (typeof db !== 'undefined' && uid) {
+                        db.ref('store_orders/' + orderId).set({
+                            orderId:orderId, uid:uid, name:uname, phone:uphone,
+                            city:'غير محدد', items:items, total:totalPrice,
+                            paymentMethod:'wallet', date:orderDate, status:'pending', ts:Date.now()
+                        });
+                        db.ref('users/'+uid+'/orders/'+orderId).set({ orderId:orderId, date:orderDate, total:totalPrice, status:'pending' });
+                        db.ref('users/'+uid+'/ordersCount').transaction(function(c){ return (c||0)+1; });
+                        db.ref('users/'+uid+'/balance').transaction(function(cur){ var n=(cur||0)-totalPrice; return n<0?0:n; });
+                        db.ref('users/'+uid+'/transactions/TX-'+Date.now()).set({
+                            desc:'دفع طلب '+orderId, date:orderDate,
+                            amount:totalPrice, type:'debit', orderId:orderId, ts:Date.now()
+                        });
+                    }
+                }
+
+                // جلب الرصيد من Firebase
+                if (typeof db !== 'undefined' && typeof auth !== 'undefined' && auth.currentUser) {
+                    db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
+                        doFinish(parseFloat(snap.val() || 0));
+                    });
+                } else {
+                    doFinish((typeof getBalance === 'function') ? getBalance() : 0);
                 }
             });
             
@@ -13697,7 +13738,7 @@
     </script>
 
     <!-- ══ Order Success Modal ══ -->
-    <div class="z-ov" id="orderSuccessOv" style="z-index:5000"></div>
+    <div class="z-ov" id="orderSuccessOv" style="z-index:5000;display:none"></div>
     <div class="z-modal" id="orderSuccessModal" style="z-index:5001;text-align:center;padding:2.5rem 2rem;max-width:360px">
         <div class="order-succ-icon"><i class="fas fa-check"></i></div>
         <h3 style="font-size:1.4rem;color:var(--primary);margin-bottom:.5rem">تم الشراء بنجاح! 🎉</h3>

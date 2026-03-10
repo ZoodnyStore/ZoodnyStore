@@ -3181,7 +3181,7 @@
     </div>
 
     <!-- نموذج بيانات العميل -->
-    <div class="customer-modal" id="customerModal">
+    <div class="customer-modal" id="customerModal" style="display:none!important">
         <div class="customer-container">
             <div class="customer-header">
                 <h3><i class="fas fa-user"></i> بيانات الطلب</h3>
@@ -11303,16 +11303,20 @@
                 return base;
             });
 
+            // اقرأ بيانات العميل من Firebase profile
+            var _uname  = (typeof userData !== 'undefined' && userData && userData.name)  ? userData.name  : (customerData.name  || '');
+            var _uphone = (typeof userData !== 'undefined' && userData && userData.phone) ? userData.phone : (customerData.phone || '');
+
             var orderData = {
                 orderId,
                 uid:           (typeof auth !== 'undefined' && auth.currentUser) ? auth.currentUser.uid : 'guest',
-                name:          customerData.name          || '',
-                phone:         customerData.phone         || '',
-                city:          customerData.city          || '',
+                name:          _uname,
+                phone:         _uphone,
+                city:          customerData.city          || 'غير محدد',
                 accountUrl:    customerData.accountUrl    || '',
                 items,
                 total:         totalPrice,
-                paymentMethod: 'sham-cash',
+                paymentMethod: 'wallet',
                 transferNumber: currentPaymentData ? currentPaymentData.transferNumber : '',
                 paidAmount:     currentPaymentData ? currentPaymentData.paidAmount     : '',
                 transferDate:   currentPaymentData ? currentPaymentData.transferDate   : '',
@@ -11356,18 +11360,20 @@
                     }
                 }
 
-                // ── إغلاق النوافذ وعرض نافذة النجاح ──
+                // ── إغلاق كل النوافذ ──
                 customerModal.classList.remove('active');
                 paymentModal.style.display = 'none';
                 paymentModal.classList.remove('active');
                 cartSidebar.classList.remove('active');
                 cartOverlay.classList.remove('active');
 
-                // عرض نافذة النجاح
-                document.getElementById('orderSuccessId').textContent   = orderId;
+                // ── عرض رسالة النجاح ──
+                document.getElementById('orderSuccessId').textContent    = orderId;
                 document.getElementById('orderSuccessTotal').textContent = totalPrice.toFixed(2) + '$';
-                document.getElementById('orderSuccessModal').classList.add('active');
-                document.getElementById('orderSuccessOv').classList.add('active');
+                setTimeout(function() {
+                    document.getElementById('orderSuccessOv').classList.add('active');
+                    document.getElementById('orderSuccessModal').classList.add('active');
+                }, 200);
 
                 // تفريغ السلة
                 cart = [];
@@ -12042,11 +12048,14 @@
                 var cartTotal = parseFloat(totalText.replace(/[^0-9.]/g, '')) || 0;
 
                 function proceedToCheckout() {
-                    renderOrderSummary();
-                    renderSocialMediaSummary();
-                    customerModal.classList.add('active');
+                    // مباشرة لنافذة التأكيد بدون نموذج بيانات
                     navLinks.classList.remove('active');
                     menuOverlay.classList.remove('active');
+                    cartSidebar.classList.remove('active');
+                    cartOverlay.classList.remove('active');
+                    if (typeof openConfirmModal === 'function') {
+                        openConfirmModal();
+                    }
                 }
 
                 function checkBalanceAndProceed(bal) {
@@ -12104,31 +12113,8 @@
                     paymentMethod: paymentMethodInput.value
                 };
                 
-                if (!customerData.name || !customerData.phone || !customerData.city) {
-                    showToast('يرجى ملء جميع الحقول المطلوبة');
-                    return;
-                }
-                
-                if (hasSocialMediaProduct) {
-                    customerData.accountUrl = accountUrl.value;
-                    
-                    if (!customerData.accountUrl) {
-                        showToast('يرجى ملء رابط الحساب أو الصفحة');
-                        return;
-                    }
-                    
-                    if (!customerData.accountUrl.startsWith('http://') && !customerData.accountUrl.startsWith('https://')) {
-                        showToast('يرجى إدخال رابط صحيح يبدأ بـ http:// أو https://');
-                        return;
-                    }
-                }
-                
-                if (customerData.paymentMethod === 'sham-cash' || true) {
-                    customerModal.classList.remove('active');
-                    setTimeout(() => {
-                        openConfirmModal();
-                    }, 200);
-                }
+                // تم حذف نموذج البيانات — الانتقال مباشرة
+                customerModal.classList.remove('active');
             });
             
             paymentClose.addEventListener('click', () => {
@@ -12190,9 +12176,9 @@
                 var errEl = document.getElementById('submitPaymentErr');
 
                 var customerData = {
-                    name:          document.getElementById('customerName').value,
-                    phone:         document.getElementById('customerPhone').value,
-                    city:          document.getElementById('customerCity').value,
+                    name:          (typeof userData !== 'undefined' && userData) ? userData.name  : '',
+                    phone:         (typeof userData !== 'undefined' && userData) ? userData.phone : '',
+                    city:          'غير محدد',
                     paymentMethod: 'wallet'
                 };
                 if (hasSocialMediaProduct) {

@@ -13702,9 +13702,20 @@
         }
         function tryAdminLogin() {
             if ($('adminPassInput').value === ADMIN_PASS) {
-                $('adminLoginModal').classList.remove('on');
-                $('adminDashboard').classList.add('on');
-                startAdminListeners();
+                $('adminLoginErr').textContent = '⏳ جارٍ تسجيل الدخول...';
+                auth.signInWithEmailAndPassword('admin@zoodny.com', $('adminPassInput').value)
+                .then(function() {
+                    $('adminLoginModal').classList.remove('on');
+                    $('adminDashboard').classList.add('on');
+                    startAdminListeners();
+                })
+                .catch(function(err) {
+                    // إذا فشل تسجيل الدخول بـ Firebase افتح اللوحة بدونه (fallback)
+                    console.warn('Admin Firebase login failed:', err.message);
+                    $('adminLoginModal').classList.remove('on');
+                    $('adminDashboard').classList.add('on');
+                    startAdminListeners();
+                });
             } else {
                 $('adminLoginErr').textContent = '✕ كلمة السر غير صحيحة';
                 $('adminPassInput').value = '';

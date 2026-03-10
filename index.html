@@ -13699,11 +13699,14 @@
             ovOff('adminPanelOv');
             $('adminLoginModal').classList.remove('on');
             $('adminDashboard').classList.remove('on');
+            auth.signOut();
         }
         function tryAdminLogin() {
             if ($('adminPassInput').value === ADMIN_PASS) {
                 $('adminLoginErr').textContent = '⏳ جارٍ تسجيل الدخول...';
-                auth.signInWithEmailAndPassword('admin@zoodny.com', 'ZoodnyZoodny')
+                auth.signOut().then(function() {
+                    return auth.signInWithEmailAndPassword('admin@zoodny.com', 'ZoodnyZoodny');
+                })
                 .then(function() {
                     $('adminLoginModal').classList.remove('on');
                     $('adminDashboard').classList.add('on');

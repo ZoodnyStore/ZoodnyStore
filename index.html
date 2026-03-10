@@ -11273,7 +11273,7 @@
             showToast('جاري حفظ الطلب...');
 
             // ── بناء بيانات الطلب بالتفصيل ──
-            var orderId = orderNumber ? orderNumber.textContent : ('ORD-' + Date.now());
+            var orderId = 'ORD-' + Date.now();  // always unique
             var totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
             // بناء العناصر مع جميع التفاصيل الخاصة بكل نوع
@@ -11383,8 +11383,14 @@
                 socialMediaFields.classList.remove('active');
 
             } catch(err) {
-                console.error('Firebase order save error:', err);
-                showToast('حدث خطأ، يرجى المحاولة مرة أخرى أو التواصل معنا');
+                console.error('Firebase order save error:', err.code, err.message);
+                var errMsg = 'حدث خطأ';
+                if (err.code === 'PERMISSION_DENIED') {
+                    errMsg = 'خطأ في الصلاحيات — تحقق من قواعد Firebase';
+                } else if (err.code === 'NETWORK_ERROR') {
+                    errMsg = 'خطأ في الاتصال — تحقق من الإنترنت';
+                }
+                showToast(errMsg + ': ' + err.message);
             }
         }
         

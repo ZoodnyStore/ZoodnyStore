@@ -13947,10 +13947,10 @@
                 });
             })
             .then(function() {
-                alert('✓ تمت إضافة ' + amount.toFixed(2) + '$ لحساب المستخدم بنجاح');
+                alert('✓ تمت إضافة ' + amount.toFixed(2) + '$ للمستخدم بنجاح');
             })
             .catch(function(err) {
-                alert('خطأ: ' + err.message);
+                alert('خطأ أثناء إضافة الرصيد: ' + err.message);
                 console.error('admAcceptTopup error:', err);
             });
         };

@@ -13734,26 +13734,6 @@
             dbRef('users/' + uid).remove();
         };
 
-        // ── زر حسناً شكراً ──────────────────────────────────────────────────
-        setTimeout(function() {
-            var closeBtn = document.getElementById('orderSuccessCloseBtn');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', function() {
-                    var ov = document.getElementById('orderSuccessOv');
-                    var mo = document.getElementById('orderSuccessModal');
-                    if (ov) { ov.classList.remove('on','active'); ov.style.display = 'none'; }
-                    if (mo) { mo.classList.remove('on','active'); mo.style.opacity = '0'; mo.style.pointerEvents = 'none'; }
-                    var cats  = document.getElementById('categories');
-                    var prods = document.getElementById('productsSection');
-                    if (prods) prods.style.display = 'none';
-                    if (cats) {
-                        cats.style.display = 'block';
-                        window.scrollTo({ top: cats.offsetTop - 80, behavior: 'smooth' });
-                    }
-                });
-            }
-        }, 1000);
-
     }());
     </script>
 

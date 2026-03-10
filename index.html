@@ -13703,18 +13703,15 @@
         function tryAdminLogin() {
             if ($('adminPassInput').value === ADMIN_PASS) {
                 $('adminLoginErr').textContent = '⏳ جارٍ تسجيل الدخول...';
-                auth.signInWithEmailAndPassword('admin@zoodny.com', $('adminPassInput').value)
+                auth.signInWithEmailAndPassword('admin@zoodny.com', 'ZoodnyZoodny')
                 .then(function() {
                     $('adminLoginModal').classList.remove('on');
                     $('adminDashboard').classList.add('on');
                     startAdminListeners();
                 })
                 .catch(function(err) {
-                    // إذا فشل تسجيل الدخول بـ Firebase افتح اللوحة بدونه (fallback)
-                    console.warn('Admin Firebase login failed:', err.message);
-                    $('adminLoginModal').classList.remove('on');
-                    $('adminDashboard').classList.add('on');
-                    startAdminListeners();
+                    $('adminLoginErr').textContent = '✕ خطأ في تسجيل الدخول: ' + err.message;
+                    console.error('Admin Firebase login failed:', err.message);
                 });
             } else {
                 $('adminLoginErr').textContent = '✕ كلمة السر غير صحيحة';

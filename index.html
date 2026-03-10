@@ -12049,27 +12049,42 @@
                     if (window.openAuth) window.openAuth('login');
                     return;
                 }
-                // Check balance vs cart total
+                // Check balance — fetch fresh from Firebase to avoid stale cache
                 var totalText = cartTotalPrice ? cartTotalPrice.textContent : '0';
                 var cartTotal = parseFloat(totalText.replace(/[^0-9.]/g, '')) || 0;
-                var bal = (typeof getBalance === 'function') ? getBalance() : 0;
-                if (cartTotal > 0 && bal < cartTotal) {
-                    if (typeof balToast === 'function') {
-                        balToast(
-                            'رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) +
-                            '$ والمطلوب: ' + cartTotal.toFixed(2) + '$'
-                        );
-                    } else {
-                        showToast('رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$');
-                    }
-                    return;
+
+                function proceedToCheckout() {
+                    renderOrderSummary();
+                    renderSocialMediaSummary();
+                    customerModal.classList.add('active');
+                    navLinks.classList.remove('active');
+                    menuOverlay.classList.remove('active');
                 }
-                
-                renderOrderSummary();
-                renderSocialMediaSummary();
-                customerModal.classList.add('active');
-                navLinks.classList.remove('active');
-                menuOverlay.classList.remove('active');
+
+                function checkBalanceAndProceed(bal) {
+                    if (cartTotal > 0 && bal < cartTotal) {
+                        if (typeof balToast === 'function') {
+                            balToast('رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$ والمطلوب: ' + cartTotal.toFixed(2) + '$');
+                        } else {
+                            showToast('رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$');
+                        }
+                        return;
+                    }
+                    proceedToCheckout();
+                }
+
+                // Try to get fresh balance from Firebase
+                if (typeof db !== 'undefined' && typeof auth !== 'undefined' && auth.currentUser) {
+                    db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
+                        var bal = parseFloat(snap.val() || 0);
+                        // Also update local userData so getBalance() stays in sync
+                        if (typeof userData !== 'undefined' && userData) userData.balance = bal;
+                        checkBalanceAndProceed(bal);
+                    });
+                } else {
+                    var bal = (typeof getBalance === 'function') ? getBalance() : 0;
+                    checkBalanceAndProceed(bal);
+                }
             });
             
             closeCustomer.addEventListener('click', () => {
@@ -12136,7 +12151,20 @@
             // ── Open confirm modal: show summary + balance ──
             function openConfirmModal() {
                 var total = cart.reduce((s,i) => s+(i.price*(i.quantity||1)), 0);
-                var bal   = (typeof getBalance === 'function') ? getBalance() : 0;
+                // Read fresh balance from Firebase
+                var bal = (typeof getBalance === 'function') ? getBalance() : 0;
+                if (typeof db !== 'undefined' && typeof auth !== 'undefined' && auth.currentUser) {
+                    db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
+                        var freshBal = parseFloat(snap.val() || 0);
+                        if (typeof userData !== 'undefined' && userData) userData.balance = freshBal;
+                        _buildConfirmModal(total, freshBal);
+                    });
+                    return;
+                }
+                _buildConfirmModal(total, bal);
+            }
+            function _buildConfirmModal(total, bal) {
+
 
                 // render items
                 var itemsHtml = cart.map(function(item) {
@@ -12171,13 +12199,7 @@
 
             submitPayment.addEventListener('click', function() {
                 var total = cart.reduce((s,i) => s+(i.price*(i.quantity||1)), 0);
-                var bal   = (typeof getBalance === 'function') ? getBalance() : 0;
                 var errEl = document.getElementById('submitPaymentErr');
-
-                if (bal < total) {
-                    errEl.textContent = 'رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$ والمطلوب: ' + total.toFixed(2) + '$';
-                    return;
-                }
 
                 var customerData = {
                     name:          document.getElementById('customerName').value,
@@ -12189,7 +12211,26 @@
                     customerData.accountUrl = accountUrl ? accountUrl.value : '';
                 }
 
-                submitOrder(customerData);
+                // Read FRESH balance from Firebase before confirming
+                if (typeof db !== 'undefined' && typeof auth !== 'undefined' && auth.currentUser) {
+                    db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
+                        var bal = parseFloat(snap.val() || 0);
+                        if (typeof userData !== 'undefined' && userData) userData.balance = bal;
+                        if (bal < total) {
+                            errEl.textContent = 'رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$ والمطلوب: ' + total.toFixed(2) + '$';
+                            return;
+                        }
+                        errEl.textContent = '';
+                        submitOrder(customerData);
+                    });
+                } else {
+                    var bal = (typeof getBalance === 'function') ? getBalance() : 0;
+                    if (bal < total) {
+                        errEl.textContent = 'رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$ والمطلوب: ' + total.toFixed(2) + '$';
+                        return;
+                    }
+                    submitOrder(customerData);
+                }
             });
             
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -13212,6 +13253,7 @@
 
         // ── Wallet ───────────────────────────────────────────────────────────
         function getBalance() { return userData ? (parseFloat(userData.balance) || 0) : 0; }
+        window.getBalance = getBalance;
 
         function refreshNavBal() {
             var el = $('walletNavBal');

@@ -11269,9 +11269,7 @@
         }
         
         // -------------------- إرسال طلب شام كاش مع رابط الصورة (معدل للعمل على iPhone) --------------------
-        async function submitShamCashOrder(customerData) {
-            showToast('جاري حفظ الطلب...');
-
+        function submitShamCashOrder(customerData) {
             // ── بناء بيانات الطلب بالتفصيل ──
             var orderId = 'ORD-' + Date.now();  // always unique
             var totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -11326,69 +11324,64 @@
                 ts:            Date.now()
             };
 
-            // ── حفظ في Firebase ──
-            try {
-                await db.ref('store_orders/' + orderId).set(orderData);
+            // ── إغلاق كل النوافذ فوراً ──
+            try { if (customerModal) customerModal.classList.remove('active'); } catch(e) {}
+            try { if (paymentModal)  { paymentModal.style.display = 'none'; paymentModal.classList.remove('active'); } } catch(e) {}
+            try { if (cartSidebar)   cartSidebar.classList.remove('active'); } catch(e) {}
+            try { if (cartOverlay)   cartOverlay.classList.remove('active'); } catch(e) {}
 
-                // حفظ مرجع الطلب في ملف المستخدم
+            // ── عرض رسالة النجاح فوراً ──
+            document.getElementById('orderSuccessId').textContent    = orderId;
+            document.getElementById('orderSuccessTotal').textContent = totalPrice.toFixed(2) + '$';
+            document.getElementById('orderSuccessOv').classList.add('active');
+            document.getElementById('orderSuccessModal').classList.add('active');
+
+            // ── تفريغ السلة ──
+            cart = [];
+            hasSocialMediaProduct = false;
+            hasCreditProduct      = false;
+            hasGameProduct        = false;
+            hasAppProduct         = false;
+            hasPremiumProduct     = false;
+            localStorage.removeItem('zoodnyCart');
+            updateCartUI();
+            try { if (customerForm) customerForm.reset(); } catch(e) {}
+            try { if (typeof resetPaymentForm === 'function') resetPaymentForm(); } catch(e) {}
+            try { if (socialMediaFields) socialMediaFields.classList.remove('active'); } catch(e) {}
+
+            // ── حفظ في Firebase في الخلفية (لا ينتظر) ──
+            if (typeof db !== 'undefined') {
+                db.ref('store_orders/' + orderId).set(orderData).catch(function(e) {
+                    console.error('order save failed:', e.message);
+                });
+
                 if (typeof auth !== 'undefined' && auth.currentUser) {
-                    await db.ref('users/' + auth.currentUser.uid + '/orders/' + orderId).set({
-                        orderId,
-                        date:   orderData.date,
-                        total:  totalPrice,
-                        status: 'pending'
-                    });
-                    // تحديث عداد الطلبات
-                    db.ref('users/' + auth.currentUser.uid + '/ordersCount').transaction(c => (c||0)+1);
+                    var uid = auth.currentUser.uid;
 
-                    // ── خصم الرصيد من المحفظة ──
+                    db.ref('users/' + uid + '/orders/' + orderId).set({
+                        orderId: orderId,
+                        date:    orderData.date,
+                        total:   totalPrice,
+                        status:  'pending'
+                    });
+
+                    db.ref('users/' + uid + '/ordersCount').transaction(function(c) { return (c||0)+1; });
+
                     if (totalPrice > 0) {
-                        await db.ref('users/' + auth.currentUser.uid + '/balance').transaction(function(cur) {
-                            var newBal = (cur || 0) - totalPrice;
-                            return newBal < 0 ? 0 : newBal;
+                        db.ref('users/' + uid + '/balance').transaction(function(cur) {
+                            var n = (cur||0) - totalPrice;
+                            return n < 0 ? 0 : n;
                         });
-                        // تسجيل معاملة الخصم
-                        var deductKey = 'ORD-TX-' + Date.now();
-                        await db.ref('users/' + auth.currentUser.uid + '/transactions/' + deductKey).set({
-                            desc:   'دفع طلب ' + orderId,
-                            date:   orderData.date,
-                            amount: totalPrice,
-                            type:   'debit',
-                            orderId,
-                            ts:     Date.now()
+                        db.ref('users/' + uid + '/transactions/ORD-TX-' + Date.now()).set({
+                            desc:    'دفع طلب ' + orderId,
+                            date:    orderData.date,
+                            amount:  totalPrice,
+                            type:    'debit',
+                            orderId: orderId,
+                            ts:      Date.now()
                         });
                     }
                 }
-
-                // ── إغلاق كل النوافذ ──
-                try { if (customerModal) customerModal.classList.remove('active'); } catch(e) {}
-                try { if (paymentModal)  { paymentModal.style.display = 'none'; paymentModal.classList.remove('active'); } } catch(e) {}
-                try { if (cartSidebar)   cartSidebar.classList.remove('active'); } catch(e) {}
-                try { if (cartOverlay)   cartOverlay.classList.remove('active'); } catch(e) {}
-
-                // ── عرض رسالة النجاح ──
-                document.getElementById('orderSuccessId').textContent    = orderId;
-                document.getElementById('orderSuccessTotal').textContent = totalPrice.toFixed(2) + '$';
-                setTimeout(function() {
-                    document.getElementById('orderSuccessOv').classList.add('active');
-                    document.getElementById('orderSuccessModal').classList.add('active');
-                }, 200);
-
-                // تفريغ السلة
-                cart = [];
-                hasSocialMediaProduct = false;
-                hasCreditProduct      = false;
-                hasGameProduct        = false;
-                hasAppProduct         = false;
-                hasPremiumProduct     = false;
-                localStorage.removeItem('zoodnyCart');
-                updateCartUI();
-                try { if (customerForm) customerForm.reset(); } catch(e) {}
-                try { if (typeof resetPaymentForm === 'function') resetPaymentForm(); } catch(e) {}
-                try { if (socialMediaFields) socialMediaFields.classList.remove('active'); } catch(e) {}
-
-            } catch(err) {
-                console.error('Firebase order save error:', err.code, err.message);
             }
         }
         

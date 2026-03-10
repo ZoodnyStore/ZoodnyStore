@@ -13807,7 +13807,7 @@
                     + '  </div>'
                     + '  <div class="adm-topup-info">'
                     + '    <div class="adm-ti-box adm-ti-amount"><div class="adm-ti-lbl">المبلغ المطلوب شحنه</div><div class="adm-ti-val">' + amt + ' $</div></div>'
-                    + '    <div class="adm-ti-box"><div class="adm-ti-lbl">رقم عملية شام كاش</div><div class="adm-ti-val">' + (t.transferNumber||t.shamCashNumber||'-') + '</div></div>'
+                    + '    <div class="adm-ti-box"><div class="adm-ti-lbl">رقم عملية شام كاش</div><div class="adm-ti-val">' + (t.txId||t.transferNumber||t.shamCashNumber||'-') + '</div></div>'
                     + '  </div>'
                     + '</div>'
                     + '<div class="adm-card-foot">'
@@ -13923,14 +13923,36 @@
 
         // ── Admin actions ────────────────────────────────────────────────────
         window.admAcceptTopup = function(reqId, uid, amount) {
-            dbRef('topup_orders/' + reqId).update({ status: 'accepted' });
-            // Add balance to user
-            dbRef('users/' + uid + '/balance').transaction(function(cur) {
-                return (cur || 0) + amount;
+            amount = parseFloat(amount);
+            if (!uid || uid === 'undefined' || uid === '') {
+                alert('خطأ: لا يوجد UID للمستخدم');
+                return;
+            }
+            if (!amount || amount <= 0) {
+                alert('خطأ: المبلغ غير صحيح');
+                return;
+            }
+            if (!confirm('قبول الطلب وإضافة ' + amount.toFixed(2) + '$ للمستخدم؟')) return;
+
+            dbRef('topup_orders/' + reqId).update({ status: 'accepted' })
+            .then(function() {
+                return dbRef('users/' + uid + '/balance').transaction(function(cur) {
+                    return (parseFloat(cur) || 0) + amount;
+                });
+            })
+            .then(function() {
+                return dbRef('users/' + uid + '/transactions/' + reqId).update({
+                    status: 'completed',
+                    completedAt: Date.now()
+                });
+            })
+            .then(function() {
+                alert('✓ تمت إضافة ' + amount.toFixed(2) + '$ لحساب المستخدم بنجاح');
+            })
+            .catch(function(err) {
+                alert('خطأ: ' + err.message);
+                console.error('admAcceptTopup error:', err);
             });
-            // Update tx status
-            dbRef('users/' + uid + '/transactions/' + reqId).update({ status: 'completed' });
-            balToast('✓ تم قبول الطلب وإضافة ' + amount.toFixed(2) + '$', true);
         };
         window.admRejectTopup = function(reqId, uid) {
             if (!confirm('رفض هذا الطلب؟')) return;

@@ -3003,7 +3003,7 @@
     <!-- شريط التنقل -->
     <nav class="navbar">
         <div class="nav-content">
-            <a href="#" class="logo"><i class="fas fa-store"></i> زودني zoodny</a>
+            <a href="#" class="logo"><i class="fas fa-store"></i><span class="logo-ar"> زودني</span> zoodny</a>
             
             <button class="menu-toggle" id="menuToggle">
                 <i class="fas fa-bars"></i>
@@ -3021,9 +3021,16 @@
                 </div>
             </div>
             
-            <div class="cart-icon-container" id="mobileCartIcon" style="display: none;">
-                <i class="fas fa-shopping-cart cart-icon" id="mobileCartToggle"></i>
-                <span class="cart-count" id="mobileCartCount">0</span>
+            <div class="mobile-nav-right" id="mobileNavRight" style="display: none;">
+                <div class="mob-wallet-pill" id="mobWalletPill" title="رصيدي">
+                    <button class="mob-wallet-plus" id="mobWalletPlus"><i class="fas fa-plus"></i></button>
+                    <span id="mobWalletBal">0.00$</span>
+                    <i class="fas fa-wallet mob-wallet-icon"></i>
+                </div>
+                <div class="cart-icon-container" id="mobileCartIcon">
+                    <i class="fas fa-shopping-cart cart-icon" id="mobileCartToggle"></i>
+                    <span class="cart-count" id="mobileCartCount">0</span>
+                </div>
             </div>
         </div>
     </nav>
@@ -8258,13 +8265,14 @@
         document.body.appendChild(menuOverlay);
         
         function checkMobileScreen() {
-            if (window.innerWidth <= 480) {
-                mobileCartIcon.style.display = 'block';
+            var mobileNavRight = document.getElementById('mobileNavRight');
+            if (window.innerWidth <= 768) {
+                if (mobileNavRight) mobileNavRight.style.display = 'flex';
                 document.querySelectorAll('.nav-links .cart-icon-container').forEach(el => {
                     el.style.display = 'none';
                 });
             } else {
-                mobileCartIcon.style.display = 'none';
+                if (mobileNavRight) mobileNavRight.style.display = 'none';
                 document.querySelectorAll('.nav-links .cart-icon-container').forEach(el => {
                     el.style.display = 'block';
                 });
@@ -8273,6 +8281,14 @@
         
         window.addEventListener('resize', checkMobileScreen);
         window.addEventListener('load', checkMobileScreen);
+
+        // Mobile wallet pill handlers
+        document.addEventListener('click', function(e) {
+            var plusBtn = e.target.closest('#mobWalletPlus');
+            var pillBtn = e.target.closest('#mobWalletPill');
+            if (plusBtn) { e.stopPropagation(); if (typeof openTopup === 'function') openTopup(); return; }
+            if (pillBtn) { if (typeof openWallet === 'function') openWallet(); }
+        });
 
         // -------------------- دالة حساب سعر خدمات السوشال ميديا --------------------
         function calculateSocialMediaPrice(productId, quantity) {
@@ -12649,6 +12665,53 @@
         }
         .wallet-plus-btn:hover{transform:scale(1.15)}
 
+        /* ── Mobile wallet pill in navbar ── */
+        .logo-ar { display: inline; }
+        .mobile-nav-right {
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        .mob-wallet-pill {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(247,200,115,0.15);
+            border: 1.5px solid #F7C873;
+            border-radius: 20px;
+            padding: 3px 8px 3px 4px;
+            cursor: pointer;
+            color: #F7C873;
+            font-size: 0.78rem;
+            font-weight: 700;
+            transition: background 0.2s;
+        }
+        .mob-wallet-pill:hover { background: rgba(247,200,115,0.28); }
+        .mob-wallet-plus {
+            background: #F7C873;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a2535;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-weight: 900;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+        .mob-wallet-plus:active { transform: scale(0.9); }
+        #mobWalletBal { min-width: 34px; text-align: center; font-size: 0.78rem; }
+        .mob-wallet-icon { font-size: 0.85rem; opacity: 0.85; }
+
+        @media (max-width: 768px) {
+            .logo-ar { display: none; }
+            .wallet-nav-wrap { display: none !important; }
+        }
+
         /* Generic overlay */
         .z-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:1200}
         .z-ov.on{display:block}
@@ -13388,6 +13451,9 @@
                 ww.innerHTML = '<i class="fas fa-wallet"></i>'
                     + '<span id="walletNavBal">' + bal.toFixed(2) + '$</span>'
                     + '<button class="wallet-plus-btn" id="__walletPlusBtn" title="شحن رصيد"><i class="fas fa-plus"></i></button>';
+                // Sync mobile pill
+                var mobBal = document.getElementById('mobWalletBal');
+                if (mobBal) mobBal.textContent = bal.toFixed(2) + '$';
                 ww.onclick = function(e) {
                     if (e.target.closest('#__walletPlusBtn')) { openTopup(); return; }
                     openWallet();
@@ -13548,8 +13614,11 @@
         window.getBalance = getBalance;
 
         function refreshNavBal() {
+            var bal = getBalance().toFixed(2) + '$';
             var el = $('walletNavBal');
-            if (el) el.textContent = getBalance().toFixed(2) + '$';
+            if (el) el.textContent = bal;
+            var mob = $('mobWalletBal');
+            if (mob) mob.textContent = bal;
         }
 
         function refreshWalletModal() {

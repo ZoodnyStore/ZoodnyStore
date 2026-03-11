@@ -13758,6 +13758,7 @@
         }
 
         function renderTopupsTable() {
+            var adminTopupFilter = 'all';
             var filtered = adminTopupFilter==='all' ? adminTopups : adminTopups.filter(function(t){ return t.status===adminTopupFilter; });
             var wrap = $('topupsCardsWrap');
             if (!wrap) return;

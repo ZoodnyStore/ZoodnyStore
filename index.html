@@ -13736,13 +13736,15 @@
                 renderOrdersTable();
             });
             // Users
+            console.log('Loading users...');
             dbRef('users').on('value', function(snap) {
+                console.log('users received:', snap.numChildren());
                 adminUsers = [];
                 snap.forEach(function(c) {
                     var u = c.val();
-                    if (u && !u.transactions && !u.orders) adminUsers.push(u);
-                    else if (u) adminUsers.push(Object.assign({}, u, {transactions:undefined, orders:undefined}));
+                    if (u) adminUsers.push(Object.assign({}, u, {transactions:undefined, orders:undefined}));
                 });
+                console.log('adminUsers:', adminUsers);
                 renderUsersTable();
             });
         }

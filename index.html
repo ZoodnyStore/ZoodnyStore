@@ -64,17 +64,84 @@
             padding: 0 1.5rem;
         }
 
-        .logo {
-            color: var(--secondary);
-            font-size: 1.8rem;
-            font-weight: 700;
-            text-decoration: none;
-            letter-spacing: 1px;
-            margin-right: 1.5rem;
-            white-space: nowrap;
+        /* ── Navbar wallet pill (centre) ── */
+        .navbar-logo-wallet {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .nav-wallet-guest,
+        .nav-wallet-user {
+            pointer-events: all;
+        }
+        .nav-wallet-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(247,200,115,0.12);
+            border: 1.5px solid rgba(247,200,115,0.55);
+            border-radius: 50px;
+            padding: 6px 16px 6px 7px;
+            cursor: pointer;
+            color: #F7C873;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 700;
+            transition: background 0.22s, border-color 0.22s, box-shadow 0.22s;
+            white-space: nowrap;
+            box-shadow: 0 0 0 0 rgba(247,200,115,0);
+        }
+        .nav-wallet-pill:hover {
+            background: rgba(247,200,115,0.2);
+            border-color: #F7C873;
+            box-shadow: 0 0 18px rgba(247,200,115,0.22);
+        }
+        .nav-wallet-pill.guest {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .nwp-plus-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #F7C873;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1A252F;
+            font-size: 0.9rem;
+            font-weight: 900;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.18s, box-shadow 0.18s;
+            box-shadow: 0 2px 8px rgba(247,200,115,0.4);
+        }
+        .nwp-plus-btn:hover {
+            transform: scale(1.12) rotate(90deg);
+            box-shadow: 0 4px 14px rgba(247,200,115,0.55);
+        }
+        .nwp-plus-btn:active { transform: scale(0.92); }
+        .nwp-bal {
+            font-size: 0.92rem;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            color: #F7C873;
+            min-width: 42px;
+            text-align: center;
+        }
+        .nwp-icon {
+            font-size: 0.95rem;
+            color: rgba(247,200,115,0.75);
+        }
+        /* ضبط nav-content لدعم التوسيط المطلق */
+        .nav-content {
+            position: relative;
         }
 
         .menu-toggle {
@@ -2143,9 +2210,9 @@
                 font-size: 1.8rem;
             }
             
-            .logo {
-                font-size: 1.5rem;
-                margin-right: 0;
+            /* إخفاء الـ wallet pill المركزي على الموبايل */
+            .navbar-logo-wallet {
+                display: none !important;
             }
 
             .hero {
@@ -3003,7 +3070,24 @@
     <!-- شريط التنقل -->
     <nav class="navbar">
         <div class="nav-content">
-            <a href="#" class="logo"><i class="fas fa-store"></i> زودني zoodny</a>
+            <div class="navbar-logo-wallet" id="navbarLogoWallet">
+                <!-- يُعرض عند عدم تسجيل الدخول -->
+                <div class="nav-wallet-guest" id="navWalletGuest">
+                    <button class="nav-wallet-pill guest" onclick="openAuth && openAuth('login')">
+                        <span class="nwp-plus"><i class="fas fa-plus"></i></span>
+                        <span class="nwp-bal">0.00$</span>
+                        <i class="fas fa-wallet nwp-icon"></i>
+                    </button>
+                </div>
+                <!-- يُعرض عند تسجيل الدخول -->
+                <div class="nav-wallet-user" id="navWalletUser" style="display:none">
+                    <div class="nav-wallet-pill" id="navWalletPill" title="رصيدي">
+                        <button class="nwp-plus-btn" id="navWalletPlus" title="شحن رصيد"><i class="fas fa-plus"></i></button>
+                        <span class="nwp-bal" id="navWalletBal">0.00$</span>
+                        <i class="fas fa-wallet nwp-icon"></i>
+                    </div>
+                </div>
+            </div>
             
             <button class="menu-toggle" id="menuToggle">
                 <i class="fas fa-bars"></i>
@@ -12631,23 +12715,10 @@
             display:flex;align-items:center;justify-content:center;
             font-size:.85rem;font-weight:700;
         }
-        /* Wallet button */
-        .wallet-nav-wrap {
-            display:flex;align-items:center;gap:6px;
-            background:rgba(46,204,113,0.1);border:1.5px solid var(--success);
-            border-radius:24px;padding:4px 12px 4px 6px;cursor:pointer;
-            color:var(--success);font-size:.9rem;font-weight:700;
-            transition:background .25s;
-        }
-        .wallet-nav-wrap:hover{background:rgba(46,204,113,.2)}
-        #walletNavBal{min-width:36px;font-size:.88rem}
-        .wallet-plus-btn{
-            background:var(--success);border:none;border-radius:50%;
-            width:26px;height:26px;display:flex;align-items:center;justify-content:center;
-            color:#fff;font-size:.85rem;cursor:pointer;
-            transition:transform .2s;
-        }
-        .wallet-plus-btn:hover{transform:scale(1.15)}
+        /* Wallet nav wrap — مخفي لأن الـ pill الجديد يحل محله */
+        .wallet-nav-wrap { display: none !important; }
+        #walletNavBal { display: none; }
+        .wallet-plus-btn { display: none; }
 
         /* Generic overlay */
         .z-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:1200}
@@ -13368,8 +13439,16 @@
             var cartCont = document.querySelector('.nav-links .cart-icon-container');
             if (!cartCont) return;
 
+            // ── تحديث wallet pill المركزي ──
+            var guestEl = $('navWalletGuest');
+            var userEl  = $('navWalletUser');
+
             if (!user) {
-                // Not logged in — show login button
+                // غير مسجّل: أظهر الـ pill بدون رصيد (guest)
+                if (guestEl) guestEl.style.display = 'block';
+                if (userEl)  userEl.style.display  = 'none';
+
+                // زر دخول في nav
                 var btn = document.createElement('button');
                 btn.id = '__authNavBtn';
                 btn.className = 'auth-nav-btn';
@@ -13377,22 +13456,23 @@
                 btn.onclick = () => openAuth('login');
                 cartCont.parentNode.insertBefore(btn, cartCont);
             } else {
-                // Logged in — show wallet + user menu
+                // مسجّل: أظهر pill الرصيد
                 var bal = (uData && uData.balance) ? parseFloat(uData.balance) : 0;
+                if (guestEl) guestEl.style.display = 'none';
+                if (userEl)  userEl.style.display  = 'block';
+                var balEl = $('navWalletBal');
+                if (balEl) balEl.textContent = bal.toFixed(2) + '$';
 
-                // Wallet wrap
-                var ww = document.createElement('div');
-                ww.id = '__walletNavWrap';
-                ww.className = 'wallet-nav-wrap';
-                ww.title = 'محفظتي';
-                ww.innerHTML = '<i class="fas fa-wallet"></i>'
-                    + '<span id="walletNavBal">' + bal.toFixed(2) + '$</span>'
-                    + '<button class="wallet-plus-btn" id="__walletPlusBtn" title="شحن رصيد"><i class="fas fa-plus"></i></button>';
-                ww.onclick = function(e) {
-                    if (e.target.closest('#__walletPlusBtn')) { openTopup(); return; }
+                // ربط زر + 
+                var plusBtn = $('navWalletPlus');
+                if (plusBtn) plusBtn.onclick = function(e) { e.stopPropagation(); openTopup(); };
+
+                // ربط الـ pill كاملاً لفتح المحفظة
+                var pill = $('navWalletPill');
+                if (pill) pill.onclick = function(e) {
+                    if (e.target.closest('#navWalletPlus')) return;
                     openWallet();
                 };
-                cartCont.parentNode.insertBefore(ww, cartCont);
 
                 // User dropdown
                 var initials = (uData && uData.name) ? uData.name.charAt(0) : (user.email ? user.email.charAt(0).toUpperCase() : 'U');
@@ -13548,8 +13628,13 @@
         window.getBalance = getBalance;
 
         function refreshNavBal() {
+            var bal = getBalance().toFixed(2) + '$';
+            // desktop wallet-nav-wrap (legacy)
             var el = $('walletNavBal');
-            if (el) el.textContent = getBalance().toFixed(2) + '$';
+            if (el) el.textContent = bal;
+            // new center pill
+            var el2 = $('navWalletBal');
+            if (el2) el2.textContent = bal;
         }
 
         function refreshWalletModal() {

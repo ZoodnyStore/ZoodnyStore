@@ -44,6 +44,13 @@
             padding-top: 80px;
         }
 
+        /* تثبيت الصفحة عند فتح أي modal */
+        body.modal-open {
+            position: fixed;
+            width: 100%;
+            overflow-y: scroll; /* يحافظ على عرض الـ scrollbar لمنع الاهتزاز */
+        }
+
         .navbar {
             background: rgba(42, 63, 84, 0.98);
             padding: 0.8rem 5%;
@@ -13545,8 +13552,32 @@
         function $(id) { return document.getElementById(id); }
         function ovOn(id)  { $(id).classList.add('on'); }
         function ovOff(id) { $(id).classList.remove('on'); }
-        function modalOn(ovId, moId)  { ovOn(ovId);  $(moId).classList.add('on'); }
-        function modalOff(ovId, moId) { ovOff(ovId); $(moId).classList.remove('on'); }
+
+        /* عداد للـ modals المفتوحة — نمنع scroll الصفحة فقط عندما يكون هناك modal مفتوح */
+        var _modalCount = 0;
+        function modalOn(ovId, moId) {
+            ovOn(ovId);
+            $(moId).classList.add('on');
+            _modalCount++;
+            if (_modalCount === 1) {
+                // حفظ موضع الـ scroll الحالي ثم تثبيت الصفحة
+                var scrollY = window.scrollY;
+                document.body.style.top = '-' + scrollY + 'px';
+                document.body.classList.add('modal-open');
+            }
+        }
+        function modalOff(ovId, moId) {
+            ovOff(ovId);
+            $(moId).classList.remove('on');
+            _modalCount = Math.max(0, _modalCount - 1);
+            if (_modalCount === 0) {
+                // استعادة موضع الـ scroll بعد إغلاق آخر modal
+                var scrollY = Math.abs(parseInt(document.body.style.top || '0'));
+                document.body.classList.remove('modal-open');
+                document.body.style.top = '';
+                window.scrollTo(0, scrollY);
+            }
+        }
 
         function balToast(msg, green) {
             var el = $('balToast');

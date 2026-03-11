@@ -14160,10 +14160,46 @@
                 adminUsers = [];
                 snap.forEach(function(c) {
                     var u = c.val();
-                    if (u) adminUsers.push(Object.assign({}, u, {transactions:undefined, orders:undefined}));
+                    var uid = c.key;
+                    if (u) adminUsers.push(Object.assign({}, u, { uid: uid, transactions: undefined, orders: undefined }));
                 });
-                console.log('adminUsers:', adminUsers);
+                console.log('adminUsers loaded:', adminUsers.length);
                 renderUsersTable();
+            }, function(err) {
+                console.error('users read error:', err.code, err.message);
+                // Firebase Rules تمنع قراءة /users — نبني القائمة من topup_orders
+                var usersMap = {};
+                adminTopups.forEach(function(t) {
+                    if (t.uid && !usersMap[t.uid]) {
+                        usersMap[t.uid] = { uid: t.uid, name: t.name || '-', phone: t.phone || '-', email: '-', balance: 0, ordersCount: 0, createdAt: t.date || '-' };
+                    }
+                });
+                adminOrders.forEach(function(o) {
+                    if (o.uid && !usersMap[o.uid]) {
+                        usersMap[o.uid] = { uid: o.uid, name: o.customerName || '-', phone: o.phone || '-', email: '-', balance: 0, ordersCount: 0, createdAt: o.date || '-' };
+                    }
+                    if (o.uid && usersMap[o.uid]) usersMap[o.uid].ordersCount = (usersMap[o.uid].ordersCount || 0) + 1;
+                });
+                adminUsers = Object.values(usersMap);
+                // محاولة قراءة كل مستخدم بشكل منفرد
+                var uids = Object.keys(usersMap);
+                var done = 0;
+                if (!uids.length) { renderUsersTable(); return; }
+                uids.forEach(function(uid) {
+                    dbRef('users/' + uid).once('value', function(s) {
+                        var u = s.val();
+                        if (u) {
+                            for (var i = 0; i < adminUsers.length; i++) {
+                                if (adminUsers[i].uid === uid) {
+                                    adminUsers[i] = Object.assign({}, u, { uid: uid, transactions: undefined, orders: undefined });
+                                    break;
+                                }
+                            }
+                        }
+                        done++;
+                        if (done === uids.length) renderUsersTable();
+                    }, function() { done++; if (done === uids.length) renderUsersTable(); });
+                });
             });
         }
 

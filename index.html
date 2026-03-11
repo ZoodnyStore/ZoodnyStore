@@ -41,54 +41,18 @@
         body {
             background: var(--light);
             color: var(--dark);
-            padding-top: 74px;
+            padding-top: 80px;
         }
 
-        /* ══════════════════════════════════════════════
-           NAVBAR — Glassmorphism + Hide-on-scroll
-        ══════════════════════════════════════════════ */
         .navbar {
+            background: rgba(42, 63, 84, 0.98);
+            padding: 0.8rem 5%;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            height: 74px;
-            background: rgba(18, 30, 44, 0.72);
-            backdrop-filter: blur(22px) saturate(1.6);
-            -webkit-backdrop-filter: blur(22px) saturate(1.6);
-            border-bottom: 1px solid rgba(247, 200, 115, 0.13);
-            box-shadow: 0 4px 32px rgba(0,0,0,0.18);
-            transition: transform 0.38s cubic-bezier(0.4,0,0.2,1),
-                        background 0.3s ease,
-                        box-shadow 0.3s ease;
-        }
-
-        /* حالة الإخفاء عند التمرير للأسفل */
-        .navbar.nav-hidden {
-            transform: translateY(-100%);
-        }
-
-        /* حالة مخفي + ظهور خلفية أغمق عند التمرير بعيداً */
-        .navbar.nav-scrolled {
-            background: rgba(12, 20, 30, 0.92);
-            box-shadow: 0 6px 40px rgba(0,0,0,0.32);
-            border-bottom-color: rgba(247,200,115,0.2);
-        }
-
-        /* Dark mode */
-        @media (prefers-color-scheme: light) {
-            .navbar {
-                background: rgba(255,255,255,0.78);
-                border-bottom: 1px solid rgba(42,63,84,0.1);
-            }
-            .navbar.nav-scrolled {
-                background: rgba(255,255,255,0.95);
-            }
-            .nav-links a { color: var(--primary) !important; }
-            .nav-links a i { color: rgba(42,63,84,0.5) !important; }
-            .nav-links a:hover { color: var(--primary) !important; }
-            .cart-icon { color: var(--primary) !important; }
-            .menu-toggle { color: var(--primary) !important; }
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            height: 80px;
         }
 
         .nav-content {
@@ -97,140 +61,92 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 74px;
-            padding: 0 2rem;
+            padding: 0 1.5rem;
         }
 
-        /* ── Logo ── */
         .logo {
             color: var(--secondary);
-            font-size: 1.55rem;
-            font-weight: 800;
+            font-size: 1.8rem;
+            font-weight: 700;
             text-decoration: none;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             margin-right: 1.5rem;
             white-space: nowrap;
             display: flex;
             align-items: center;
-            gap: 8px;
-            transition: opacity 0.2s;
-        }
-        .logo:hover { opacity: 0.88; }
-        .logo i {
-            font-size: 1.25rem;
-            filter: drop-shadow(0 0 8px rgba(247,200,115,0.5));
+            gap: 10px;
         }
 
-        /* ── Menu toggle (mobile) ── */
         .menu-toggle {
             display: none;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 11px;
-            background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.12);
-            color: #fff;
-            font-size: 1.05rem;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
             cursor: pointer;
-            margin-left: 0.75rem;
-            transition: background 0.2s, transform 0.2s;
+            margin-left: 1rem;
         }
-        .menu-toggle:hover { background: rgba(247,200,115,0.15); }
-        .menu-toggle:active { transform: scale(0.93); }
 
-        /* ── Nav links (desktop) ── */
         .nav-links {
             display: flex;
-            gap: 0.25rem;
+            gap: 2.5rem;
             align-items: center;
         }
 
         .nav-links a {
-            color: rgba(255,255,255,0.82);
+            color: var(--light);
             text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 600;
-            padding: 0.45rem 0.85rem;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 1.05rem;
+            transition: all 0.3s;
             position: relative;
-            transition: color 0.22s, background 0.22s;
-        }
-        .nav-links a i {
-            font-size: 0.82rem;
-            color: rgba(247,200,115,0.6);
-            transition: color 0.22s, transform 0.22s;
-        }
-        .nav-links a:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.07);
-        }
-        .nav-links a:hover i {
-            color: #F7C873;
-            transform: translateY(-1px);
         }
 
-        /* خط سفلي متحرك للرابط النشط */
         .nav-links a::after {
             content: '';
             position: absolute;
-            bottom: 3px;
-            left: 50%;
-            transform: translateX(-50%) scaleX(0);
-            width: 70%;
+            bottom: -5px;
+            left: 0;
+            width: 0;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #F7C873, transparent);
-            border-radius: 2px;
-            transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+            background: var(--secondary);
+            transition: width 0.3s;
         }
-        .nav-links a:hover::after,
-        .nav-links a.active-link::after {
-            transform: translateX(-50%) scaleX(1);
-        }
-        .nav-links a.active-link {
-            color: #F7C873;
-            background: rgba(247,200,115,0.08);
-        }
-        .nav-links a.active-link i { color: #F7C873; }
 
-        /* ── Overlay ── */
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
         .menu-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.55);
-            backdrop-filter: blur(3px);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 998;
             display: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .menu-overlay.active {
-            display: block;
-            opacity: 1;
         }
 
-        /* ── Cart icon (desktop) ── */
+        .menu-overlay.active {
+            display: block;
+        }
+
         .cart-icon-container {
             position: relative;
-            margin-right: 0.5rem;
+            margin-right: 1rem;
         }
+
         .cart-icon {
-            color: rgba(255,255,255,0.85);
-            font-size: 1.35rem;
+            color: var(--light);
+            font-size: 1.5rem;
             cursor: pointer;
-            transition: color 0.25s, transform 0.25s;
+            transition: color 0.3s;
         }
+
         .cart-icon:hover {
-            color: #F7C873;
-            transform: scale(1.12) rotate(-8deg);
+            color: var(--secondary);
         }
+
         .cart-count {
             position: absolute;
             top: -8px;
@@ -238,19 +154,13 @@
             background: var(--accent);
             color: white;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.72rem;
+            font-size: 0.8rem;
             font-weight: 700;
-            border: 2px solid rgba(18,30,44,0.8);
-            transition: transform 0.2s;
-        }
-        .cart-icon:hover ~ .cart-count,
-        .cart-icon-container:hover .cart-count {
-            transform: scale(1.15);
         }
 
         .cart-sidebar {
@@ -2185,117 +2095,62 @@
 
         @media (max-width: 768px) {
             .navbar {
-                height: 60px;
-                padding: 0;
+                height: 70px;
+                padding: 0.5rem 5%;
             }
-
-            .nav-content {
-                height: 60px;
-                padding: 0 12px;
-                gap: 0;
-            }
-
+            
             body {
-                padding-top: 60px;
+                padding-top: 70px;
             }
-
-            /* زر القائمة */
+            
             .menu-toggle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 38px;
-                height: 38px;
-                border-radius: 10px;
-                background: rgba(255,255,255,0.06);
-                border: 1px solid rgba(255,255,255,0.1);
-                color: #fff;
-                font-size: 1.05rem;
-                cursor: pointer;
-                flex-shrink: 0;
-                transition: background 0.2s;
+                display: block;
             }
-            .menu-toggle:active { background: rgba(247,200,115,0.18); }
-
-            /* اللوغو */
-            .logo {
-                font-size: 1.15rem;
-                font-weight: 800;
-                margin: 0;
-                flex: 1;
-                justify-content: center;
-                letter-spacing: 0.5px;
-                gap: 6px;
-            }
-            .logo i { font-size: 1rem; }
-
-            /* القائمة الجانبية */
+            
             .nav-links {
                 position: fixed;
-                top: 62px;
+                top: 70px;
                 left: -100%;
-                width: 82%;
-                max-width: 300px;
-                height: calc(100vh - 62px);
-                background: linear-gradient(180deg, #121c28 0%, #1a2535 100%);
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: var(--primary);
                 flex-direction: column;
-                padding: 1.5rem 0;
-                gap: 0;
-                transition: left 0.32s cubic-bezier(0.4,0,0.2,1);
+                padding: 2rem 0;
+                gap: 1.5rem;
+                transition: left 0.3s ease;
                 z-index: 999;
                 overflow-y: auto;
-                border-right: 1px solid rgba(247,200,115,0.1);
-                box-shadow: 4px 0 24px rgba(0,0,0,0.4);
             }
-            .nav-links.active { left: 0; }
-
-            /* Header للقائمة الجانبية */
-            .nav-links::before {
-                content: '';
-                display: block;
-                height: 3px;
-                background: linear-gradient(90deg, transparent, #F7C873, transparent);
-                margin-bottom: 0.5rem;
+            
+            .nav-links.active {
+                left: 0;
             }
-
+            
             .nav-links a {
-                font-size: 0.95rem;
-                padding: 0.8rem 1.4rem;
+                font-size: 1.2rem;
+                padding: 0.8rem 0;
                 width: 100%;
-                text-align: right;
-                border-bottom: 1px solid rgba(255,255,255,0.04);
-                color: rgba(255,255,255,0.75);
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                transition: background 0.2s, color 0.2s, border-color 0.2s;
-                position: relative;
-            }
-            .nav-links a i {
-                width: 20px;
                 text-align: center;
-                color: rgba(247,200,115,0.55);
-                font-size: 0.9rem;
-                transition: color 0.2s;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             }
-            .nav-links a:hover {
-                background: rgba(247,200,115,0.07);
-                color: #F7C873;
-                border-bottom-color: rgba(247,200,115,0.1);
-            }
-            .nav-links a:hover i { color: #F7C873; }
-            .nav-links a:active { background: rgba(247,200,115,0.14); }
-            .nav-links a::after { display: none; }
-
+            
             .cart-icon-container {
                 margin-right: 0;
-                margin-bottom: 0;
+                margin-bottom: 1rem;
             }
-            .cart-icon { font-size: 1.35rem; }
+            
+            .cart-icon {
+                font-size: 1.8rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+                margin-right: 0;
+            }
 
             .hero {
                 height: 70vh;
-                margin-top: 62px;
+                margin-top: 70px;
             }
 
             .hero h1 {
@@ -3148,34 +3003,27 @@
     <!-- شريط التنقل -->
     <nav class="navbar">
         <div class="nav-content">
-            <a href="#" class="logo"><i class="fas fa-store"></i><span class="logo-ar"> زودني</span> zoodny</a>
+            <a href="#" class="logo"><i class="fas fa-store"></i> زودني zoodny</a>
             
             <button class="menu-toggle" id="menuToggle">
                 <i class="fas fa-bars"></i>
             </button>
             
             <div class="nav-links">
-                <a href="#home"><i class="fas fa-home"></i>الرئيسية</a>
-                <a href="#categories"><i class="fas fa-store"></i>المتجر</a>
-                <a href="#branches"><i class="fas fa-map-marker-alt"></i>فروعنا</a>
-                <a href="#about"><i class="fas fa-info-circle"></i>من نحن</a>
-                <a href="#contact"><i class="fas fa-headset"></i>اتصل بنا</a>
+                <a href="#home">الرئيسية</a>
+                <a href="#categories">المتجر</a>
+                <a href="#branches">فروعنا</a>
+                <a href="#about">من نحن</a>
+                <a href="#contact">اتصل بنا</a>
                 <div class="cart-icon-container">
                     <i class="fas fa-shopping-cart cart-icon" id="cartToggle"></i>
                     <span class="cart-count" id="cartCount">0</span>
                 </div>
             </div>
             
-            <div class="mobile-nav-right" id="mobileNavRight" style="display: none;">
-                <div class="mob-wallet-pill" id="mobWalletPill" title="رصيدي">
-                    <button class="mob-wallet-plus" id="mobWalletPlus"><i class="fas fa-plus"></i></button>
-                    <span id="mobWalletBal">0.00$</span>
-                    <i class="fas fa-wallet mob-wallet-icon"></i>
-                </div>
-                <div class="cart-icon-container" id="mobileCartIcon">
-                    <i class="fas fa-shopping-cart cart-icon" id="mobileCartToggle"></i>
-                    <span class="cart-count" id="mobileCartCount">0</span>
-                </div>
+            <div class="cart-icon-container" id="mobileCartIcon" style="display: none;">
+                <i class="fas fa-shopping-cart cart-icon" id="mobileCartToggle"></i>
+                <span class="cart-count" id="mobileCartCount">0</span>
             </div>
         </div>
     </nav>
@@ -8410,14 +8258,13 @@
         document.body.appendChild(menuOverlay);
         
         function checkMobileScreen() {
-            var mobileNavRight = document.getElementById('mobileNavRight');
-            if (window.innerWidth <= 768) {
-                if (mobileNavRight) mobileNavRight.style.display = 'flex';
+            if (window.innerWidth <= 480) {
+                mobileCartIcon.style.display = 'block';
                 document.querySelectorAll('.nav-links .cart-icon-container').forEach(el => {
                     el.style.display = 'none';
                 });
             } else {
-                if (mobileNavRight) mobileNavRight.style.display = 'none';
+                mobileCartIcon.style.display = 'none';
                 document.querySelectorAll('.nav-links .cart-icon-container').forEach(el => {
                     el.style.display = 'block';
                 });
@@ -8426,14 +8273,6 @@
         
         window.addEventListener('resize', checkMobileScreen);
         window.addEventListener('load', checkMobileScreen);
-
-        // Mobile wallet pill handlers
-        document.addEventListener('click', function(e) {
-            var plusBtn = e.target.closest('#mobWalletPlus');
-            var pillBtn = e.target.closest('#mobWalletPill');
-            if (plusBtn) { e.stopPropagation(); if (typeof openTopup === 'function') openTopup(); return; }
-            if (pillBtn) { if (typeof openWallet === 'function') openWallet(); }
-        });
 
         // -------------------- دالة حساب سعر خدمات السوشال ميديا --------------------
         function calculateSocialMediaPrice(productId, quantity) {
@@ -12244,63 +12083,7 @@
             menuToggle.addEventListener('click', () => {
                 navLinks.classList.toggle('active');
                 menuOverlay.classList.toggle('active');
-                menuToggle.innerHTML = navLinks.classList.contains('active')
-                    ? '<i class="fas fa-times"></i>'
-                    : '<i class="fas fa-bars"></i>';
             });
-
-            // ── Hide navbar on scroll down, show on scroll up ──
-            (function() {
-                var navbar   = document.querySelector('.navbar');
-                var lastY    = 0;
-                var ticking  = false;
-                var threshold = 6;
-
-                window.addEventListener('scroll', function() {
-                    if (!ticking) {
-                        requestAnimationFrame(function() {
-                            var currentY = window.scrollY;
-                            if (currentY > 80) {
-                                navbar.classList.add('nav-scrolled');
-                                if (currentY > lastY + threshold) {
-                                    navbar.classList.add('nav-hidden');
-                                } else if (currentY < lastY - threshold) {
-                                    navbar.classList.remove('nav-hidden');
-                                }
-                            } else {
-                                navbar.classList.remove('nav-scrolled', 'nav-hidden');
-                            }
-                            lastY = currentY;
-                            ticking = false;
-                        });
-                        ticking = true;
-                    }
-                }, { passive: true });
-            })();
-
-            // ── Active link indicator based on scroll position ──
-            (function() {
-                var sections = Array.from(document.querySelectorAll('section[id], div[id]'))
-                    .filter(function(el) {
-                        return ['home','categories','branches','about','contact'].includes(el.id);
-                    });
-                var links = document.querySelectorAll('.nav-links a[href^="#"]');
-
-                function setActive() {
-                    var scrollY = window.scrollY + 120;
-                    var current = '';
-                    sections.forEach(function(sec) {
-                        if (sec.offsetTop <= scrollY) current = sec.id;
-                    });
-                    links.forEach(function(link) {
-                        link.classList.remove('active-link');
-                        var href = link.getAttribute('href').replace('#','');
-                        if (href === current) link.classList.add('active-link');
-                    });
-                }
-                window.addEventListener('scroll', setActive, { passive: true });
-                setActive();
-            })();
             
             menuOverlay.addEventListener('click', () => {
                 navLinks.classList.remove('active');
@@ -12865,91 +12648,6 @@
             transition:transform .2s;
         }
         .wallet-plus-btn:hover{transform:scale(1.15)}
-
-        /* ── Mobile wallet pill in navbar ── */
-        .logo-ar { display: inline; }
-        .mobile-nav-right {
-            display: none;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-        }
-
-        /* pill: رصيد + زر + أيقونة */
-        .mob-wallet-pill {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: rgba(247,200,115,0.1);
-            border: 1.5px solid rgba(247,200,115,0.55);
-            border-radius: 22px;
-            padding: 4px 9px 4px 4px;
-            cursor: pointer;
-            color: #F7C873;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.76rem;
-            font-weight: 700;
-            transition: background 0.2s, border-color 0.2s;
-            white-space: nowrap;
-        }
-        .mob-wallet-pill:active { background: rgba(247,200,115,0.22); }
-
-        .mob-wallet-plus {
-            background: #F7C873;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #121c28;
-            font-size: 0.8rem;
-            cursor: pointer;
-            font-weight: 900;
-            transition: transform 0.18s;
-            flex-shrink: 0;
-        }
-        .mob-wallet-plus:active { transform: scale(0.88); }
-
-        #mobWalletBal {
-            min-width: 38px;
-            text-align: center;
-            font-size: 0.76rem;
-            letter-spacing: 0.2px;
-        }
-        .mob-wallet-icon {
-            font-size: 0.78rem;
-            opacity: 0.75;
-        }
-
-        /* سلة الموبايل */
-        #mobileCartIcon .cart-icon {
-            font-size: 1.25rem;
-            color: rgba(255,255,255,0.88);
-        }
-        #mobileCartIcon .cart-count {
-            top: -7px;
-            left: -7px;
-            width: 18px;
-            height: 18px;
-            font-size: 0.68rem;
-        }
-
-        @media (max-width: 768px) {
-            .logo-ar { display: none; }
-            .wallet-nav-wrap { display: none !important; }
-            /* زر المستخدم — يبقى مرئياً بدون اسم على الموبايل */
-            .user-dropdown { display: flex; align-items: center; }
-            .auth-nav-btn span { display: none; }
-            .auth-nav-btn {
-                padding: 5px 8px;
-                border-radius: 50%;
-                min-width: 38px;
-                height: 38px;
-                justify-content: center;
-            }
-        }
 
         /* Generic overlay */
         .z-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:1200}
@@ -13690,9 +13388,6 @@
                 ww.innerHTML = '<i class="fas fa-wallet"></i>'
                     + '<span id="walletNavBal">' + bal.toFixed(2) + '$</span>'
                     + '<button class="wallet-plus-btn" id="__walletPlusBtn" title="شحن رصيد"><i class="fas fa-plus"></i></button>';
-                // Sync mobile pill
-                var mobBal = document.getElementById('mobWalletBal');
-                if (mobBal) mobBal.textContent = bal.toFixed(2) + '$';
                 ww.onclick = function(e) {
                     if (e.target.closest('#__walletPlusBtn')) { openTopup(); return; }
                     openWallet();
@@ -13853,11 +13548,8 @@
         window.getBalance = getBalance;
 
         function refreshNavBal() {
-            var bal = getBalance().toFixed(2) + '$';
             var el = $('walletNavBal');
-            if (el) el.textContent = bal;
-            var mob = $('mobWalletBal');
-            if (mob) mob.textContent = bal;
+            if (el) el.textContent = getBalance().toFixed(2) + '$';
         }
 
         function refreshWalletModal() {

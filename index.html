@@ -12094,11 +12094,15 @@
             menuToggle.addEventListener('click', () => {
                 navLinks.classList.toggle('active');
                 menuOverlay.classList.toggle('active');
+                var bottomNav = document.getElementById('mobileBottomNav');
+                if (bottomNav) bottomNav.style.display = menuOverlay.classList.contains('active') ? 'none' : '';
             });
             
             menuOverlay.addEventListener('click', () => {
                 navLinks.classList.remove('active');
                 menuOverlay.classList.remove('active');
+                var bottomNav = document.getElementById('mobileBottomNav');
+                if (bottomNav) bottomNav.style.display = '';
             });
             
             document.querySelectorAll('.nav-links a').forEach(link => {
@@ -12106,6 +12110,8 @@
                     if (!this.getAttribute('href').includes('#categories')) {
                         navLinks.classList.remove('active');
                         menuOverlay.classList.remove('active');
+                        var bottomNav = document.getElementById('mobileBottomNav');
+                        if (bottomNav) bottomNav.style.display = '';
                         return;
                     }
                     
@@ -12114,6 +12120,8 @@
                         backToCategoriesView();
                         navLinks.classList.remove('active');
                         menuOverlay.classList.remove('active');
+                        var bottomNav = document.getElementById('mobileBottomNav');
+                        if (bottomNav) bottomNav.style.display = '';
                     }
                 });
             });
@@ -12130,6 +12138,8 @@
                     cartOverlay.classList.add('active');
                     navLinks.classList.remove('active');
                     menuOverlay.classList.remove('active');
+                    var bottomNav = document.getElementById('mobileBottomNav');
+                    if (bottomNav) bottomNav.style.display = '';
                 });
             });
             
@@ -12164,6 +12174,8 @@
                     menuOverlay.classList.remove('active');
                     cartSidebar.classList.remove('active');
                     cartOverlay.classList.remove('active');
+                    var bottomNav = document.getElementById('mobileBottomNav');
+                    if (bottomNav) bottomNav.style.display = '';
                     if (typeof openConfirmModal === 'function') {
                         openConfirmModal();
                     }
@@ -12397,6 +12409,8 @@
                         
                         navLinks.classList.remove('active');
                         menuOverlay.classList.remove('active');
+                        var bottomNav = document.getElementById('mobileBottomNav');
+                        if (bottomNav) bottomNav.style.display = '';
                     }
                 });
             });

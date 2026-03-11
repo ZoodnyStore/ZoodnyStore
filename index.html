@@ -2460,23 +2460,23 @@
 
         @media (max-width: 768px) {
             body {
-                padding-bottom: 80px;
+                padding-bottom: 70px;
             }
 
             .mobile-bottom-nav {
-                display: flex;
+                display: grid;
+                grid-template-columns: 1fr 1fr 52px 1fr 1fr;
+                align-items: center;
                 position: fixed;
-                bottom: 10px;
-                left: 8px;
-                right: 8px;
+                bottom: 8px;
+                left: 6px;
+                right: 6px;
                 z-index: 2000;
                 background: #1a2535;
-                border-radius: 20px;
-                box-shadow: 0 -2px 20px rgba(0,0,0,0.4);
-                padding: 0 6px;
-                height: 56px;
-                align-items: center;
-                justify-content: space-around;
+                border-radius: 16px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.45);
+                padding: 0 2px;
+                height: 48px;
             }
 
             .mob-nav-btn {
@@ -2488,84 +2488,81 @@
                 background: none;
                 border: none;
                 cursor: pointer;
-                color: #8a9bb5;
+                color: #5a6e85;
                 font-family: 'Cairo', sans-serif;
-                font-size: 0.58rem;
+                font-size: 0.5rem;
                 font-weight: 600;
-                padding: 4px 8px;
-                border-radius: 10px;
-                transition: color 0.2s, background 0.2s;
-                min-width: 44px;
+                padding: 2px 0;
+                transition: color 0.2s;
+                width: 100%;
                 position: relative;
             }
 
             .mob-nav-btn i {
-                font-size: 1.1rem;
+                font-size: 0.95rem;
                 transition: color 0.2s;
             }
 
-            .mob-nav-btn:hover,
             .mob-nav-btn.active {
                 color: #ffffff;
             }
 
             .mob-nav-btn.active i {
-                color: var(--secondary);
+                color: #F7C873;
             }
 
             .mob-nav-btn.active::after {
                 content: '';
                 position: absolute;
-                bottom: -2px;
+                bottom: 0;
                 left: 50%;
                 transform: translateX(-50%);
-                width: 24px;
-                height: 3px;
-                background: var(--secondary);
-                border-radius: 3px 3px 0 0;
+                width: 18px;
+                height: 2px;
+                background: #F7C873;
+                border-radius: 2px;
             }
 
-            /* زر الشحن الوسط المميز */
+            /* زر الشحن الوسط */
             .mob-nav-center {
-                position: relative;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: 2px;
-                margin-top: -22px;
+                gap: 1px;
+                position: relative;
+                top: -12px;
+                justify-self: center;
             }
 
             .mob-nav-center-btn {
-                width: 50px;
-                height: 50px;
+                width: 44px;
+                height: 44px;
                 border-radius: 50%;
-                background: linear-gradient(135deg, #00c6fb, #005bea);
+                background: #F7C873;
                 border: 3px solid #1a2535;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 4px 16px rgba(0,198,251,0.45);
+                box-shadow: 0 4px 14px rgba(247,200,115,0.6);
                 cursor: pointer;
-                transition: transform 0.2s, box-shadow 0.2s;
+                transition: transform 0.18s;
             }
 
             .mob-nav-center-btn:active {
-                transform: scale(0.93);
-                box-shadow: 0 2px 10px rgba(0,198,251,0.3);
+                transform: scale(0.9);
             }
 
             .mob-nav-center-btn i {
-                color: #ffffff;
-                font-size: 1.3rem;
+                color: #1a2535;
+                font-size: 1.15rem;
             }
 
             .mob-nav-center-label {
-                color: #ffffff;
+                color: #F7C873;
                 font-family: 'Cairo', sans-serif;
-                font-size: 0.58rem;
+                font-size: 0.5rem;
                 font-weight: 700;
-                margin-top: 1px;
             }
         }
 
@@ -13660,30 +13657,69 @@
             if (!currentUser) { openAuth('login'); return; }
             $('ordersBody').innerHTML = '<div class="wallet-empty-tx"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>';
             modalOn('ordersOv','ordersModal');
+
+            function renderOrders(orders) {
+                if (!orders.length) {
+                    $('ordersBody').innerHTML = '<div class="wallet-empty-tx"><i class="fas fa-box-open" style="font-size:2rem;display:block;margin-bottom:.5rem"></i>لا توجد طلبات سابقة</div>';
+                    return;
+                }
+                var statusMap = { pending:'🕐 جديد', processing:'⚙️ قيد التنفيذ', done:'✅ منجز', rejected:'❌ مرفوض' };
+                var statusColor = { pending:'#F7C873', processing:'#4fc3f7', done:'#2ECC71', rejected:'#E74C3C' };
+                $('ordersBody').innerHTML = orders.map(function(o) {
+                    var stClass = o.status || 'pending';
+                    var color = statusColor[stClass] || '#aaa';
+                    var itemsHtml = '';
+                    var itemsArr = o.items || o.products || [];
+                    if (Array.isArray(itemsArr) && itemsArr.length) {
+                        itemsHtml = itemsArr.map(function(item) {
+                            var name = item.name || item.productName || '-';
+                            var qty  = item.quantity || 1;
+                            var price = parseFloat(item.price || item.totalItem || 0);
+                            return '<div class="order-item-row"><span>' + name + ' × ' + qty + '</span><span>' + (price * qty).toFixed(2) + '$</span></div>';
+                        }).join('');
+                    }
+                    return '<div class="order-card" style="border-right:3px solid ' + color + ';margin-bottom:.7rem;background:#fff;border-radius:10px;padding:.7rem .9rem">'
+                        + '<div class="order-card-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">'
+                        + '<div><div class="order-card-id" style="font-weight:700;font-size:.82rem;color:#2A3F54">طلب: ' + (o.orderId||'-') + '</div>'
+                        + '<div class="order-card-date" style="font-size:.72rem;color:#aaa">' + (o.date||'-') + '</div></div>'
+                        + '<span style="background:' + color + '20;color:' + color + ';border:1px solid ' + color + ';padding:.15rem .5rem;border-radius:20px;font-size:.72rem;font-weight:700">' + (statusMap[stClass]||stClass) + '</span>'
+                        + '</div>'
+                        + '<div class="order-card-body">'
+                        + (itemsHtml || '<div style="color:#aaa;font-size:.75rem">لا تفاصيل منتجات</div>')
+                        + '<div class="order-total-row" style="display:flex;justify-content:space-between;border-top:1px solid #eee;margin-top:.4rem;padding-top:.4rem;font-weight:700"><span>الإجمالي</span><span style="color:#E74C3C">' + parseFloat(o.total||0).toFixed(2) + '$</span></div>'
+                        + '</div></div>';
+                }).join('');
+            }
+
+            // محاولة أولى: البحث في store_orders بالـ uid
             dbRef('store_orders').orderByChild('uid').equalTo(currentUser.uid)
                 .once('value', function(snap) {
                     var orders = [];
                     snap.forEach(function(c) { orders.unshift(c.val()); });
-                    if (!orders.length) {
-                        $('ordersBody').innerHTML = '<div class="wallet-empty-tx">لا توجد طلبات سابقة</div>';
-                        return;
-                    }
-                    $('ordersBody').innerHTML = orders.map(function(o) {
-                        var statusMap = { pending:'🕐 جديد', processing:'⚙️ قيد التنفيذ', done:'✓ منجز', rejected:'✕ مرفوض' };
-                        var stClass   = o.status || 'pending';
-                        return '<div class="order-card">'
-                            + '<div class="order-card-header">'
-                            + '<div><div class="order-card-id">رقم الطلب: ' + o.orderId + '</div>'
-                            + '<div class="order-card-date">' + o.date + '</div></div>'
-                            + '<span class="order-status-badge ' + stClass + '">' + (statusMap[stClass]||stClass) + '</span>'
-                            + '</div>'
-                            + '<div class="order-card-body">'
-                            + (o.items||[]).map(function(item) {
-                                return '<div class="order-item-row"><span>' + item.name + ' × ' + item.quantity + '</span><span>' + (item.price*item.quantity).toFixed(2) + '$</span></div>';
-                            }).join('')
-                            + '<div class="order-total-row"><span>الإجمالي</span><span>' + parseFloat(o.total||0).toFixed(2) + '$</span></div>'
-                            + '</div></div>';
-                    }).join('');
+                    if (orders.length) { renderOrders(orders); return; }
+
+                    // محاولة ثانية: قراءة من users/{uid}/orders
+                    dbRef('users/' + currentUser.uid + '/orders')
+                        .once('value', function(snap2) {
+                            var refs = [];
+                            snap2.forEach(function(c) { refs.push(c.val()); });
+                            if (!refs.length) { renderOrders([]); return; }
+
+                            // جلب تفاصيل كل طلب من store_orders
+                            var promises = refs.map(function(r) {
+                                return dbRef('store_orders/' + r.orderId).once('value')
+                                    .then(function(s) { return s.val(); });
+                            });
+                            Promise.all(promises).then(function(results) {
+                                var full = results.filter(Boolean).sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
+                                if (!full.length) {
+                                    // عرض البيانات المختصرة من users/orders كبديل
+                                    renderOrders(refs.sort(function(a,b){ return (b.ts||0)-(a.ts||0); }));
+                                } else {
+                                    renderOrders(full);
+                                }
+                            });
+                        });
                 });
         }
 

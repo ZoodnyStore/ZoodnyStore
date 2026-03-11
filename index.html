@@ -13702,10 +13702,6 @@
         }
         function tryAdminLogin() {
             if ($('adminPassInput').value === ADMIN_PASS) {
-                if (!auth.currentUser || auth.currentUser.uid !== 'zDjQMWK0xqedhCWWUddlrmAqqlp1') {
-                    $('adminLoginErr').textContent = '✕ يجب تسجيل الدخول كمدير';
-                    return;
-                }
                 $('adminLoginModal').classList.remove('on');
                 $('adminDashboard').classList.add('on');
                 startAdminListeners();
@@ -13724,9 +13720,12 @@
             adminListenerOn = true;
 
             // Topup orders
+            console.log('Loading topup_orders...');
             dbRef('topup_orders').on('value', function(snap) {
+                console.log('topup_orders received:', snap.val());
                 adminTopups = [];
                 snap.forEach(function(c) { adminTopups.push(c.val()); });
+                console.log('adminTopups array:', adminTopups);
                 renderTopupsTable();
                 renderTopupStats();
             });

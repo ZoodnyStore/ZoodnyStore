@@ -100,11 +100,7 @@
             border-color: #F7C873;
             box-shadow: 0 0 18px rgba(247,200,115,0.22);
         }
-        .nav-wallet-pill.guest {
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
+
         .nwp-plus-btn {
             width: 28px;
             height: 28px;
@@ -3073,11 +3069,11 @@
             <div class="navbar-logo-wallet" id="navbarLogoWallet">
                 <!-- يُعرض عند عدم تسجيل الدخول -->
                 <div class="nav-wallet-guest" id="navWalletGuest">
-                    <button class="nav-wallet-pill guest" onclick="openAuth && openAuth('login')">
-                        <span class="nwp-plus"><i class="fas fa-plus"></i></span>
+                    <div class="nav-wallet-pill" onclick="openAuth && openAuth('login')" style="cursor:pointer" title="تسجيل الدخول">
+                        <span class="nwp-plus-btn"><i class="fas fa-plus"></i></span>
                         <span class="nwp-bal">0.00$</span>
                         <i class="fas fa-wallet nwp-icon"></i>
-                    </button>
+                    </div>
                 </div>
                 <!-- يُعرض عند تسجيل الدخول -->
                 <div class="nav-wallet-user" id="navWalletUser" style="display:none">

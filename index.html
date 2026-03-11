@@ -2466,15 +2466,15 @@
             .mobile-bottom-nav {
                 display: flex;
                 position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
+                bottom: 10px;
+                left: 8px;
+                right: 8px;
                 z-index: 2000;
                 background: #1a2535;
-                border-radius: 22px 22px 0 0;
-                box-shadow: 0 -4px 24px rgba(0,0,0,0.35);
-                padding: 0 8px;
-                height: 65px;
+                border-radius: 20px;
+                box-shadow: 0 -2px 20px rgba(0,0,0,0.4);
+                padding: 0 6px;
+                height: 56px;
                 align-items: center;
                 justify-content: space-around;
             }
@@ -2484,23 +2484,23 @@
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: 3px;
+                gap: 2px;
                 background: none;
                 border: none;
                 cursor: pointer;
                 color: #8a9bb5;
                 font-family: 'Cairo', sans-serif;
-                font-size: 0.65rem;
+                font-size: 0.58rem;
                 font-weight: 600;
-                padding: 6px 10px;
-                border-radius: 12px;
+                padding: 4px 8px;
+                border-radius: 10px;
                 transition: color 0.2s, background 0.2s;
-                min-width: 52px;
+                min-width: 44px;
                 position: relative;
             }
 
             .mob-nav-btn i {
-                font-size: 1.3rem;
+                font-size: 1.1rem;
                 transition: color 0.2s;
             }
 
@@ -2532,20 +2532,20 @@
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: 3px;
-                margin-top: -28px;
+                gap: 2px;
+                margin-top: -22px;
             }
 
             .mob-nav-center-btn {
-                width: 58px;
-                height: 58px;
+                width: 50px;
+                height: 50px;
                 border-radius: 50%;
                 background: linear-gradient(135deg, #00c6fb, #005bea);
-                border: 4px solid #1a2535;
+                border: 3px solid #1a2535;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 4px 18px rgba(0,198,251,0.45);
+                box-shadow: 0 4px 16px rgba(0,198,251,0.45);
                 cursor: pointer;
                 transition: transform 0.2s, box-shadow 0.2s;
             }
@@ -2557,15 +2557,15 @@
 
             .mob-nav-center-btn i {
                 color: #ffffff;
-                font-size: 1.5rem;
+                font-size: 1.3rem;
             }
 
             .mob-nav-center-label {
                 color: #ffffff;
                 font-family: 'Cairo', sans-serif;
-                font-size: 0.65rem;
+                font-size: 0.58rem;
                 font-weight: 700;
-                margin-top: 2px;
+                margin-top: 1px;
             }
         }
 
@@ -13139,6 +13139,9 @@
             .wa-float-btn { bottom: 18px; right: 14px; width: 52px; height: 52px; }
             .wa-float-btn i { font-size: 1.45rem; }
         }
+        @media (max-width: 768px) {
+            .wa-float-btn { display: none !important; }
+        }
     </style>
 
     <!-- ══════════════ AUTH BUTTON injected by JS ══════════════ -->
@@ -14105,17 +14108,12 @@
 
         // ── شريط التنقل السفلي للموبايل ──────────────────────────────────────
         window.mobileNavGo = function(sectionId, btn) {
-            // إزالة active من كل الأزرار
             document.querySelectorAll('.mob-nav-btn').forEach(function(b){ b.classList.remove('active'); });
             if (btn) btn.classList.add('active');
-
             var el = document.getElementById(sectionId);
             if (el) {
-                var offset = sectionId === 'categories' ? 90 : 80;
-                window.scrollTo({ top: el.offsetTop - offset, behavior: 'smooth' });
+                window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
             }
-
-            // إذا كانت الفئات مخفية اظهرها
             if (sectionId === 'categories') {
                 var cats = document.getElementById('categories');
                 var prods = document.getElementById('productsSection');
@@ -14124,30 +14122,60 @@
             }
         };
 
+        // زر طلباتي — يفتح نافذة طلبات المتجر (pending / processing / done / rejected)
         window.mobileNavOrders = function(btn) {
             document.querySelectorAll('.mob-nav-btn').forEach(function(b){ b.classList.remove('active'); });
             if (btn) btn.classList.add('active');
-            // فتح نافذة الطلبات إن كان المستخدم مسجلاً
             if (typeof openOrdersHistory === 'function') {
                 openOrdersHistory();
             } else {
-                // إن لم يكن مسجلاً دلّه للدخول
-                var loginBtn = document.getElementById('__openLogin') || document.querySelector('.login-btn');
+                // إن لم يكن مسجلاً
+                var loginBtn = document.getElementById('__openLogin');
                 if (loginBtn) loginBtn.click();
                 else alert('يرجى تسجيل الدخول أولاً لعرض طلباتك');
             }
         };
 
+        // زر سجل الشحن — يفتح نافذة شحن الرصيد (topup) ليرى حالة طلباته مقبولة/مرفوضة
         window.mobileNavHistory = function(btn) {
             document.querySelectorAll('.mob-nav-btn').forEach(function(b){ b.classList.remove('active'); });
             if (btn) btn.classList.add('active');
-            // فتح سجل الشحن (طلبات الشحن/تعبئة الرصيد)
-            if (typeof openOrdersHistory === 'function') {
-                openOrdersHistory();
+            // نفتح المحفظة التي تحتوي سجل عمليات الشحن
+            var walletOv = document.getElementById('walletOv');
+            var walletModal = document.getElementById('walletModal');
+            if (walletOv && walletModal) {
+                if (typeof modalOn === 'function') {
+                    modalOn('walletOv','walletModal');
+                } else {
+                    walletOv.style.display = 'block';
+                    walletModal.style.display = 'block';
+                }
             } else {
-                var histBtn = document.getElementById('__menuOrders');
-                if (histBtn) histBtn.click();
+                // بديل: فتح نافذة التوب أب مباشرة
+                if (typeof openTopup === 'function') openTopup();
             }
+        };
+
+        // زر شحن المنتصف — يفتح نافذة شحن الرصيد مباشرة
+        window.mobileNavTopup = function() {
+            if (typeof openTopup === 'function') {
+                openTopup();
+            } else {
+                var chargeBtn = document.getElementById('walletChargeBtn');
+                if (chargeBtn) chargeBtn.click();
+                else {
+                    var walletOv = document.getElementById('walletOv');
+                    var walletModal = document.getElementById('walletModal');
+                    if (walletOv && walletModal && typeof modalOn === 'function') {
+                        modalOn('walletOv','walletModal');
+                    }
+                }
+            }
+        };
+
+        // زر اتصل بنا — يفتح واتساب مباشرة
+        window.mobileNavWhatsapp = function() {
+            window.open('https://wa.me/963982199738', '_blank');
         };
 
         // تحديث الزر النشط عند التمرير
@@ -14188,7 +14216,7 @@
 
         <!-- شحن - زر المنتصف المميز -->
         <div class="mob-nav-center">
-            <div class="mob-nav-center-btn" onclick="mobileNavGo('categories', null)">
+            <div class="mob-nav-center-btn" onclick="mobileNavTopup()">
                 <i class="fas fa-plus"></i>
             </div>
             <span class="mob-nav-center-label">شحن</span>
@@ -14201,7 +14229,7 @@
         </button>
 
         <!-- اتصل بنا -->
-        <button class="mob-nav-btn" id="mob-contact" onclick="mobileNavGo('contact', this)">
+        <button class="mob-nav-btn" id="mob-contact" onclick="mobileNavWhatsapp()">
             <i class="fas fa-headset"></i>
             <span>اتصل بنا</span>
         </button>

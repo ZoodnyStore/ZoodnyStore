@@ -77,58 +77,6 @@
             gap: 10px;
         }
 
-        /* ── Mobile wallet pill (موبايل فقط) ── */
-        .mobile-nav-right {
-            display: none;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-        .mob-wallet-pill {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(247,200,115,0.12);
-            border: 1.5px solid rgba(247,200,115,0.6);
-            border-radius: 50px;
-            padding: 5px 12px 5px 5px;
-            cursor: pointer;
-            color: #F7C873;
-            font-family: 'Cairo', sans-serif;
-            font-weight: 700;
-            white-space: nowrap;
-            transition: background 0.2s;
-        }
-        .mob-wallet-pill:active { background: rgba(247,200,115,0.22); }
-        .mob-wallet-plus {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: #F7C873;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1A252F;
-            font-size: 0.82rem;
-            font-weight: 900;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: transform 0.18s;
-        }
-        .mob-wallet-plus:active { transform: scale(0.88); }
-        .mob-wallet-bal {
-            font-size: 0.8rem;
-            font-weight: 800;
-            color: #F7C873;
-            min-width: 36px;
-            text-align: center;
-        }
-        .mob-wallet-icon {
-            font-size: 0.82rem;
-            color: rgba(247,200,115,0.8);
-        }
-
         .menu-toggle {
             display: none;
             background: none;
@@ -2195,10 +2143,10 @@
                 font-size: 1.8rem;
             }
             
-            /* إظهار الـ wallet pill + السلة على الموبايل */
-            .mobile-nav-right { display: flex; }
-            /* إخفاء اللوغو على الموبايل */
-            .desktop-only { display: none !important; }
+            .logo {
+                font-size: 1.5rem;
+                margin-right: 0;
+            }
 
             .hero {
                 height: 70vh;
@@ -3055,14 +3003,12 @@
     <!-- شريط التنقل -->
     <nav class="navbar">
         <div class="nav-content">
-            <!-- اللوغو — يظهر فقط على الـ desktop -->
-            <a href="#" class="logo desktop-only"><i class="fas fa-store"></i> زودني zoodny</a>
-
-            <!-- زر القائمة — موبايل فقط -->
+            <a href="#" class="logo"><i class="fas fa-store"></i> زودني zoodny</a>
+            
             <button class="menu-toggle" id="menuToggle">
                 <i class="fas fa-bars"></i>
             </button>
-
+            
             <div class="nav-links">
                 <a href="#home">الرئيسية</a>
                 <a href="#categories">المتجر</a>
@@ -3074,30 +3020,11 @@
                     <span class="cart-count" id="cartCount">0</span>
                 </div>
             </div>
-
-            <!-- محفظة الموبايل + سلة الموبايل — تظهر فقط على الهاتف -->
-            <div class="mobile-nav-right" id="mobileNavRight">
-
-                <!-- حالة: غير مسجّل -->
-                <div class="mob-wallet-pill" id="mobWalletGuest" onclick="openAuth && openAuth('login')" title="تسجيل الدخول">
-                    <span class="mob-wallet-plus"><i class="fas fa-plus"></i></span>
-                    <span class="mob-wallet-bal">0.00$</span>
-                    <i class="fas fa-wallet mob-wallet-icon"></i>
-                </div>
-
-                <!-- حالة: مسجّل — مخفي حتى يُستدعى buildNavButtons -->
-                <div class="mob-wallet-pill" id="mobWalletLoggedIn" style="display:none">
-                    <button class="mob-wallet-plus" id="mobWalletPlus" onclick="event.stopPropagation();openTopup()"><i class="fas fa-plus"></i></button>
-                    <span class="mob-wallet-bal" id="mobWalletBal">0.00$</span>
-                    <i class="fas fa-wallet mob-wallet-icon"></i>
-                </div>
-
-                <div class="cart-icon-container" id="mobileCartIcon">
-                    <i class="fas fa-shopping-cart cart-icon" id="mobileCartToggle"></i>
-                    <span class="cart-count" id="mobileCartCount">0</span>
-                </div>
-            </div>
             
+            <div class="cart-icon-container" id="mobileCartIcon" style="display: none;">
+                <i class="fas fa-shopping-cart cart-icon" id="mobileCartToggle"></i>
+                <span class="cart-count" id="mobileCartCount">0</span>
+            </div>
         </div>
     </nav>
 
@@ -8331,7 +8258,17 @@
         document.body.appendChild(menuOverlay);
         
         function checkMobileScreen() {
-            // CSS media query يتحكم في الإظهار/الإخفاء
+            if (window.innerWidth <= 480) {
+                mobileCartIcon.style.display = 'block';
+                document.querySelectorAll('.nav-links .cart-icon-container').forEach(el => {
+                    el.style.display = 'none';
+                });
+            } else {
+                mobileCartIcon.style.display = 'none';
+                document.querySelectorAll('.nav-links .cart-icon-container').forEach(el => {
+                    el.style.display = 'block';
+                });
+            }
         }
         
         window.addEventListener('resize', checkMobileScreen);
@@ -12694,7 +12631,7 @@
             display:flex;align-items:center;justify-content:center;
             font-size:.85rem;font-weight:700;
         }
-        /* Wallet button — desktop */
+        /* Wallet button */
         .wallet-nav-wrap {
             display:flex;align-items:center;gap:6px;
             background:rgba(46,204,113,0.1);border:1.5px solid var(--success);
@@ -13431,35 +13368,31 @@
             var cartCont = document.querySelector('.nav-links .cart-icon-container');
             if (!cartCont) return;
 
-            // ── تحديث wallet pill المركزي ──
             if (!user) {
-                // غير مسجّل — desktop: زر دخول، موبايل: pill guest يبقى ظاهراً
+                // Not logged in — show login button
                 var btn = document.createElement('button');
                 btn.id = '__authNavBtn';
                 btn.className = 'auth-nav-btn';
                 btn.innerHTML = '<i class="fas fa-user"></i> دخول / تسجيل';
                 btn.onclick = () => openAuth('login');
                 cartCont.parentNode.insertBefore(btn, cartCont);
-                // موبايل: أظهر guest pill فقط
-                var gEl = $('mobWalletGuest');
-                var lEl = $('mobWalletLoggedIn');
-                if (gEl) gEl.style.display = 'flex';
-                if (lEl) lEl.style.display = 'none';
             } else {
-                // مسجّل — desktop: wallet-nav-wrap، موبايل: pill الرصيد
+                // Logged in — show wallet + user menu
                 var bal = (uData && uData.balance) ? parseFloat(uData.balance) : 0;
-                // موبايل: أخفِ guest وأظهر logged-in pill
-                var gEl = $('mobWalletGuest');
-                var lEl = $('mobWalletLoggedIn');
-                if (gEl) gEl.style.display = 'none';
-                if (lEl) { lEl.style.display = 'flex'; }
-                var bEl = $('mobWalletBal');
-                if (bEl) bEl.textContent = bal.toFixed(2) + '$';
-                // mobWalletLoggedIn onclick → openWallet
-                if (lEl) lEl.onclick = function(e) {
-                    if (e.target.closest('#mobWalletPlus')) return;
+
+                // Wallet wrap
+                var ww = document.createElement('div');
+                ww.id = '__walletNavWrap';
+                ww.className = 'wallet-nav-wrap';
+                ww.title = 'محفظتي';
+                ww.innerHTML = '<i class="fas fa-wallet"></i>'
+                    + '<span id="walletNavBal">' + bal.toFixed(2) + '$</span>'
+                    + '<button class="wallet-plus-btn" id="__walletPlusBtn" title="شحن رصيد"><i class="fas fa-plus"></i></button>';
+                ww.onclick = function(e) {
+                    if (e.target.closest('#__walletPlusBtn')) { openTopup(); return; }
                     openWallet();
                 };
+                cartCont.parentNode.insertBefore(ww, cartCont);
 
                 // User dropdown
                 var initials = (uData && uData.name) ? uData.name.charAt(0) : (user.email ? user.email.charAt(0).toUpperCase() : 'U');
@@ -13615,11 +13548,8 @@
         window.getBalance = getBalance;
 
         function refreshNavBal() {
-            var bal = getBalance().toFixed(2) + '$';
             var el = $('walletNavBal');
-            if (el) el.textContent = bal;
-            var el2 = $('mobWalletBal');
-            if (el2) el2.textContent = bal;
+            if (el) el.textContent = getBalance().toFixed(2) + '$';
         }
 
         function refreshWalletModal() {

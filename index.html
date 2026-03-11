@@ -2454,120 +2454,116 @@
         /* ============================================================
            شريط التنقل السفلي للموبايل
         ============================================================ */
-        /* ══ Bottom Nav — Desktop + Mobile ══ */
-        body { padding-bottom: 80px; }
-
         .mobile-bottom-nav {
-            display: grid;
-            grid-template-columns: 1fr 1fr 56px 1fr 1fr;
-            align-items: center;
-            position: fixed;
-            bottom: 18px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 420px;
-            max-width: calc(100vw - 32px);
-            z-index: 2000;
-            background: #1a2535;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.38), 0 2px 8px rgba(0,0,0,0.18);
-            padding: 0 4px;
-            height: 58px;
+            display: none;
         }
 
-        .mob-nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #5a6e85;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.58rem;
-            font-weight: 600;
-            padding: 4px 0;
-            transition: color 0.2s;
-            width: 100%;
-            position: relative;
-        }
-
-        .mob-nav-btn i {
-            font-size: 1.15rem;
-            transition: color 0.2s, transform 0.2s;
-        }
-
-        .mob-nav-btn:hover i { transform: translateY(-1px); color: #8a9eb8; }
-
-        .mob-nav-btn.active { color: #ffffff; }
-        .mob-nav-btn.active i { color: #F7C873; }
-
-        .mob-nav-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px; height: 2.5px;
-            background: #F7C873;
-            border-radius: 2px;
-        }
-
-        /* زر الشحن الوسط */
-        .mob-nav-center {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
-            position: relative;
-            top: -14px;
-            justify-self: center;
-        }
-
-        .mob-nav-center-btn {
-            width: 46px; height: 46px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #F7C873, #e0a832);
-            border: 3px solid #1a2535;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 16px rgba(247,200,115,0.65);
-            cursor: pointer;
-            transition: transform 0.18s, box-shadow 0.18s;
-        }
-
-        .mob-nav-center-btn:hover {
-            transform: scale(1.08);
-            box-shadow: 0 6px 22px rgba(247,200,115,0.75);
-        }
-
-        .mob-nav-center-btn:active { transform: scale(0.92); }
-
-        .mob-nav-center-btn i { color: #1a2535; font-size: 1.15rem; }
-
-        .mob-nav-center-label {
-            color: #F7C873;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.52rem;
-            font-weight: 700;
-        }
-
-        /* على الموبايل: أصغر قليلاً */
         @media (max-width: 768px) {
-            .mobile-bottom-nav {
-                width: calc(100vw - 32px);
-                height: 52px;
-                bottom: 14px;
-                border-radius: 16px;
+            body {
+                padding-bottom: 70px;
             }
-            .mob-nav-btn { font-size: 0.52rem; }
-            .mob-nav-btn i { font-size: 1.1rem; }
-            .mob-nav-center { top: -12px; }
-            .mob-nav-center-btn { width: 42px; height: 42px; }
+
+            .mobile-bottom-nav {
+                display: grid;
+                grid-template-columns: 1fr 1fr 52px 1fr 1fr;
+                align-items: center;
+                position: fixed;
+                bottom: 16px;
+                left: 20px;
+                right: 20px;
+                z-index: 2000;
+                background: #1a2535;
+                border-radius: 16px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.45);
+                padding: 0 2px;
+                height: 52px;
+            }
+
+            .mob-nav-btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: #5a6e85;
+                font-family: 'Cairo', sans-serif;
+                font-size: 0.55rem;
+                font-weight: 600;
+                padding: 2px 0;
+                transition: color 0.2s;
+                width: 100%;
+                position: relative;
+            }
+
+            .mob-nav-btn i {
+                font-size: 1.2rem;
+                transition: color 0.2s;
+            }
+
+            .mob-nav-btn.active {
+                color: #ffffff;
+            }
+
+            .mob-nav-btn.active i {
+                color: #F7C873;
+            }
+
+            .mob-nav-btn.active::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 18px;
+                height: 2px;
+                background: #F7C873;
+                border-radius: 2px;
+            }
+
+            /* زر الشحن الوسط */
+            .mob-nav-center {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 1px;
+                position: relative;
+                top: -12px;
+                justify-self: center;
+            }
+
+            .mob-nav-center-btn {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                background: #F7C873;
+                border: 3px solid #1a2535;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 14px rgba(247,200,115,0.6);
+                cursor: pointer;
+                transition: transform 0.18s;
+            }
+
+            .mob-nav-center-btn:active {
+                transform: scale(0.9);
+            }
+
+            .mob-nav-center-btn i {
+                color: #1a2535;
+                font-size: 1.15rem;
+            }
+
+            .mob-nav-center-label {
+                color: #F7C873;
+                font-family: 'Cairo', sans-serif;
+                font-size: 0.5rem;
+                font-weight: 700;
+            }
         }
 
         /* ============================================================
@@ -12664,8 +12660,25 @@
             opacity:0;pointer-events:none;overflow-y:auto;
             transition:all .3s cubic-bezier(.34,1.56,.64,1);
             box-shadow:0 20px 60px rgba(0,0,0,.22);
+            scroll-behavior:smooth;
         }
         .z-modal.on{opacity:1;pointer-events:all;transform:translate(-50%,-50%) scale(1)}
+        /* topup modal: slides up from bottom on mobile */
+        @media(max-width:768px){
+            #topupModal{
+                top:auto; bottom:-100%; left:0; right:0;
+                transform:none; width:100%; border-radius:22px 22px 0 0;
+                max-height:92vh; transition:bottom .35s cubic-bezier(.4,0,.2,1), opacity .2s;
+                opacity:1;
+            }
+            #topupModal.on{bottom:0;transform:none;opacity:1}
+            .topup-header{border-radius:22px 22px 0 0}
+            /* drag handle */
+            #topupModal::before{
+                content:'';display:block;width:38px;height:4px;
+                background:#dde1e8;border-radius:2px;margin:10px auto 0;
+            }
+        }
         .z-mh{
             display:flex;justify-content:space-between;align-items:center;
             padding:1.1rem 1.4rem;
@@ -12746,31 +12759,179 @@
         .tx-badge.done{background:#d1f7e0;color:#155724}
 
         /* Topup modal */
-        #topupModal{max-width:480px;max-height:90vh;z-index:1401}
+        /* ══ Topup Modal — Redesigned ══ */
+        #topupModal{
+            max-width:460px;
+            max-height:92vh;
+            z-index:1401;
+            overflow-y:auto;
+            scroll-behavior:smooth;
+            /* smooth scrollbar */
+            scrollbar-width:thin;
+            scrollbar-color:rgba(247,200,115,.4) transparent;
+        }
+        #topupModal::-webkit-scrollbar{width:4px}
+        #topupModal::-webkit-scrollbar-track{background:transparent}
+        #topupModal::-webkit-scrollbar-thumb{background:rgba(247,200,115,.45);border-radius:4px}
         #topupOv{z-index:1400}
-        .sc-info{
-            background:#fffbf0;border:1.5px solid var(--secondary);border-radius:10px;
-            padding:.85rem 1rem;display:flex;gap:10px;margin-bottom:1rem;font-size:.88rem;
+
+        /* ── Header gradient ── */
+        .topup-header{
+            background:linear-gradient(135deg,#1a2535 0%,#2a3f54 100%);
+            padding:1.3rem 1.4rem 1.1rem;
+            display:flex;justify-content:space-between;align-items:center;
+            position:sticky;top:0;z-index:2;
+            border-radius:18px 18px 0 0;
         }
-        .sc-info i{color:#d4a017;font-size:1.1rem;flex-shrink:0;margin-top:2px}
-        .topup-form-group{margin-bottom:.95rem}
-        .topup-form-group label{display:block;font-size:.85rem;font-weight:600;color:var(--primary);margin-bottom:4px}
-        .topup-form-group input,.topup-form-group textarea{
-            width:100%;padding:.65rem .9rem;border:1.5px solid #ddd;border-radius:8px;
-            font-family:'Cairo',sans-serif;font-size:.9rem;transition:border-color .2s;
+        .topup-header-left{display:flex;align-items:center;gap:10px}
+        .topup-header-icon{
+            width:40px;height:40px;border-radius:50%;
+            background:rgba(247,200,115,.18);
+            display:flex;align-items:center;justify-content:center;
+            font-size:1.2rem;color:#F7C873;
         }
-        .topup-form-group input:focus,.topup-form-group textarea:focus{outline:none;border-color:var(--secondary)}
-        .topup-form-group textarea{height:65px;resize:vertical}
+        .topup-header h3{color:#fff;font-size:1.05rem;font-weight:700;margin:0}
+        .topup-header p{color:rgba(255,255,255,.6);font-size:.72rem;margin:2px 0 0}
+        .topup-xbtn{
+            background:rgba(255,255,255,.1);border:none;
+            width:32px;height:32px;border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            color:#fff;font-size:1rem;cursor:pointer;
+            transition:background .18s;flex-shrink:0;
+        }
+        .topup-xbtn:hover{background:rgba(255,255,255,.22)}
+
+        /* ── Body ── */
+        .topup-body{padding:1.3rem 1.4rem 1.5rem}
+
+        /* ── Instruction banner ── */
+        .topup-banner{
+            background:linear-gradient(135deg,#fffbf0,#fff8e6);
+            border:1.5px solid rgba(247,200,115,.5);
+            border-radius:14px;padding:1rem 1.1rem;
+            margin-bottom:1.3rem;
+            display:flex;gap:10px;align-items:flex-start;
+        }
+        .topup-banner-icon{
+            width:36px;height:36px;border-radius:10px;flex-shrink:0;
+            background:linear-gradient(135deg,#F7C873,#e0a832);
+            display:flex;align-items:center;justify-content:center;
+            font-size:1rem;color:#1a2535;
+            box-shadow:0 3px 10px rgba(247,200,115,.4);
+        }
+        .topup-banner p{
+            font-size:.85rem;line-height:1.65;color:#5a4a1a;margin:0;
+            font-weight:500;
+        }
+        .topup-banner strong{color:#c8860a}
+
+        /* ── QR + Account card ── */
+        .topup-account-card{
+            background:linear-gradient(135deg,#1a2535,#2a3f54);
+            border-radius:16px;padding:1.3rem 1.2rem;
+            margin-bottom:1.3rem;
+            display:flex;gap:14px;align-items:center;
+            box-shadow:0 6px 24px rgba(0,0,0,.2);
+            position:relative;overflow:hidden;
+        }
+        .topup-account-card::before{
+            content:'';position:absolute;top:-30px;right:-30px;
+            width:100px;height:100px;
+            background:rgba(247,200,115,.08);border-radius:50%;
+        }
+        .topup-qr{
+            width:90px;height:90px;border-radius:12px;
+            background:#fff;padding:6px;
+            display:flex;align-items:center;justify-content:center;
+            flex-shrink:0;position:relative;z-index:1;
+            box-shadow:0 4px 14px rgba(0,0,0,.25);
+        }
+        .topup-qr img{width:100%;height:100%;object-fit:contain;border-radius:6px}
+        .topup-qr-placeholder{
+            width:100%;height:100%;border-radius:6px;
+            display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+            background:#f8f9fa;
+        }
+        .topup-qr-placeholder i{font-size:1.8rem;color:#ccc}
+        .topup-qr-placeholder span{font-size:.55rem;color:#aaa;font-weight:600}
+        .topup-acc-info{flex:1;position:relative;z-index:1}
+        .topup-acc-label{
+            font-size:.68rem;color:rgba(255,255,255,.55);
+            text-transform:uppercase;letter-spacing:.8px;font-weight:700;
+            margin-bottom:4px;
+        }
+        .topup-acc-num{
+            font-size:1.35rem;font-weight:800;color:#F7C873;
+            letter-spacing:1px;margin-bottom:6px;direction:ltr;text-align:right;
+        }
+        .topup-acc-name{
+            font-size:.78rem;color:rgba(255,255,255,.75);font-weight:600;
+            margin-bottom:10px;
+        }
+        .topup-copy-btn{
+            display:inline-flex;align-items:center;gap:5px;
+            background:rgba(247,200,115,.18);border:1px solid rgba(247,200,115,.38);
+            border-radius:20px;padding:4px 12px;
+            color:#F7C873;font-size:.72rem;font-weight:700;
+            font-family:'Cairo',sans-serif;cursor:pointer;
+            transition:background .18s;border:none;
+        }
+        .topup-copy-btn:hover{background:rgba(247,200,115,.28)}
+        .topup-copy-btn.copied{background:rgba(46,204,113,.2);color:#2ecc71}
+
+        /* ── Divider ── */
+        .topup-divider{
+            display:flex;align-items:center;gap:10px;
+            margin-bottom:1.2rem;
+        }
+        .topup-divider::before,.topup-divider::after{
+            content:'';flex:1;height:1px;background:#eef0f3;
+        }
+        .topup-divider span{
+            font-size:.75rem;color:#aab;font-weight:600;white-space:nowrap;
+        }
+
+        /* ── Form groups ── */
+        .topup-form-group{margin-bottom:1rem}
+        .topup-form-group label{
+            display:flex;align-items:center;gap:6px;
+            font-size:.82rem;font-weight:700;color:#2a3f54;margin-bottom:5px;
+        }
+        .topup-form-group label i{font-size:.78rem;color:#F7C873}
+        .topup-form-group input,
+        .topup-form-group textarea{
+            width:100%;padding:.7rem 1rem;
+            border:1.5px solid #e8eaf0;border-radius:10px;
+            font-family:'Cairo',sans-serif;font-size:.9rem;
+            transition:border-color .2s,box-shadow .2s;
+            background:#fafbfc;color:#2d3748;
+        }
+        .topup-form-group input:focus,
+        .topup-form-group textarea:focus{
+            outline:none;border-color:#F7C873;
+            box-shadow:0 0 0 3px rgba(247,200,115,.15);
+            background:#fff;
+        }
+        .topup-form-group textarea{height:70px;resize:vertical}
+
+        /* ── Submit button ── */
         .topup-submit-btn{
-            width:100%;padding:.82rem;
-            background:linear-gradient(135deg,var(--primary),#3a5a78);
-            color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;
+            width:100%;padding:.9rem;margin-top:.4rem;
+            background:linear-gradient(135deg,#1a2535,#2a3f54);
+            color:#fff;border:none;border-radius:12px;
+            font-size:1rem;font-weight:700;
             font-family:'Cairo',sans-serif;cursor:pointer;
             display:flex;align-items:center;justify-content:center;gap:8px;
             transition:transform .2s,box-shadow .2s;
+            box-shadow:0 4px 16px rgba(26,37,53,.3);
         }
-        .topup-submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(42,63,84,.3)}
-        .topup-err{color:#E74C3C;font-size:.82rem;margin-top:.4rem;display:none}
+        .topup-submit-btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 8px 24px rgba(26,37,53,.4);
+        }
+        .topup-submit-btn:active{transform:translateY(0)}
+        .topup-err{color:#E74C3C;font-size:.82rem;margin-top:.5rem;display:none;
+            background:#fff5f5;border-radius:8px;padding:.5rem .8rem;border:1px solid #fcc}
         .topup-err.show{display:block}
 
         /* Success modal */
@@ -13204,23 +13365,84 @@
 
     <!-- ══ Topup overlay + modal ══ -->
     <div class="z-ov" id="topupOv" style="z-index:1400"></div>
-    <div class="z-modal" id="topupModal" style="z-index:1401">
-        <div class="z-mh" style="background:linear-gradient(135deg,#d4a017,#F7C873);color:var(--primary)">
-            <h3 style="color:var(--primary)"><i class="fas fa-mobile-alt"></i> شحن عبر شام كاش</h3>
-            <button class="z-xbtn" style="color:var(--primary)" id="topupClose"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="z-mb">
-            <div class="sc-info">
-                <i class="fas fa-info-circle"></i>
-                <p>أرسل المبلغ عبر شام كاش إلى <strong>0982199738</strong> ثم أدخل بياناتك أدناه وسيتم إضافة رصيدك بعد التحقق.</p>
+    <div class="z-modal" id="topupModal" style="z-index:1401;padding:0;overflow:hidden">
+
+        <!-- ── Header ── -->
+        <div class="topup-header">
+            <div class="topup-header-left">
+                <div class="topup-header-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div>
+                    <h3>شحن عبر شام كاش</h3>
+                    <p>أضف رصيداً لحسابك بسهولة</p>
+                </div>
             </div>
-            <div class="topup-form-group"><label>اسمك الكامل *</label><input type="text" id="tuName" placeholder="الاسم الكامل"/></div>
-            <div class="topup-form-group"><label>رقم هاتفك *</label><input type="tel" id="tuPhone" placeholder="09xxxxxxxx"/></div>
-            <div class="topup-form-group"><label>المبلغ المُرسل ($) *</label><input type="number" id="tuAmount" placeholder="0.00" min="1" step="0.01"/></div>
-            <div class="topup-form-group"><label>رقم عملية شام كاش *</label><input type="text" id="tuTxId" placeholder="رقم العملية"/></div>
-            <div class="topup-form-group"><label>ملاحظات</label><textarea id="tuNotes" placeholder="أي ملاحظات..."></textarea></div>
-            <button class="topup-submit-btn" id="tuSubmitBtn"><i class="fas fa-paper-plane"></i> إرسال الطلب</button>
+            <button class="topup-xbtn" id="topupClose"><i class="fas fa-times"></i></button>
+        </div>
+
+        <!-- ── Body ── -->
+        <div class="topup-body">
+
+            <!-- بانر التعليمات -->
+            <div class="topup-banner">
+                <div class="topup-banner-icon"><i class="fas fa-info"></i></div>
+                <p>أرسل المبلغ عبر شام كاش إلى هذا الحساب ثم أدخل بياناتك أدناه وسيتم إضافة رصيدك بعد التحقق.</p>
+            </div>
+
+            <!-- بطاقة حساب شام كاش + باركود -->
+            <div class="topup-account-card">
+                <!-- QR Code -->
+                <div class="topup-qr">
+                    <div class="topup-qr-placeholder">
+                        <i class="fas fa-qrcode"></i>
+                        <span>QR Code</span>
+                    </div>
+                </div>
+                <!-- معلومات الحساب -->
+                <div class="topup-acc-info">
+                    <div class="topup-acc-label">حساب شام كاش</div>
+                    <div class="topup-acc-num" id="tuAccNum">0982199738</div>
+                    <div class="topup-acc-name">زودني — Zoodny Store</div>
+                    <button class="topup-copy-btn" id="topupCopyBtn" onclick="
+                        navigator.clipboard && navigator.clipboard.writeText('0982199738');
+                        this.innerHTML='<i class=\'fas fa-check\'></i> تم النسخ';
+                        this.classList.add('copied');
+                        var t=this; setTimeout(function(){ t.innerHTML='<i class=\'fas fa-copy\'></i> نسخ الرقم'; t.classList.remove('copied'); },2000);
+                    ">
+                        <i class="fas fa-copy"></i> نسخ الرقم
+                    </button>
+                </div>
+            </div>
+
+            <!-- فاصل -->
+            <div class="topup-divider"><span>أدخل بيانات التحويل</span></div>
+
+            <!-- الحقول -->
+            <div class="topup-form-group">
+                <label><i class="fas fa-user"></i> اسمك الكامل *</label>
+                <input type="text" id="tuName" placeholder="الاسم الكامل"/>
+            </div>
+            <div class="topup-form-group">
+                <label><i class="fas fa-phone"></i> رقم هاتفك *</label>
+                <input type="tel" id="tuPhone" placeholder="09xxxxxxxx"/>
+            </div>
+            <div class="topup-form-group">
+                <label><i class="fas fa-dollar-sign"></i> المبلغ المُرسل ($) *</label>
+                <input type="number" id="tuAmount" placeholder="0.00" min="1" step="0.01"/>
+            </div>
+            <div class="topup-form-group">
+                <label><i class="fas fa-hashtag"></i> رقم عملية شام كاش *</label>
+                <input type="text" id="tuTxId" placeholder="رقم العملية"/>
+            </div>
+            <div class="topup-form-group">
+                <label><i class="fas fa-comment-alt"></i> ملاحظات</label>
+                <textarea id="tuNotes" placeholder="أي ملاحظات إضافية..."></textarea>
+            </div>
+
+            <button class="topup-submit-btn" id="tuSubmitBtn">
+                <i class="fas fa-paper-plane"></i> إرسال طلب الشحن
+            </button>
             <div class="topup-err" id="tuErr"></div>
+
         </div>
     </div>
 
@@ -13600,6 +13822,23 @@
                 if (userData.phone) $('tuPhone').value = userData.phone;
             }
             modalOn('topupOv','topupModal');
+            // Scroll modal to top smoothly on open
+            setTimeout(function(){ var m = $('topupModal'); if(m) m.scrollTop = 0; }, 50);
+            // Generate QR code
+            var qrContainer = document.querySelector('.topup-qr');
+            if (qrContainer) {
+                qrContainer.innerHTML = '';
+                var SHAMCASH_NUM = '0982199738';
+                // Use Google Charts QR API
+                var qrImg = document.createElement('img');
+                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' + encodeURIComponent(SHAMCASH_NUM) + '&bgcolor=ffffff&color=1a2535&qzone=1';
+                qrImg.alt = 'QR شام كاش';
+                qrImg.style.cssText = 'width:100%;height:100%;border-radius:6px;object-fit:contain';
+                qrImg.onerror = function(){
+                    qrContainer.innerHTML = '<div class="topup-qr-placeholder"><i class="fas fa-qrcode"></i><span>QR Code</span></div>';
+                };
+                qrContainer.appendChild(qrImg);
+            }
         }
 
         $('topupClose').onclick = () => modalOff('topupOv','topupModal');

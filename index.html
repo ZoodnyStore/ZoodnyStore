@@ -13701,19 +13701,22 @@
             $('adminDashboard').classList.remove('on');
             auth.signOut();
         }
+        // ── Secondary Firebase app for admin (won't affect logged-in users) ──
+        const adminApp = firebase.initializeApp(firebaseConfig, 'adminApp');
+        const adminAuth = adminApp.auth();
+
         function tryAdminLogin() {
             if ($('adminPassInput').value === ADMIN_PASS) {
                 $('adminLoginErr').textContent = '⏳ جارٍ تسجيل الدخول...';
-                auth.signInAnonymously()
+                adminAuth.signInWithEmailAndPassword('zoodnystore@gmail.com', 'ZoodnyZoodny')
                 .then(function() {
                     $('adminLoginModal').classList.remove('on');
                     $('adminDashboard').classList.add('on');
                     startAdminListeners();
                 })
-                .catch(function() {
-                    $('adminLoginModal').classList.remove('on');
-                    $('adminDashboard').classList.add('on');
-                    startAdminListeners();
+                .catch(function(err) {
+                    $('adminLoginErr').textContent = '✕ خطأ في تسجيل الدخول: ' + err.message;
+                    console.error('Admin Firebase login failed:', err.message);
                 });
             } else {
                 $('adminLoginErr').textContent = '✕ كلمة السر غير صحيحة';
@@ -13933,6 +13936,9 @@
         }
 
         // ── Admin actions ────────────────────────────────────────────────────
+        const adminDb = adminApp.database();
+        const adminDbRef = function(path) { return adminDb.ref(path); };
+
         window.admAcceptTopup = function(reqId, uid, amount) {
             amount = parseFloat(amount);
             if (!uid || uid === 'undefined' || uid === '') {
@@ -13945,14 +13951,14 @@
             }
             if (!confirm('قبول الطلب وإضافة ' + amount.toFixed(2) + '$ للمستخدم؟')) return;
 
-            dbRef('topup_orders/' + reqId).update({ status: 'accepted' })
+            adminDbRef('topup_orders/' + reqId).update({ status: 'accepted' })
             .then(function() {
-                return dbRef('users/' + uid + '/balance').transaction(function(cur) {
+                return adminDbRef('users/' + uid + '/balance').transaction(function(cur) {
                     return (parseFloat(cur) || 0) + amount;
                 });
             })
             .then(function() {
-                return dbRef('users/' + uid + '/transactions/' + reqId).update({
+                return adminDbRef('users/' + uid + '/transactions/' + reqId).update({
                     status: 'completed',
                     completedAt: Date.now()
                 });
@@ -13967,11 +13973,11 @@
         };
         window.admRejectTopup = function(reqId, uid) {
             if (!confirm('رفض هذا الطلب؟')) return;
-            dbRef('topup_orders/' + reqId).update({ status: 'rejected' });
-            dbRef('users/' + uid + '/transactions/' + reqId).remove();
+            adminDbRef('topup_orders/' + reqId).update({ status: 'rejected' });
+            adminDbRef('users/' + uid + '/transactions/' + reqId).remove();
         };
         window.admDelTopup = function(reqId) {
-            dbRef('topup_orders/' + reqId).remove();
+            adminDbRef('topup_orders/' + reqId).remove();
         };
         window.admReviewTopup = function(reqId, uid, amount, encodedData) {
             var t = {};
@@ -14005,20 +14011,20 @@
             document.body.appendChild(modal);
         };
         window.admUpdateOrderStatus = function(orderId, status) {
-            dbRef('store_orders/' + orderId).update({ status: status });
+            adminDbRef('store_orders/' + orderId).update({ status: status });
         };
         window.admDeleteOrder = function(orderId) {
             if (confirm('حذف هذا الطلب نهائياً؟')) {
-                dbRef('store_orders/' + orderId).remove();
+                adminDbRef('store_orders/' + orderId).remove();
             }
         };
         window.admAddBalance = function(uid) {
             var inp = $('topupAmt_' + uid);
             var amt = parseFloat(inp ? inp.value : 0);
             if (!amt || amt <= 0) { alert('أدخل مبلغاً صحيحاً'); return; }
-            dbRef('users/' + uid + '/balance').transaction(function(cur) { return (cur||0)+amt; });
+            adminDbRef('users/' + uid + '/balance').transaction(function(cur) { return (cur||0)+amt; });
             var txKey = 'ADM-' + Date.now();
-            dbRef('users/' + uid + '/transactions/' + txKey).set({
+            adminDbRef('users/' + uid + '/transactions/' + txKey).set({
                 desc: 'إضافة رصيد من المدير', date: nowAr(),
                 amount: amt, type: 'credit', status: 'completed', ts: Date.now()
             });
@@ -14027,7 +14033,7 @@
         };
         window.admDelUser = function(uid) {
             if (!confirm('حذف هذا المستخدم نهائياً؟')) return;
-            dbRef('users/' + uid).remove();
+            adminDbRef('users/' + uid).remove();
         };
 
         // ── زر حسناً شكراً ──────────────────────────────────────────────────

@@ -2454,116 +2454,120 @@
         /* ============================================================
            شريط التنقل السفلي للموبايل
         ============================================================ */
+        /* ══ Bottom Nav — Desktop + Mobile ══ */
+        body { padding-bottom: 80px; }
+
         .mobile-bottom-nav {
-            display: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr 56px 1fr 1fr;
+            align-items: center;
+            position: fixed;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 420px;
+            max-width: calc(100vw - 32px);
+            z-index: 2000;
+            background: #1a2535;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.38), 0 2px 8px rgba(0,0,0,0.18);
+            padding: 0 4px;
+            height: 58px;
         }
 
+        .mob-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #5a6e85;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.58rem;
+            font-weight: 600;
+            padding: 4px 0;
+            transition: color 0.2s;
+            width: 100%;
+            position: relative;
+        }
+
+        .mob-nav-btn i {
+            font-size: 1.15rem;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .mob-nav-btn:hover i { transform: translateY(-1px); color: #8a9eb8; }
+
+        .mob-nav-btn.active { color: #ffffff; }
+        .mob-nav-btn.active i { color: #F7C873; }
+
+        .mob-nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px; height: 2.5px;
+            background: #F7C873;
+            border-radius: 2px;
+        }
+
+        /* زر الشحن الوسط */
+        .mob-nav-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            position: relative;
+            top: -14px;
+            justify-self: center;
+        }
+
+        .mob-nav-center-btn {
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #F7C873, #e0a832);
+            border: 3px solid #1a2535;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(247,200,115,0.65);
+            cursor: pointer;
+            transition: transform 0.18s, box-shadow 0.18s;
+        }
+
+        .mob-nav-center-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 22px rgba(247,200,115,0.75);
+        }
+
+        .mob-nav-center-btn:active { transform: scale(0.92); }
+
+        .mob-nav-center-btn i { color: #1a2535; font-size: 1.15rem; }
+
+        .mob-nav-center-label {
+            color: #F7C873;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.52rem;
+            font-weight: 700;
+        }
+
+        /* على الموبايل: أصغر قليلاً */
         @media (max-width: 768px) {
-            body {
-                padding-bottom: 70px;
-            }
-
             .mobile-bottom-nav {
-                display: grid;
-                grid-template-columns: 1fr 1fr 52px 1fr 1fr;
-                align-items: center;
-                position: fixed;
-                bottom: 16px;
-                left: 20px;
-                right: 20px;
-                z-index: 2000;
-                background: #1a2535;
-                border-radius: 16px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.45);
-                padding: 0 2px;
+                width: calc(100vw - 32px);
                 height: 52px;
+                bottom: 14px;
+                border-radius: 16px;
             }
-
-            .mob-nav-btn {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 2px;
-                background: none;
-                border: none;
-                cursor: pointer;
-                color: #5a6e85;
-                font-family: 'Cairo', sans-serif;
-                font-size: 0.55rem;
-                font-weight: 600;
-                padding: 2px 0;
-                transition: color 0.2s;
-                width: 100%;
-                position: relative;
-            }
-
-            .mob-nav-btn i {
-                font-size: 1.2rem;
-                transition: color 0.2s;
-            }
-
-            .mob-nav-btn.active {
-                color: #ffffff;
-            }
-
-            .mob-nav-btn.active i {
-                color: #F7C873;
-            }
-
-            .mob-nav-btn.active::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 18px;
-                height: 2px;
-                background: #F7C873;
-                border-radius: 2px;
-            }
-
-            /* زر الشحن الوسط */
-            .mob-nav-center {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 1px;
-                position: relative;
-                top: -12px;
-                justify-self: center;
-            }
-
-            .mob-nav-center-btn {
-                width: 44px;
-                height: 44px;
-                border-radius: 50%;
-                background: #F7C873;
-                border: 3px solid #1a2535;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 4px 14px rgba(247,200,115,0.6);
-                cursor: pointer;
-                transition: transform 0.18s;
-            }
-
-            .mob-nav-center-btn:active {
-                transform: scale(0.9);
-            }
-
-            .mob-nav-center-btn i {
-                color: #1a2535;
-                font-size: 1.15rem;
-            }
-
-            .mob-nav-center-label {
-                color: #F7C873;
-                font-family: 'Cairo', sans-serif;
-                font-size: 0.5rem;
-                font-weight: 700;
-            }
+            .mob-nav-btn { font-size: 0.52rem; }
+            .mob-nav-btn i { font-size: 1.1rem; }
+            .mob-nav-center { top: -12px; }
+            .mob-nav-center-btn { width: 42px; height: 42px; }
         }
 
         /* ============================================================

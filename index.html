@@ -13589,6 +13589,8 @@
                 document.body.style.top = '-' + scrollY + 'px';
                 document.body.classList.add('modal-open');
             }
+            var bottomNav = document.getElementById('mobileBottomNav');
+            if (bottomNav) bottomNav.style.display = 'none';
         }
         function modalOff(ovId, moId) {
             ovOff(ovId);
@@ -13601,6 +13603,8 @@
                 document.body.style.top = '';
                 window.scrollTo(0, scrollY);
             }
+            var bottomNav = document.getElementById('mobileBottomNav');
+            if (bottomNav) bottomNav.style.display = '';
         }
 
         function balToast(msg, green) {
@@ -13847,7 +13851,6 @@
                 if (userData.name)  $('tuName').value  = userData.name;
                 if (userData.phone) $('tuPhone').value = userData.phone;
             }
-            document.getElementById('mobileBottomNav').style.display = 'none';
             modalOn('topupOv','topupModal');
             // scroll to top smoothly on open
             setTimeout(function(){
@@ -13856,8 +13859,8 @@
             }, 60);
         }
 
-        $('topupClose').onclick = () => { modalOff('topupOv','topupModal'); document.getElementById('mobileBottomNav').style.display = ''; };
-        $('topupOv').onclick    = () => { modalOff('topupOv','topupModal'); document.getElementById('mobileBottomNav').style.display = ''; };
+        $('topupClose').onclick = () => modalOff('topupOv','topupModal');
+        $('topupOv').onclick    = () => modalOff('topupOv','topupModal');
 
         $('tuSubmitBtn').onclick = function() {
             var name   = $('tuName').value.trim();
@@ -13894,7 +13897,6 @@
                 })
                 .then(function() {
                     modalOff('topupOv','topupModal');
-                    document.getElementById('mobileBottomNav').style.display = '';
                     $('successRef').textContent = 'رقم الطلب: ' + reqId + ' | المبلغ: ' + amount.toFixed(2) + '$';
                     modalOn('successOv','successModal');
                 })

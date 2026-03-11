@@ -13896,7 +13896,9 @@
         }
 
         function renderUsersTable() {
+            console.log('renderUsersTable called, adminUsers:', adminUsers);
             var tbody = $('usersBody');
+            if (!tbody) { console.log('tbody not found'); return; }
             if (!adminUsers.length) { tbody.innerHTML = '<tr><td colspan="7" class="adm-no-data">لا يوجد مستخدمون</td></tr>'; return; }
             tbody.innerHTML = adminUsers.map(function(u) {
                 var uid = u.uid || '';

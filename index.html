@@ -12793,159 +12793,29 @@
         .bal-toast.green{background:#2ECC71;box-shadow:0 8px 24px rgba(46,204,113,.4)}
 
         /* User dropdown */
-        /* ══ User Dropdown ══ */
-        .user-dropdown{position:relative}
-        .um-overlay{
-            display:none;position:fixed;inset:0;
-            background:rgba(0,0,0,.5);backdrop-filter:blur(3px);
-            z-index:2999;opacity:0;transition:opacity .25s;
+        .user-dropdown{
+            position:relative;
         }
-        .um-overlay.on{opacity:1}
         .user-menu{
-            position:absolute;top:calc(100% + 12px);left:0;
-            width:300px;background:#fff;border-radius:18px;
-            box-shadow:0 24px 60px rgba(0,0,0,.17);border:1px solid rgba(0,0,0,.06);
-            opacity:0;pointer-events:none;
-            transform:translateY(-10px) scale(.97);
-            transition:opacity .22s,transform .25s cubic-bezier(.34,1.56,.64,1);
-            z-index:3000;overflow:hidden;
+            position:absolute;top:calc(100% + 10px);left:0;
+            background:#fff;border-radius:12px;min-width:200px;
+            box-shadow:0 12px 36px rgba(0,0,0,.15);border:1px solid #eee;
+            opacity:0;pointer-events:none;transform:translateY(-8px);
+            transition:all .25s;z-index:2000;overflow:hidden;
         }
-        .user-menu.open{opacity:1;pointer-events:all;transform:translateY(0) scale(1)}
-        /* header */
-        .um-head{
-            background:linear-gradient(135deg,#1a2535 0%,#2a3f54 100%);
-            padding:1.2rem 1.2rem 1rem;position:relative;overflow:hidden;
-        }
-        .um-head::before{
-            content:'';position:absolute;top:-35px;left:-25px;
-            width:120px;height:120px;background:rgba(247,200,115,.1);border-radius:50%;
-        }
-        .um-head-row{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
-        .um-av{
-            width:52px;height:52px;border-radius:50%;flex-shrink:0;
-            background:linear-gradient(135deg,#F7C873,#e0a832);
-            color:#1a2535;display:flex;align-items:center;justify-content:center;
-            font-size:1.35rem;font-weight:800;
-            border:2.5px solid rgba(255,255,255,.25);
-            box-shadow:0 4px 14px rgba(247,200,115,.4);
-        }
-        .um-nfo{flex:1;min-width:0}
-        .um-nm{font-size:1rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .um-em{font-size:.72rem;color:rgba(255,255,255,.58);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .um-badge{
-            display:inline-flex;align-items:center;gap:4px;margin-top:6px;
-            background:rgba(247,200,115,.18);border:1px solid rgba(247,200,115,.38);
-            color:#F7C873;font-size:.64rem;font-weight:700;padding:2px 9px;border-radius:20px;
-        }
-        /* balance */
-        .um-bal{
-            display:flex;align-items:center;justify-content:space-between;
-            padding:.68rem 1.2rem;background:#f8fafc;border-bottom:1px solid #eef0f3;
-        }
-        .um-bal-lbl{font-size:.78rem;color:#8a9ab0;display:flex;align-items:center;gap:6px}
-        .um-bal-lbl i{color:#2ecc71;font-size:.8rem}
-        .um-bal-val{font-size:1rem;font-weight:800;color:#2ecc71}
-        /* items */
-        .um-list{padding:.4rem 0}
+        .user-menu.open{opacity:1;pointer-events:all;transform:translateY(0)}
+        .user-menu-header{padding:.8rem 1rem;background:var(--primary);color:#fff}
+        .user-menu-header .um-name{font-weight:700;font-size:.95rem}
+        .user-menu-header .um-email{font-size:.75rem;opacity:.75}
         .user-menu-item{
-            display:flex;align-items:center;gap:12px;padding:.72rem 1.2rem;
-            cursor:pointer;font-size:.88rem;color:#2d3748;
-            transition:background .14s,padding-right .16s;
-            border:none;background:none;width:100%;text-align:right;
-            font-family:'Cairo',sans-serif;font-weight:600;
+            display:flex;align-items:center;gap:10px;padding:.75rem 1rem;
+            cursor:pointer;font-size:.88rem;color:var(--dark);transition:background .15s;border:none;background:none;width:100%;text-align:right;font-family:'Cairo',sans-serif;
         }
-        .user-menu-item:hover{background:#f4f6fb;padding-right:1.5rem}
-        .um-ic{
-            width:34px;height:34px;border-radius:9px;
-            background:rgba(42,63,84,.08);flex-shrink:0;
-            display:flex;align-items:center;justify-content:center;
-            font-size:.82rem;color:#2a3f54;transition:background .14s;
-        }
-        .user-menu-item:hover .um-ic{background:rgba(42,63,84,.15)}
-        .user-menu-item.red{color:#e74c3c}
-        .user-menu-item.red .um-ic{background:rgba(231,76,60,.1);color:#e74c3c}
-        .user-menu-item.red:hover{background:#fff5f5;padding-right:1.5rem}
-        .user-menu-item.red:hover .um-ic{background:rgba(231,76,60,.18)}
-        .um-logout-wrap{padding:.2rem .8rem .7rem}
-        .um-logout-btn{
-            width:100%;padding:.7rem;border-radius:12px;
-            background:rgba(231,76,60,.07);border:1.5px solid rgba(231,76,60,.28);
-            color:#e74c3c;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;
-            cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
-            transition:background .18s,border-color .18s;
-        }
-        .um-logout-btn:hover{background:rgba(231,76,60,.14);border-color:rgba(231,76,60,.5)}
-        .user-menu-divider{height:1px;background:#eef0f3;margin:.1rem 0}
-
-        /* ══ Mobile: bottom sheet ══ */
-        @media(max-width:768px){
-            .user-menu{
-                position:fixed;top:auto;bottom:-100%;left:0;right:0;
-                width:100%;border-radius:22px 22px 0 0;max-height:88vh;
-                overflow-y:auto;transform:none;opacity:1;pointer-events:none;
-                transition:bottom .3s cubic-bezier(.4,0,.2,1);
-                box-shadow:0 -8px 40px rgba(0,0,0,.2);
-            }
-            .user-menu::before{
-                content:'';display:block;width:40px;height:4px;
-                background:#dde1e8;border-radius:2px;margin:10px auto 2px;
-            }
-            .user-menu.open{bottom:0;pointer-events:all;transform:none}
-            .um-av{width:56px;height:56px;font-size:1.45rem}
-            .user-menu-item{padding:.88rem 1.3rem;font-size:.93rem}
-            .user-menu-item:hover{padding-right:1.3rem}
-            .um-ic{width:38px;height:38px;font-size:.88rem}
-            .um-logout-wrap{padding:.2rem 1rem .9rem}
-        }
-
-        /* ══ Mobile account card inside nav sidebar ══ */
-        .mob-acc-card{
-            display:none;
-            background:linear-gradient(135deg,#1a2535 0%,#2a3f54 100%);
-            padding:1.2rem 1.3rem 1rem;position:relative;overflow:hidden;
-        }
-        .mob-acc-card::before{
-            content:'';position:absolute;top:-30px;left:-20px;
-            width:110px;height:110px;background:rgba(247,200,115,.09);border-radius:50%;
-        }
-        .mob-acc-head{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
-        .mob-av{
-            width:50px;height:50px;border-radius:50%;flex-shrink:0;
-            background:linear-gradient(135deg,#F7C873,#e0a832);
-            color:#1a2535;display:flex;align-items:center;justify-content:center;
-            font-size:1.3rem;font-weight:800;
-            border:2px solid rgba(255,255,255,.22);
-            box-shadow:0 4px 12px rgba(247,200,115,.38);
-        }
-        .mob-acc-info{flex:1;min-width:0}
-        .mob-acc-name{font-size:.97rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .mob-acc-contact{font-size:.71rem;color:rgba(255,255,255,.55);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .mob-acc-bal{
-            display:flex;align-items:center;justify-content:space-between;
-            background:rgba(255,255,255,.09);border-radius:10px;
-            padding:.5rem .9rem;margin-top:.8rem;position:relative;z-index:1;
-        }
-        .mob-acc-bal span{font-size:.78rem;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:5px}
-        .mob-acc-bal span i{color:#F7C873}
-        .mob-acc-bal strong{font-size:1.05rem;font-weight:800;color:#F7C873}
-        .mob-acc-btns{display:flex;gap:8px;margin-top:.75rem;position:relative;z-index:1}
-        .mob-acc-btn{
-            flex:1;padding:.58rem 0;border-radius:10px;
-            background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
-            color:#fff;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:600;
-            cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
-            transition:background .18s;
-        }
-        .mob-acc-btn:active{background:rgba(255,255,255,.2)}
-        .mob-acc-logout{
-            width:100%;margin-top:.65rem;padding:.65rem;border-radius:11px;
-            background:rgba(231,76,60,.15);border:1.5px solid rgba(231,76,60,.38);
-            color:#ff7b6b;font-family:'Cairo',sans-serif;font-size:.88rem;font-weight:700;
-            cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
-            position:relative;z-index:1;transition:background .18s;
-        }
-        .mob-acc-logout:active{background:rgba(231,76,60,.25)}
-        @media(max-width:768px){.mob-acc-card{display:block}}
+        .user-menu-item:hover{background:#f8f9fa}
+        .user-menu-item i{color:var(--primary);width:18px}
+        .user-menu-item.red{color:#E74C3C}
+        .user-menu-item.red i{color:#E74C3C}
+        .user-menu-divider{height:1px;background:#f0f0f0}
 
         /* Orders history modal */
         #ordersModal{max-width:600px;max-height:85vh;z-index:1601}
@@ -13490,130 +13360,69 @@
 
         // ── inject navbar buttons ────────────────────────────────────────────
         function buildNavButtons(user, uData) {
-            ['__authNavBtn','__walletNavWrap','__userDropDown','__umOv','__mobAcc'].forEach(function(id){
-                var el = $(id); if(el) el.remove();
+            // remove old injected elements
+            ['__authNavBtn','__walletNavWrap','__userDropDown'].forEach(function(id){
+                var el = $(id); if (el) el.remove();
             });
 
             var cartCont = document.querySelector('.nav-links .cart-icon-container');
-            if(!cartCont) return;
+            if (!cartCont) return;
 
-            if(!user){
+            if (!user) {
+                // Not logged in — show login button
                 var btn = document.createElement('button');
-                btn.id = '__authNavBtn'; btn.className = 'auth-nav-btn';
+                btn.id = '__authNavBtn';
+                btn.className = 'auth-nav-btn';
                 btn.innerHTML = '<i class="fas fa-user"></i> دخول / تسجيل';
                 btn.onclick = () => openAuth('login');
                 cartCont.parentNode.insertBefore(btn, cartCont);
-
             } else {
-                var bal      = (uData && uData.balance) ? parseFloat(uData.balance) : 0;
-                var fullName = (uData && uData.name) ? uData.name : 'حسابي';
-                var firstName= fullName.split(' ')[0];
-                var ini      = fullName.charAt(0).toUpperCase();
-                var contact  = user.email || (uData && uData.phone) || '';
+                // Logged in — show wallet + user menu
+                var bal = (uData && uData.balance) ? parseFloat(uData.balance) : 0;
 
-                /* ── wallet pill (desktop) ── */
+                // Wallet wrap
                 var ww = document.createElement('div');
-                ww.id = '__walletNavWrap'; ww.className = 'wallet-nav-wrap'; ww.title = 'محفظتي';
+                ww.id = '__walletNavWrap';
+                ww.className = 'wallet-nav-wrap';
+                ww.title = 'محفظتي';
                 ww.innerHTML = '<i class="fas fa-wallet"></i>'
                     + '<span id="walletNavBal">' + bal.toFixed(2) + '$</span>'
                     + '<button class="wallet-plus-btn" id="__walletPlusBtn" title="شحن رصيد"><i class="fas fa-plus"></i></button>';
-                ww.onclick = function(e){ if(e.target.closest('#__walletPlusBtn')){ openTopup(); return; } openWallet(); };
+                ww.onclick = function(e) {
+                    if (e.target.closest('#__walletPlusBtn')) { openTopup(); return; }
+                    openWallet();
+                };
                 cartCont.parentNode.insertBefore(ww, cartCont);
 
-                /* ── overlay (mobile) ── */
-                var ov = document.createElement('div');
-                ov.id = '__umOv'; ov.className = 'um-overlay';
-                document.body.appendChild(ov);
-
-                /* ── dropdown ── */
+                // User dropdown
+                var initials = (uData && uData.name) ? uData.name.charAt(0) : (user.email ? user.email.charAt(0).toUpperCase() : 'U');
                 var ud = document.createElement('div');
-                ud.id = '__userDropDown'; ud.className = 'user-dropdown';
-                ud.innerHTML =
-                    '<div class="auth-nav-btn" id="__userNavBtn">'
-                  +   '<div class="auth-avatar">' + ini + '</div>'
-                  +   '<span>' + firstName + '</span>'
-                  + '</div>'
-                  + '<div class="user-menu" id="__userMenu">'
-                  +   '<div class="um-head">'
-                  +     '<div class="um-head-row">'
-                  +       '<div class="um-av">' + ini + '</div>'
-                  +       '<div class="um-nfo">'
-                  +         '<div class="um-nm">' + fullName + '</div>'
-                  +         '<div class="um-em">' + contact + '</div>'
-                  +         '<span class="um-badge"><i class="fas fa-shield-alt"></i> عميل موثّق</span>'
-                  +       '</div>'
-                  +     '</div>'
-                  +   '</div>'
-                  +   '<div class="um-bal">'
-                  +     '<span class="um-bal-lbl"><i class="fas fa-wallet"></i> رصيدي الحالي</span>'
-                  +     '<span class="um-bal-val" id="__umBal">' + bal.toFixed(2) + '$</span>'
-                  +   '</div>'
-                  +   '<div class="um-list">'
-                  +     '<button class="user-menu-item" id="__menuWallet">'
-                  +       '<span class="um-ic"><i class="fas fa-wallet"></i></span>محفظتي'
-                  +     '</button>'
-                  +     '<button class="user-menu-item" id="__menuOrders">'
-                  +       '<span class="um-ic"><i class="fas fa-box-open"></i></span>طلباتي'
-                  +     '</button>'
-                  +   '</div>'
-                  +   '<div class="um-logout-wrap">'
-                  +     '<button class="um-logout-btn" id="__menuLogout">'
-                  +       '<i class="fas fa-sign-out-alt"></i>تسجيل الخروج'
-                  +     '</button>'
-                  +   '</div>'
-                  + '</div>';
+                ud.id = '__userDropDown';
+                ud.className = 'user-dropdown';
+                ud.innerHTML = '<div class="auth-nav-btn" id="__userNavBtn">'
+                    + '<div class="auth-avatar">' + initials + '</div>'
+                    + '<span>' + ((uData && uData.name) ? uData.name.split(' ')[0] : 'حسابي') + '</span>'
+                    + '</div>'
+                    + '<div class="user-menu" id="__userMenu">'
+                    + '<div class="user-menu-header">'
+                    + '<div class="um-name">' + ((uData && uData.name) ? uData.name : '') + '</div>'
+                    + '<div class="um-email">' + (user.email || '') + '</div>'
+                    + '</div>'
+                    + '<button class="user-menu-item" id="__menuWallet"><i class="fas fa-wallet"></i> محفظتي</button>'
+                    + '<button class="user-menu-item" id="__menuOrders"><i class="fas fa-box"></i> طلباتي</button>'
+                    + '<div class="user-menu-divider"></div>'
+                    + '<button class="user-menu-item red" id="__menuLogout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>'
+                    + '</div>';
                 cartCont.parentNode.insertBefore(ud, cartCont);
 
-                /* ── بطاقة الحساب داخل القائمة الجانبية ── */
-                var mac = document.createElement('div');
-                mac.id = '__mobAcc'; mac.className = 'mob-acc-card';
-                mac.innerHTML =
-                    '<div class="mob-acc-head">'
-                  +   '<div class="mob-av">' + ini + '</div>'
-                  +   '<div class="mob-acc-info">'
-                  +     '<div class="mob-acc-name">' + fullName + '</div>'
-                  +     '<div class="mob-acc-contact">' + contact + '</div>'
-                  +   '</div>'
-                  + '</div>'
-                  + '<div class="mob-acc-bal">'
-                  +   '<span><i class="fas fa-wallet"></i> رصيدي</span>'
-                  +   '<strong id="__mobBal">' + bal.toFixed(2) + '$</strong>'
-                  + '</div>'
-                  + '<div class="mob-acc-btns">'
-                  +   '<button class="mob-acc-btn" id="__mBtnW"><i class="fas fa-wallet"></i> محفظتي</button>'
-                  +   '<button class="mob-acc-btn" id="__mBtnO"><i class="fas fa-box-open"></i> طلباتي</button>'
-                  + '</div>'
-                  + '<button class="mob-acc-logout" id="__mBtnL"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>';
+                $('__userNavBtn').onclick  = () => $('__userMenu').classList.toggle('open');
+                $('__menuWallet').onclick  = () => { $('__userMenu').classList.remove('open'); openWallet(); };
+                $('__menuOrders').onclick  = () => { $('__userMenu').classList.remove('open'); openOrdersHistory(); };
+                $('__menuLogout').onclick  = () => { $('__userMenu').classList.remove('open'); auth.signOut(); };
 
-                var nl = document.querySelector('.nav-links');
-                if(nl) nl.insertBefore(mac, nl.firstChild);
-
-                /* ── events ── */
-                function closeMenu(){
-                    $('__userMenu').classList.remove('open');
-                    ov.classList.remove('on');
-                }
-                function openMenu(){
-                    $('__userMenu').classList.add('open');
-                    ov.classList.add('on');
-                }
-                $('__userNavBtn').onclick = function(e){
-                    e.stopPropagation();
-                    $('__userMenu').classList.contains('open') ? closeMenu() : openMenu();
-                };
-                ov.onclick = closeMenu;
-                $('__menuWallet').onclick = () => { closeMenu(); openWallet(); };
-                $('__menuOrders').onclick = () => { closeMenu(); openOrdersHistory(); };
-                $('__menuLogout').onclick = () => { closeMenu(); auth.signOut(); };
-
-                var closeNav = () => { var nl2 = document.querySelector('.nav-links'); if(nl2) nl2.classList.remove('active'); };
-                $('__mBtnW').onclick = () => { closeNav(); openWallet(); };
-                $('__mBtnO').onclick = () => { closeNav(); openOrdersHistory(); };
-                $('__mBtnL').onclick = () => { auth.signOut(); };
-
-                document.addEventListener('click', function(e){
+                document.addEventListener('click', function(e) {
                     var ud2 = $('__userDropDown');
-                    if(ud2 && !ud2.contains(e.target)) closeMenu();
+                    if (ud2 && !ud2.contains(e.target)) $('__userMenu').classList.remove('open');
                 }, true);
             }
         }
@@ -13739,10 +13548,8 @@
         window.getBalance = getBalance;
 
         function refreshNavBal() {
-            var b = getBalance().toFixed(2) + '$';
-            var e1 = $('walletNavBal'); if(e1) e1.textContent = b;
-            var e2 = $('__umBal');     if(e2) e2.textContent = b;
-            var e3 = $('__mobBal');    if(e3) e3.textContent = b;
+            var el = $('walletNavBal');
+            if (el) el.textContent = getBalance().toFixed(2) + '$';
         }
 
         function refreshWalletModal() {

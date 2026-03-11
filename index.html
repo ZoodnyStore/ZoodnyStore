@@ -13370,17 +13370,18 @@
                          onerror="this.parentElement.innerHTML='<div style=\'display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;gap:4px;\'><i class=\'fas fa-qrcode\' style=\'font-size:2rem;color:#ccc\'></i><span style=\'font-size:.55rem;color:#aaa;font-weight:600\'>QR Code</span></div>'">
                 </div>
                 <div class="topup-acc-info">
-                    <div class="topup-acc-label">حساب شام كاش</div>
-                    <div class="topup-acc-num">0982199738</div>
+                    <div class="topup-acc-label">معرّف حساب شام كاش</div>
+                    <div class="topup-acc-num" style="font-size:.72rem;letter-spacing:.5px;word-break:break-all;line-height:1.5">3f0e8bfc093679d889328460090733b8</div>
                     <div class="topup-acc-name">زودني — Zoodny Store</div>
                     <button class="topup-copy-btn" id="topupCopyBtn" onclick="
                         var btn=this;
-                        if(navigator.clipboard){ navigator.clipboard.writeText('0982199738'); }
-                        else{ var t=document.createElement('textarea');t.value='0982199738';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t); }
+                        var id='3f0e8bfc093679d889328460090733b8';
+                        if(navigator.clipboard){ navigator.clipboard.writeText(id); }
+                        else{ var t=document.createElement('textarea');t.value=id;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t); }
                         btn.innerHTML='<i class=\'fas fa-check\'></i> تم النسخ!';
                         btn.classList.add('copied');
-                        setTimeout(function(){ btn.innerHTML='<i class=\'fas fa-copy\'></i> نسخ الرقم'; btn.classList.remove('copied'); }, 2200);
-                    "><i class="fas fa-copy"></i> نسخ الرقم</button>
+                        setTimeout(function(){ btn.innerHTML='<i class=\'fas fa-copy\'></i> نسخ المعرّف'; btn.classList.remove('copied'); }, 2200);
+                    "><i class="fas fa-copy"></i> نسخ المعرّف</button>
                 </div>
             </div>
 

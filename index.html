@@ -13847,6 +13847,7 @@
                 if (userData.name)  $('tuName').value  = userData.name;
                 if (userData.phone) $('tuPhone').value = userData.phone;
             }
+            document.getElementById('mobileBottomNav').style.display = 'none';
             modalOn('topupOv','topupModal');
             // scroll to top smoothly on open
             setTimeout(function(){
@@ -13855,8 +13856,8 @@
             }, 60);
         }
 
-        $('topupClose').onclick = () => modalOff('topupOv','topupModal');
-        $('topupOv').onclick    = () => modalOff('topupOv','topupModal');
+        $('topupClose').onclick = () => { modalOff('topupOv','topupModal'); document.getElementById('mobileBottomNav').style.display = ''; };
+        $('topupOv').onclick    = () => { modalOff('topupOv','topupModal'); document.getElementById('mobileBottomNav').style.display = ''; };
 
         $('tuSubmitBtn').onclick = function() {
             var name   = $('tuName').value.trim();
@@ -13893,6 +13894,7 @@
                 })
                 .then(function() {
                     modalOff('topupOv','topupModal');
+                    document.getElementById('mobileBottomNav').style.display = '';
                     $('successRef').textContent = 'رقم الطلب: ' + reqId + ' | المبلغ: ' + amount.toFixed(2) + '$';
                     modalOn('successOv','successModal');
                 })

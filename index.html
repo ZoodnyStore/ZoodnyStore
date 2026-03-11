@@ -2452,6 +2452,124 @@
         }
 
         /* ============================================================
+           شريط التنقل السفلي للموبايل
+        ============================================================ */
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 80px;
+            }
+
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 2000;
+                background: #1a2535;
+                border-radius: 22px 22px 0 0;
+                box-shadow: 0 -4px 24px rgba(0,0,0,0.35);
+                padding: 0 8px;
+                height: 65px;
+                align-items: center;
+                justify-content: space-around;
+            }
+
+            .mob-nav-btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 3px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: #8a9bb5;
+                font-family: 'Cairo', sans-serif;
+                font-size: 0.65rem;
+                font-weight: 600;
+                padding: 6px 10px;
+                border-radius: 12px;
+                transition: color 0.2s, background 0.2s;
+                min-width: 52px;
+                position: relative;
+            }
+
+            .mob-nav-btn i {
+                font-size: 1.3rem;
+                transition: color 0.2s;
+            }
+
+            .mob-nav-btn:hover,
+            .mob-nav-btn.active {
+                color: #ffffff;
+            }
+
+            .mob-nav-btn.active i {
+                color: var(--secondary);
+            }
+
+            .mob-nav-btn.active::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 24px;
+                height: 3px;
+                background: var(--secondary);
+                border-radius: 3px 3px 0 0;
+            }
+
+            /* زر الشحن الوسط المميز */
+            .mob-nav-center {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 3px;
+                margin-top: -28px;
+            }
+
+            .mob-nav-center-btn {
+                width: 58px;
+                height: 58px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #00c6fb, #005bea);
+                border: 4px solid #1a2535;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 18px rgba(0,198,251,0.45);
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+
+            .mob-nav-center-btn:active {
+                transform: scale(0.93);
+                box-shadow: 0 2px 10px rgba(0,198,251,0.3);
+            }
+
+            .mob-nav-center-btn i {
+                color: #ffffff;
+                font-size: 1.5rem;
+            }
+
+            .mob-nav-center-label {
+                color: #ffffff;
+                font-family: 'Cairo', sans-serif;
+                font-size: 0.65rem;
+                font-weight: 700;
+                margin-top: 2px;
+            }
+        }
+
+        /* ============================================================
            تحسينات جديدة: شريط العروض، بحث، تقييمات، كوبون، عداد
         ============================================================ */
 
@@ -13985,8 +14103,110 @@
             }
         }, 1000);
 
+        // ── شريط التنقل السفلي للموبايل ──────────────────────────────────────
+        window.mobileNavGo = function(sectionId, btn) {
+            // إزالة active من كل الأزرار
+            document.querySelectorAll('.mob-nav-btn').forEach(function(b){ b.classList.remove('active'); });
+            if (btn) btn.classList.add('active');
+
+            var el = document.getElementById(sectionId);
+            if (el) {
+                var offset = sectionId === 'categories' ? 90 : 80;
+                window.scrollTo({ top: el.offsetTop - offset, behavior: 'smooth' });
+            }
+
+            // إذا كانت الفئات مخفية اظهرها
+            if (sectionId === 'categories') {
+                var cats = document.getElementById('categories');
+                var prods = document.getElementById('productsSection');
+                if (cats) cats.style.display = 'block';
+                if (prods) prods.style.display = 'none';
+            }
+        };
+
+        window.mobileNavOrders = function(btn) {
+            document.querySelectorAll('.mob-nav-btn').forEach(function(b){ b.classList.remove('active'); });
+            if (btn) btn.classList.add('active');
+            // فتح نافذة الطلبات إن كان المستخدم مسجلاً
+            if (typeof openOrdersHistory === 'function') {
+                openOrdersHistory();
+            } else {
+                // إن لم يكن مسجلاً دلّه للدخول
+                var loginBtn = document.getElementById('__openLogin') || document.querySelector('.login-btn');
+                if (loginBtn) loginBtn.click();
+                else alert('يرجى تسجيل الدخول أولاً لعرض طلباتك');
+            }
+        };
+
+        window.mobileNavHistory = function(btn) {
+            document.querySelectorAll('.mob-nav-btn').forEach(function(b){ b.classList.remove('active'); });
+            if (btn) btn.classList.add('active');
+            // فتح سجل الشحن (طلبات الشحن/تعبئة الرصيد)
+            if (typeof openOrdersHistory === 'function') {
+                openOrdersHistory();
+            } else {
+                var histBtn = document.getElementById('__menuOrders');
+                if (histBtn) histBtn.click();
+            }
+        };
+
+        // تحديث الزر النشط عند التمرير
+        window.addEventListener('scroll', function() {
+            var sections = ['home', 'categories', 'contact'];
+            var btnMap = { 'home': 'mob-home', 'contact': 'mob-contact' };
+            var scrollPos = window.scrollY + 100;
+            sections.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (!el || !btnMap[id]) return;
+                var top = el.offsetTop - 90;
+                var bottom = top + el.offsetHeight;
+                if (scrollPos >= top && scrollPos < bottom) {
+                    document.querySelectorAll('.mob-nav-btn').forEach(function(b){ b.classList.remove('active'); });
+                    var activeBtn = document.getElementById(btnMap[id]);
+                    if (activeBtn) activeBtn.classList.add('active');
+                }
+            });
+        });
+
     }());
     </script>
+
+    <!-- ══ شريط التنقل السفلي للموبايل ══ -->
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
+
+        <!-- الرئيسية -->
+        <button class="mob-nav-btn active" id="mob-home" onclick="mobileNavGo('home', this)">
+            <i class="fas fa-home"></i>
+            <span>الرئيسية</span>
+        </button>
+
+        <!-- طلباتي -->
+        <button class="mob-nav-btn" id="mob-orders" onclick="mobileNavOrders(this)">
+            <i class="fas fa-list-alt"></i>
+            <span>طلباتي</span>
+        </button>
+
+        <!-- شحن - زر المنتصف المميز -->
+        <div class="mob-nav-center">
+            <div class="mob-nav-center-btn" onclick="mobileNavGo('categories', null)">
+                <i class="fas fa-plus"></i>
+            </div>
+            <span class="mob-nav-center-label">شحن</span>
+        </div>
+
+        <!-- سجل الشحن -->
+        <button class="mob-nav-btn" id="mob-history" onclick="mobileNavHistory(this)">
+            <i class="fas fa-history"></i>
+            <span>سجل الشحن</span>
+        </button>
+
+        <!-- اتصل بنا -->
+        <button class="mob-nav-btn" id="mob-contact" onclick="mobileNavGo('contact', this)">
+            <i class="fas fa-headset"></i>
+            <span>اتصل بنا</span>
+        </button>
+
+    </nav>
 
     <!-- ══ Order Success Modal ══ -->
     <div class="z-ov" id="orderSuccessOv" style="z-index:5000;display:none"></div>

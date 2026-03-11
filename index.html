@@ -13704,8 +13704,6 @@
         // ── Secondary Firebase app for admin (won't affect logged-in users) ──
         const adminApp = firebase.initializeApp(firebaseConfig, 'adminApp');
         const adminAuth = adminApp.auth();
-        const adminDb = adminApp.database();
-        const adminDbRef = function(path) { return adminDb.ref(path); };
 
         function tryAdminLogin() {
             if ($('adminPassInput').value === ADMIN_PASS) {
@@ -13938,6 +13936,8 @@
         }
 
         // ── Admin actions ────────────────────────────────────────────────────
+        const adminDb = adminApp.database();
+        const adminDbRef = function(path) { return adminDb.ref(path); };
 
         window.admAcceptTopup = function(reqId, uid, amount) {
             amount = parseFloat(amount);

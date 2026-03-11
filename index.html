@@ -12668,10 +12668,9 @@
             position:fixed;top:50%;left:50%;
             transform:translate(-50%,-50%) scale(.88);
             background:#fff;border-radius:18px;width:92%;
-            opacity:0;pointer-events:none;overflow-y:auto;
+            opacity:0;pointer-events:none;overflow:hidden;
             transition:all .3s cubic-bezier(.34,1.56,.64,1);
             box-shadow:0 20px 60px rgba(0,0,0,.22);
-            scroll-behavior:smooth;
         }
         .z-modal.on{opacity:1;pointer-events:all;transform:translate(-50%,-50%) scale(1)}
         /* topup modal على الموبايل — handled in topup CSS section below */
@@ -12684,7 +12683,7 @@
         .z-mh h3{font-size:1.1rem}
         .z-xbtn{background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;opacity:.8}
         .z-xbtn:hover{opacity:1}
-        .z-mb{padding:1.4rem}
+        .z-mb{padding:1.4rem;overflow-y:auto;-webkit-overflow-scrolling:touch;max-height:calc(88vh - 70px)}
 
         /* Auth modal */
         #authModal{max-width:420px;max-height:90vh;z-index:1201}
@@ -12756,167 +12755,169 @@
 
         /* Topup modal */
         /* ══ Topup Modal — Full Redesign ══ */
+        /* ══ Topup Modal ══ */
+        #topupOv{z-index:1400}
         #topupModal{
-            max-width:440px;
-            height:auto;
-            max-height:88vh;
+            max-width:400px;
             z-index:1401;
             padding:0;
-            overflow:hidden; /* نمنع overflow على المودال نفسه */
             display:flex;
             flex-direction:column;
+            max-height:85vh;
+            overflow:hidden;
         }
-        #topupModal.on{ display:flex; }
-        #topupModal::-webkit-scrollbar{width:4px}
-        #topupModal::-webkit-scrollbar-track{background:transparent}
-        #topupModal::-webkit-scrollbar-thumb{background:rgba(247,200,115,.45);border-radius:4px}
-        #topupOv{z-index:1400}
+        #topupModal.on{display:flex}
 
-        /* header — ثابت في الأعلى */
+        /* هيدر ثابت */
         .topup-header{
-            background:linear-gradient(135deg,#1a2535 0%,#2a3f54 100%);
-            padding:1rem 1.2rem .9rem;
+            background:linear-gradient(135deg,#1a2535,#2a3f54);
+            padding:.85rem 1.1rem .8rem;
             display:flex;justify-content:space-between;align-items:center;
-            flex-shrink:0; /* لا يتقلص أبداً */
+            flex-shrink:0;
             border-radius:18px 18px 0 0;
         }
-        .topup-header-left{display:flex;align-items:center;gap:9px}
+        .topup-header-left{display:flex;align-items:center;gap:8px}
         .topup-header-icon{
-            width:36px;height:36px;border-radius:50%;
+            width:32px;height:32px;border-radius:50%;
             background:rgba(247,200,115,.18);
             display:flex;align-items:center;justify-content:center;
-            font-size:1.05rem;color:#F7C873;flex-shrink:0;
+            font-size:.95rem;color:#F7C873;flex-shrink:0;
         }
-        .topup-header h3{color:#fff;font-size:.98rem;font-weight:700;margin:0;line-height:1.3}
-        .topup-header p{color:rgba(255,255,255,.52);font-size:.67rem;margin:1px 0 0}
+        .topup-header h3{color:#fff;font-size:.9rem;font-weight:700;margin:0}
+        .topup-header p{color:rgba(255,255,255,.5);font-size:.63rem;margin:1px 0 0}
         .topup-xbtn{
             background:rgba(255,255,255,.1);border:none;
-            width:30px;height:30px;border-radius:50%;
+            width:28px;height:28px;border-radius:50%;
             display:flex;align-items:center;justify-content:center;
-            color:#fff;font-size:.95rem;cursor:pointer;flex-shrink:0;
+            color:#fff;font-size:.88rem;cursor:pointer;flex-shrink:0;
             transition:background .18s;
         }
         .topup-xbtn:hover{background:rgba(255,255,255,.22)}
 
-        /* body — يأخذ المساحة المتبقية ويسمح بالـ scroll */
+        /* body — يأخذ المساحة ويسكرول */
         .topup-body{
             flex:1;
+            min-height:0; /* مهم جداً لـ flex scroll */
             overflow-y:auto;
-            -webkit-overflow-scrolling:touch; /* smooth scroll على iOS */
-            scroll-behavior:smooth;
-            padding:1.1rem 1.2rem 1.4rem;
+            -webkit-overflow-scrolling:touch;
+            overscroll-behavior:contain; /* يمنع تسرب الـ scroll للخارج */
+            padding:.9rem 1rem 1.2rem;
             scrollbar-width:thin;
             scrollbar-color:rgba(247,200,115,.4) transparent;
         }
-        .topup-body::-webkit-scrollbar{width:4px}
-        .topup-body::-webkit-scrollbar-track{background:transparent}
-        .topup-body::-webkit-scrollbar-thumb{background:rgba(247,200,115,.4);border-radius:4px}
+        .topup-body::-webkit-scrollbar{width:3px}
+        .topup-body::-webkit-scrollbar-thumb{background:rgba(247,200,115,.4);border-radius:3px}
 
-        /* instruction banner — مضغوط */
+        /* بانر */
         .topup-banner{
-            background:linear-gradient(135deg,#fffbef,#fff8e0);
-            border:1.5px solid rgba(247,200,115,.45);
-            border-radius:12px;padding:.75rem .9rem;
-            margin-bottom:1rem;
-            display:flex;gap:9px;align-items:flex-start;
+            background:#fffbef;border:1px solid rgba(247,200,115,.4);
+            border-radius:10px;padding:.65rem .85rem;
+            margin-bottom:.85rem;display:flex;gap:8px;align-items:flex-start;
         }
         .topup-banner-icon{
-            width:30px;height:30px;border-radius:8px;flex-shrink:0;
+            width:26px;height:26px;border-radius:7px;flex-shrink:0;
             background:linear-gradient(135deg,#F7C873,#e0a832);
             display:flex;align-items:center;justify-content:center;
-            font-size:.82rem;color:#1a2535;
-            box-shadow:0 2px 8px rgba(247,200,115,.35);
+            font-size:.72rem;color:#1a2535;
         }
-        .topup-banner p{font-size:.8rem;line-height:1.6;color:#5a4a18;margin:0;font-weight:500}
-        .topup-banner strong{color:#b8780a;font-weight:800}
+        .topup-banner p{font-size:.75rem;line-height:1.55;color:#5a4a18;margin:0;font-weight:500}
 
-        /* account card — مضغوط */
+        /* بطاقة الحساب */
         .topup-account-card{
             background:linear-gradient(135deg,#1a2535,#2a3f54);
-            border-radius:14px;padding:1rem 1rem;
-            margin-bottom:1rem;
-            display:flex;gap:12px;align-items:center;
-            box-shadow:0 5px 20px rgba(0,0,0,.2);
+            border-radius:12px;padding:.85rem .9rem;
+            margin-bottom:.85rem;display:flex;gap:10px;align-items:center;
+            box-shadow:0 4px 16px rgba(0,0,0,.18);
             position:relative;overflow:hidden;
         }
         .topup-account-card::before{
-            content:'';position:absolute;top:-30px;right:-20px;
-            width:90px;height:90px;
-            background:rgba(247,200,115,.08);border-radius:50%;pointer-events:none;
+            content:'';position:absolute;top:-25px;right:-15px;
+            width:75px;height:75px;background:rgba(247,200,115,.07);
+            border-radius:50%;pointer-events:none;
         }
         .topup-qr{
-            width:82px;height:82px;border-radius:10px;
+            width:72px;height:72px;border-radius:9px;
             background:#fff;padding:4px;
             display:flex;align-items:center;justify-content:center;
             flex-shrink:0;position:relative;z-index:1;
-            box-shadow:0 3px 12px rgba(0,0,0,.25);
+            box-shadow:0 3px 10px rgba(0,0,0,.22);
         }
-        .topup-qr img{width:100%;height:100%;border-radius:6px;object-fit:cover;display:block}
+        .topup-qr img{width:100%;height:100%;border-radius:5px;object-fit:cover;display:block}
         .topup-acc-info{flex:1;position:relative;z-index:1;min-width:0}
-        .topup-acc-label{
-            font-size:.62rem;color:rgba(255,255,255,.48);
-            letter-spacing:.7px;font-weight:700;margin-bottom:3px;text-transform:uppercase;
-        }
-        .topup-acc-num{
-            font-size:.68rem;font-weight:800;color:#F7C873;
-            margin-bottom:3px;direction:ltr;word-break:break-all;line-height:1.5;
-        }
-        .topup-acc-name{font-size:.72rem;color:rgba(255,255,255,.65);font-weight:600;margin-bottom:8px}
+        .topup-acc-label{font-size:.58rem;color:rgba(255,255,255,.45);letter-spacing:.6px;font-weight:700;margin-bottom:2px;text-transform:uppercase}
+        .topup-acc-num{font-size:.62rem;font-weight:800;color:#F7C873;margin-bottom:2px;direction:ltr;word-break:break-all;line-height:1.4}
+        .topup-acc-name{font-size:.68rem;color:rgba(255,255,255,.62);font-weight:600;margin-bottom:7px}
         .topup-copy-btn{
             display:inline-flex;align-items:center;gap:4px;
-            background:rgba(247,200,115,.15);
-            border:1px solid rgba(247,200,115,.35);border-radius:20px;
-            padding:3px 10px;
-            color:#F7C873;font-size:.68rem;font-weight:700;
-            font-family:'Cairo',sans-serif;cursor:pointer;
-            transition:background .18s;
+            background:rgba(247,200,115,.14);border:1px solid rgba(247,200,115,.3);
+            border-radius:20px;padding:3px 9px;
+            color:#F7C873;font-size:.64rem;font-weight:700;
+            font-family:'Cairo',sans-serif;cursor:pointer;transition:background .18s;
         }
-        .topup-copy-btn:hover{background:rgba(247,200,115,.25)}
-        .topup-copy-btn.copied{background:rgba(46,204,113,.2);color:#2ecc71;border-color:rgba(46,204,113,.4)}
+        .topup-copy-btn:hover{background:rgba(247,200,115,.24)}
+        .topup-copy-btn.copied{background:rgba(46,204,113,.18);color:#2ecc71;border-color:rgba(46,204,113,.35)}
 
-        /* divider */
-        .topup-divider{display:flex;align-items:center;gap:8px;margin-bottom:1rem;}
+        /* فاصل */
+        .topup-divider{display:flex;align-items:center;gap:7px;margin-bottom:.85rem}
         .topup-divider::before,.topup-divider::after{content:'';flex:1;height:1px;background:#eef0f3}
-        .topup-divider span{font-size:.72rem;color:#aab;font-weight:600;white-space:nowrap}
+        .topup-divider span{font-size:.68rem;color:#aab;font-weight:600;white-space:nowrap}
 
-        /* form — مضغوط */
-        .topup-form-group{margin-bottom:.8rem}
+        /* حقول */
+        .topup-form-group{margin-bottom:.72rem}
         .topup-form-group label{
             display:flex;align-items:center;gap:5px;
-            font-size:.78rem;font-weight:700;color:#2a3f54;margin-bottom:4px;
+            font-size:.74rem;font-weight:700;color:#2a3f54;margin-bottom:3px;
         }
-        .topup-form-group label i{font-size:.72rem;color:#d4a017}
+        .topup-form-group label i{font-size:.68rem;color:#d4a017}
         .topup-form-group input,.topup-form-group textarea{
-            width:100%;padding:.6rem .9rem;
-            border:1.5px solid #e8eaf0;border-radius:9px;
-            font-family:'Cairo',sans-serif;font-size:.88rem;
+            width:100%;padding:.55rem .8rem;
+            border:1.5px solid #e8eaf0;border-radius:8px;
+            font-family:'Cairo',sans-serif;font-size:.85rem;
             transition:border-color .2s,box-shadow .2s;
             background:#fafbfc;color:#2d3748;box-sizing:border-box;
         }
         .topup-form-group input:focus,.topup-form-group textarea:focus{
             outline:none;border-color:#F7C873;
-            box-shadow:0 0 0 3px rgba(247,200,115,.13);background:#fff;
+            box-shadow:0 0 0 3px rgba(247,200,115,.12);background:#fff;
         }
-        .topup-form-group textarea{height:60px;resize:vertical}
+        .topup-form-group textarea{height:52px;resize:none}
 
-        /* submit */
+        /* زر الإرسال */
         .topup-submit-btn{
-            width:100%;padding:.82rem;margin-top:.2rem;
+            width:100%;padding:.75rem;margin-top:.15rem;
             background:linear-gradient(135deg,#1a2535,#2a3f54);
-            color:#fff;border:none;border-radius:11px;
-            font-size:.95rem;font-weight:700;font-family:'Cairo',sans-serif;
-            cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+            color:#fff;border:none;border-radius:10px;
+            font-size:.9rem;font-weight:700;font-family:'Cairo',sans-serif;
+            cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
             transition:transform .2s,box-shadow .2s;
-            box-shadow:0 4px 14px rgba(26,37,53,.28);
+            box-shadow:0 3px 12px rgba(26,37,53,.25);
+            flex-shrink:0;
         }
-        .topup-submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(26,37,53,.38)}
+        .topup-submit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(26,37,53,.35)}
         .topup-submit-btn:active{transform:translateY(0)}
         .topup-err{
-            color:#E74C3C;font-size:.8rem;margin-top:.4rem;display:none;
-            background:#fff5f5;border-radius:8px;padding:.45rem .8rem;
-            border:1px solid #fcc;
+            color:#E74C3C;font-size:.76rem;margin-top:.4rem;display:none;
+            background:#fff5f5;border-radius:7px;padding:.4rem .7rem;border:1px solid #fcc;
         }
         .topup-err.show{display:block}
+
+        /* موبايل iOS: bottom sheet */
+        @media(max-width:768px){
+            #topupModal{
+                max-width:100%;max-height:88vh;
+                top:auto;bottom:-100%;left:0;right:0;
+                transform:none;width:100%;
+                border-radius:18px 18px 0 0;
+                opacity:1;pointer-events:none;
+                transition:bottom .3s cubic-bezier(.4,0,.2,1);
+            }
+            #topupModal.on{bottom:0;transform:none;pointer-events:all}
+            #topupModal::before{
+                content:'';display:block;width:34px;height:4px;
+                background:#dde;border-radius:2px;margin:7px auto 0;flex-shrink:0;
+            }
+            .topup-header{border-radius:0}
+        }
 
         /* موبايل */
         @media(max-width:768px){

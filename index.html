@@ -8847,7 +8847,7 @@
                 });
 
                 card.querySelector('.vpn-cart').addEventListener('click', () => {
-                    directOrder(vpnProductData.id);
+                    window.directOrder(vpnProductData.id);
                 });
 
 
@@ -9112,7 +9112,7 @@
                 });
 
                 card.querySelector('.payment-cart').addEventListener('click', () => {
-                    directOrder(paymentProductData.id);
+                    window.directOrder(paymentProductData.id);
                 });
 
 
@@ -9261,7 +9261,7 @@
                     showPaymentProductDetails({ id: product.id, name: product.name, price: product.price, image: product.image, description: product.description });
                 });
                 card.querySelector('.tv-cart').addEventListener('click', () => {
-                    directOrder(product.id);
+                    window.directOrder(product.id);
                 });
 
                 productsGrid.appendChild(card);
@@ -9410,7 +9410,7 @@
                     if (product.inputLabel) {
                         openDesignEmailModal(product);
                     } else {
-                        directOrder(product.id);
+                        window.directOrder(product.id);
                     }
                 });
 
@@ -9685,7 +9685,7 @@
                     showProductDetails(product.id);
                 });
                 card.querySelector('.ap-cart').addEventListener('click', () => {
-                    directOrder(product.id);
+                    window.directOrder(product.id);
                 });
 
                 productsGrid.appendChild(card);
@@ -9953,7 +9953,7 @@
                 });
 
                 card.querySelector('.vpn-cart').addEventListener('click', () => {
-                    directOrder(vpnProductData.id);
+                    window.directOrder(vpnProductData.id);
                 });
 
 
@@ -10204,7 +10204,7 @@
                     showPaymentProductDetails({ id: product.id, name: product.name, price: product.price, image: product.image, description: product.description });
                 });
                 card.querySelector('.arqam-cart').addEventListener('click', () => {
-                    directOrder(product.id);
+                    window.directOrder(product.id);
                 });
 
                 productsGrid.appendChild(card);
@@ -10335,7 +10335,7 @@
                     } else if (product.category === 'تفعيلات بريميوم') {
                         openPremiumModal(product);
                     } else {
-                        addToCart(productId);
+                        window.directOrder(productId);
                     }
                 });
             });
@@ -11756,7 +11756,7 @@
                             openAppModal(p);
                         } else {
                             closeQModal(productDetailsModal);
-                            directOrder(pid);
+                            window.directOrder(pid);
                         }
                     });
                 }
@@ -11851,21 +11851,8 @@
 
                 if (addBtn) {
                     addBtn.addEventListener('click', () => {
-                        const cartItem = {
-                            id: paymentProduct.id,
-                            name: paymentProduct.name,
-                            price: paymentProduct.price || 0,
-                            quantity: 1,
-                            image: paymentProduct.image,
-                            category: paymentProduct.category || 'منتج'
-                        };
-                        const existing = cart.find(i => i.id === cartItem.id);
-                        if (existing) existing.quantity++;
-                        else cart.push(cartItem);
-                        localStorage.setItem('zoodnyCart', JSON.stringify(cart));
-                        updateCartUI();
                         closeQModal(productDetailsModal);
-                        showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
+                        window.directOrder(paymentProduct.id, null, paymentProduct.price||null);
                     });
                 }
 
@@ -11925,7 +11912,7 @@
                 if (quantity > 1000000) { showToast('الحد الأقصى للطلب هو 1,000,000', 'err'); return; }
                 var sp = selectedSocialProduct; selectedSocialProduct = null;
                 closeQModal(quantityModal);
-                directOrder(sp.id, quantity, null, null, null, null, null, null, null, svcLink);
+                window.directOrder(sp.id, quantity, null, null, null, null, null, null, null, svcLink);
             });
             
             quantityClose.addEventListener('click', () => {
@@ -11966,7 +11953,7 @@
                 
                 var cp = selectedCreditProduct; selectedCreditProduct = null;
                 closeQModal(creditModal);
-                directOrder(cp.id, null, null, phone, amount);
+                window.directOrder(cp.id, null, null, phone, amount);
             });
             
             creditClose.addEventListener('click', () => {
@@ -12007,7 +11994,7 @@
                 
                 var ap = selectedAppProduct; selectedAppProduct = null;
                 closeQModal(appModal);
-                directOrder(ap.id, null, null, null, null, null, playerIdValue, quantity);
+                window.directOrder(ap.id, null, null, null, null, null, playerIdValue, quantity);
             });
             
             appClose.addEventListener('click', () => {
@@ -12055,7 +12042,7 @@
                 
                 var gp = selectedGameProduct; selectedGameProduct = null;
                 closeQModal(gameModal);
-                directOrder(productId, null, productPrice, null, null, amount, playerIdValue);
+                window.directOrder(productId, null, productPrice, null, null, amount, playerIdValue);
             });
             
             gameClose.addEventListener('click', () => {
@@ -12083,7 +12070,7 @@
                 
                 var pp = selectedPremiumProduct; selectedPremiumProduct = null;
                 closeQModal(premiumModal);
-                directOrder(pp.id, null, pp.price, null, null, null, null, null, premiumInputValue);
+                window.directOrder(pp.id, null, pp.price, null, null, null, null, null, premiumInputValue);
             });
             
             premiumClose.addEventListener('click', () => {
@@ -12126,7 +12113,7 @@
                 cart = [];
                 cart.push({ id:dp.id, name:dp.name+' | إيميل: '+emailVal, price:dp.price||0, quantity:1, category:'برامج التصميم', email:emailVal });
                 if (typeof auth !== 'undefined' && !auth.currentUser) { showToast('سجّل دخولك أولاً', 'warn'); if(window.openAuth) window.openAuth('login'); return; }
-                openConfirmModal();
+                window.openConfirmModal();
             });
 
             designEmailClose.addEventListener('click', () => {
@@ -12221,168 +12208,11 @@
             // ════════════════════════════════════════════════════
             // directOrder: تجاوز السلة — إضافة منتج + فتح تأكيد
             // ════════════════════════════════════════════════════
-            function directOrder(productId, qty, customPrice, phone,
-                                 creditAmt, gameAmt, playerId, appQty,
-                                 premiumVal, svcLink) {
-                // فرّغ السلة لأن كل طلب منفرد
-                cart = [];
-                hasSocialMediaProduct = false;
-                hasCreditProduct      = false;
-                hasGameProduct        = false;
-                hasAppProduct         = false;
-                hasPremiumProduct     = false;
+            // directOrder مُعرَّفة في window-level أدناه
 
-                addToCart(productId, qty, customPrice, phone, creditAmt,
-                          gameAmt, playerId, appQty, premiumVal, svcLink);
+            // openConfirmModal مُعرَّفة في window-level أدناه
+            // _buildConfirmModal + submitPayment مُعرَّفان في window-level أدناه
 
-                if (cart.length === 0) return; // addToCart رفض (validation)
-
-                if (typeof auth !== 'undefined' && !auth.currentUser) {
-                    showToast('سجّل دخولك أولاً للمتابعة', 'warn');
-                    if (window.openAuth) window.openAuth('login');
-                    return;
-                }
-                openConfirmModal();
-            }
-
-            // ── Open confirm modal: show summary + balance ──
-            function openConfirmModal() {
-                var total = cart.reduce((s,i) => s+(i.price*(i.quantity||1)), 0);
-                // Read fresh balance from Firebase
-                var bal = (typeof getBalance === 'function') ? getBalance() : 0;
-                if (typeof db !== 'undefined' && typeof auth !== 'undefined' && auth.currentUser) {
-                    db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
-                        var freshBal = parseFloat(snap.val() || 0);
-                        if (typeof userData !== 'undefined' && userData) userData.balance = freshBal;
-                        _buildConfirmModal(total, freshBal);
-                    });
-                    return;
-                }
-                _buildConfirmModal(total, bal);
-            }
-            function _buildConfirmModal(total, bal) {
-
-
-                // render items
-                var itemsHtml = cart.map(function(item) {
-                    return '<div style="display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid #eee">'
-                        + '<span>' + item.name + (item.quantity>1?' × '+item.quantity:'') + '</span>'
-                        + '<span style="font-weight:600">' + (item.price*(item.quantity||1)).toFixed(2) + '$</span>'
-                        + '</div>';
-                }).join('');
-                document.getElementById('confirmOrderItems').innerHTML = itemsHtml;
-                document.getElementById('confirmOrderTotal').textContent = total.toFixed(2) + '$';
-                document.getElementById('confirmWalletBal').textContent  = bal.toFixed(2) + '$';
-                var after = bal - total;
-                document.getElementById('confirmBalAfter').textContent   = (after < 0 ? '0.00' : after.toFixed(2)) + '$';
-                document.getElementById('confirmBalAfter').style.color   = after < 0 ? '#E74C3C' : 'var(--primary)';
-
-                // set hidden payment data
-                currentPaymentData = {
-                    transferNumber:  'WALLET',
-                    paidAmount:      total.toFixed(2),
-                    transferDate:    new Date().toISOString().split('T')[0],
-                    requiredAmount:  total.toFixed(2)
-                };
-
-                // generate order number
-                var orderNum = '#' + String(Date.now()).slice(-6);
-                document.getElementById('orderNumber').textContent = orderNum;
-
-                document.getElementById('submitPaymentErr').textContent = '';
-                modalOn('confirmOv','paymentModal');
-            }
-
-            submitPayment.addEventListener('click', function() {
-                var total  = cart.reduce((s,i) => s+(i.price*(i.quantity||1)), 0);
-                var errEl  = document.getElementById('submitPaymentErr');
-                var btn    = document.getElementById('submitPayment');
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التأكيد...';
-
-                function doFinish(bal) {
-                    // فحص الرصيد
-                    if (bal < total) {
-                        errEl.textContent = 'رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$ والمطلوب: ' + total.toFixed(2) + '$';
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد وإتمام الطلب';
-                        return;
-                    }
-
-                    // بناء بيانات الطلب
-                    var orderId    = 'ORD-' + Date.now();
-                    var totalPrice = total;
-                    var orderDate  = new Date().toLocaleString('ar-SY');
-                    // بناء المنتجات بشكل واضح لـ Firebase
-                    var items = {};
-                    cart.forEach(function(i, idx) {
-                        var key = 'item_' + (idx + 1);
-                        var obj = {
-                            productName: i.name,
-                            price:       i.price,
-                            quantity:    i.quantity || 1,
-                            totalItem:   parseFloat((i.price * (i.quantity || 1)).toFixed(2)),
-                            category:    i.category
-                        };
-                        if (i.category === 'games')             { obj.playerId = i.playerId||''; obj.gameValue = i.gameDisplay||i.gameValue||''; }
-                        if (i.category === 'app')               { obj.playerId = i.playerId||''; obj.appValue  = i.appValue||''; }
-                        if (i.category === 'rased')             { obj.phoneNumber = i.phoneNumber||''; obj.creditValue = i.creditValue||''; }
-                        if (i.category === 'social-media')      { obj.customQuantity = i.customQuantity||300; }
-                        if (i.category === 'تفعيلات بريميوم') { obj.premiumInput = i.premiumInput||''; }
-                        items[key] = obj;
-                    });
-                    var uid    = (typeof auth !== 'undefined' && auth.currentUser) ? auth.currentUser.uid : '';
-                    var uname  = (typeof userData !== 'undefined' && userData) ? (userData.name  || '') : '';
-                    var uphone = (typeof userData !== 'undefined' && userData) ? (userData.phone || '') : '';
-
-                    // ── 1. إغلاق paymentModal تماماً ──
-                    modalOff('confirmOv','paymentModal');
-
-                    // ── 2. عرض نافذة النجاح ──
-                    document.getElementById('orderSuccessId').textContent    = orderId;
-                    document.getElementById('orderSuccessTotal').textContent = totalPrice.toFixed(2) + '$';
-                    modalOn('orderSuccessOv','orderSuccessModal');
-
-                    // ── 3. تفريغ السلة ──
-                    cart = [];
-                    hasSocialMediaProduct = false;
-                    hasCreditProduct = false;
-                    hasGameProduct = false;
-                    hasAppProduct = false;
-                    hasPremiumProduct = false;
-                    localStorage.removeItem('zoodnyCart');
-                    updateCartUI();
-                    /* removed */
-                    try { customerForm.reset(); } catch(e){}
-                    try { socialMediaFields.classList.remove('active'); } catch(e){}
-
-                    // ── 4. حفظ في Firebase في الخلفية ──
-                    if (typeof db !== 'undefined' && uid) {
-                        db.ref('store_orders/' + orderId).set({
-                            orderId:orderId, uid:uid, name:uname, phone:uphone,
-                            city:'غير محدد', items:items, total:totalPrice,
-                            paymentMethod:'wallet', date:orderDate, status:'pending', ts:Date.now()
-                        });
-                        db.ref('users/'+uid+'/orders/'+orderId).set({ orderId:orderId, date:orderDate, total:totalPrice, status:'pending' });
-                        db.ref('users/'+uid+'/ordersCount').transaction(function(c){ return (c||0)+1; });
-                        db.ref('users/'+uid+'/balance').transaction(function(cur){ var n=(cur||0)-totalPrice; return n<0?0:n; });
-                        db.ref('users/'+uid+'/transactions/TX-'+Date.now()).set({
-                            desc:'دفع طلب '+orderId, date:orderDate,
-                            amount:totalPrice, type:'debit', orderId:orderId, ts:Date.now()
-                        });
-                    }
-                }
-
-                // جلب الرصيد من Firebase
-                if (typeof db !== 'undefined' && typeof auth !== 'undefined' && auth.currentUser) {
-                    db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
-                        doFinish(parseFloat(snap.val() || 0));
-                    });
-                } else {
-                    doFinish((typeof getBalance === 'function') ? getBalance() : 0);
-                }
-            });
-            
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     const targetId = this.getAttribute('href');
@@ -12623,6 +12453,192 @@
 
             const ratingObserver = new MutationObserver(addRatingToProductCards);
             ratingObserver.observe(document.getElementById('productsGrid'), { childList: true, subtree: true });
+
+
+        // ═══════════════════════════════════════════════════════════════
+        // WINDOW-LEVEL: directOrder + openConfirmModal + _buildConfirmModal
+        // (خارج DOMContentLoaded حتى تُرى من كل الدوال)
+        // ═══════════════════════════════════════════════════════════════
+
+        window.directOrder = function(productId, qty, customPrice, phone,
+                                      creditAmt, gameAmt, playerId, appQty,
+                                      premiumVal, svcLink) {
+            if (typeof cart === 'undefined') { console.warn('cart not ready'); return; }
+            // فرّغ السلة لأن كل طلب منفرد
+            cart = [];
+            if (typeof hasSocialMediaProduct !== 'undefined') hasSocialMediaProduct = false;
+            if (typeof hasCreditProduct !== 'undefined')      hasCreditProduct      = false;
+            if (typeof hasGameProduct !== 'undefined')        hasGameProduct        = false;
+            if (typeof hasAppProduct !== 'undefined')         hasAppProduct         = false;
+            if (typeof hasPremiumProduct !== 'undefined')     hasPremiumProduct     = false;
+
+            if (typeof addToCart === 'function') {
+                addToCart(productId, qty, customPrice, phone, creditAmt,
+                          gameAmt, playerId, appQty, premiumVal, svcLink);
+            }
+
+            if (cart.length === 0) return; // addToCart رفض (validation)
+
+            if (typeof auth !== 'undefined' && auth.currentUser === null) {
+                if (typeof showToast === 'function') showToast('سجّل دخولك أولاً للمتابعة', 'warn');
+                if (window.openAuth) window.openAuth('login');
+                return;
+            }
+            window.openConfirmModal();
+        };
+
+        window.openConfirmModal = function() {
+            if (typeof cart === 'undefined') return;
+            var total = cart.reduce(function(s,i){ return s + (i.price*(i.quantity||1)); }, 0);
+            var bal = 0;
+            if (typeof db !== 'undefined' && typeof auth !== 'undefined' && auth.currentUser) {
+                db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
+                    var freshBal = parseFloat(snap.val() || 0);
+                    if (typeof userData !== 'undefined' && userData) userData.balance = freshBal;
+                    window._buildConfirmModal(total, freshBal);
+                });
+                return;
+            }
+            if (typeof userData !== 'undefined' && userData) bal = userData.balance || 0;
+            window._buildConfirmModal(total, bal);
+        };
+
+        window._buildConfirmModal = function(total, bal) {
+            var itemsEl   = document.getElementById('confirmOrderItems');
+            var totalEl   = document.getElementById('confirmOrderTotal');
+            var walletEl  = document.getElementById('confirmWalletBal');
+            var afterEl   = document.getElementById('confirmBalAfter');
+            var errEl     = document.getElementById('submitPaymentErr');
+            var numEl     = document.getElementById('orderNumber');
+            if (!itemsEl) return;
+
+            // ملخص المنتجات
+            var itemsHtml = (typeof cart !== 'undefined' ? cart : []).map(function(item) {
+                return '<div style="display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid #eee">'
+                    + '<span>' + item.name + (item.quantity>1?' × '+item.quantity:'') + '</span>'
+                    + '<span style="font-weight:600">' + (item.price*(item.quantity||1)).toFixed(2) + '$</span>'
+                    + '</div>';
+            }).join('');
+            itemsEl.innerHTML = itemsHtml;
+            if (totalEl) totalEl.textContent = total.toFixed(2) + '$';
+            if (walletEl) walletEl.textContent = bal.toFixed(2) + '$';
+            var after = bal - total;
+            if (afterEl) {
+                afterEl.textContent = (after < 0 ? '0.00' : after.toFixed(2)) + '$';
+                afterEl.style.color = after < 0 ? '#E74C3C' : '#fff';
+            }
+            if (errEl) errEl.textContent = '';
+            if (numEl) numEl.textContent = '#' + String(Date.now()).slice(-6);
+
+            if (typeof modalOn === 'function') modalOn('confirmOv', 'paymentModal');
+        };
+
+        // submitPayment handler - window-level
+        document.addEventListener('DOMContentLoaded', function() {
+            var spBtn = document.getElementById('submitPayment');
+            if (!spBtn) return;
+            spBtn.addEventListener('click', function() {
+                var total = (typeof cart !== 'undefined') ? cart.reduce(function(s,i){ return s+(i.price*(i.quantity||1)); }, 0) : 0;
+                var errEl = document.getElementById('submitPaymentErr');
+                var btn   = this;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التأكيد...';
+
+                function doFinish(bal) {
+                    if (bal < total) {
+                        if (errEl) errEl.textContent = 'رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$ والمطلوب: ' + total.toFixed(2) + '$';
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-check-circle" style="color:var(--secondary)"></i> تأكيد وإتمام الطلب';
+                        return;
+                    }
+
+                    var orderId   = 'ORD-' + Date.now();
+                    var orderDate = new Date().toLocaleString('ar-SY');
+                    var items = {};
+                    if (typeof cart !== 'undefined') {
+                        cart.forEach(function(i, idx) {
+                            var key = 'item_' + (idx+1);
+                            var obj = { productName:i.name, price:i.price, quantity:i.quantity||1,
+                                        totalItem:parseFloat((i.price*(i.quantity||1)).toFixed(2)), category:i.category };
+                            if (i.category==='games')             { obj.playerId=i.playerId||''; obj.gameValue=i.gameDisplay||i.gameValue||''; }
+                            if (i.category==='app')               { obj.playerId=i.playerId||''; obj.appValue=i.appValue||''; }
+                            if (i.category==='rased')             { obj.phoneNumber=i.phoneNumber||''; obj.creditValue=i.creditValue||''; }
+                            if (i.category==='social-media')      { obj.customQuantity=i.customQuantity||300; obj.serviceLink=i.serviceLink||''; }
+                            if (i.category==='تفعيلات بريميوم') { obj.premiumInput=i.premiumInput||''; }
+                            if (i.email)                          { obj.email=i.email; }
+                            items[key] = obj;
+                        });
+                    }
+                    var uid    = (typeof auth!=='undefined' && auth.currentUser) ? auth.currentUser.uid : '';
+                    var uname  = (typeof userData!=='undefined' && userData) ? (userData.name||'')  : '';
+                    var uphone = (typeof userData!=='undefined' && userData) ? (userData.phone||'') : '';
+
+                    // إغلاق نافذة التأكيد
+                    if (typeof modalOff === 'function') modalOff('confirmOv', 'paymentModal');
+
+                    // عرض نافذة النجاح
+                    var sid = document.getElementById('orderSuccessId');
+                    var st  = document.getElementById('orderSuccessTotal');
+                    if (sid) sid.textContent = orderId;
+                    if (st)  st.textContent  = total.toFixed(2) + '$';
+                    if (typeof modalOn === 'function') modalOn('orderSuccessOv', 'orderSuccessModal');
+
+                    // تفريغ السلة
+                    if (typeof cart !== 'undefined') {
+                        cart = [];
+                        if (typeof hasSocialMediaProduct !== 'undefined') hasSocialMediaProduct = false;
+                        if (typeof hasCreditProduct !== 'undefined')      hasCreditProduct = false;
+                        if (typeof hasGameProduct !== 'undefined')        hasGameProduct = false;
+                        if (typeof hasAppProduct !== 'undefined')         hasAppProduct = false;
+                        if (typeof hasPremiumProduct !== 'undefined')     hasPremiumProduct = false;
+                    }
+                    localStorage.removeItem('zoodnyCart');
+                    if (typeof updateCartUI === 'function') updateCartUI();
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check-circle" style="color:var(--secondary)"></i> تأكيد وإتمام الطلب';
+
+                    // حفظ في Firebase
+                    if (typeof db !== 'undefined' && uid) {
+                        db.ref('store_orders/' + orderId).set({
+                            orderId:orderId, uid:uid, name:uname, phone:uphone,
+                            city:'غير محدد', items:items, total:total,
+                            paymentMethod:'wallet', date:orderDate, status:'pending', ts:Date.now()
+                        });
+                        db.ref('users/'+uid+'/orders/'+orderId).set({ orderId:orderId, date:orderDate, total:total, status:'pending' });
+                        db.ref('users/'+uid+'/ordersCount').transaction(function(c){ return (c||0)+1; });
+                        db.ref('users/'+uid+'/balance').transaction(function(cur){ var n=(cur||0)-total; return n<0?0:n; });
+                        db.ref('users/'+uid+'/transactions/TX-'+Date.now()).set({
+                            desc:'دفع طلب '+orderId, date:orderDate,
+                            amount:total, type:'debit', orderId:orderId, ts:Date.now()
+                        });
+                        // تحديث رصيد الـ nav
+                        db.ref('users/'+uid+'/balance').once('value', function(snap){
+                            if (typeof refreshNavBal === 'function') refreshNavBal(parseFloat(snap.val()||0));
+                        });
+                    }
+                }
+
+                if (typeof db !== 'undefined' && typeof auth !== 'undefined' && auth.currentUser) {
+                    db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
+                        doFinish(parseFloat(snap.val() || 0));
+                    });
+                } else {
+                    doFinish(0);
+                }
+            });
+
+            // إغلاق نافذة التأكيد
+            var pcBtn = document.getElementById('paymentClose');
+            if (pcBtn) pcBtn.addEventListener('click', function(){ if(typeof modalOff==='function') modalOff('confirmOv','paymentModal'); });
+            var cOv = document.getElementById('confirmOv');
+            if (cOv) cOv.addEventListener('click', function(){ if(typeof modalOff==='function') modalOff('confirmOv','paymentModal'); });
+
+            // إغلاق نافذة النجاح
+            var succClose = document.querySelector('.order-succ-close');
+            var succOv    = document.getElementById('orderSuccessOv');
+            if (succClose) succClose.addEventListener('click', function(){ if(typeof modalOff==='function') modalOff('orderSuccessOv','orderSuccessModal'); });
+            if (succOv)    succOv.addEventListener('click',    function(){ if(typeof modalOff==='function') modalOff('orderSuccessOv','orderSuccessModal'); });
+        });
 
         });
     </script>

@@ -48,6 +48,7 @@
         body.modal-open { position: fixed; width: 100%; overflow-y: scroll; }
 
         /* ── إخفاء bottom nav عند فتح نافذة ── */
+        /* 6 أزرار في bottom nav */
         .mobile-bottom-nav { transition: opacity .22s, transform .22s; }
         body.qmodal-open .mobile-bottom-nav {
             opacity: 0 !important;
@@ -90,11 +91,17 @@
         .nav-content {
             max-width: 1400px;
             margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
             padding: 0 1.5rem;
         }
+        /* يسار: محفظة/دخول */
+        .nav-left  { display:flex; align-items:center; justify-content:flex-start; gap:.8rem; }
+        /* وسط: لوغو */
+        .nav-center { display:flex; justify-content:center; }
+        /* يمين: ثلاث شخط + روابط */
+        .nav-right { display:flex; align-items:center; justify-content:flex-end; gap:1.2rem; }
 
         .logo {
             color: var(--secondary);
@@ -102,7 +109,6 @@
             font-weight: 700;
             text-decoration: none;
             letter-spacing: 1px;
-            margin-right: 1.5rem;
             white-space: nowrap;
             display: flex;
             align-items: center;
@@ -116,7 +122,7 @@
             color: var(--light);
             font-size: 1.5rem;
             cursor: pointer;
-            margin-left: 1rem;
+            order: 99;
         }
 
         .nav-links {
@@ -2188,58 +2194,54 @@
 
         @media (max-width: 768px) {
             .navbar {
-                height: 70px;
-                padding: 0.5rem 5%;
+                height: 62px;
+                padding: 0 4%;
             }
-            
-            body {
-                padding-top: 70px;
+            body { padding-top: 62px; }
+            .menu-toggle { display: block; }
+            .nav-content {
+                grid-template-columns: 1fr auto 1fr;
+                padding: 0 .5rem;
             }
-            
-            .menu-toggle {
-                display: block;
-            }
-            
+            .nav-left  { justify-content: flex-start; }
+            .nav-center .logo { font-size: 1.35rem; }
             .nav-links {
                 position: fixed;
-                top: 70px;
-                left: -100%;
-                width: 100%;
-                height: calc(100vh - 70px);
-                background: var(--primary);
+                top: 62px; left: -100%;
+                width: 85%; max-width: 320px;
+                height: calc(100vh - 62px);
+                background: linear-gradient(160deg, var(--primary) 0%, #1a3550 100%);
                 flex-direction: column;
-                padding: 2rem 0;
-                gap: 1.5rem;
-                transition: left 0.3s ease;
+                padding: 1.2rem 0 6rem;
+                gap: 0;
+                transition: left .3s cubic-bezier(.4,0,.2,1);
                 z-index: 999;
                 overflow-y: auto;
+                box-shadow: 4px 0 24px rgba(0,0,0,.3);
             }
-            
-            .nav-links.active {
-                left: 0;
-            }
-            
+            .nav-links.active { left: 0; }
             .nav-links a {
-                font-size: 1.2rem;
-                padding: 0.8rem 0;
+                font-size: 1.05rem;
+                padding: .85rem 1.5rem;
                 width: 100%;
-                text-align: center;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: right;
+                border-bottom: 1px solid rgba(255,255,255,.08);
+                display: flex; align-items: center; gap: .6rem;
             }
-            
-            .cart-icon-container {
-                margin-right: 0;
-                margin-bottom: 1rem;
+            /* زر حسابي في الدراور - يُبنى ديناميكياً */
+            #navAccountSlot { width:100%; padding: .5rem 1.5rem; }
+            #navAccountSlot .acct-drawer-btn {
+                width:100%; padding:.85rem 1rem;
+                background: rgba(247,200,115,.1);
+                border: 1.5px solid rgba(247,200,115,.3);
+                border-radius: 12px; color: var(--secondary);
+                font-size: 1rem; font-weight: 700;
+                font-family: 'Cairo',sans-serif;
+                cursor:pointer; display:flex; align-items:center; gap:.6rem;
+                transition: background .2s;
             }
-            
-            .cart-icon {
-                font-size: 1.8rem;
-            }
-            
-            .logo {
-                font-size: 1.5rem;
-                margin-right: 0;
-            }
+            #navAccountSlot .acct-drawer-btn:hover { background: rgba(247,200,115,.2); }
+            .logo { font-size: 1.3rem; margin-right: 0; }
 
             .hero {
                 height: 70vh;
@@ -2550,6 +2552,7 @@
         /* ══ Bottom Nav — Desktop + Mobile ══ */
         body { padding-bottom: 80px; }
 
+        /* 6 أزرار في bottom nav */
         .mobile-bottom-nav {
             display: grid;
             grid-template-columns: 1fr 1fr 56px 1fr 1fr;
@@ -2651,7 +2654,8 @@
 
         /* على الموبايل: أصغر قليلاً */
         @media (max-width: 768px) {
-            .mobile-bottom-nav {
+            /* 6 أزرار في bottom nav */
+        .mobile-bottom-nav {
                 width: calc(100vw - 32px);
                 height: 52px;
                 bottom: 14px;
@@ -3100,29 +3104,39 @@
     <!-- شريط التنقل -->
     <nav class="navbar">
         <div class="nav-content">
-            <a href="#" class="logo"><i class="fas fa-store"></i> زودني zoodny</a>
-            
-            <button class="menu-toggle" id="menuToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <div class="nav-links">
-                <a href="#home">الرئيسية</a>
-                <a href="#categories">المتجر</a>
-                <a href="#branches">فروعنا</a>
-                <a href="#about">من نحن</a>
-                <a href="#contact">اتصل بنا</a>
-                <!-- slot المحفظة — يُبنى ديناميكياً بعد الدخول -->
+            <!-- يسار: محفظة / دخول -->
+            <div class="nav-left">
                 <div id="navWalletSlot"></div>
             </div>
-            <!-- hidden stubs للكود القديم -->
-            <span id="cartCount" style="display:none">0</span>
-            <span id="mobileCartCount" style="display:none">0</span>
-            <span id="cartToggle" style="display:none"></span>
-            <span id="mobileCartToggle" style="display:none"></span>
-            <div id="mobileCartIcon" style="display:none"></div>
+
+            <!-- وسط: اللوغو -->
+            <div class="nav-center">
+                <a href="#" class="logo"><i class="fas fa-store"></i> زودني zoodny</a>
+            </div>
+
+            <!-- يمين: روابط + ثلاث شخط -->
+            <div class="nav-right">
+                <div class="nav-links" id="navLinks">
+                    <a href="#home">الرئيسية</a>
+                    <a href="#categories">المتجر</a>
+                    <a href="#branches">فروعنا</a>
+                    <a href="#about">من نحن</a>
+                    <a href="#contact">اتصل بنا</a>
+                    <!-- زر حسابي على اللابتوب — يُبنى ديناميكياً -->
+                    <div id="navAccountSlot"></div>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
         </div>
     </nav>
+    <!-- hidden stubs -->
+    <span id="cartCount" style="display:none">0</span>
+    <span id="mobileCartCount" style="display:none">0</span>
+    <span id="cartToggle" style="display:none"></span>
+    <span id="mobileCartToggle" style="display:none"></span>
+    <div id="mobileCartIcon" style="display:none"></div>
 
     <!-- stubs مخفية للحفاظ على توافق الكود القديم -->
     <div id="cartOverlay" style="display:none"></div>
@@ -13040,6 +13054,85 @@
         .succ-ref{font-size:.8rem;color:var(--gray);background:#f8f9fa;border-radius:8px;padding:.4rem .8rem;margin-bottom:1.2rem}
         .succ-ok-btn{background:var(--primary);color:#fff;border:none;border-radius:30px;padding:.65rem 2rem;font-size:.95rem;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer}
 
+
+
+        /* زر حسابي في nav-links على اللابتوب */
+        #navAccountSlot { display:flex; align-items:center; }
+        @media (max-width: 768px) {
+            /* على الموبايل: navAccountSlot داخل الدراور */
+            #navAccountSlot {
+                display: block;
+                border-top: 1px solid rgba(255,255,255,.08);
+                padding-top: .5rem; margin-top: .3rem;
+            }
+        }
+        /* ══ Account Modal ══ */
+        #acctOv { z-index: 3500; }
+        #acctModal { z-index: 3501; max-width: 380px; padding: 0; overflow: hidden; border-radius: 22px; }
+        .acct-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #1a3550 100%);
+            padding: 1.8rem 1.5rem 3.5rem;
+            position: relative; text-align: center;
+        }
+        .acct-avatar {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: var(--secondary); color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: 800; margin: 0 auto .8rem;
+            border: 3px solid rgba(255,255,255,.25);
+            box-shadow: 0 6px 20px rgba(0,0,0,.25);
+        }
+        .acct-name { color: #fff; font-size: 1.2rem; font-weight: 700; margin-bottom: .2rem; }
+        .acct-email { color: rgba(255,255,255,.65); font-size: .8rem; }
+        .acct-close-btn {
+            position: absolute; top: .8rem; left: .8rem;
+            background: rgba(255,255,255,.12); border: none;
+            width: 30px; height: 30px; border-radius: 50%;
+            color: #fff; cursor: pointer; font-size: .85rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .18s;
+        }
+        .acct-close-btn:hover { background: rgba(255,255,255,.22); }
+        .acct-balance-card {
+            background: linear-gradient(135deg, #1a6b3c, #27ae60);
+            border-radius: 14px; padding: 1rem 1.2rem;
+            margin: -2rem 1.2rem 0;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 6px 20px rgba(26,107,60,.35);
+            position: relative; z-index: 1;
+        }
+        .acct-bal-label { color: rgba(255,255,255,.8); font-size: .78rem; }
+        .acct-bal-value { color: #fff; font-size: 1.5rem; font-weight: 800; }
+        .acct-topup-btn {
+            background: rgba(255,255,255,.2); border: 1.5px solid rgba(255,255,255,.4);
+            color: #fff; border-radius: 20px; padding: .4rem .9rem;
+            font-size: .8rem; font-weight: 700; font-family: 'Cairo',sans-serif;
+            cursor: pointer; transition: background .18s; white-space: nowrap;
+        }
+        .acct-topup-btn:hover { background: rgba(255,255,255,.35); }
+        .acct-body { padding: 1.2rem; }
+        .acct-info-row {
+            display: flex; align-items: center; gap: .8rem;
+            padding: .65rem .9rem; border-radius: 10px;
+            background: #f8f9fb; margin-bottom: .5rem;
+            font-size: .84rem; color: var(--primary); font-weight: 600;
+        }
+        .acct-info-row i { color: var(--secondary); font-size: .9rem; width: 18px; text-align:center; }
+        .acct-info-label { color: var(--gray); font-size: .72rem; display: block; font-weight: 400; }
+        .acct-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-top: .8rem; }
+        .acct-action-btn {
+            padding: .75rem; border-radius: 10px; border: 1.5px solid #e8eaf0;
+            background: #fff; cursor: pointer; font-family: 'Cairo',sans-serif;
+            font-size: .82rem; font-weight: 700; color: var(--primary);
+            display: flex; flex-direction: column; align-items: center; gap: .35rem;
+            transition: border-color .18s, background .18s;
+        }
+        .acct-action-btn i { font-size: 1.1rem; color: var(--secondary); }
+        .acct-action-btn:hover { border-color: var(--secondary); background: rgba(247,200,115,.06); }
+        .acct-action-btn.danger { color: #c0392b; }
+        .acct-action-btn.danger i { color: #e74c3c; }
+        .acct-action-btn.danger:hover { border-color: #e74c3c; background: rgba(231,76,60,.05); }
+
         /* bal-toast → merged into unified toast */
 
         /* User dropdown */
@@ -13688,62 +13781,127 @@
         function balToast(msg, green) { showToast(msg, green ? 'ok' : 'err'); }
 
         function buildNavButtons(user, uData) {
-            var slot = document.getElementById('navWalletSlot');
-            if (!slot) return;
-            slot.innerHTML = '';
+            var walletSlot  = document.getElementById('navWalletSlot');
+            var accountSlot = document.getElementById('navAccountSlot');
+            if (walletSlot)  walletSlot.innerHTML  = '';
+            if (accountSlot) accountSlot.innerHTML = '';
 
             if (!user) {
-                var btn = document.createElement('button');
-                btn.id = '__authNavBtn';
-                btn.className = 'auth-nav-btn';
-                btn.innerHTML = '<i class="fas fa-user"></i> دخول / تسجيل';
-                btn.onclick = function() { openAuth('login'); };
-                slot.appendChild(btn);
+                // ── غير مسجّل: زر دخول في يسار (wallet slot) ──
+                if (walletSlot) {
+                    var btn = document.createElement('button');
+                    btn.id = '__authNavBtn';
+                    btn.className = 'auth-nav-btn';
+                    btn.innerHTML = '<i class="fas fa-user"></i> دخول / تسجيل';
+                    btn.onclick = function() { openAuth('login'); };
+                    walletSlot.appendChild(btn);
+                }
             } else {
-                var bal = (uData && uData.balance) ? parseFloat(uData.balance) : 0;
-                var ww = document.createElement('div');
-                ww.id = '__walletNavWrap';
-                ww.className = 'wallet-nav-wrap';
-                ww.title = 'محفظتي — اضغط لعرض المحفظة';
-                ww.innerHTML = '<button class="wallet-plus-btn" id="__walletPlusBtn" title="شحن رصيد"><i class="fas fa-plus"></i></button>'
-                    + '<span id="walletNavBal">' + bal.toFixed(2) + '$</span>'
-                    + '<i class="wallet-nav-icon fas fa-wallet"></i>';
-                ww.onclick = function(e) {
-                    if (e.target.closest('#__walletPlusBtn')) { openTopup(); return; }
-                    openWallet();
-                };
-                slot.appendChild(ww);
-
-                // User dropdown
+                var bal      = (uData && uData.balance) ? parseFloat(uData.balance) : 0;
                 var initials = (uData && uData.name) ? uData.name.charAt(0) : (user.email ? user.email.charAt(0).toUpperCase() : 'U');
-                var ud = document.createElement('div');
-                ud.id = '__userDropDown';
-                ud.className = 'user-dropdown';
-                ud.innerHTML = '<div class="auth-nav-btn" id="__userNavBtn">'
-                    + '<div class="auth-avatar">' + initials + '</div>'
-                    + '<span>' + ((uData && uData.name) ? uData.name.split(' ')[0] : 'حسابي') + '</span>'
-                    + '</div>'
-                    + '<div class="user-menu" id="__userMenu">'
-                    + '<div class="user-menu-header">'
-                    + '<div class="um-name">' + ((uData && uData.name) ? uData.name : '') + '</div>'
-                    + '<div class="um-email">' + (user.email || '') + '</div>'
-                    + '</div>'
-                    + '<button class="user-menu-item" id="__menuOrders"><i class="fas fa-box"></i> طلباتي</button>'
-                    + '<div class="user-menu-divider"></div>'
-                    + '<button class="user-menu-item red" id="__menuLogout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>'
-                    + '</div>';
-                cartCont.parentNode.insertBefore(ud, cartCont);
+                var fname    = (uData && uData.name) ? uData.name.split(' ')[0] : 'حسابي';
 
-                $('__userNavBtn').onclick  = () => $('__userMenu').classList.toggle('open');
-                $('__menuOrders').onclick  = () => { $('__userMenu').classList.remove('open'); openOrdersHistory(); };
-                $('__menuLogout').onclick  = () => { $('__userMenu').classList.remove('open'); auth.signOut(); };
+                // ── يسار: أيقونة المحفظة الذهبية ──
+                if (walletSlot) {
+                    var ww = document.createElement('div');
+                    ww.id = '__walletNavWrap';
+                    ww.className = 'wallet-nav-wrap';
+                    ww.title = 'محفظتي';
+                    ww.innerHTML = '<button class="wallet-plus-btn" id="__walletPlusBtn" title="شحن"><i class="fas fa-plus"></i></button>'
+                        + '<span id="walletNavBal">' + bal.toFixed(2) + '$</span>'
+                        + '<i class="wallet-nav-icon fas fa-wallet"></i>';
+                    ww.onclick = function(e) {
+                        if (e.target.closest('#__walletPlusBtn')) { openTopup(); return; }
+                        openWallet();
+                    };
+                    walletSlot.appendChild(ww);
+                }
 
-                document.addEventListener('click', function(e) {
-                    var ud2 = $('__userDropDown');
-                    if (ud2 && !ud2.contains(e.target)) $('__userMenu').classList.remove('open');
-                }, true);
+                // ── يمين (جانب اتصل بنا): زر حسابي ──
+                if (accountSlot) {
+                    var ab = document.createElement('button');
+                    ab.id = '__acctNavBtn';
+                    ab.className = 'auth-nav-btn';
+                    ab.innerHTML = '<div class="auth-avatar">' + initials + '</div><span>' + fname + '</span>';
+                    ab.onclick = function() { openAccountModal(); };
+                    accountSlot.appendChild(ab);
+                }
+
+                // ── الدراور (موبايل): زر حسابي ──
+                var drawerSlot = document.getElementById('navAccountSlot');
+                if (drawerSlot && window.innerWidth < 769) {
+                    drawerSlot.innerHTML = '';
+                    var db2 = document.createElement('button');
+                    db2.className = 'acct-drawer-btn';
+                    db2.innerHTML = '<div class="auth-avatar" style="width:28px;height:28px;font-size:.85rem">' + initials + '</div> ' + fname + ' — حسابي';
+                    db2.onclick = function() { openAccountModal(); };
+                    drawerSlot.appendChild(db2);
+                }
             }
         }
+
+
+        // ── Account Modal ──────────────────────────────────────────────────
+        window.openAccountModal = function openAccountModal() {
+            var user  = (typeof auth !== 'undefined') ? auth.currentUser : null;
+            var uData = (typeof userData !== 'undefined') ? userData : null;
+            if (!user) { if (window.openAuth) openAuth('login'); return; }
+
+            var name    = (uData && uData.name)    ? uData.name    : '';
+            var email   = user.email || '';
+            var phone   = (uData && uData.phone)   ? uData.phone   : '—';
+            var bal     = (uData && uData.balance)  ? parseFloat(uData.balance) : 0;
+            var orders  = (uData && uData.ordersCount) ? uData.ordersCount : 0;
+            var joined  = (uData && uData.createdAt) ? new Date(uData.createdAt).toLocaleDateString('ar-SY') : '—';
+            var initials= name ? name.charAt(0) : email.charAt(0).toUpperCase();
+
+            $('acctAvatar').textContent  = initials;
+            $('acctName').textContent    = name || email;
+            $('acctEmail').textContent   = email;
+            $('acctBal').textContent     = bal.toFixed(2) + '$';
+            $('acctPhone').textContent   = phone;
+            $('acctJoined').textContent  = joined;
+            $('acctOrders').textContent  = orders;
+
+            // Fresh balance from Firebase
+            if (typeof db !== 'undefined' && auth.currentUser) {
+                db.ref('users/' + auth.currentUser.uid).once('value', function(snap) {
+                    var d = snap.val() || {};
+                    if ($('acctBal'))    $('acctBal').textContent    = parseFloat(d.balance||0).toFixed(2) + '$';
+                    if ($('acctOrders')) $('acctOrders').textContent = d.ordersCount || 0;
+                    if ($('acctPhone'))  $('acctPhone').textContent  = d.phone || '—';
+                    if ($('acctJoined')) $('acctJoined').textContent = d.createdAt ? new Date(d.createdAt).toLocaleDateString('ar-SY') : '—';
+                });
+            }
+
+            modalOn('acctOv', 'acctModal');
+        };
+
+        (function() {
+            function closeAcct() { modalOff('acctOv', 'acctModal'); }
+            document.addEventListener('DOMContentLoaded', function() {
+                var closeBtn = document.getElementById('acctCloseBtn');
+                var ov       = document.getElementById('acctOv');
+                var topupBtn = document.getElementById('acctTopupBtn');
+                var ordersBtn= document.getElementById('acctViewOrders');
+                var walletBtn= document.getElementById('acctViewWallet');
+                var logoutBtn= document.getElementById('acctLogout');
+
+                if (closeBtn)  closeBtn.onclick  = closeAcct;
+                if (ov)        ov.onclick         = closeAcct;
+                if (topupBtn)  topupBtn.onclick   = function() { closeAcct(); openTopup(); };
+                if (ordersBtn) ordersBtn.onclick  = function() { closeAcct(); openOrdersHistory(); };
+                if (walletBtn) walletBtn.onclick  = function() { closeAcct(); openWallet(); };
+                if (logoutBtn) logoutBtn.onclick  = function() { closeAcct(); if(typeof auth!=='undefined') auth.signOut(); };
+            });
+        }());
+
+        // ── mobileNavAccount ──────────────────────────────────────────────
+        window.mobileNavAccount = function(btn) {
+            var user = (typeof auth !== 'undefined') ? auth.currentUser : null;
+            if (!user) { if (window.openAuth) openAuth('login'); return; }
+            openAccountModal();
+        };
 
         // ── Handle Google Redirect result (for mobile) ───────────────────────
         auth.getRedirectResult().then(function(result) {
@@ -14593,7 +14751,58 @@
             <span>اتصل بنا</span>
         </button>
 
+        <!-- حسابي -->
+        <button class="mob-nav-btn" id="mob-account" onclick="mobileNavAccount(this)">
+            <i class="fas fa-user-circle"></i>
+            <span>حسابي</span>
+        </button>
+
     </nav>
+
+    <!-- ══ Account Modal ══ -->
+    <div class="z-ov" id="acctOv"></div>
+    <div class="z-modal" id="acctModal">
+        <div class="acct-header">
+            <button class="acct-close-btn" id="acctCloseBtn"><i class="fas fa-times"></i></button>
+            <div class="acct-avatar" id="acctAvatar">Z</div>
+            <div class="acct-name" id="acctName">اسم المستخدم</div>
+            <div class="acct-email" id="acctEmail">email@example.com</div>
+        </div>
+        <div class="acct-balance-card">
+            <div>
+                <div class="acct-bal-label">رصيد المحفظة</div>
+                <div class="acct-bal-value" id="acctBal">0.00$</div>
+            </div>
+            <button class="acct-topup-btn" id="acctTopupBtn">
+                <i class="fas fa-plus"></i> شحن
+            </button>
+        </div>
+        <div class="acct-body">
+            <div class="acct-info-row">
+                <i class="fas fa-phone"></i>
+                <div><span class="acct-info-label">رقم الهاتف</span><span id="acctPhone">—</span></div>
+            </div>
+            <div class="acct-info-row">
+                <i class="fas fa-calendar-alt"></i>
+                <div><span class="acct-info-label">تاريخ الانضمام</span><span id="acctJoined">—</span></div>
+            </div>
+            <div class="acct-info-row">
+                <i class="fas fa-shopping-bag"></i>
+                <div><span class="acct-info-label">عدد الطلبات</span><span id="acctOrders">0</span></div>
+            </div>
+            <div class="acct-actions">
+                <button class="acct-action-btn" id="acctViewOrders">
+                    <i class="fas fa-box-open"></i> طلباتي
+                </button>
+                <button class="acct-action-btn" id="acctViewWallet">
+                    <i class="fas fa-wallet"></i> محفظتي
+                </button>
+                <button class="acct-action-btn danger" id="acctLogout" style="grid-column:1/-1">
+                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- ══ Order Success Modal ══ -->
     <div class="z-ov" id="orderSuccessOv" style="z-index:5000;display:none"></div>

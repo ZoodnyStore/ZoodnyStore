@@ -455,6 +455,47 @@
             color: var(--secondary);
         }
 
+
+        /* حقل رابط الخدمة */
+        .service-link-group {
+            margin-bottom: 1.2rem;
+        }
+        .service-link-group label {
+            display: flex; align-items: center; gap: 6px;
+            font-size: .85rem; font-weight: 700; color: var(--primary); margin-bottom: 6px;
+        }
+        .service-link-group label i { color: #e0a832; font-size: .82rem; }
+        .service-link-input {
+            width: 100%; padding: .65rem .9rem;
+            border: 1.5px solid #dde0e8; border-radius: 9px;
+            font-family: 'Cairo', sans-serif; font-size: .88rem;
+            direction: ltr; text-align: left;
+            transition: border-color .2s, box-shadow .2s;
+            background: #fafbfc; color: #2d3748; box-sizing: border-box;
+        }
+        .service-link-input:focus {
+            outline: none; border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(247,200,115,.15); background: #fff;
+        }
+        .service-link-hint {
+            font-size: .75rem; color: var(--gray); margin-top: 4px;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .service-link-hint i { color: var(--secondary); }
+        .platform-icon-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: linear-gradient(135deg, #f8f9fa, #eef0f3);
+            border: 1px solid #dde; border-radius: 8px;
+            padding: 4px 10px; font-size: .78rem; font-weight: 700;
+            color: var(--primary); margin-bottom: 10px;
+        }
+        .platform-icon-badge i { font-size: .9rem; }
+        .platform-icon-badge.ig { background:linear-gradient(135deg,#fce4ec,#f8bbd9); border-color:#f06292; color:#ad1457; }
+        .platform-icon-badge.fb { background:linear-gradient(135deg,#e3f2fd,#bbdefb); border-color:#64b5f6; color:#1565c0; }
+        .platform-icon-badge.tt { background:linear-gradient(135deg,#fce4ec,#ffe0b2); border-color:#ff8a65; color:#bf360c; }
+        .platform-icon-badge.yt { background:linear-gradient(135deg,#ffebee,#ffcdd2); border-color:#ef9a9a; color:#b71c1c; }
+        .platform-icon-badge.tg { background:linear-gradient(135deg,#e3f2fd,#b3e5fc); border-color:#4fc3f7; color:#0277bd; }
+
         .quantity-modal {
             position: fixed;
             top: 0;
@@ -3079,16 +3120,24 @@
     <!-- نافذة إدخال الكمية المطلوبة لخدمات السوشال ميديا -->
     <div class="quantity-modal" id="quantityModal">
         <div class="quantity-container">
-            <div class="quantity-header">
-                <h3><i class="fab fa-instagram"></i> إدخال الكمية المطلوبة</h3>
+            <div class="quantity-header" id="quantityModalHeader">
+                <h3 id="quantityModalTitle"><i class="fab fa-instagram"></i> إدخال الكمية المطلوبة</h3>
                 <button class="quantity-close" id="quantityClose"><i class="fas fa-times"></i></button>
             </div>
             <div class="quantity-body">
                 <div class="quantity-info">
+                    <span id="platformIconBadge"></span>
                     <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
                     <span id="selectedProductName">متابعين إنستغرام حقيقي</span>
                 </div>
-                
+
+                <!-- حقل رابط الخدمة -->
+                <div class="service-link-group" id="serviceLinkGroup">
+                    <label for="serviceLink"><i class="fas fa-link"></i> <span id="serviceLinkLabel">رابط الصفحة / المنشور</span> *</label>
+                    <input type="url" class="service-link-input" id="serviceLink" placeholder="https://" autocomplete="off" autocorrect="off" spellcheck="false"/>
+                    <div class="service-link-hint"><i class="fas fa-info-circle"></i> <span id="serviceLinkHint">أدخل رابط الصفحة أو المنشور المراد تعزيزه</span></div>
+                </div>
+
                 <div class="form-group">
                     <label for="socialQuantity">الكمية المطلوبة *</label>
                     <input type="number" id="socialQuantity" placeholder="أدخل الكمية المطلوبة (مثال: 1000)" min="300" max="1000000" step="1" required>
@@ -10512,18 +10561,135 @@
         }
         
         // -------------------- فتح نافذة إدخال الكمية للسوشال ميديا --------------------
+
+        // خريطة إعدادات كل منصة: أيقونة، لون الهيدر، تسمية الرابط، تلميح، placeholder
+        var platformConfig = {
+            instagram: {
+                icon: 'fab fa-instagram', badgeClass: 'ig', label: 'إنستغرام',
+                headerBg: 'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)',
+                titleIcon: 'fab fa-instagram',
+                getLinkLabel: function(name) {
+                    if (name.includes('متابع')) return 'رابط صفحة إنستغرام';
+                    if (name.includes('مشاهد') || name.includes('فيديو')) return 'رابط الفيديو / الريلز';
+                    if (name.includes('لايك') || name.includes('مشارك') || name.includes('تعليق')) return 'رابط المنشور';
+                    return 'رابط الصفحة / المنشور';
+                },
+                getHint: function(name) {
+                    if (name.includes('متابع')) return 'مثال: https://instagram.com/username';
+                    return 'مثال: https://instagram.com/p/ABC123/';
+                },
+                placeholder: function(name) {
+                    if (name.includes('متابع')) return 'https://instagram.com/username';
+                    return 'https://instagram.com/p/...';
+                }
+            },
+            facebook: {
+                icon: 'fab fa-facebook', badgeClass: 'fb', label: 'فيسبوك',
+                headerBg: 'linear-gradient(135deg,#1877f2,#1356b4)',
+                titleIcon: 'fab fa-facebook-f',
+                getLinkLabel: function(name) {
+                    if (name.includes('متابع') || name.includes('صفحة')) return 'رابط صفحة فيسبوك';
+                    if (name.includes('مشاهد')) return 'رابط الفيديو';
+                    if (name.includes('لايك') || name.includes('تفاعل')) return 'رابط المنشور';
+                    return 'رابط الصفحة / المنشور';
+                },
+                getHint: function(name) {
+                    if (name.includes('متابع') || name.includes('صفحة')) return 'مثال: https://facebook.com/pagename';
+                    return 'مثال: https://facebook.com/video/123456';
+                },
+                placeholder: function(name) {
+                    if (name.includes('متابع')) return 'https://facebook.com/pagename';
+                    return 'https://facebook.com/...';
+                }
+            },
+            tiktok: {
+                icon: 'fab fa-tiktok', badgeClass: 'tt', label: 'تيك توك',
+                headerBg: 'linear-gradient(135deg,#010101,#ff0050)',
+                titleIcon: 'fab fa-tiktok',
+                getLinkLabel: function(name) {
+                    if (name.includes('متابع')) return 'رابط حساب تيك توك';
+                    if (name.includes('مشاهد') || name.includes('لايك') || name.includes('تعليق')) return 'رابط الفيديو';
+                    return 'رابط الحساب / الفيديو';
+                },
+                getHint: function(name) {
+                    if (name.includes('متابع')) return 'مثال: https://tiktok.com/@username';
+                    return 'مثال: https://tiktok.com/@user/video/123456';
+                },
+                placeholder: function(name) {
+                    if (name.includes('متابع')) return 'https://tiktok.com/@username';
+                    return 'https://tiktok.com/@user/video/...';
+                }
+            },
+            youtube: {
+                icon: 'fab fa-youtube', badgeClass: 'yt', label: 'يوتيوب',
+                headerBg: 'linear-gradient(135deg,#ff0000,#cc0000)',
+                titleIcon: 'fab fa-youtube',
+                getLinkLabel: function(name) {
+                    if (name.includes('مشترك') || name.includes('قناة')) return 'رابط قناة يوتيوب';
+                    return 'رابط الفيديو';
+                },
+                getHint: function(name) {
+                    if (name.includes('مشترك') || name.includes('قناة')) return 'مثال: https://youtube.com/@channelname';
+                    return 'مثال: https://youtube.com/watch?v=ABC123';
+                },
+                placeholder: function(name) {
+                    if (name.includes('مشترك') || name.includes('قناة')) return 'https://youtube.com/@channel';
+                    return 'https://youtube.com/watch?v=...';
+                }
+            },
+            telegram: {
+                icon: 'fab fa-telegram', badgeClass: 'tg', label: 'تليغرام',
+                headerBg: 'linear-gradient(135deg,#229ed9,#1a7fb8)',
+                titleIcon: 'fab fa-telegram-plane',
+                getLinkLabel: function(name) {
+                    if (name.includes('عضو') || name.includes('متابع')) return 'رابط القناة / المجموعة';
+                    if (name.includes('مشاهد') || name.includes('تفاعل')) return 'رابط المنشور / القناة';
+                    return 'رابط القناة / المجموعة';
+                },
+                getHint: function(name) {
+                    return 'مثال: https://t.me/channelname';
+                },
+                placeholder: function(name) {
+                    return 'https://t.me/...';
+                }
+            }
+        };
+
         function openQuantityModal(product) {
             selectedSocialProduct = product;
-            
             selectedProductName.textContent = product.name;
-            
-            const pricePerThousandValue = product.basePrice || product.price || 0;
-            pricePerThousand.textContent = `${pricePerThousandValue.toFixed(2)}$`;
-            
+
+            var pricePerThousandValue = product.basePrice || product.price || 0;
+            pricePerThousand.textContent = pricePerThousandValue.toFixed(2) + '$';
             socialQuantity.value = '';
             calculatedPrice.textContent = '0.00$';
-            
+
+            // ضبط واجهة المودال حسب المنصة
+            var platform = product.platform || 'instagram';
+            var cfg = platformConfig[platform] || platformConfig['instagram'];
+            var name = product.name;
+
+            // هيدر المودال
+            var header = document.getElementById('quantityModalHeader');
+            if (header) header.style.background = cfg.headerBg;
+            var titleEl = document.getElementById('quantityModalTitle');
+            if (titleEl) titleEl.innerHTML = '<i class="' + cfg.titleIcon + '"></i> أدخل الكمية والرابط';
+
+            // شارة المنصة
+            var badge = document.getElementById('platformIconBadge');
+            if (badge) badge.innerHTML = '<span class="platform-icon-badge ' + cfg.badgeClass + '"><i class="' + cfg.icon + '"></i>' + cfg.label + '</span>';
+
+            // حقل الرابط
+            var linkLabel = document.getElementById('serviceLinkLabel');
+            var linkHint = document.getElementById('serviceLinkHint');
+            var linkInput = document.getElementById('serviceLink');
+            if (linkLabel) linkLabel.textContent = cfg.getLinkLabel(name);
+            if (linkHint) linkHint.textContent = cfg.getHint(name);
+            if (linkInput) { linkInput.value = ''; linkInput.placeholder = cfg.placeholder(name); }
+
             quantityModal.classList.add('active');
+            // focus على حقل الرابط
+            setTimeout(function(){ var li = document.getElementById('serviceLink'); if(li) li.focus(); }, 300);
         }
         
         // -------------------- تحديث معاينة السعر للسوشال ميديا --------------------
@@ -10779,7 +10945,7 @@
         }
         
         // -------------------- إضافة منتج إلى السلة --------------------
-        function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null, gameAmount_ = null, playerId = null, appQuantity_ = null, premiumInputValue = null) {
+        function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null, gameAmount_ = null, playerId = null, appQuantity_ = null, premiumInputValue = null, serviceLink = null) {
             let product = products.find(p => p.id === productId);
             
             // إذا لم يُعثر على المنتج، ابحث في vpnData
@@ -10825,6 +10991,7 @@
                     existingItem.customQuantity = (existingItem.customQuantity || 300) + customQuantity;
                     existingItem.price = calculateSocialMediaPrice(product.id, existingItem.customQuantity);
                     existingItem.quantity = 1;
+                    if (serviceLink) existingItem.serviceLink = serviceLink;
                 } else {
                     cart.push({
                         id: product.id,
@@ -10834,7 +11001,9 @@
                         quantity: 1,
                         customQuantity: customQuantity,
                         category: product.category,
-                        perThousand: product.perThousand || null
+                        perThousand: product.perThousand || null,
+                        serviceLink: serviceLink || null,
+                        platform: product.platform || null
                     });
                 }
             } else if (product.category === 'rased') {
@@ -11089,6 +11258,7 @@
                             <h4 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.3rem;">${item.name}</h4>
                             <p style="color: var(--accent); font-weight: 700;">${item.price.toFixed(2)}$</p>
                             <p style="color: var(--gray); font-size: 0.85rem;">الكمية: ${customQty.toLocaleString()}</p>
+                            ${item.serviceLink ? `<p style="color:#1a6b3c;font-size:0.78rem;margin-top:3px;word-break:break-all;"><i class="fas fa-link" style="margin-left:3px"></i>${item.serviceLink}</p>` : ''}
                         </div>
                     `;
                 } else if (isCredit) {
@@ -11410,7 +11580,8 @@
                 };
                 if (item.category === 'social-media') {
                     base.customQuantity = item.customQuantity || 300;
-                    base.accountUrl = customerData.accountUrl || '';
+                    base.serviceLink = item.serviceLink || customerData.accountUrl || '';
+                    base.platform = item.platform || '';
                 } else if (item.category === 'rased') {
                     base.creditValue  = item.creditValue  || '';
                     base.phoneNumber  = item.phoneNumber  || '';
@@ -11839,21 +12010,33 @@
             
             confirmQuantityBtn.addEventListener('click', function() {
                 if (!selectedSocialProduct) return;
-                
+
+                // التحقق من الرابط
+                var linkInput = document.getElementById('serviceLink');
+                var serviceLink = linkInput ? linkInput.value.trim() : '';
+                if (!serviceLink) {
+                    showToast('يرجى إدخال رابط الخدمة');
+                    if (linkInput) linkInput.focus();
+                    return;
+                }
+                if (!serviceLink.startsWith('http://') && !serviceLink.startsWith('https://')) {
+                    showToast('يرجى إدخال رابط صحيح يبدأ بـ https://');
+                    if (linkInput) linkInput.focus();
+                    return;
+                }
+
                 const quantity = parseInt(socialQuantity.value);
-                
                 if (!quantity || quantity < 300) {
                     showToast('الحد الأدنى للطلب هو 300');
                     return;
                 }
-                
                 if (quantity > 1000000) {
                     showToast('الحد الأقصى للطلب هو 1,000,000');
                     return;
                 }
-                
-                addToCart(selectedSocialProduct.id, quantity);
-                
+
+                addToCart(selectedSocialProduct.id, quantity, null, null, null, null, null, null, null, serviceLink);
+
                 quantityModal.classList.remove('active');
                 selectedSocialProduct = null;
             });
@@ -14273,6 +14456,7 @@
                         if (it.creditValue)    extras.push('<span><i class="fas fa-money-bill"></i> الرصيد: <b>' + it.creditValue + ' ل.س</b></span>');
                         if (it.customQuantity) extras.push('<span><i class="fas fa-sort-amount-up"></i> الكمية: <b>' + parseInt(it.customQuantity).toLocaleString() + '</b></span>');
                         if (it.premiumInput)   extras.push('<span><i class="fas fa-key"></i> البيانات: <b>' + it.premiumInput + '</b></span>');
+                        if (it.serviceLink)    extras.push('<span style="color:#1a6b3c"><i class="fas fa-link"></i> الرابط: <b><a href="' + it.serviceLink + '" target="_blank" style="color:#1a6b3c;text-decoration:underline">' + it.serviceLink + '</a></b></span>');
                         return '<div class="adm-prod-item">'
                             + '<div style="flex:1">'
                             + '<div class="adm-prod-name"><i class="fas fa-tag" style="color:var(--secondary);font-size:.72rem;margin-left:4px"></i>' + (it.productName || it.name || '-') + '</div>'

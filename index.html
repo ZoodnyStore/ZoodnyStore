@@ -3112,55 +3112,30 @@
                 <a href="#branches">فروعنا</a>
                 <a href="#about">من نحن</a>
                 <a href="#contact">اتصل بنا</a>
-                <div class="cart-icon-container">
-                    <i class="fas fa-shopping-cart cart-icon" id="cartToggle"></i>
-                    <span class="cart-count" id="cartCount">0</span>
-                </div>
+                <!-- slot المحفظة — يُبنى ديناميكياً بعد الدخول -->
+                <div id="navWalletSlot"></div>
             </div>
-            
-            <div class="cart-icon-container" id="mobileCartIcon" style="display: none;">
-                <i class="fas fa-shopping-cart cart-icon" id="mobileCartToggle"></i>
-                <span class="cart-count" id="mobileCartCount">0</span>
-            </div>
+            <!-- hidden stubs للكود القديم -->
+            <span id="cartCount" style="display:none">0</span>
+            <span id="mobileCartCount" style="display:none">0</span>
+            <span id="cartToggle" style="display:none"></span>
+            <span id="mobileCartToggle" style="display:none"></span>
+            <div id="mobileCartIcon" style="display:none"></div>
         </div>
     </nav>
 
-    <!-- سلة التسوق الجانبية -->
-    <div class="cart-overlay" id="cartOverlay"></div>
-    <div class="cart-sidebar" id="cartSidebar">
-        <div class="cart-header">
-            <h3><i class="fas fa-shopping-cart"></i> سلة التسوق</h3>
-            <button class="close-cart" id="closeCart"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="cart-items" id="cartItems">
-            <div class="empty-cart">
-                <i class="fas fa-shopping-basket"></i>
-                <p>سلة التسوق فارغة</p>
-            </div>
-        </div>
-        <!-- كوبون الخصم -->
-        <div class="coupon-section">
-            <h4><i class="fas fa-tag"></i> كوبون الخصم</h4>
-            <div class="coupon-input-group">
-                <input type="text" id="couponInput" placeholder="أدخل كود الخصم" />
-                <button class="apply-coupon-btn" id="applyCouponBtn">تطبيق</button>
-            </div>
-            <div class="coupon-message" id="couponMessage"></div>
-        </div>
-        <div class="cart-footer">
-            <div class="discount-row" id="discountRow" style="display:none;">
-                <span><i class="fas fa-tag"></i> الخصم المطبق</span>
-                <span id="discountAmount">-0$</span>
-            </div>
-            <div class="cart-total">
-                <span>الإجمالي:</span>
-                <span id="cartTotalPrice">0$</span>
-            </div>
-            <button class="checkout-btn" id="checkoutBtn">
-                <i class="fas fa-shopping-bag"></i> اتمام الطلب
-            </button>
-        </div>
-    </div>
+    <!-- stubs مخفية للحفاظ على توافق الكود القديم -->
+    <div id="cartOverlay" style="display:none"></div>
+    <div id="cartSidebar" style="display:none"></div>
+    <div id="closeCart" style="display:none"></div>
+    <div id="cartItems" style="display:none"></div>
+    <div id="couponInput" style="display:none"></div>
+    <div id="applyCouponBtn" style="display:none"></div>
+    <div id="couponMessage" style="display:none"></div>
+    <div id="discountRow" style="display:none"></div>
+    <div id="discountAmount" style="display:none"></div>
+    <div id="cartTotalPrice" style="display:none">0$</div>
+    <div id="checkoutBtn" style="display:none"></div>
 
     <!-- نافذة إدخال الكمية المطلوبة لخدمات السوشال ميديا -->
     <!-- نافذة السوشال ميديا -->
@@ -3198,7 +3173,7 @@
                 </div>
 
                 <button class="submit-order-btn" id="confirmQuantityBtn">
-                    <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
+                    <i class="fas fa-bolt"></i> إتمام الطلب
                 </button>
             </div>
         </div>
@@ -3232,7 +3207,7 @@
                     <span id="calculatedCreditPrice">0.00$</span>
                 </div>
                 <button class="submit-order-btn" id="confirmCreditBtn">
-                    <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
+                    <i class="fas fa-bolt"></i> إتمام الطلب
                 </button>
             </div>
         </div>
@@ -3265,7 +3240,7 @@
                     <span id="calculatedAppPrice">0.00$</span>
                 </div>
                 <button class="submit-order-btn" id="confirmAppBtn">
-                    <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
+                    <i class="fas fa-bolt"></i> إتمام الطلب
                 </button>
             </div>
         </div>
@@ -3299,7 +3274,7 @@
                     <span id="calculatedGamePrice">0.00$</span>
                 </div>
                 <button class="submit-order-btn" id="confirmGameBtn">
-                    <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
+                    <i class="fas fa-bolt"></i> إتمام الطلب
                 </button>
             </div>
         </div>
@@ -3327,7 +3302,7 @@
                     <span id="calculatedPremiumPrice">0.00$</span>
                 </div>
                 <button class="submit-order-btn" id="confirmPremiumBtn">
-                    <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
+                    <i class="fas fa-bolt"></i> إتمام الطلب
                 </button>
             </div>
         </div>
@@ -3358,7 +3333,7 @@
                     <span id="calculatedDesignPrice">0.00$</span>
                 </div>
                 <button class="submit-order-btn" id="confirmDesignEmailBtn">
-                    <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
+                    <i class="fas fa-bolt"></i> إتمام الطلب
                 </button>
             </div>
         </div>
@@ -9754,7 +9729,7 @@
                     showProductDetails(product.id);
                 });
                 card.querySelector('.ap-cart').addEventListener('click', () => {
-                    addToCart(product.id);
+                    directOrder(product.id);
                 });
 
                 productsGrid.appendChild(card);
@@ -11590,8 +11565,8 @@
             // ── إغلاق كل النوافذ فوراً ──
             try { if (customerModal) customerModal.classList.remove('active'); } catch(e) {}
             try { if (paymentModal)  { paymentModal.style.display = 'none'; paymentModal.classList.remove('active'); } } catch(e) {}
-            try { if (cartSidebar)   cartSidebar.classList.remove('active'); } catch(e) {}
-            try { if (cartOverlay)   cartOverlay.classList.remove('active'); } catch(e) {}
+            /* cartSidebar removed */
+            /* cartOverlay removed */
 
             // ── عرض رسالة النجاح فوراً ──
             document.getElementById('orderSuccessId').textContent    = orderId;
@@ -11843,8 +11818,8 @@
                             closeQModal(productDetailsModal);
                             openAppModal(p);
                         } else {
-                            addToCart(pid);
                             closeQModal(productDetailsModal);
+                            directOrder(pid);
                         }
                     });
                 }
@@ -12002,23 +11977,18 @@
             
             confirmQuantityBtn.addEventListener('click', function() {
                 if (!selectedSocialProduct) return;
-                
+                var linkInp = document.getElementById('svcLinkInput');
+                var svcLink = linkInp ? linkInp.value.trim() : '';
+                if (!svcLink) { showToast('يرجى إدخال رابط الخدمة', 'err'); if(linkInp) linkInp.focus(); return; }
+                if (!svcLink.startsWith('http://') && !svcLink.startsWith('https://')) {
+                    showToast('الرابط غير صحيح، يجب أن يبدأ بـ https://', 'err'); if(linkInp) linkInp.focus(); return;
+                }
                 const quantity = parseInt(socialQuantity.value);
-                
-                if (!quantity || quantity < 300) {
-                    showToast('الحد الأدنى للطلب هو 300', 'err');
-                    return;
-                }
-                
-                if (quantity > 1000000) {
-                    showToast('الحد الأقصى للطلب هو 1,000,000', 'err');
-                    return;
-                }
-                
-                addToCart(selectedSocialProduct.id, quantity);
-                
+                if (!quantity || quantity < 300) { showToast('الحد الأدنى للطلب هو 300', 'err'); return; }
+                if (quantity > 1000000) { showToast('الحد الأقصى للطلب هو 1,000,000', 'err'); return; }
+                var sp = selectedSocialProduct; selectedSocialProduct = null;
                 closeQModal(quantityModal);
-                selectedSocialProduct = null;
+                directOrder(sp.id, quantity, null, null, null, null, null, null, null, svcLink);
             });
             
             quantityClose.addEventListener('click', () => {
@@ -12057,10 +12027,9 @@
                     return;
                 }
                 
-                addToCart(selectedCreditProduct.id, null, null, phone, amount);
-                
+                var cp = selectedCreditProduct; selectedCreditProduct = null;
                 closeQModal(creditModal);
-                selectedCreditProduct = null;
+                directOrder(cp.id, null, null, phone, amount);
             });
             
             creditClose.addEventListener('click', () => {
@@ -12099,10 +12068,9 @@
                     return;
                 }
                 
-                addToCart(selectedAppProduct.id, null, null, null, null, null, playerIdValue, quantity);
-                
+                var ap = selectedAppProduct; selectedAppProduct = null;
                 closeQModal(appModal);
-                selectedAppProduct = null;
+                directOrder(ap.id, null, null, null, null, null, playerIdValue, quantity);
             });
             
             appClose.addEventListener('click', () => {
@@ -12148,10 +12116,9 @@
                     amountDisplay = selectedGameProduct.selectedAmount.display;
                 }
                 
-                addToCart(productId, null, productPrice, null, null, amount, playerIdValue);
-                showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
+                var gp = selectedGameProduct; selectedGameProduct = null;
                 closeQModal(gameModal);
-                selectedGameProduct = null;
+                directOrder(productId, null, productPrice, null, null, amount, playerIdValue);
             });
             
             gameClose.addEventListener('click', () => {
@@ -12177,10 +12144,9 @@
                     return;
                 }
                 
-                addToCart(selectedPremiumProduct.id, null, selectedPremiumProduct.price, null, null, null, null, null, premiumInputValue);
-                
+                var pp = selectedPremiumProduct; selectedPremiumProduct = null;
                 closeQModal(premiumModal);
-                selectedPremiumProduct = null;
+                directOrder(pp.id, null, pp.price, null, null, null, null, null, premiumInputValue);
             });
             
             premiumClose.addEventListener('click', () => {
@@ -12217,29 +12183,13 @@
                     return;
                 }
 
-                // إضافة للسلة مع حفظ الإيميل في اسم المنتج
-                const cartItem = {
-                    id: selectedDesignProduct.id,
-                    name: selectedDesignProduct.name + ' | إيميل: ' + emailVal,
-                    price: selectedDesignProduct.price || 0,
-                    quantity: 1,
-                    image: selectedDesignProduct.image,
-                    category: 'برامج التصميم',
-                    email: emailVal
-                };
-                const existing = cart.find(i => i.id === cartItem.id);
-                if (existing) {
-                    existing.quantity++;
-                    existing.email = emailVal;
-                    existing.name = cartItem.name;
-                } else {
-                    cart.push(cartItem);
-                }
-                localStorage.setItem('zoodnyCart', JSON.stringify(cart));
-                updateCartUI();
-                designEmailModal.classList.remove('active');
-                selectedDesignProduct = null;
-                showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
+                var dp = selectedDesignProduct; selectedDesignProduct = null;
+                closeQModal(designEmailModal);
+                // بناء مباشر في السلة + فتح تأكيد
+                cart = [];
+                cart.push({ id:dp.id, name:dp.name+' | إيميل: '+emailVal, price:dp.price||0, quantity:1, category:'برامج التصميم', email:emailVal });
+                if (typeof auth !== 'undefined' && !auth.currentUser) { showToast('سجّل دخولك أولاً', 'warn'); if(window.openAuth) window.openAuth('login'); return; }
+                openConfirmModal();
             });
 
             designEmailClose.addEventListener('click', () => {
@@ -12294,81 +12244,7 @@
                 backToCategoriesView();
             });
             
-            const cartToggleElements = [cartToggle, mobileCartToggle].filter(el => el);
-            cartToggleElements.forEach(el => {
-                el.addEventListener('click', () => {
-                    cartSidebar.classList.add('active');
-                    cartOverlay.classList.add('active');
-                    navLinks.classList.remove('active');
-                    menuOverlay.classList.remove('active');
-                    var bottomNav = document.getElementById('mobileBottomNav');
-                    if (bottomNav) bottomNav.style.display = '';
-                });
-            });
-            
-            closeCart.addEventListener('click', () => {
-                cartSidebar.classList.remove('active');
-                cartOverlay.classList.remove('active');
-            });
-            
-            cartOverlay.addEventListener('click', () => {
-                cartSidebar.classList.remove('active');
-                cartOverlay.classList.remove('active');
-            });
-            
-            checkoutBtn.addEventListener('click', () => {
-                if (cart.length === 0) {
-                    showToast('السلة فارغة، أضف منتجات أولاً');
-                    return;
-                }
-                // Require login
-                if (typeof auth !== 'undefined' && !auth.currentUser) {
-                    showToast('سجّل دخولك أولاً للمتابعة');
-                    if (window.openAuth) window.openAuth('login');
-                    return;
-                }
-                // Check balance — fetch fresh from Firebase to avoid stale cache
-                var totalText = cartTotalPrice ? cartTotalPrice.textContent : '0';
-                var cartTotal = parseFloat(totalText.replace(/[^0-9.]/g, '')) || 0;
-
-                function proceedToCheckout() {
-                    // مباشرة لنافذة التأكيد بدون نموذج بيانات
-                    navLinks.classList.remove('active');
-                    menuOverlay.classList.remove('active');
-                    cartSidebar.classList.remove('active');
-                    cartOverlay.classList.remove('active');
-                    var bottomNav = document.getElementById('mobileBottomNav');
-                    if (bottomNav) bottomNav.style.display = '';
-                    if (typeof openConfirmModal === 'function') {
-                        openConfirmModal();
-                    }
-                }
-
-                function checkBalanceAndProceed(bal) {
-                    if (cartTotal > 0 && bal < cartTotal) {
-                        if (typeof balToast === 'function') {
-                            balToast('رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$ والمطلوب: ' + cartTotal.toFixed(2) + '$');
-                        } else {
-                            showToast('رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$');
-                        }
-                        return;
-                    }
-                    proceedToCheckout();
-                }
-
-                // Try to get fresh balance from Firebase
-                if (typeof db !== 'undefined' && typeof auth !== 'undefined' && auth.currentUser) {
-                    db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
-                        var bal = parseFloat(snap.val() || 0);
-                        // Also update local userData so getBalance() stays in sync
-                        if (typeof userData !== 'undefined' && userData) userData.balance = bal;
-                        checkBalanceAndProceed(bal);
-                    });
-                } else {
-                    var bal = (typeof getBalance === 'function') ? getBalance() : 0;
-                    checkBalanceAndProceed(bal);
-                }
-            });
+            // cart toggle removed
             
             closeCustomer.addEventListener('click', () => {
                 customerModal.classList.remove('active');
@@ -12407,6 +12283,33 @@
                 paymentModal.style.display = 'none';
                 paymentModal.classList.remove('active');
             });
+
+            // ════════════════════════════════════════════════════
+            // directOrder: تجاوز السلة — إضافة منتج + فتح تأكيد
+            // ════════════════════════════════════════════════════
+            function directOrder(productId, qty, customPrice, phone,
+                                 creditAmt, gameAmt, playerId, appQty,
+                                 premiumVal, svcLink) {
+                // فرّغ السلة لأن كل طلب منفرد
+                cart = [];
+                hasSocialMediaProduct = false;
+                hasCreditProduct      = false;
+                hasGameProduct        = false;
+                hasAppProduct         = false;
+                hasPremiumProduct     = false;
+
+                addToCart(productId, qty, customPrice, phone, creditAmt,
+                          gameAmt, playerId, appQty, premiumVal, svcLink);
+
+                if (cart.length === 0) return; // addToCart رفض (validation)
+
+                if (typeof auth !== 'undefined' && !auth.currentUser) {
+                    showToast('سجّل دخولك أولاً للمتابعة', 'warn');
+                    if (window.openAuth) window.openAuth('login');
+                    return;
+                }
+                openConfirmModal();
+            }
 
             // ── Open confirm modal: show summary + balance ──
             function openConfirmModal() {
@@ -12520,7 +12423,7 @@
                     hasPremiumProduct = false;
                     localStorage.removeItem('zoodnyCart');
                     updateCartUI();
-                    try { cartSidebar.classList.remove('active'); cartOverlay.classList.remove('active'); } catch(e){}
+                    /* removed */
                     try { customerForm.reset(); } catch(e){}
                     try { socialMediaFields.classList.remove('active'); } catch(e){}
 
@@ -12820,22 +12723,32 @@
             font-size:.85rem;font-weight:700;
         }
         /* Wallet button */
+        /* ── Wallet Nav Pill (بديل السلة) ── */
+        #navWalletSlot { display:flex; align-items:center; }
         .wallet-nav-wrap {
-            display:flex;align-items:center;gap:6px;
-            background:rgba(46,204,113,0.1);border:1.5px solid var(--success);
-            border-radius:24px;padding:4px 12px 4px 6px;cursor:pointer;
-            color:var(--success);font-size:.9rem;font-weight:700;
-            transition:background .25s;
+            display:flex; align-items:center; gap:7px;
+            background: rgba(247,200,115,.12);
+            border: 1.5px solid var(--secondary);
+            border-radius: 28px; padding: 4px 12px 4px 5px;
+            cursor: pointer; color: var(--secondary);
+            font-size: .88rem; font-weight: 800;
+            transition: background .22s, box-shadow .22s;
+            box-shadow: 0 2px 8px rgba(247,200,115,.15);
         }
-        .wallet-nav-wrap:hover{background:rgba(46,204,113,.2)}
-        #walletNavBal{min-width:36px;font-size:.88rem}
-        .wallet-plus-btn{
-            background:var(--success);border:none;border-radius:50%;
-            width:26px;height:26px;display:flex;align-items:center;justify-content:center;
-            color:#fff;font-size:.85rem;cursor:pointer;
-            transition:transform .2s;
+        .wallet-nav-wrap:hover {
+            background: rgba(247,200,115,.22);
+            box-shadow: 0 3px 14px rgba(247,200,115,.3);
         }
-        .wallet-plus-btn:hover{transform:scale(1.15)}
+        .wallet-nav-icon { font-size:1rem; color:var(--secondary); }
+        #walletNavBal { font-size:.86rem; color:var(--secondary); min-width:36px; }
+        .wallet-plus-btn {
+            background: var(--secondary); border: none; border-radius: 50%;
+            width:25px; height:25px; display:flex; align-items:center; justify-content:center;
+            color: var(--primary); font-size:.75rem; cursor:pointer; flex-shrink:0;
+            transition:transform .18s, box-shadow .18s;
+            box-shadow: 0 1px 5px rgba(247,200,115,.35);
+        }
+        .wallet-plus-btn:hover { transform:scale(1.12); }
 
         /* Generic overlay */
         .z-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:1200}
@@ -13775,34 +13688,31 @@
         function balToast(msg, green) { showToast(msg, green ? 'ok' : 'err'); }
 
         function buildNavButtons(user, uData) {
-            var cartCont = document.querySelector('.nav-links .cart-icon-container');
-            if (!cartCont) return;
+            var slot = document.getElementById('navWalletSlot');
+            if (!slot) return;
+            slot.innerHTML = '';
 
             if (!user) {
-                // Not logged in — show login button
                 var btn = document.createElement('button');
                 btn.id = '__authNavBtn';
                 btn.className = 'auth-nav-btn';
                 btn.innerHTML = '<i class="fas fa-user"></i> دخول / تسجيل';
-                btn.onclick = () => openAuth('login');
-                cartCont.parentNode.insertBefore(btn, cartCont);
+                btn.onclick = function() { openAuth('login'); };
+                slot.appendChild(btn);
             } else {
-                // Logged in — show wallet + user menu
                 var bal = (uData && uData.balance) ? parseFloat(uData.balance) : 0;
-
-                // Wallet wrap
                 var ww = document.createElement('div');
                 ww.id = '__walletNavWrap';
                 ww.className = 'wallet-nav-wrap';
-                ww.title = 'محفظتي';
-                ww.innerHTML = '<i class="fas fa-wallet"></i>'
+                ww.title = 'محفظتي — اضغط لعرض المحفظة';
+                ww.innerHTML = '<button class="wallet-plus-btn" id="__walletPlusBtn" title="شحن رصيد"><i class="fas fa-plus"></i></button>'
                     + '<span id="walletNavBal">' + bal.toFixed(2) + '$</span>'
-                    + '<button class="wallet-plus-btn" id="__walletPlusBtn" title="شحن رصيد"><i class="fas fa-plus"></i></button>';
+                    + '<i class="wallet-nav-icon fas fa-wallet"></i>';
                 ww.onclick = function(e) {
                     if (e.target.closest('#__walletPlusBtn')) { openTopup(); return; }
                     openWallet();
                 };
-                cartCont.parentNode.insertBefore(ww, cartCont);
+                slot.appendChild(ww);
 
                 // User dropdown
                 var initials = (uData && uData.name) ? uData.name.charAt(0) : (user.email ? user.email.charAt(0).toUpperCase() : 'U');
@@ -13818,7 +13728,6 @@
                     + '<div class="um-name">' + ((uData && uData.name) ? uData.name : '') + '</div>'
                     + '<div class="um-email">' + (user.email || '') + '</div>'
                     + '</div>'
-                    + '<button class="user-menu-item" id="__menuWallet"><i class="fas fa-wallet"></i> محفظتي</button>'
                     + '<button class="user-menu-item" id="__menuOrders"><i class="fas fa-box"></i> طلباتي</button>'
                     + '<div class="user-menu-divider"></div>'
                     + '<button class="user-menu-item red" id="__menuLogout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>'
@@ -13826,7 +13735,6 @@
                 cartCont.parentNode.insertBefore(ud, cartCont);
 
                 $('__userNavBtn').onclick  = () => $('__userMenu').classList.toggle('open');
-                $('__menuWallet').onclick  = () => { $('__userMenu').classList.remove('open'); openWallet(); };
                 $('__menuOrders').onclick  = () => { $('__userMenu').classList.remove('open'); openOrdersHistory(); };
                 $('__menuLogout').onclick  = () => { $('__userMenu').classList.remove('open'); auth.signOut(); };
 

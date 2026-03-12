@@ -169,39 +169,125 @@
             display: block;
         }
 
-        
+        .cart-icon-container {
+            position: relative;
+            margin-right: 1rem;
+        }
 
-        
+        .cart-icon {
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
 
-        
+        .cart-icon:hover {
+            color: var(--secondary);
+        }
 
-        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
 
-        
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            left: -400px;
+            width: 380px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1100;
+            transition: left 0.4s ease;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
 
-        
+        .cart-sidebar.active {
+            left: 0;
+        }
 
-        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
 
-        
+        .cart-header h3 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
 
-        
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
 
-        
+        .close-cart:hover {
+            color: var(--accent);
+        }
 
-        
+        .cart-items {
+            margin-bottom: 2rem;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
 
-        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            gap: 1rem;
+        }
 
-        
+        .cart-item-img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #f0f0f0;
+        }
 
-        
+        .cart-item-details {
+            flex: 1;
+        }
 
-        
+        .cart-item-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
 
-        
+        .cart-item-price {
+            color: var(--accent);
+            font-weight: 700;
+        }
 
-        
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
 
         .quantity-btn {
             background: var(--light);
@@ -221,7 +307,11 @@
             color: white;
         }
 
-        
+        .cart-item-quantity {
+            font-weight: 600;
+            min-width: 25px;
+            text-align: center;
+        }
 
         .remove-item {
             background: none;
@@ -231,15 +321,46 @@
             font-size: 1.2rem;
         }
 
-        
+        .cart-footer {
+            border-top: 1px solid #eee;
+            padding-top: 1.5rem;
+        }
 
-        
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
 
-        
+        .checkout-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
 
-        
+        .checkout-btn:hover {
+            background: #27ae60;
+        }
 
-        
+        .empty-cart {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray);
+        }
 
         .empty-cart i {
             font-size: 3rem;
@@ -247,9 +368,20 @@
             color: #ddd;
         }
 
-        
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1050;
+            display: none;
+        }
 
-        
+        .cart-overlay.active {
+            display: block;
+        }
 
         .customer-modal {
             position: fixed;
@@ -708,19 +840,62 @@
             transform: translateY(-2px);
         }
 
-        
+        .payment-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1300;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
 
-        
+        .payment-modal.active {
+            display: flex;
+        }
 
-        
+        .payment-container {
+            background: white;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
 
-        
+        .payment-header {
+            background: linear-gradient(135deg, #2E8B57, #3CB371);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        
+        .payment-header h3 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-        
+        .payment-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
 
-        
+        .payment-body {
+            padding: 2rem;
+        }
 
         .payment-steps {
             display: flex;
@@ -935,11 +1110,30 @@
             background: #5a6268;
         }
 
-        
+        .confirm-payment-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.3s;
+        }
 
-        
+        .confirm-payment-btn:hover {
+            background: #27ae60;
+        }
 
-        
+        .confirm-payment-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
 
         .copy-account-id {
             display: inline-flex;
@@ -1980,7 +2174,10 @@
                 font-size: 2.3rem;
             }
             
-            
+            .cart-sidebar {
+                width: 320px;
+                left: -320px;
+            }
             
             .card-grid {
                 grid-template-columns: 1fr;
@@ -2069,15 +2266,28 @@
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             }
 
+            .cart-sidebar {
+                width: 90%;
+                left: -100%;
+            }
             
+            .cart-sidebar.active {
+                left: 5%;
+            }
             
+            .cart-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
             
+            .cart-item-details {
+                text-align: center;
+            }
             
-            
-            
-            
-            
-            
+            .cart-item-actions {
+                justify-content: center;
+            }
             
             .about-section {
                 padding: 6rem 5%;
@@ -2270,16 +2480,16 @@
             .nav-content { display: flex; align-items: center; justify-content: space-between; }
             .menu-toggle { order: 1; margin-left: 0; }
             .logo { order: 2; margin-right: 0; font-size: 1.3rem; }
-            
-            
-            .nav-links 
-            
-            
+            .cart-icon-container { order: 3; margin-right: 0; margin-bottom: 0; display: block !important; }
+            .cart-icon { font-size: 1.4rem; }
+            .nav-links .cart-icon-container { display: none !important; }
+            .cart-sidebar { width: 95%; }
+            .cart-sidebar.active { left: 2.5%; }
             .payment-steps::before { right: 20%; left: 20%; }
             .account-id-container { padding: 0.6rem; margin-top: 0.6rem; }
             .account-id-value { font-size: 0.75rem; padding: 0.5rem; word-break: break-word; }
             .copy-account-id { padding: 0.5rem 0.7rem; font-size: 0.8rem; }
-            
+            .payment-body { padding: 1.5rem; }
             /* quantity-body responsive handled in main */
             .product-details-body { padding: 1.5rem; }
             .product-details-title { font-size: 1.3rem; }
@@ -2608,7 +2818,12 @@
         .search-no-results { padding: 2rem; text-align: center; color: var(--gray); }
 
         /* كوبون الخصم */
-        
+        .coupon-section {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
 
         .coupon-section h4 {
             font-size: 0.95rem;
@@ -2619,7 +2834,7 @@
             gap: 0.5rem;
         }
 
-        
+        .coupon-input-group { display: flex; gap: 0.5rem; }
 
         .coupon-input-group input {
             flex: 1;
@@ -2633,15 +2848,35 @@
 
         .coupon-input-group input:focus { outline: none; border-color: var(--secondary); }
 
-        
+        .apply-coupon-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
 
-        
+        .apply-coupon-btn:hover { background: #1e2e3f; }
 
-        
+        .coupon-message { margin-top: 0.5rem; font-size: 0.85rem; font-weight: 600; }
         .coupon-message.success { color: var(--success); }
         .coupon-message.error { color: var(--accent); }
 
-        
+        .discount-row {
+            display: flex;
+            justify-content: space-between;
+            color: var(--success);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed #ddd;
+        }
 
         /* تقييمات */
         .product-rating { display: flex; align-items: center; gap: 0.3rem; margin: 0.3rem 0; }
@@ -3257,9 +3492,7 @@
         </div>
     </div>
 
-    </div>
-
-        <!-- قسم الهيرو -->
+<!-- قسم الهيرو -->
     <section class="hero" id="home">
         <div class="hero-content">
             <h1>التجربة الأولى من نوعها في سوريا <span style="color: var(--secondary)">زودني</span></h1>
@@ -8614,20 +8847,7 @@
                 });
 
                 card.querySelector('.vpn-cart').addEventListener('click', () => {
-                    const cartItem = {
-                        id: vpnProductData.id,
-                        name: vpnProductData.name,
-                        price: product.price || 0,
-                        quantity: 1,
-                        image: group.image,
-                        category: 'اشتراكات VPN'
-                    };
-                    const existing = cart.find(i => i.id === cartItem.id);
-                    if (existing) existing.quantity++;
-                    else cart.push(cartItem);
-                    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
-                    updateCartUI();
-                    showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
+                    directOrder(vpnProductData.id);
                 });
 
 
@@ -8892,20 +9112,7 @@
                 });
 
                 card.querySelector('.payment-cart').addEventListener('click', () => {
-                    const cartItem = {
-                        id: paymentProductData.id,
-                        name: paymentProductData.name,
-                        price: product.price || 0,
-                        quantity: 1,
-                        image: group.image,
-                        category: 'الدفع الالكتروني'
-                    };
-                    const existing = cart.find(i => i.id === cartItem.id);
-                    if (existing) existing.quantity++;
-                    else cart.push(cartItem);
-                    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
-                    updateCartUI();
-                    showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
+                    directOrder(paymentProductData.id);
                 });
 
 
@@ -9054,12 +9261,7 @@
                     showPaymentProductDetails({ id: product.id, name: product.name, price: product.price, image: product.image, description: product.description });
                 });
                 card.querySelector('.tv-cart').addEventListener('click', () => {
-                    const existing = cart.find(i => i.id === product.id);
-                    if (existing) existing.quantity++;
-                    else cart.push({ id: product.id, name: product.name, price: product.price || 0, quantity: 1, image: product.image, category: 'اشتراكات التلفاز' });
-                    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
-                    updateCartUI();
-                    showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
+                    directOrder(product.id);
                 });
 
                 productsGrid.appendChild(card);
@@ -9205,16 +9407,10 @@
                     showPaymentProductDetails({ id: product.id, name: product.name, price: product.price, image: product.image, description: product.description });
                 });
                 card.querySelector('.design-cart').addEventListener('click', () => {
-                    // إذا كان المنتج يحتاج إيميل (مثل كانفا) → افتح نافذة الإيميل
                     if (product.inputLabel) {
                         openDesignEmailModal(product);
                     } else {
-                        const existing = cart.find(i => i.id === product.id);
-                        if (existing) existing.quantity++;
-                        else cart.push({ id: product.id, name: product.name, price: product.price || 0, quantity: 1, image: product.image, category: 'برامج التصميم' });
-                        localStorage.setItem('zoodnyCart', JSON.stringify(cart));
-                        updateCartUI();
-                        showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
+                        directOrder(product.id);
                     }
                 });
 
@@ -9757,20 +9953,7 @@
                 });
 
                 card.querySelector('.vpn-cart').addEventListener('click', () => {
-                    const cartItem = {
-                        id: vpnProductData.id,
-                        name: vpnProductData.name,
-                        price: product.price || 0,
-                        quantity: 1,
-                        image: group.image,
-                        category: 'اشتراكات VPN'
-                    };
-                    const existing = cart.find(i => i.id === cartItem.id);
-                    if (existing) existing.quantity++;
-                    else cart.push(cartItem);
-                    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
-                    updateCartUI();
-                    showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
+                    directOrder(vpnProductData.id);
                 });
 
 
@@ -10021,12 +10204,7 @@
                     showPaymentProductDetails({ id: product.id, name: product.name, price: product.price, image: product.image, description: product.description });
                 });
                 card.querySelector('.arqam-cart').addEventListener('click', () => {
-                    const existing = cart.find(i => i.id === product.id);
-                    if (existing) existing.quantity++;
-                    else cart.push({ id: product.id, name: product.name, price: product.price || 0, quantity: 1, image: product.image, category: categoryId });
-                    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
-                    updateCartUI();
-                    showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
+                    directOrder(product.id);
                 });
 
                 productsGrid.appendChild(card);
@@ -10145,7 +10323,7 @@
                 btn.addEventListener('click', function() {
                     const productId = parseInt(this.getAttribute('data-id'));
                     const product = products.find(p => p.id === productId);
-                    if (!product) return;
+                    
                     if (product.category === 'social-media') {
                         openQuantityModal(product);
                     } else if (product.category === 'rased') {
@@ -10157,7 +10335,7 @@
                     } else if (product.category === 'تفعيلات بريميوم') {
                         openPremiumModal(product);
                     } else {
-                        directOrder(productId);
+                        addToCart(productId);
                     }
                 });
             });
@@ -10819,8 +10997,6 @@
             checkForPremiumProducts();
             
             localStorage.setItem('zoodnyCart', JSON.stringify(cart));
-            updateCartUI();
-            showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
         }
         
         // -------------------- التحقق من وجود منتجات سوشال ميديا --------------------
@@ -11325,14 +11501,15 @@
 
             // ── إغلاق كل النوافذ فوراً ──
             try { if (customerModal) customerModal.classList.remove('active'); } catch(e) {}
-            try { if (paymentModal)  {  modalOff('confirmOv', 'paymentModal'); } } catch(e) {}
+            try { if (paymentModal)  { paymentModal.style.display = 'none'; paymentModal.classList.remove('active'); } } catch(e) {}
             /* cartSidebar removed */
             /* cartOverlay removed */
 
             // ── عرض رسالة النجاح فوراً ──
             document.getElementById('orderSuccessId').textContent    = orderId;
             document.getElementById('orderSuccessTotal').textContent = totalPrice.toFixed(2) + '$';
-            modalOn('orderSuccessOv', 'orderSuccessModal');
+            document.getElementById('orderSuccessOv').classList.add('active');
+            document.getElementById('orderSuccessModal').classList.add('active');
 
             // ── تفريغ السلة ──
             cart = [];
@@ -12039,10 +12216,7 @@
                 customerModal.classList.remove('active');
             });
             
-            var _pClose2 = document.getElementById('paymentClose'); if(_pClose2) _pClose2.addEventListener('click', function paymentCloseHandler() {
-                
-                modalOff('confirmOv', 'paymentModal');
-            });
+            var _pcBtn=document.getElementById('paymentClose'); if(_pcBtn) _pcBtn.addEventListener('click',function(){ modalOff('confirmOv','paymentModal'); });
 
             // ════════════════════════════════════════════════════
             // directOrder: تجاوز السلة — إضافة منتج + فتح تأكيد
@@ -12116,8 +12290,7 @@
                 document.getElementById('orderNumber').textContent = orderNum;
 
                 document.getElementById('submitPaymentErr').textContent = '';
-                
-                modalOn('confirmOv', 'paymentModal');
+                modalOn('confirmOv','paymentModal');
             }
 
             submitPayment.addEventListener('click', function() {
@@ -12163,12 +12336,12 @@
                     var uphone = (typeof userData !== 'undefined' && userData) ? (userData.phone || '') : '';
 
                     // ── 1. إغلاق paymentModal تماماً ──
-                    modalOff('confirmOv', 'paymentModal');
+                    modalOff('confirmOv','paymentModal');
 
                     // ── 2. عرض نافذة النجاح ──
                     document.getElementById('orderSuccessId').textContent    = orderId;
                     document.getElementById('orderSuccessTotal').textContent = totalPrice.toFixed(2) + '$';
-                    modalOn('orderSuccessOv', 'orderSuccessModal');
+                    modalOn('orderSuccessOv','orderSuccessModal');
 
                     // ── 3. تفريغ السلة ──
                     cart = [];
@@ -14350,7 +14523,7 @@
             var closeBtn = document.getElementById('orderSuccessCloseBtn');
             if (closeBtn) {
                 closeBtn.addEventListener('click', function() {
-                    modalOff('orderSuccessOv', 'orderSuccessModal');
+                    modalOff('orderSuccessOv','orderSuccessModal');
                     var cats  = document.getElementById('categories');
                     var prods = document.getElementById('productsSection');
                     if (prods) prods.style.display = 'none';
@@ -14505,7 +14678,7 @@
             <button class="acct-close-btn" id="acctCloseBtn"><i class="fas fa-times"></i></button>
             <div class="acct-avatar" id="acctAvatar">Z</div>
             <div class="acct-name" id="acctName">اسم المستخدم</div>
-            <div class="acct-email" id="acctEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c8ada5a9a1a488adb0a9a5b8a4ade6aba7a5">[email&#160;protected]</a></div>
+            <div class="acct-email" id="acctEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f3969e929a9fb3968b929e839f96dd909c9e">[email&#160;protected]</a></div>
         </div>
         <div class="acct-balance-card">
             <div>
@@ -14566,9 +14739,4 @@
             </div>
         </div>
         <button class="order-succ-close" id="orderSuccessCloseBtn" style="width:100%;margin-top:.5rem">
-            <i class="fas fa-thumbs-up"></i> &nbsp; حسناً، شكراً!
-        </button>
-    </div>
-
-</body>
-</html>
+       

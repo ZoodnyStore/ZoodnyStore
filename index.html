@@ -50,15 +50,33 @@
             width: 100%;
             overflow-y: scroll;
         }
-        /* إخفاء الشريط السفلي عند فتح نافذة */
-        .mobile-bottom-nav {
-            transition: opacity .22s, transform .22s;
-        }
+        /* إخفاء bottom nav عند فتح أي نافذة */
+        .mobile-bottom-nav { transition: opacity .22s, transform .22s; }
         body.qmodal-open .mobile-bottom-nav {
             opacity: 0 !important;
             pointer-events: none !important;
             transform: translateX(-50%) translateY(20px) !important;
         }
+        /* حقل رابط الخدمة */
+        .svc-link-wrap { margin-bottom: 1.2rem; }
+        .svc-link-wrap label {
+            display: flex; align-items: center; gap: 6px;
+            font-size: .85rem; font-weight: 700; color: var(--primary); margin-bottom: 6px;
+        }
+        .svc-link-wrap label i { color: #e0a832; }
+        .svc-link-input {
+            width: 100%; padding: .65rem .9rem;
+            border: 1.5px solid #dde0e8; border-radius: 9px;
+            font-family: 'Cairo', sans-serif; font-size: .88rem;
+            direction: ltr; background: #fafbfc; box-sizing: border-box;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .svc-link-input:focus {
+            outline: none; border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(247,200,115,.15); background: #fff;
+        }
+        .svc-link-hint { font-size: .75rem; color: var(--gray); margin-top: 4px; }
+        .svc-link-hint i { color: var(--secondary); margin-left: 3px; }
 
         .navbar {
             background: rgba(42, 63, 84, 0.98);
@@ -3088,8 +3106,8 @@
     <!-- نافذة إدخال الكمية المطلوبة لخدمات السوشال ميديا -->
     <div class="quantity-modal" id="quantityModal">
         <div class="quantity-container">
-            <div class="quantity-header">
-                <h3><i class="fab fa-instagram"></i> إدخال الكمية المطلوبة</h3>
+            <div class="quantity-header" id="qModalHeader">
+                <h3 id="qModalTitle"><i class="fab fa-instagram"></i> إدخال الكمية المطلوبة</h3>
                 <button class="quantity-close" id="quantityClose"><i class="fas fa-times"></i></button>
             </div>
             <div class="quantity-body">
@@ -3097,7 +3115,21 @@
                     <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
                     <span id="selectedProductName">متابعين إنستغرام حقيقي</span>
                 </div>
-                
+
+                <!-- حقل رابط الخدمة -->
+                <div class="svc-link-wrap">
+                    <label for="svcLinkInput">
+                        <i class="fas fa-link"></i>
+                        <span id="svcLinkLabel">رابط الصفحة / المنشور</span> *
+                    </label>
+                    <input type="url" class="svc-link-input" id="svcLinkInput"
+                           placeholder="https://" autocomplete="off" spellcheck="false"/>
+                    <div class="svc-link-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="svcLinkHint">أدخل رابط الصفحة أو المنشور المراد تعزيزه</span>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="socialQuantity">الكمية المطلوبة *</label>
                     <input type="number" id="socialQuantity" placeholder="أدخل الكمية المطلوبة (مثال: 1000)" min="300" max="1000000" step="1" required>
@@ -8244,26 +8276,6 @@
         const socialMediaFields = document.getElementById('socialMediaFields');
         const accountUrl = document.getElementById('accountUrl');
         const socialMediaItemsSummary = document.getElementById('socialMediaItemsSummary');
-
-        // ── دوال مركزية لفتح/إغلاق نوافذ quantity-modal ──────────────────────
-        var _qScrollY = 0;
-        function openQModal(modalEl) {
-            if (!modalEl) return;
-            // حفظ الـ scroll وتثبيت الصفحة
-            _qScrollY = window.scrollY;
-            document.body.style.top = '-' + _qScrollY + 'px';
-            document.body.classList.add('qmodal-open');
-            // فتح النافذة
-            modalEl.classList.add('active');
-        }
-        function closeQModal(modalEl) {
-            if (!modalEl) return;
-            modalEl.classList.remove('active');
-            // إعادة الصفحة لوضعها
-            document.body.classList.remove('qmodal-open');
-            document.body.style.top = '';
-            window.scrollTo(0, _qScrollY);
-        }
         
         const step1 = document.getElementById('step1');
         const step2 = document.getElementById('step2');
@@ -10541,18 +10553,76 @@
         }
         
         // -------------------- فتح نافذة إدخال الكمية للسوشال ميديا --------------------
+        // إعدادات كل منصة: تسمية حقل الرابط وتلميحه والـ placeholder
+        var _platformLinkCfg = {
+            instagram: {
+                follow:  { label:'رابط صفحة إنستغرام',        hint:'مثال: https://instagram.com/username',     ph:'https://instagram.com/username' },
+                post:    { label:'رابط المنشور / الريلز',      hint:'مثال: https://instagram.com/p/ABC123/',   ph:'https://instagram.com/p/...' },
+                default: { label:'رابط الصفحة أو المنشور',    hint:'مثال: https://instagram.com/...',         ph:'https://instagram.com/...' }
+            },
+            facebook: {
+                follow:  { label:'رابط صفحة فيسبوك',          hint:'مثال: https://facebook.com/pagename',    ph:'https://facebook.com/pagename' },
+                post:    { label:'رابط المنشور / الفيديو',     hint:'مثال: https://facebook.com/video/123',   ph:'https://facebook.com/...' },
+                default: { label:'رابط الصفحة أو المنشور',    hint:'مثال: https://facebook.com/...',         ph:'https://facebook.com/...' }
+            },
+            tiktok: {
+                follow:  { label:'رابط حساب تيك توك',         hint:'مثال: https://tiktok.com/@username',     ph:'https://tiktok.com/@username' },
+                post:    { label:'رابط الفيديو',               hint:'مثال: https://tiktok.com/@user/video/…', ph:'https://tiktok.com/@user/video/...' },
+                default: { label:'رابط الحساب أو الفيديو',    hint:'مثال: https://tiktok.com/...',           ph:'https://tiktok.com/...' }
+            },
+            youtube: {
+                follow:  { label:'رابط قناة يوتيوب',          hint:'مثال: https://youtube.com/@channel',     ph:'https://youtube.com/@channel' },
+                post:    { label:'رابط الفيديو',               hint:'مثال: https://youtube.com/watch?v=ABC',  ph:'https://youtube.com/watch?v=...' },
+                default: { label:'رابط القناة أو الفيديو',    hint:'مثال: https://youtube.com/...',          ph:'https://youtube.com/...' }
+            },
+            telegram: {
+                follow:  { label:'رابط القناة أو المجموعة',   hint:'مثال: https://t.me/channelname',         ph:'https://t.me/...' },
+                post:    { label:'رابط المنشور / القناة',      hint:'مثال: https://t.me/channelname/123',     ph:'https://t.me/...' },
+                default: { label:'رابط القناة أو المجموعة',   hint:'مثال: https://t.me/...',                 ph:'https://t.me/...' }
+            }
+        };
+
+        var _qScrollY = 0;
+
         function openQuantityModal(product) {
             selectedSocialProduct = product;
-            
             selectedProductName.textContent = product.name;
-            
-            const pricePerThousandValue = product.basePrice || product.price || 0;
-            pricePerThousand.textContent = `${pricePerThousandValue.toFixed(2)}$`;
-            
+
+            var ppv = product.basePrice || product.price || 0;
+            pricePerThousand.textContent = ppv.toFixed(2) + '$';
             socialQuantity.value = '';
             calculatedPrice.textContent = '0.00$';
-            
-            openQModal(quantityModal);
+
+            // ── ضبط حقل الرابط حسب المنصة والنوع ──
+            var platform = product.platform || 'instagram';
+            var name = product.name;
+            var cfgMap = _platformLinkCfg[platform] || _platformLinkCfg['instagram'];
+            var isFollow = name.includes('متابع') || name.includes('مشترك') || name.includes('عضو') || name.includes('صفحة');
+            var isPost   = name.includes('مشاهد') || name.includes('لايك') || name.includes('تفاعل') || name.includes('مشارك') || name.includes('تعليق') || name.includes('فيديو') || name.includes('ريلز');
+            var cfg = isFollow ? cfgMap.follow : isPost ? cfgMap.post : cfgMap.default;
+
+            var lblEl  = document.getElementById('svcLinkLabel');
+            var hintEl = document.getElementById('svcLinkHint');
+            var inpEl  = document.getElementById('svcLinkInput');
+            if (lblEl)  lblEl.textContent  = cfg.label;
+            if (hintEl) hintEl.textContent = cfg.hint;
+            if (inpEl)  { inpEl.value = ''; inpEl.placeholder = cfg.ph; }
+
+            // ── تثبيت scroll الصفحة وإخفاء bottom nav ──
+            _qScrollY = window.scrollY;
+            document.body.style.top = '-' + _qScrollY + 'px';
+            document.body.classList.add('qmodal-open');
+
+            quantityModal.classList.add('active');
+            setTimeout(function(){ var i=document.getElementById('svcLinkInput'); if(i) i.focus(); }, 320);
+        }
+
+        function _closeQuantityModal() {
+            quantityModal.classList.remove('active');
+            document.body.classList.remove('qmodal-open');
+            document.body.style.top = '';
+            window.scrollTo(0, _qScrollY);
+            selectedSocialProduct = null;
         }
         
         // -------------------- تحديث معاينة السعر للسوشال ميديا --------------------
@@ -10599,7 +10669,7 @@
             calculatedCreditPrice.textContent = '0.00$';
             selectedCreditValue.textContent = '0';
             
-            openQModal(creditModal);
+            creditModal.classList.add('active');
         }
         
         // -------------------- تحديث معاينة سعر الرصيد --------------------
@@ -10660,7 +10730,7 @@
             appPlayerId.value = '';
             updateAppPricePreview();
             
-            openQModal(appModal);
+            appModal.classList.add('active');
         }
         
         // -------------------- تحديث معاينة سعر التطبيق --------------------
@@ -10723,7 +10793,7 @@
             calculatedGamePrice.textContent = '0.00$';
             selectedGameValue.textContent = '0';
             
-            openQModal(gameModal);
+            gameModal.classList.add('active');
         }
 
         // -------------------- فتح نافذة تفعيلات البريميوم --------------------
@@ -10771,7 +10841,7 @@
             
             premiumInput.value = '';
             
-            openQModal(premiumModal);
+            premiumModal.classList.add('active');
         }
         
         // -------------------- تحديث معاينة سعر البريميوم --------------------
@@ -10808,7 +10878,7 @@
         }
         
         // -------------------- إضافة منتج إلى السلة --------------------
-        function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null, gameAmount_ = null, playerId = null, appQuantity_ = null, premiumInputValue = null) {
+        function addToCart(productId, customQuantity = null, customPrice = null, phoneNumber = null, creditAmount_ = null, gameAmount_ = null, playerId = null, appQuantity_ = null, premiumInputValue = null, serviceLink = null) {
             let product = products.find(p => p.id === productId);
             
             // إذا لم يُعثر على المنتج، ابحث في vpnData
@@ -10854,6 +10924,7 @@
                     existingItem.customQuantity = (existingItem.customQuantity || 300) + customQuantity;
                     existingItem.price = calculateSocialMediaPrice(product.id, existingItem.customQuantity);
                     existingItem.quantity = 1;
+                    if (serviceLink) existingItem.serviceLink = serviceLink;
                 } else {
                     cart.push({
                         id: product.id,
@@ -10863,7 +10934,9 @@
                         quantity: 1,
                         customQuantity: customQuantity,
                         category: product.category,
-                        perThousand: product.perThousand || null
+                        platform: product.platform || null,
+                        perThousand: product.perThousand || null,
+                        serviceLink: serviceLink || null
                     });
                 }
             } else if (product.category === 'rased') {
@@ -11118,6 +11191,7 @@
                             <h4 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.3rem;">${item.name}</h4>
                             <p style="color: var(--accent); font-weight: 700;">${item.price.toFixed(2)}$</p>
                             <p style="color: var(--gray); font-size: 0.85rem;">الكمية: ${customQty.toLocaleString()}</p>
+                            ${item.serviceLink ? `<p style="font-size:.78rem;color:#1a6b3c;margin-top:3px;word-break:break-all"><i class="fas fa-link" style="margin-left:3px"></i>${item.serviceLink}</p>` : ''}
                         </div>
                     `;
                 } else if (isCredit) {
@@ -11439,7 +11513,8 @@
                 };
                 if (item.category === 'social-media') {
                     base.customQuantity = item.customQuantity || 300;
-                    base.accountUrl = customerData.accountUrl || '';
+                    base.serviceLink = item.serviceLink || '';
+                    base.platform = item.platform || '';
                 } else if (item.category === 'rased') {
                     base.creditValue  = item.creditValue  || '';
                     base.phoneNumber  = item.phoneNumber  || '';
@@ -11697,27 +11772,27 @@
                         const p = products.find(p => p.id === pid);
                         
                         if (p.category === 'social-media') {
-                            closeQModal(productDetailsModal);
+                            productDetailsModal.classList.remove('active');
                             openQuantityModal(p);
                         } else if (p.category === 'rased') {
-                            closeQModal(productDetailsModal);
+                            productDetailsModal.classList.remove('active');
                             openCreditModal(p);
                         } else if (p.category === 'games') {
-                            closeQModal(productDetailsModal);
+                            productDetailsModal.classList.remove('active');
                             openGameModal(p);
                         } else if (p.category === 'app') {
-                            closeQModal(productDetailsModal);
+                            productDetailsModal.classList.remove('active');
                             openAppModal(p);
                         } else {
                             addToCart(pid);
-                            closeQModal(productDetailsModal);
+                            productDetailsModal.classList.remove('active');
                         }
                     });
                 }
                 
             }, 100);
             
-            openQModal(productDetailsModal);
+            productDetailsModal.classList.add('active');
         }
         
 
@@ -11798,7 +11873,7 @@
                 </div>
             `;
 
-            openQModal(productDetailsModal);
+            productDetailsModal.classList.add('active');
 
             setTimeout(() => {
                 const addBtn = document.getElementById('payDetAddCart');
@@ -11818,7 +11893,7 @@
                         else cart.push(cartItem);
                         localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                         updateCartUI();
-                        closeQModal(productDetailsModal);
+                        productDetailsModal.classList.remove('active');
                         showToast('تمت إضافة المنتج إلى السلة بنجاح!');
                     });
                 }
@@ -11855,7 +11930,7 @@
             document.getElementById('calculatedDesignPrice').textContent =
                 product.price ? product.price.toFixed(2) + '$' : '0.00$';
 
-            openQModal(document.getElementById('designEmailModal'));
+            document.getElementById('designEmailModal').classList.add('active');
         }
 
         // -------------------- تهيئة الصفحة --------------------
@@ -11868,35 +11943,39 @@
             
             confirmQuantityBtn.addEventListener('click', function() {
                 if (!selectedSocialProduct) return;
-                
+
+                // التحقق من الرابط
+                var linkInp = document.getElementById('svcLinkInput');
+                var svcLink = linkInp ? linkInp.value.trim() : '';
+                if (!svcLink) {
+                    showToast('يرجى إدخال رابط الخدمة');
+                    if (linkInp) linkInp.focus();
+                    return;
+                }
+                if (!svcLink.startsWith('http://') && !svcLink.startsWith('https://')) {
+                    showToast('الرابط غير صحيح — يجب أن يبدأ بـ https://');
+                    if (linkInp) linkInp.focus();
+                    return;
+                }
+
                 const quantity = parseInt(socialQuantity.value);
-                
                 if (!quantity || quantity < 300) {
                     showToast('الحد الأدنى للطلب هو 300');
                     return;
                 }
-                
                 if (quantity > 1000000) {
                     showToast('الحد الأقصى للطلب هو 1,000,000');
                     return;
                 }
-                
-                addToCart(selectedSocialProduct.id, quantity);
-                
-                closeQModal(quantityModal);
-                selectedSocialProduct = null;
+
+                addToCart(selectedSocialProduct.id, quantity, null, null, null, null, null, null, null, svcLink);
+                _closeQuantityModal();
             });
-            
-            quantityClose.addEventListener('click', () => {
-                closeQModal(quantityModal);
-                selectedSocialProduct = null;
-            });
-            
+
+            quantityClose.addEventListener('click', () => { _closeQuantityModal(); });
+
             quantityModal.addEventListener('click', function(e) {
-                if (e.target === quantityModal) {
-                    closeQModal(quantityModal);
-                    selectedSocialProduct = null;
-                }
+                if (e.target === quantityModal) { _closeQuantityModal(); }
             });
             
             // أحداث نافذة الرصيد
@@ -11925,18 +12004,18 @@
                 
                 addToCart(selectedCreditProduct.id, null, null, phone, amount);
                 
-                closeQModal(creditModal);
+                creditModal.classList.remove('active');
                 selectedCreditProduct = null;
             });
             
             creditClose.addEventListener('click', () => {
-                closeQModal(creditModal);
+                creditModal.classList.remove('active');
                 selectedCreditProduct = null;
             });
             
             creditModal.addEventListener('click', function(e) {
                 if (e.target === creditModal) {
-                    closeQModal(creditModal);
+                    creditModal.classList.remove('active');
                     selectedCreditProduct = null;
                 }
             });
@@ -11967,18 +12046,18 @@
                 
                 addToCart(selectedAppProduct.id, null, null, null, null, null, playerIdValue, quantity);
                 
-                closeQModal(appModal);
+                appModal.classList.remove('active');
                 selectedAppProduct = null;
             });
             
             appClose.addEventListener('click', () => {
-                closeQModal(appModal);
+                appModal.classList.remove('active');
                 selectedAppProduct = null;
             });
             
             appModal.addEventListener('click', function(e) {
                 if (e.target === appModal) {
-                    closeQModal(appModal);
+                    appModal.classList.remove('active');
                     selectedAppProduct = null;
                 }
             });
@@ -12016,18 +12095,18 @@
                 
                 addToCart(productId, null, productPrice, null, null, amount, playerIdValue);
                 showToast('تمت إضافة المنتج إلى السلة بنجاح!');
-                closeQModal(gameModal);
+                gameModal.classList.remove('active');
                 selectedGameProduct = null;
             });
             
             gameClose.addEventListener('click', () => {
-                closeQModal(gameModal);
+                gameModal.classList.remove('active');
                 selectedGameProduct = null;
             });
             
             gameModal.addEventListener('click', function(e) {
                 if (e.target === gameModal) {
-                    closeQModal(gameModal);
+                    gameModal.classList.remove('active');
                     selectedGameProduct = null;
                 }
             });
@@ -12045,18 +12124,18 @@
                 
                 addToCart(selectedPremiumProduct.id, null, selectedPremiumProduct.price, null, null, null, null, null, premiumInputValue);
                 
-                closeQModal(premiumModal);
+                premiumModal.classList.remove('active');
                 selectedPremiumProduct = null;
             });
             
             premiumClose.addEventListener('click', () => {
-                closeQModal(premiumModal);
+                premiumModal.classList.remove('active');
                 selectedPremiumProduct = null;
             });
             
             premiumModal.addEventListener('click', function(e) {
                 if (e.target === premiumModal) {
-                    closeQModal(premiumModal);
+                    premiumModal.classList.remove('active');
                     selectedPremiumProduct = null;
                 }
             });
@@ -12245,12 +12324,12 @@
             copyAccountId.addEventListener('click', copyAccountIdToClipboard);
             
             productDetailsClose.addEventListener('click', () => {
-                closeQModal(productDetailsModal);
+                productDetailsModal.classList.remove('active');
             });
             
             productDetailsModal.addEventListener('click', function(e) {
                 if (e.target === productDetailsModal) {
-                    closeQModal(productDetailsModal);
+                    productDetailsModal.classList.remove('active');
                 }
             });
             
@@ -14302,6 +14381,7 @@
                         if (it.creditValue)    extras.push('<span><i class="fas fa-money-bill"></i> الرصيد: <b>' + it.creditValue + ' ل.س</b></span>');
                         if (it.customQuantity) extras.push('<span><i class="fas fa-sort-amount-up"></i> الكمية: <b>' + parseInt(it.customQuantity).toLocaleString() + '</b></span>');
                         if (it.premiumInput)   extras.push('<span><i class="fas fa-key"></i> البيانات: <b>' + it.premiumInput + '</b></span>');
+                        if (it.serviceLink)    extras.push('<span style="color:#1a6b3c"><i class="fas fa-link"></i> الرابط: <b><a href="' + it.serviceLink + '" target="_blank" style="color:#1a6b3c;text-decoration:underline">' + it.serviceLink + '</a></b></span>');
                         return '<div class="adm-prod-item">'
                             + '<div style="flex:1">'
                             + '<div class="adm-prod-name"><i class="fas fa-tag" style="color:var(--secondary);font-size:.72rem;margin-left:4px"></i>' + (it.productName || it.name || '-') + '</div>'

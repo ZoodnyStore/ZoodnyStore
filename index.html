@@ -1242,32 +1242,68 @@
             font-size: 0.9rem;
         }
 
+        /* ══ Unified Toast ══ */
         .toast {
             position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--success);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1400;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(.82);
+            z-index: 99999;
             display: none;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 10px;
-            animation: fadeInUp 0.3s, fadeOutDown 0.3s 2.7s;
+            background: #fff;
+            border-radius: 20px;
+            padding: 1.6rem 2rem 1.4rem;
+            min-width: 240px;
+            max-width: min(88vw, 320px);
+            box-shadow: 0 24px 60px rgba(0,0,0,.22), 0 4px 16px rgba(0,0,0,.1);
+            text-align: center;
+            opacity: 0;
+            border-top: 4px solid var(--secondary);
+            transition: none;
         }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.toast-show {
+            display: flex;
+            animation: toastPop .3s cubic-bezier(.34,1.56,.64,1) forwards;
         }
-
-        @keyframes fadeOutDown {
-            from { opacity: 1; transform: translateX(-50%) translateY(0); }
-            to { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        .toast.toast-hide {
+            animation: toastFade .25s ease forwards;
         }
+        @keyframes toastPop {
+            from { opacity:0; transform: translate(-50%,-50%) scale(.75); }
+            to   { opacity:1; transform: translate(-50%,-50%) scale(1); }
+        }
+        @keyframes toastFade {
+            from { opacity:1; transform: translate(-50%,-50%) scale(1); }
+            to   { opacity:0; transform: translate(-50%,-50%) scale(.85); }
+        }
+        .toast-icon {
+            width: 46px; height: 46px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, var(--primary), #1a3550);
+            color: var(--secondary);
+            box-shadow: 0 4px 14px rgba(26,37,53,.25);
+            flex-shrink: 0;
+        }
+        .toast-icon.err  { background: linear-gradient(135deg,#c0392b,#e74c3c); color:#fff; }
+        .toast-icon.warn { background: linear-gradient(135deg,#e67e22,#f39c12); color:#fff; }
+        .toast-icon.ok   { background: linear-gradient(135deg,#1a6b3c,#27ae60); color:#fff; }
+        .toast-text {
+            font-size: .88rem; font-weight: 700;
+            color: var(--primary); line-height: 1.5;
+        }
+        /* backdrop خلف الرسالة */
+        .toast-backdrop {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.32);
+            backdrop-filter: blur(2px);
+            z-index: 99998;
+            display: none;
+        }
+        .toast-backdrop.show { display: block; }
 
         .hero {
             height: 85vh;
@@ -3736,9 +3772,11 @@
     </footer>
 
     <!-- رسائل التأكيد -->
+    <!-- backdrop + unified toast -->
+    <div class="toast-backdrop" id="toastBackdrop"></div>
     <div class="toast" id="successToast">
-        <i class="fas fa-check-circle"></i>
-        <span id="toastMessage">تمت إضافة المنتج إلى السلة بنجاح!</span>
+        <div class="toast-icon ok" id="toastIcon"><i class="fas fa-check-circle"></i></div>
+        <div class="toast-text" id="toastMessage">تمت إضافة المنتج إلى السلة</div>
     </div>
 
     <!-- مكتبات JS -->
@@ -8854,7 +8892,7 @@
                     else cart.push(cartItem);
                     localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                     updateCartUI();
-                    showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                    showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
                 });
 
 
@@ -9132,7 +9170,7 @@
                     else cart.push(cartItem);
                     localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                     updateCartUI();
-                    showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                    showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
                 });
 
 
@@ -9286,7 +9324,7 @@
                     else cart.push({ id: product.id, name: product.name, price: product.price || 0, quantity: 1, image: product.image, category: 'اشتراكات التلفاز' });
                     localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                     updateCartUI();
-                    showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                    showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
                 });
 
                 productsGrid.appendChild(card);
@@ -9441,7 +9479,7 @@
                         else cart.push({ id: product.id, name: product.name, price: product.price || 0, quantity: 1, image: product.image, category: 'برامج التصميم' });
                         localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                         updateCartUI();
-                        showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                        showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
                     }
                 });
 
@@ -9997,7 +10035,7 @@
                     else cart.push(cartItem);
                     localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                     updateCartUI();
-                    showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                    showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
                 });
 
 
@@ -10253,7 +10291,7 @@
                     else cart.push({ id: product.id, name: product.name, price: product.price || 0, quantity: 1, image: product.image, category: categoryId });
                     localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                     updateCartUI();
-                    showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                    showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
                 });
 
                 productsGrid.appendChild(card);
@@ -10906,7 +10944,7 @@
             
             if (product.category === 'social-media') {
                 if (!customQuantity) {
-                    showToast('يرجى تحديد الكمية المطلوبة');
+                    showToast('يرجى تحديد الكمية المطلوبة', 'err');
                     return;
                 }
                 
@@ -10936,7 +10974,7 @@
                 }
             } else if (product.category === 'rased') {
                 if (!creditAmount_ || !phoneNumber) {
-                    showToast('يرجى اختيار الكمية وإدخال رقم الهاتف');
+                    showToast('يرجى اختيار الكمية وإدخال رقم الهاتف', 'err');
                     return;
                 }
                 
@@ -10964,7 +11002,7 @@
                 });
             } else if (product.category === 'games') {
                 if (!gameAmount_ || !playerId) {
-                    showToast('يرجى اختيار الكمية وإدخال رقم اللاعب');
+                    showToast('يرجى اختيار الكمية وإدخال رقم اللاعب', 'err');
                     return;
                 }
                 
@@ -10988,7 +11026,7 @@
                 });
             } else if (product.category === 'app') {
                 if (!appQuantity_ || !playerId) {
-                    showToast('يرجى إدخال الكمية ورقم اللاعب');
+                    showToast('يرجى إدخال الكمية ورقم اللاعب', 'err');
                     return;
                 }
                 
@@ -11010,7 +11048,7 @@
                 });
             } else if (product.category === 'تفعيلات بريميوم') {
                 if (!premiumInputValue) {
-                    showToast('يرجى إدخال البيانات المطلوبة');
+                    showToast('يرجى إدخال البيانات المطلوبة', 'err');
                     return;
                 }
                 
@@ -11046,7 +11084,7 @@
             
             localStorage.setItem('zoodnyCart', JSON.stringify(cart));
             updateCartUI();
-            showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+            showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
         }
         
         // -------------------- التحقق من وجود منتجات سوشال ميديا --------------------
@@ -11617,13 +11655,39 @@
         }
         
         // -------------------- عرض رسالة نجاح --------------------
-        function showToast(message) {
-            toastMessage.textContent = message;
-            successToast.style.display = 'flex';
-            
-            setTimeout(() => {
-                successToast.style.display = 'none';
-            }, 3000);
+        var _toastTimer = null;
+        function showToast(message, type) {
+            // type: 'ok' | 'err' | 'warn' | '' (default=primary)
+            var t   = type || '';
+            var ic  = document.getElementById('toastIcon');
+            var msg = document.getElementById('toastMessage');
+            var bd  = document.getElementById('toastBackdrop');
+            if (!ic || !msg) return;
+
+            // أيقونة حسب النوع
+            var icons = { ok:'fas fa-check-circle', err:'fas fa-times-circle', warn:'fas fa-exclamation-triangle', '':'fas fa-bell' };
+            ic.innerHTML = '<i class="' + (icons[t]||icons['']) + '"></i>';
+            ic.className = 'toast-icon' + (t ? ' '+t : '');
+            msg.textContent = message;
+
+            // backdrop
+            if (bd) bd.classList.add('show');
+
+            // إظهار
+            if (_toastTimer) clearTimeout(_toastTimer);
+            successToast.classList.remove('toast-hide');
+            successToast.classList.add('toast-show');
+
+            _toastTimer = setTimeout(function() {
+                successToast.classList.remove('toast-show');
+                successToast.classList.add('toast-hide');
+                if (bd) bd.classList.remove('show');
+                setTimeout(function(){
+                    successToast.classList.remove('toast-hide');
+                    successToast.style.display = 'none';
+                    successToast.style.display = '';
+                }, 260);
+            }, 2800);
         }
         
         // -------------------- تهيئة السلة --------------------
@@ -11889,7 +11953,7 @@
                         localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                         updateCartUI();
                         closeQModal(productDetailsModal);
-                        showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                        showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
                     });
                 }
 
@@ -11942,12 +12006,12 @@
                 const quantity = parseInt(socialQuantity.value);
                 
                 if (!quantity || quantity < 300) {
-                    showToast('الحد الأدنى للطلب هو 300');
+                    showToast('الحد الأدنى للطلب هو 300', 'err');
                     return;
                 }
                 
                 if (quantity > 1000000) {
-                    showToast('الحد الأقصى للطلب هو 1,000,000');
+                    showToast('الحد الأقصى للطلب هو 1,000,000', 'err');
                     return;
                 }
                 
@@ -11979,17 +12043,17 @@
                 const phone = creditPhoneNumber.value.trim();
                 
                 if (!amount) {
-                    showToast('يرجى اختيار الكمية');
+                    showToast('يرجى اختيار الكمية', 'err');
                     return;
                 }
                 
                 if (!phone) {
-                    showToast('يرجى إدخال رقم الهاتف');
+                    showToast('يرجى إدخال رقم الهاتف', 'err');
                     return;
                 }
                 
                 if (!/^09[0-9]{8}$/.test(phone)) {
-                    showToast('رقم الهاتف غير صحيح. يجب أن يبدأ بـ 09 ويتكون من 10 أرقام');
+                    showToast('رقم الهاتف غير صحيح. يجب أن يبدأ بـ 09 ويتكون من 10 أرقام', 'err');
                     return;
                 }
                 
@@ -12026,12 +12090,12 @@
                 const playerIdValue = appPlayerId.value.trim();
                 
                 if (!quantity || quantity < appData.minQuantity || quantity > appData.maxQuantity) {
-                    showToast(`الكمية يجب أن تكون بين ${appData.minQuantity} و ${appData.maxQuantity}`);
+                    showToast(`الكمية يجب أن تكون بين ${appData.minQuantity} و ${appData.maxQuantity}`, 'err');
                     return;
                 }
                 
                 if (!playerIdValue) {
-                    showToast('يرجى إدخال رقم اللاعب');
+                    showToast('يرجى إدخال رقم اللاعب', 'err');
                     return;
                 }
                 
@@ -12063,12 +12127,12 @@
                 const playerIdValue = gamePlayerId.value.trim();
                 
                 if (!amount) {
-                    showToast('يرجى اختيار الكمية');
+                    showToast('يرجى اختيار الكمية', 'err');
                     return;
                 }
                 
                 if (!playerIdValue) {
-                    showToast('يرجى إدخال رقم اللاعب');
+                    showToast('يرجى إدخال رقم اللاعب', 'err');
                     return;
                 }
                 
@@ -12085,7 +12149,7 @@
                 }
                 
                 addToCart(productId, null, productPrice, null, null, amount, playerIdValue);
-                showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
                 closeQModal(gameModal);
                 selectedGameProduct = null;
             });
@@ -12109,7 +12173,7 @@
                 const premiumInputValue = document.getElementById('premiumInput').value.trim();
                 
                 if (!premiumInputValue) {
-                    showToast('يرجى إدخال البيانات المطلوبة');
+                    showToast('يرجى إدخال البيانات المطلوبة', 'err');
                     return;
                 }
                 
@@ -12142,14 +12206,14 @@
                 const emailVal = document.getElementById('designEmailInput').value.trim();
 
                 if (!emailVal) {
-                    showToast('يرجى إدخال الإيميل أولاً');
+                    showToast('يرجى إدخال الإيميل أولاً', 'err');
                     return;
                 }
 
                 // التحقق من صيغة الإيميل
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(emailVal)) {
-                    showToast('يرجى إدخال إيميل صحيح');
+                    showToast('يرجى إدخال إيميل صحيح', 'err');
                     return;
                 }
 
@@ -12175,7 +12239,7 @@
                 updateCartUI();
                 designEmailModal.classList.remove('active');
                 selectedDesignProduct = null;
-                showToast('تمت إضافة المنتج إلى السلة بنجاح!');
+                showToast('تمت إضافة المنتج إلى السلة بنجاح!', 'ok');
             });
 
             designEmailClose.addEventListener('click', () => {
@@ -13063,18 +13127,7 @@
         .succ-ref{font-size:.8rem;color:var(--gray);background:#f8f9fa;border-radius:8px;padding:.4rem .8rem;margin-bottom:1.2rem}
         .succ-ok-btn{background:var(--primary);color:#fff;border:none;border-radius:30px;padding:.65rem 2rem;font-size:.95rem;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer}
 
-        /* Balance toast */
-        .bal-toast{
-            position:fixed;bottom:28px;left:50%;
-            transform:translateX(-50%) translateY(80px);
-            background:#E74C3C;color:#fff;padding:.75rem 1.4rem;border-radius:30px;
-            z-index:9000;font-size:.9rem;font-weight:600;
-            box-shadow:0 8px 24px rgba(231,76,60,.4);
-            transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;
-            opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;
-        }
-        .bal-toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-        .bal-toast.green{background:#2ECC71;box-shadow:0 8px 24px rgba(46,204,113,.4)}
+        /* bal-toast → merged into unified toast */
 
         /* User dropdown */
         .user-dropdown{
@@ -13584,8 +13637,7 @@
         </div>
     </div>
 
-    <!-- ══ Balance toast ══ -->
-    <div class="bal-toast" id="balToast"><i class="fas fa-exclamation-circle"></i><span id="balToastMsg">رصيدك غير كافٍ</span></div>
+    <!-- bal-toast merged into unified toast -->
 
     <!-- ══ Admin login ══ -->
     <div class="z-ov" id="adminPanelOv" style="z-index:4000"></div>
@@ -13720,21 +13772,9 @@
             if (bottomNav) bottomNav.style.display = '';
         }
 
-        function balToast(msg, green) {
-            var el = $('balToast');
-            $('balToastMsg').textContent = msg;
-            el.classList.toggle('green', !!green);
-            el.classList.add('show');
-            setTimeout(() => el.classList.remove('show'), 3500);
-        }
+        function balToast(msg, green) { showToast(msg, green ? 'ok' : 'err'); }
 
-        // ── inject navbar buttons ────────────────────────────────────────────
         function buildNavButtons(user, uData) {
-            // remove old injected elements
-            ['__authNavBtn','__walletNavWrap','__userDropDown'].forEach(function(id){
-                var el = $(id); if (el) el.remove();
-            });
-
             var cartCont = document.querySelector('.nav-links .cart-icon-container');
             if (!cartCont) return;
 

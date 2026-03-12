@@ -99,6 +99,7 @@
         }
         .nav-left { display:flex; align-items:center; gap:1rem; }
         .nav-right { display:flex; align-items:center; gap:1rem; }
+        .nav-center { display:flex; align-items:center; justify-content:center; flex:1; }
 
         .menu-toggle {
             background: rgba(255,255,255,0.1);
@@ -119,6 +120,16 @@
             .menu-toggle {
                 display: flex;
             }
+            .nav-left {
+                order: 1;
+            }
+            .nav-center {
+                order: 2;
+                flex: 0;
+            }
+            .nav-right {
+                order: 3;
+            }
             #navWalletSlot, #navAccountSlot {
                 display: none;
             }
@@ -128,13 +139,19 @@
         }
         
         @media (min-width: 769px) {
-            #mobileMenuWalletSlot, #mobileMenuAccountSlot {
-                display: none;
-            }
-        }
-
-        @media (min-width: 769px) {
             .menu-toggle {
+                display: flex;
+            }
+            .nav-left {
+                order: 3;
+            }
+            .nav-center {
+                order: 2;
+            }
+            .nav-right {
+                order: 1;
+            }
+            #mobileMenuWalletSlot, #mobileMenuAccountSlot {
                 display: none;
             }
         }
@@ -3203,20 +3220,16 @@
     <!-- شريط التنقل -->
     <nav class="navbar">
         <div class="nav-content">
-            <div class="nav-left">
+            <div class="nav-right">
                 <button class="menu-toggle" id="menuToggle">
                     <span><i></i><i></i><i></i></span>
                 </button>
             </div>
-            <div class="nav-right">
+            <div class="nav-center">
                 <div id="navWalletSlot"></div>
+            </div>
+            <div class="nav-left">
                 <div id="navAccountSlot"></div>
-                <div class="cart-icon-container" id="cartIconContainer">
-                    <button class="cart-icon" id="cartIcon">
-                        <i class="fas fa-shopping-bag"></i>
-                    </button>
-                    <span class="cart-count" id="navCartCount">0</span>
-                </div>
             </div>
         </div>
     </nav>
@@ -3236,6 +3249,11 @@
             <a href="#branches" class="mobile-menu-item"><i class="fas fa-map-marker-alt"></i> فروعنا</a>
             <a href="#about" class="mobile-menu-item"><i class="fas fa-info-circle"></i> من نحن</a>
             <a href="#contact" class="mobile-menu-item"><i class="fas fa-phone-alt"></i> اتصل بنا</a>
+            <button class="mobile-cart-btn" id="mobileCartBtn">
+                <i class="fas fa-shopping-bag"></i>
+                <span>سلة المشتريات</span>
+                <span class="mobile-cart-count" id="mobileCartCount">0</span>
+            </button>
             <div id="mobileMenuAccountSlot"></div>
             <div id="mobileMenuWalletSlot" style="padding: 0.5rem 1.5rem;"></div>
         </div>
@@ -12343,6 +12361,21 @@
                 document.body.style.overflow = '';
             });
             
+            // Mobile cart button handler
+            const mobileCartBtn = document.getElementById('mobileCartBtn');
+            if (mobileCartBtn) {
+                mobileCartBtn.addEventListener('click', function() {
+                    mobileMenuDrawer.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                    const cartSidebar = document.getElementById('cartSidebar');
+                    const cartOverlay = document.getElementById('cartOverlay');
+                    if (cartSidebar) cartSidebar.classList.add('active');
+                    if (cartOverlay) cartOverlay.classList.add('active');
+                    document.body.classList.add('qmodal-open');
+                });
+            }
+            
             menuOverlay.addEventListener('click', () => {
                 mobileMenuDrawer.classList.remove('active');
                 menuOverlay.classList.remove('active');
@@ -12356,18 +12389,6 @@
                     document.body.style.overflow = '';
                 });
             });
-            
-            // Cart icon click handler
-            const cartIconContainer = document.getElementById('cartIconContainer');
-            if (cartIconContainer) {
-                cartIconContainer.addEventListener('click', function() {
-                    const cartSidebar = document.getElementById('cartSidebar');
-                    const cartOverlay = document.getElementById('cartOverlay');
-                    if (cartSidebar) cartSidebar.classList.toggle('active');
-                    if (cartOverlay) cartOverlay.classList.toggle('active');
-                    document.body.classList.toggle('qmodal-open');
-                });
-            }
             
             document.querySelectorAll('.nav-links a').forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -13220,6 +13241,46 @@
         
         .acct-drawer-btn:hover {
             background: rgba(247,200,115,0.2);
+        }
+        
+        .mobile-cart-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: calc(100% - 3rem);
+            margin: 1rem 1.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .mobile-cart-btn:hover {
+            background: #1e2e3f;
+            transform: translateY(-2px);
+        }
+        
+        .mobile-cart-btn i {
+            font-size: 1.2rem;
+        }
+        
+        .mobile-cart-btn span:first-of-type {
+            flex: 1;
+        }
+        
+        .mobile-cart-count {
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
         }
         
         @media (max-width: 768px) {

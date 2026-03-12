@@ -45,29 +45,28 @@
         }
 
         /* تثبيت الصفحة عند فتح أي modal */
-        body.modal-open {
-            position: fixed;
-            width: 100%;
-            overflow-y: scroll;
-        }
-        /* إخفاء bottom nav عند فتح أي نافذة */
+        body.modal-open { position: fixed; width: 100%; overflow-y: scroll; }
+
+        /* ── إخفاء bottom nav عند فتح نافذة ── */
         .mobile-bottom-nav { transition: opacity .22s, transform .22s; }
         body.qmodal-open .mobile-bottom-nav {
             opacity: 0 !important;
             pointer-events: none !important;
             transform: translateX(-50%) translateY(20px) !important;
         }
-        /* حقل رابط الخدمة */
-        .svc-link-wrap { margin-bottom: 1.2rem; }
+
+        /* ── حقل رابط الخدمة ── */
+        .svc-link-wrap { margin-bottom: .8rem; }
         .svc-link-wrap label {
-            display: flex; align-items: center; gap: 6px;
-            font-size: .85rem; font-weight: 700; color: var(--primary); margin-bottom: 6px;
+            display: flex; align-items: center; gap: 5px;
+            font-size: .78rem; font-weight: 700;
+            color: var(--primary); margin-bottom: 4px;
         }
-        .svc-link-wrap label i { color: #e0a832; }
+        .svc-link-wrap label i { color: var(--secondary); }
         .svc-link-input {
-            width: 100%; padding: .65rem .9rem;
-            border: 1.5px solid #dde0e8; border-radius: 9px;
-            font-family: 'Cairo', sans-serif; font-size: .88rem;
+            width: 100%; padding: .52rem .8rem;
+            border: 1.5px solid #e2e6ea; border-radius: 8px;
+            font-family: 'Cairo',sans-serif; font-size: .84rem;
             direction: ltr; background: #fafbfc; box-sizing: border-box;
             transition: border-color .2s, box-shadow .2s;
         }
@@ -75,8 +74,7 @@
             outline: none; border-color: var(--secondary);
             box-shadow: 0 0 0 3px rgba(247,200,115,.15); background: #fff;
         }
-        .svc-link-hint { font-size: .75rem; color: var(--gray); margin-top: 4px; }
-        .svc-link-hint i { color: var(--secondary); margin-left: 3px; }
+        .svc-link-hint { font-size: .7rem; color: var(--gray); margin-top: 3px; }
 
         .navbar {
             background: rgba(42, 63, 84, 0.98);
@@ -433,30 +431,26 @@
             padding: 2rem;
         }
 
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-
+        .form-group { margin-bottom: .8rem; }
         .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--dark);
+            display: flex; align-items: center; gap: 5px;
+            font-size: .78rem; font-weight: 700;
+            color: var(--primary); margin-bottom: 4px;
         }
-
+        .form-group label i { color: var(--secondary); font-size: .72rem; }
         .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 0.9rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border 0.3s;
+            width: 100%; padding: .52rem .8rem;
+            border: 1.5px solid #e2e6ea; border-radius: 8px;
+            font-family: 'Cairo',sans-serif; font-size: .84rem;
+            background: #fafbfc; box-sizing: border-box;
+            transition: border-color .2s, box-shadow .2s;
         }
-
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             border-color: var(--secondary);
-            outline: none;
+            box-shadow: 0 0 0 3px rgba(247,200,115,.15);
+            outline: none; background: #fff;
         }
+        .form-group small { font-size: .7rem; color: var(--gray); margin-top: 3px; display: block; }
 
         .social-media-fields {
             background: #f8f9fa;
@@ -482,128 +476,157 @@
             color: var(--secondary);
         }
 
+        /* ══ quantity-modal: overlay ══ */
         .quantity-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            position: fixed; inset: 0;
+            background: rgba(10,18,30,.62);
+            backdrop-filter: blur(4px);
             z-index: 1250;
             display: none;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
-            padding: 1rem;
         }
+        .quantity-modal.active { display: flex; }
 
-        .quantity-modal.active {
-            display: flex;
-        }
-
+        /* ══ bottom-sheet على موبايل، popup على لابتوب ══ */
         .quantity-container {
-            background: white;
-            border-radius: 15px;
+            background: #fff;
             width: 100%;
-            max-width: 450px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            max-width: 480px;
+            border-radius: 22px 22px 0 0;
+            max-height: 90vh;
+            display: flex; flex-direction: column;
+            box-shadow: 0 -6px 36px rgba(0,0,0,.2);
+            animation: qSlideUp .26s cubic-bezier(.4,0,.2,1);
+            overflow: hidden;
+        }
+        @keyframes qSlideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+        /* drag handle */
+        .quantity-container::before {
+            content: '';
+            display: block; flex-shrink: 0;
+            width: 38px; height: 4px;
+            background: #d8dce5; border-radius: 2px;
+            margin: 9px auto 0;
         }
 
+        /* لابتوب: مرتكز في المنتصف */
+        @media (min-width: 600px) {
+            .quantity-modal { align-items: center; padding: 1rem; }
+            .quantity-container {
+                border-radius: 18px;
+                animation: qPopIn .22s cubic-bezier(.34,1.5,.64,1);
+            }
+            .quantity-container::before { display: none; }
+        }
+        @keyframes qPopIn {
+            from { transform: scale(.9); opacity: 0; }
+            to   { transform: scale(1);  opacity: 1; }
+        }
+
+        /* ══ Header ══ */
         .quantity-header {
-            background: linear-gradient(135deg, var(--primary), #1E2B38);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 15px 15px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: linear-gradient(120deg, var(--primary) 0%, #1a3550 100%);
+            color: #fff;
+            padding: .7rem 1rem .65rem;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-shrink: 0;
+            border-bottom: 2px solid var(--secondary);
         }
-
         .quantity-header h3 {
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: .9rem; font-weight: 700;
+            display: flex; align-items: center; gap: 7px; margin: 0;
         }
-
+        .quantity-header h3 i {
+            font-size: 1rem;
+            color: var(--secondary);
+            filter: drop-shadow(0 0 4px rgba(247,200,115,.5));
+        }
         .quantity-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.18);
+            color: #fff; cursor: pointer;
+            width: 26px; height: 26px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .78rem; flex-shrink: 0;
+            transition: background .18s;
         }
+        .quantity-close:hover { background: rgba(255,255,255,.22); }
 
+        /* ══ Body ══ */
         .quantity-body {
-            padding: 2rem;
+            padding: .85rem 1rem 1rem;
+            overflow-y: auto; flex: 1;
+            -webkit-overflow-scrolling: touch;
         }
 
+        /* ══ Info banner ══ */
         .quantity-info {
-            background: #f0fff4;
-            border-right: 4px solid var(--success);
-            padding: 1rem;
+            background: linear-gradient(135deg,#edfbf3,#d9f7e8);
+            border-right: 3px solid var(--success);
+            padding: .5rem .75rem;
             border-radius: 8px;
-            margin-bottom: 1.5rem;
+            margin-bottom: .75rem;
+            font-size: .8rem; font-weight: 600; color: #1a5c35;
+            display: flex; align-items: center; gap: 6px;
         }
+        .quantity-info i { color: var(--success); flex-shrink: 0; font-size: .82rem; }
 
+        /* ══ Price preview ══ */
         .price-preview {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f0f3f8, #e8edf5);
+            border: 1px solid #dde2ec;
             border-radius: 10px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            text-align: center;
+            padding: .6rem .85rem;
+            margin: .65rem 0;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: .5rem;
         }
-
+        .price-preview p { color: var(--gray); font-size: .76rem; margin: 0; }
         .price-preview span {
-            color: var(--accent);
-            font-size: 1.5rem;
-            font-weight: 700;
+            color: var(--primary); font-size: 1.25rem; font-weight: 800;
+            white-space: nowrap;
         }
 
+        /* ══ Order summary ══ */
         .order-summary {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
+            background: #f8f9fb; border-radius: 8px;
+            padding: .65rem .85rem; margin-top: .7rem;
         }
-
         .summary-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.8rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #eee;
+            display: flex; justify-content: space-between;
+            font-size: .8rem;
+            margin-bottom: .5rem; padding-bottom: .4rem;
+            border-bottom: 1px solid #edf0f5;
         }
-
         .summary-total {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 2px solid #ddd;
+            font-size: .95rem; font-weight: 800; color: var(--primary);
+            margin-top: .6rem; padding-top: .6rem; border-top: 2px solid #e0e5ee;
         }
 
+        /* ══ Submit button ══ */
         .submit-order-btn {
-            background: var(--success);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 1.2rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 1.5rem;
+            background: linear-gradient(120deg, var(--primary) 0%, #1a3550 100%);
+            color: #fff; border: none; width: 100%;
+            padding: .72rem; border-radius: 10px;
+            font-size: .88rem; font-weight: 700;
+            font-family: 'Cairo',sans-serif; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 7px;
+            margin-top: .75rem;
+            transition: transform .18s, box-shadow .18s;
+            box-shadow: 0 4px 16px rgba(26,37,53,.3);
+            position: relative; overflow: hidden;
         }
-
-        .submit-order-btn:hover {
-            background: #27ae60;
+        .submit-order-btn::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(120deg, transparent 40%, rgba(247,200,115,.15) 100%);
         }
+        .submit-order-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(26,37,53,.38); }
+        .submit-order-btn:active { transform: translateY(0); }
 
         .product-details-modal {
             position: fixed;
@@ -2429,7 +2452,7 @@
             .account-id-value { font-size: 0.75rem; padding: 0.5rem; word-break: break-word; }
             .copy-account-id { padding: 0.5rem 0.7rem; font-size: 0.8rem; }
             .payment-body { padding: 1.5rem; }
-            .quantity-body { padding: 1.5rem; }
+            /* quantity-body responsive handled in main */
             .product-details-body { padding: 1.5rem; }
             .product-details-title { font-size: 1.3rem; }
             .product-details-price { font-size: 1.6rem; }
@@ -3104,52 +3127,48 @@
     </div>
 
     <!-- نافذة إدخال الكمية المطلوبة لخدمات السوشال ميديا -->
+    <!-- نافذة السوشال ميديا -->
     <div class="quantity-modal" id="quantityModal">
         <div class="quantity-container">
             <div class="quantity-header" id="qModalHeader">
-                <h3 id="qModalTitle"><i class="fab fa-instagram"></i> إدخال الكمية المطلوبة</h3>
+                <h3 id="qModalTitle"><i class="fab fa-instagram"></i> خدمة سوشال ميديا</h3>
                 <button class="quantity-close" id="quantityClose"><i class="fas fa-times"></i></button>
             </div>
             <div class="quantity-body">
                 <div class="quantity-info">
-                    <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
-                    <span id="selectedProductName">متابعين إنستغرام حقيقي</span>
+                    <i class="fas fa-tag"></i>
+                    <span id="selectedProductName">متابعين إنستغرام</span>
                 </div>
 
-                <!-- حقل رابط الخدمة -->
                 <div class="svc-link-wrap">
                     <label for="svcLinkInput">
                         <i class="fas fa-link"></i>
-                        <span id="svcLinkLabel">رابط الصفحة / المنشور</span> *
+                        <span id="svcLinkLabel">رابط الصفحة أو المنشور</span> *
                     </label>
                     <input type="url" class="svc-link-input" id="svcLinkInput"
                            placeholder="https://" autocomplete="off" spellcheck="false"/>
-                    <div class="svc-link-hint">
-                        <i class="fas fa-info-circle"></i>
-                        <span id="svcLinkHint">أدخل رابط الصفحة أو المنشور المراد تعزيزه</span>
-                    </div>
+                    <div class="svc-link-hint"><i class="fas fa-info-circle"></i> <span id="svcLinkHint">أدخل رابط الصفحة أو المنشور المراد تعزيزه</span></div>
                 </div>
 
                 <div class="form-group">
-                    <label for="socialQuantity">الكمية المطلوبة *</label>
-                    <input type="number" id="socialQuantity" placeholder="أدخل الكمية المطلوبة (مثال: 1000)" min="300" max="1000000" step="1" required>
-                    <small style="color: var(--gray); font-size: 0.85rem;">الحد الأدنى 300 - الحد الأقصى 1,000,000</small>
+                    <label for="socialQuantity"><i class="fas fa-sort-amount-up"></i> الكمية المطلوبة *</label>
+                    <input type="number" id="socialQuantity" placeholder="مثال: 1000" min="300" max="1000000" step="1" required>
+                    <small>الحد الأدنى 300 — الحد الأقصى 1,000,000</small>
                 </div>
-                
+
                 <div class="price-preview" id="pricePreview">
-                    <p style="color: var(--gray); margin-bottom: 0.5rem;">السعر المقدر:</p>
+                    <p>السعر المقدر &nbsp;|&nbsp; سعر الألف: <span id="pricePerThousand" style="font-weight:700;color:var(--primary)">3.50$</span></p>
                     <span id="calculatedPrice">0.00$</span>
-                    <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem;">* سعر الألف: <span id="pricePerThousand">3.50$</span></p>
                 </div>
-                
+
                 <button class="submit-order-btn" id="confirmQuantityBtn">
-                    <i class="fas fa-check"></i> تأكيد وإضافة للسلة
+                    <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة إدخال بيانات رصيد الموبايل -->
+    <!-- نافذة رصيد الموبايل -->
     <div class="quantity-modal" id="creditModal">
         <div class="quantity-container">
             <div class="quantity-header">
@@ -3158,37 +3177,32 @@
             </div>
             <div class="quantity-body">
                 <div class="quantity-info">
-                    <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
+                    <i class="fas fa-sim-card"></i>
                     <span id="selectedCreditName">سيرياتيل - رصيد</span>
                 </div>
-                
                 <div class="form-group">
-                    <label for="creditAmount">اختر الكمية *</label>
-                    <select id="creditAmount" class="form-control" required>
+                    <label for="creditAmount"><i class="fas fa-coins"></i> قيمة الرصيد *</label>
+                    <select id="creditAmount" required>
                         <option value="">-- اختر قيمة الرصيد --</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
-                    <label for="creditPhoneNumber">رقم الهاتف *</label>
-                    <input type="tel" id="creditPhoneNumber" class="form-control" placeholder="09xxxxxxxx" pattern="09[0-9]{8}" required>
-                    <small style="color: var(--gray); font-size: 0.85rem;">يجب أن يبدأ الرقم بـ 09</small>
+                    <label for="creditPhoneNumber"><i class="fas fa-mobile-alt"></i> رقم الهاتف *</label>
+                    <input type="tel" id="creditPhoneNumber" placeholder="09xxxxxxxx" pattern="09[0-9]{8}" required>
+                    <small>يجب أن يبدأ الرقم بـ 09 ويتكون من 10 أرقام</small>
                 </div>
-                
                 <div class="price-preview" id="creditPricePreview">
-                    <p style="color: var(--gray); margin-bottom: 0.5rem;">السعر:</p>
+                    <p>السعر &nbsp;|&nbsp; الرصيد: <span id="selectedCreditValue" style="font-weight:700;color:var(--primary)">0</span> ل.س</p>
                     <span id="calculatedCreditPrice">0.00$</span>
-                    <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem;">* قيمة الرصيد: <span id="selectedCreditValue">0</span> ل.س</p>
                 </div>
-                
                 <button class="submit-order-btn" id="confirmCreditBtn">
-                    <i class="fas fa-check"></i> تأكيد وإضافة للسلة
+                    <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ==================== نافذة شحن التطبيقات (معدلة) ==================== -->
+    <!-- نافذة شحن التطبيقات -->
     <div class="quantity-modal" id="appModal">
         <div class="quantity-container">
             <div class="quantity-header">
@@ -3197,38 +3211,31 @@
             </div>
             <div class="quantity-body">
                 <div class="quantity-info">
-                    <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
+                    <i class="fas fa-layer-group"></i>
                     <span id="selectedAppName">شحن تطبيق</span>
                 </div>
-                
-                <!-- حقل الكمية -->
                 <div class="form-group">
-                    <label for="appQuantity">الكمية المطلوبة *</label>
-                    <input type="number" id="appQuantity" class="form-control" placeholder="أدخل الكمية المطلوبة" step="1" required>
-                    <small style="color: var(--gray); font-size: 0.85rem;" id="appQuantityHelp">الحد الأدنى: 1 - الحد الأقصى: 100</small>
+                    <label for="appQuantity"><i class="fas fa-sort-amount-up"></i> الكمية المطلوبة *</label>
+                    <input type="number" id="appQuantity" placeholder="أدخل الكمية" step="1" required>
+                    <small id="appQuantityHelp">الحد الأدنى: 1</small>
                 </div>
-                
-                <!-- حقل رقم اللاعب (معرف الحساب) -->
                 <div class="form-group">
-                    <label for="appPlayerId" id="appPlayerIdLabel">رقم اللاعب *</label>
-                    <input type="text" id="appPlayerId" class="form-control" placeholder="أدخل رقم اللاعب الخاص بك" required>
-                    <small style="color: var(--gray); font-size: 0.85rem;" id="appPlayerIdHelp">أدخل رقم اللاعب (User ID) الخاص بحسابك</small>
+                    <label for="appPlayerId" id="appPlayerIdLabel"><i class="fas fa-id-badge"></i> معرّف الحساب *</label>
+                    <input type="text" id="appPlayerId" placeholder="أدخل معرّف حسابك" required>
+                    <small id="appPlayerIdHelp">أدخل رقم اللاعب (User ID)</small>
                 </div>
-                
                 <div class="price-preview" id="appPricePreview">
-                    <p style="color: var(--gray); margin-bottom: 0.5rem;">السعر:</p>
+                    <p>السعر &nbsp;|&nbsp; القطعة: <span id="unitPrice" style="font-weight:700;color:var(--primary)">0.00$</span></p>
                     <span id="calculatedAppPrice">0.00$</span>
-                    <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem;">* سعر القطعة: <span id="unitPrice">0.00$</span></p>
                 </div>
-                
                 <button class="submit-order-btn" id="confirmAppBtn">
-                    <i class="fas fa-check"></i> تأكيد وإضافة للسلة
+                    <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة شحن الألعاب (قائمة منسدلة) - بقيت كما هي للألعاب -->
+    <!-- نافذة شحن الألعاب -->
     <div class="quantity-modal" id="gameModal">
         <div class="quantity-container">
             <div class="quantity-header">
@@ -3237,37 +3244,32 @@
             </div>
             <div class="quantity-body">
                 <div class="quantity-info">
-                    <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
+                    <i class="fas fa-gamepad"></i>
                     <span id="selectedGameName">شحن لعبة</span>
                 </div>
-                
                 <div class="form-group">
-                    <label for="gameAmount">اختر الكمية *</label>
-                    <select id="gameAmount" class="form-control" required>
+                    <label for="gameAmount"><i class="fas fa-coins"></i> اختر الكمية *</label>
+                    <select id="gameAmount" required>
                         <option value="">-- اختر الكمية --</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
-                    <label for="gamePlayerId" id="gamePlayerIdLabel">رقم اللاعب *</label>
-                    <input type="text" id="gamePlayerId" class="form-control" placeholder="" required>
-                    <small style="color: var(--gray); font-size: 0.85rem;" id="gamePlayerIdHelp">أدخل رقم اللاعب (User ID) الخاص بحسابك</small>
+                    <label for="gamePlayerId" id="gamePlayerIdLabel"><i class="fas fa-id-badge"></i> رقم اللاعب *</label>
+                    <input type="text" id="gamePlayerId" placeholder="أدخل رقم اللاعب" required>
+                    <small id="gamePlayerIdHelp">أدخل رقم اللاعب (User ID)</small>
                 </div>
-                
                 <div class="price-preview" id="gamePricePreview">
-                    <p style="color: var(--gray); margin-bottom: 0.5rem;">السعر:</p>
+                    <p>السعر &nbsp;|&nbsp; الكمية: <span id="selectedGameValue" style="font-weight:700;color:var(--primary)">0</span></p>
                     <span id="calculatedGamePrice">0.00$</span>
-                    <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem;">* الكمية: <span id="selectedGameValue">0</span></p>
                 </div>
-                
                 <button class="submit-order-btn" id="confirmGameBtn">
-                    <i class="fas fa-check"></i> تأكيد وإضافة للسلة
+                    <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة تفعيلات البريميوم -->
+    <!-- نافذة البريميوم -->
     <div class="quantity-modal" id="premiumModal">
         <div class="quantity-container">
             <div class="quantity-header">
@@ -3276,30 +3278,27 @@
             </div>
             <div class="quantity-body">
                 <div class="quantity-info">
-                    <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
+                    <i class="fas fa-crown"></i>
                     <span id="selectedPremiumName">تفعيل</span>
                 </div>
-                
                 <div class="form-group">
-                    <label for="premiumInput" id="premiumInputLabel">أدخل البيانات المطلوبة *</label>
-                    <input type="text" id="premiumInput" class="form-control" placeholder="" required>
-                    <small style="color: var(--gray); font-size: 0.85rem;" id="premiumInputHelp"></small>
+                    <label for="premiumInput" id="premiumInputLabel"><i class="fas fa-key"></i> البيانات المطلوبة *</label>
+                    <input type="text" id="premiumInput" placeholder="" required>
+                    <small id="premiumInputHelp"></small>
                 </div>
-                
                 <div class="price-preview" id="premiumPricePreview">
-                    <p style="color: var(--gray); margin-bottom: 0.5rem;">السعر:</p>
+                    <p>السعر الإجمالي</p>
                     <span id="calculatedPremiumPrice">0.00$</span>
                 </div>
-                
                 <button class="submit-order-btn" id="confirmPremiumBtn">
-                    <i class="fas fa-check"></i> تأكيد وإضافة للسلة
+                    <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
                 </button>
             </div>
         </div>
     </div>
 
 
-    <!-- نافذة إدخال الإيميل لمنتجات التصميم (كانفا وغيرها) -->
+    <!-- نافذة التصميم/الإيميل -->
     <div class="quantity-modal" id="designEmailModal">
         <div class="quantity-container">
             <div class="quantity-header">
@@ -3308,25 +3307,20 @@
             </div>
             <div class="quantity-body">
                 <div class="quantity-info">
-                    <i class="fas fa-info-circle" style="color: var(--success); margin-left: 0.5rem;"></i>
+                    <i class="fas fa-paint-brush"></i>
                     <span id="selectedDesignName">المنتج</span>
                 </div>
-
-                <div class="form-group" style="margin-top: 1.2rem;">
-                    <label for="designEmailInput" id="designEmailLabel">أدخل الإيميل *</label>
-                    <input type="email" id="designEmailInput" class="form-control"
+                <div class="form-group">
+                    <label for="designEmailInput" id="designEmailLabel"><i class="fas fa-envelope"></i> الإيميل *</label>
+                    <input type="email" id="designEmailInput"
                            placeholder="example@gmail.com" required
-                           style="direction: ltr; text-align: left;">
-                    <small style="color: var(--gray); font-size: 0.85rem;" id="designEmailHelp">
-                        سيتم تفعيل الاشتراك على هذا الإيميل
-                    </small>
+                           style="direction:ltr;text-align:left">
+                    <small id="designEmailHelp">سيتم تفعيل الاشتراك على هذا الإيميل</small>
                 </div>
-
                 <div class="price-preview" id="designPricePreview">
-                    <p style="color: var(--gray); margin-bottom: 0.5rem;">السعر:</p>
+                    <p>السعر الإجمالي</p>
                     <span id="calculatedDesignPrice">0.00$</span>
                 </div>
-
                 <button class="submit-order-btn" id="confirmDesignEmailBtn">
                     <i class="fas fa-cart-plus"></i> تأكيد وإضافة للسلة
                 </button>
@@ -8269,6 +8263,23 @@
         let selectedPremiumProduct = null;
         
         const paymentModal = document.getElementById('paymentModal');
+
+        // ── دوال مركزية: فتح/إغلاق النوافذ + lock scroll + hide nav ──
+        var _qScrollY = 0;
+        function openQModal(el) {
+            if (!el) return;
+            _qScrollY = window.scrollY;
+            document.body.style.top = '-' + _qScrollY + 'px';
+            document.body.classList.add('qmodal-open');
+            el.classList.add('active');
+        }
+        function closeQModal(el) {
+            if (!el) return;
+            el.classList.remove('active');
+            document.body.classList.remove('qmodal-open');
+            document.body.style.top = '';
+            window.scrollTo(0, _qScrollY);
+        }
         const paymentClose = document.getElementById('paymentClose');
         const paymentMethodInput = document.getElementById('paymentMethod');
         const submitOrderBtn = document.getElementById('submitOrderBtn');
@@ -10553,76 +10564,60 @@
         }
         
         // -------------------- فتح نافذة إدخال الكمية للسوشال ميديا --------------------
-        // إعدادات كل منصة: تسمية حقل الرابط وتلميحه والـ placeholder
-        var _platformLinkCfg = {
+        // إعدادات حقل الرابط لكل منصة
+        var _pCfg = {
             instagram: {
-                follow:  { label:'رابط صفحة إنستغرام',        hint:'مثال: https://instagram.com/username',     ph:'https://instagram.com/username' },
-                post:    { label:'رابط المنشور / الريلز',      hint:'مثال: https://instagram.com/p/ABC123/',   ph:'https://instagram.com/p/...' },
-                default: { label:'رابط الصفحة أو المنشور',    hint:'مثال: https://instagram.com/...',         ph:'https://instagram.com/...' }
+                follow: { l:'رابط صفحة إنستغرام', h:'مثال: https://instagram.com/username', p:'https://instagram.com/username' },
+                post:   { l:'رابط المنشور / الريلز', h:'مثال: https://instagram.com/p/ABC/', p:'https://instagram.com/p/...' },
+                def:    { l:'رابط الصفحة أو المنشور', h:'مثال: https://instagram.com/...', p:'https://instagram.com/...' }
             },
             facebook: {
-                follow:  { label:'رابط صفحة فيسبوك',          hint:'مثال: https://facebook.com/pagename',    ph:'https://facebook.com/pagename' },
-                post:    { label:'رابط المنشور / الفيديو',     hint:'مثال: https://facebook.com/video/123',   ph:'https://facebook.com/...' },
-                default: { label:'رابط الصفحة أو المنشور',    hint:'مثال: https://facebook.com/...',         ph:'https://facebook.com/...' }
+                follow: { l:'رابط صفحة فيسبوك', h:'مثال: https://facebook.com/pagename', p:'https://facebook.com/pagename' },
+                post:   { l:'رابط المنشور أو الفيديو', h:'مثال: https://facebook.com/...', p:'https://facebook.com/...' },
+                def:    { l:'رابط الصفحة أو المنشور', h:'مثال: https://facebook.com/...', p:'https://facebook.com/...' }
             },
             tiktok: {
-                follow:  { label:'رابط حساب تيك توك',         hint:'مثال: https://tiktok.com/@username',     ph:'https://tiktok.com/@username' },
-                post:    { label:'رابط الفيديو',               hint:'مثال: https://tiktok.com/@user/video/…', ph:'https://tiktok.com/@user/video/...' },
-                default: { label:'رابط الحساب أو الفيديو',    hint:'مثال: https://tiktok.com/...',           ph:'https://tiktok.com/...' }
+                follow: { l:'رابط حساب تيك توك', h:'مثال: https://tiktok.com/@username', p:'https://tiktok.com/@username' },
+                post:   { l:'رابط الفيديو', h:'مثال: https://tiktok.com/@user/video/...', p:'https://tiktok.com/@user/video/...' },
+                def:    { l:'رابط الحساب أو الفيديو', h:'مثال: https://tiktok.com/...', p:'https://tiktok.com/...' }
             },
             youtube: {
-                follow:  { label:'رابط قناة يوتيوب',          hint:'مثال: https://youtube.com/@channel',     ph:'https://youtube.com/@channel' },
-                post:    { label:'رابط الفيديو',               hint:'مثال: https://youtube.com/watch?v=ABC',  ph:'https://youtube.com/watch?v=...' },
-                default: { label:'رابط القناة أو الفيديو',    hint:'مثال: https://youtube.com/...',          ph:'https://youtube.com/...' }
+                follow: { l:'رابط قناة يوتيوب', h:'مثال: https://youtube.com/@channel', p:'https://youtube.com/@channel' },
+                post:   { l:'رابط الفيديو', h:'مثال: https://youtube.com/watch?v=ABC', p:'https://youtube.com/watch?v=...' },
+                def:    { l:'رابط القناة أو الفيديو', h:'مثال: https://youtube.com/...', p:'https://youtube.com/...' }
             },
             telegram: {
-                follow:  { label:'رابط القناة أو المجموعة',   hint:'مثال: https://t.me/channelname',         ph:'https://t.me/...' },
-                post:    { label:'رابط المنشور / القناة',      hint:'مثال: https://t.me/channelname/123',     ph:'https://t.me/...' },
-                default: { label:'رابط القناة أو المجموعة',   hint:'مثال: https://t.me/...',                 ph:'https://t.me/...' }
+                follow: { l:'رابط القناة أو المجموعة', h:'مثال: https://t.me/channelname', p:'https://t.me/...' },
+                post:   { l:'رابط المنشور', h:'مثال: https://t.me/channel/123', p:'https://t.me/...' },
+                def:    { l:'رابط القناة أو المجموعة', h:'مثال: https://t.me/...', p:'https://t.me/...' }
             }
         };
 
-        var _qScrollY = 0;
-
         function openQuantityModal(product) {
             selectedSocialProduct = product;
-            selectedProductName.textContent = product.name;
+            document.getElementById('selectedProductName').textContent = product.name;
 
             var ppv = product.basePrice || product.price || 0;
             pricePerThousand.textContent = ppv.toFixed(2) + '$';
             socialQuantity.value = '';
             calculatedPrice.textContent = '0.00$';
 
-            // ── ضبط حقل الرابط حسب المنصة والنوع ──
-            var platform = product.platform || 'instagram';
-            var name = product.name;
-            var cfgMap = _platformLinkCfg[platform] || _platformLinkCfg['instagram'];
-            var isFollow = name.includes('متابع') || name.includes('مشترك') || name.includes('عضو') || name.includes('صفحة');
-            var isPost   = name.includes('مشاهد') || name.includes('لايك') || name.includes('تفاعل') || name.includes('مشارك') || name.includes('تعليق') || name.includes('فيديو') || name.includes('ريلز');
-            var cfg = isFollow ? cfgMap.follow : isPost ? cfgMap.post : cfgMap.default;
+            // ضبط حقل الرابط
+            var plt = product.platform || 'instagram';
+            var nm  = product.name;
+            var m   = _pCfg[plt] || _pCfg.instagram;
+            var isF = /متابع|مشترك|عضو|صفحة|قناة|مجموع/.test(nm);
+            var isP = /مشاهد|لايك|تفاعل|مشارك|تعليق|فيديو|ريلز/.test(nm);
+            var cfg = isF ? m.follow : isP ? m.post : m.def;
+            var lbl = document.getElementById('svcLinkLabel');
+            var hnt = document.getElementById('svcLinkHint');
+            var inp = document.getElementById('svcLinkInput');
+            if (lbl) lbl.textContent = cfg.l;
+            if (hnt) hnt.textContent = cfg.h;
+            if (inp) { inp.value = ''; inp.placeholder = cfg.p; }
 
-            var lblEl  = document.getElementById('svcLinkLabel');
-            var hintEl = document.getElementById('svcLinkHint');
-            var inpEl  = document.getElementById('svcLinkInput');
-            if (lblEl)  lblEl.textContent  = cfg.label;
-            if (hintEl) hintEl.textContent = cfg.hint;
-            if (inpEl)  { inpEl.value = ''; inpEl.placeholder = cfg.ph; }
-
-            // ── تثبيت scroll الصفحة وإخفاء bottom nav ──
-            _qScrollY = window.scrollY;
-            document.body.style.top = '-' + _qScrollY + 'px';
-            document.body.classList.add('qmodal-open');
-
-            quantityModal.classList.add('active');
-            setTimeout(function(){ var i=document.getElementById('svcLinkInput'); if(i) i.focus(); }, 320);
-        }
-
-        function _closeQuantityModal() {
-            quantityModal.classList.remove('active');
-            document.body.classList.remove('qmodal-open');
-            document.body.style.top = '';
-            window.scrollTo(0, _qScrollY);
-            selectedSocialProduct = null;
+            openQModal(quantityModal);
+            setTimeout(function(){ var i=document.getElementById('svcLinkInput'); if(i) i.focus(); }, 300);
         }
         
         // -------------------- تحديث معاينة السعر للسوشال ميديا --------------------
@@ -10669,7 +10664,7 @@
             calculatedCreditPrice.textContent = '0.00$';
             selectedCreditValue.textContent = '0';
             
-            creditModal.classList.add('active');
+            openQModal(creditModal);
         }
         
         // -------------------- تحديث معاينة سعر الرصيد --------------------
@@ -10730,7 +10725,7 @@
             appPlayerId.value = '';
             updateAppPricePreview();
             
-            appModal.classList.add('active');
+            openQModal(appModal);
         }
         
         // -------------------- تحديث معاينة سعر التطبيق --------------------
@@ -10793,7 +10788,7 @@
             calculatedGamePrice.textContent = '0.00$';
             selectedGameValue.textContent = '0';
             
-            gameModal.classList.add('active');
+            openQModal(gameModal);
         }
 
         // -------------------- فتح نافذة تفعيلات البريميوم --------------------
@@ -10841,7 +10836,7 @@
             
             premiumInput.value = '';
             
-            premiumModal.classList.add('active');
+            openQModal(premiumModal);
         }
         
         // -------------------- تحديث معاينة سعر البريميوم --------------------
@@ -11191,7 +11186,7 @@
                             <h4 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.3rem;">${item.name}</h4>
                             <p style="color: var(--accent); font-weight: 700;">${item.price.toFixed(2)}$</p>
                             <p style="color: var(--gray); font-size: 0.85rem;">الكمية: ${customQty.toLocaleString()}</p>
-                            ${item.serviceLink ? `<p style="font-size:.78rem;color:#1a6b3c;margin-top:3px;word-break:break-all"><i class="fas fa-link" style="margin-left:3px"></i>${item.serviceLink}</p>` : ''}
+                            ${item.serviceLink ? `<p style="font-size:.78rem;color:#1a6b3c;margin-top:3px;word-break:break-all"><i class='fas fa-link' style='margin-left:3px'></i>${item.serviceLink}</p>` : ''}
                         </div>
                     `;
                 } else if (isCredit) {
@@ -11772,27 +11767,27 @@
                         const p = products.find(p => p.id === pid);
                         
                         if (p.category === 'social-media') {
-                            productDetailsModal.classList.remove('active');
+                            closeQModal(productDetailsModal);
                             openQuantityModal(p);
                         } else if (p.category === 'rased') {
-                            productDetailsModal.classList.remove('active');
+                            closeQModal(productDetailsModal);
                             openCreditModal(p);
                         } else if (p.category === 'games') {
-                            productDetailsModal.classList.remove('active');
+                            closeQModal(productDetailsModal);
                             openGameModal(p);
                         } else if (p.category === 'app') {
-                            productDetailsModal.classList.remove('active');
+                            closeQModal(productDetailsModal);
                             openAppModal(p);
                         } else {
                             addToCart(pid);
-                            productDetailsModal.classList.remove('active');
+                            closeQModal(productDetailsModal);
                         }
                     });
                 }
                 
             }, 100);
             
-            productDetailsModal.classList.add('active');
+            openQModal(productDetailsModal);
         }
         
 
@@ -11873,7 +11868,7 @@
                 </div>
             `;
 
-            productDetailsModal.classList.add('active');
+            openQModal(productDetailsModal);
 
             setTimeout(() => {
                 const addBtn = document.getElementById('payDetAddCart');
@@ -11893,7 +11888,7 @@
                         else cart.push(cartItem);
                         localStorage.setItem('zoodnyCart', JSON.stringify(cart));
                         updateCartUI();
-                        productDetailsModal.classList.remove('active');
+                        closeQModal(productDetailsModal);
                         showToast('تمت إضافة المنتج إلى السلة بنجاح!');
                     });
                 }
@@ -11930,7 +11925,7 @@
             document.getElementById('calculatedDesignPrice').textContent =
                 product.price ? product.price.toFixed(2) + '$' : '0.00$';
 
-            document.getElementById('designEmailModal').classList.add('active');
+            openQModal(document.getElementById('designEmailModal'));
         }
 
         // -------------------- تهيئة الصفحة --------------------
@@ -11943,39 +11938,35 @@
             
             confirmQuantityBtn.addEventListener('click', function() {
                 if (!selectedSocialProduct) return;
-
-                // التحقق من الرابط
-                var linkInp = document.getElementById('svcLinkInput');
-                var svcLink = linkInp ? linkInp.value.trim() : '';
-                if (!svcLink) {
-                    showToast('يرجى إدخال رابط الخدمة');
-                    if (linkInp) linkInp.focus();
-                    return;
-                }
-                if (!svcLink.startsWith('http://') && !svcLink.startsWith('https://')) {
-                    showToast('الرابط غير صحيح — يجب أن يبدأ بـ https://');
-                    if (linkInp) linkInp.focus();
-                    return;
-                }
-
+                
                 const quantity = parseInt(socialQuantity.value);
+                
                 if (!quantity || quantity < 300) {
                     showToast('الحد الأدنى للطلب هو 300');
                     return;
                 }
+                
                 if (quantity > 1000000) {
                     showToast('الحد الأقصى للطلب هو 1,000,000');
                     return;
                 }
-
-                addToCart(selectedSocialProduct.id, quantity, null, null, null, null, null, null, null, svcLink);
-                _closeQuantityModal();
+                
+                addToCart(selectedSocialProduct.id, quantity);
+                
+                closeQModal(quantityModal);
+                selectedSocialProduct = null;
             });
-
-            quantityClose.addEventListener('click', () => { _closeQuantityModal(); });
-
+            
+            quantityClose.addEventListener('click', () => {
+                closeQModal(quantityModal);
+                selectedSocialProduct = null;
+            });
+            
             quantityModal.addEventListener('click', function(e) {
-                if (e.target === quantityModal) { _closeQuantityModal(); }
+                if (e.target === quantityModal) {
+                    closeQModal(quantityModal);
+                    selectedSocialProduct = null;
+                }
             });
             
             // أحداث نافذة الرصيد
@@ -12004,18 +11995,18 @@
                 
                 addToCart(selectedCreditProduct.id, null, null, phone, amount);
                 
-                creditModal.classList.remove('active');
+                closeQModal(creditModal);
                 selectedCreditProduct = null;
             });
             
             creditClose.addEventListener('click', () => {
-                creditModal.classList.remove('active');
+                closeQModal(creditModal);
                 selectedCreditProduct = null;
             });
             
             creditModal.addEventListener('click', function(e) {
                 if (e.target === creditModal) {
-                    creditModal.classList.remove('active');
+                    closeQModal(creditModal);
                     selectedCreditProduct = null;
                 }
             });
@@ -12046,18 +12037,18 @@
                 
                 addToCart(selectedAppProduct.id, null, null, null, null, null, playerIdValue, quantity);
                 
-                appModal.classList.remove('active');
+                closeQModal(appModal);
                 selectedAppProduct = null;
             });
             
             appClose.addEventListener('click', () => {
-                appModal.classList.remove('active');
+                closeQModal(appModal);
                 selectedAppProduct = null;
             });
             
             appModal.addEventListener('click', function(e) {
                 if (e.target === appModal) {
-                    appModal.classList.remove('active');
+                    closeQModal(appModal);
                     selectedAppProduct = null;
                 }
             });
@@ -12095,18 +12086,18 @@
                 
                 addToCart(productId, null, productPrice, null, null, amount, playerIdValue);
                 showToast('تمت إضافة المنتج إلى السلة بنجاح!');
-                gameModal.classList.remove('active');
+                closeQModal(gameModal);
                 selectedGameProduct = null;
             });
             
             gameClose.addEventListener('click', () => {
-                gameModal.classList.remove('active');
+                closeQModal(gameModal);
                 selectedGameProduct = null;
             });
             
             gameModal.addEventListener('click', function(e) {
                 if (e.target === gameModal) {
-                    gameModal.classList.remove('active');
+                    closeQModal(gameModal);
                     selectedGameProduct = null;
                 }
             });
@@ -12124,18 +12115,18 @@
                 
                 addToCart(selectedPremiumProduct.id, null, selectedPremiumProduct.price, null, null, null, null, null, premiumInputValue);
                 
-                premiumModal.classList.remove('active');
+                closeQModal(premiumModal);
                 selectedPremiumProduct = null;
             });
             
             premiumClose.addEventListener('click', () => {
-                premiumModal.classList.remove('active');
+                closeQModal(premiumModal);
                 selectedPremiumProduct = null;
             });
             
             premiumModal.addEventListener('click', function(e) {
                 if (e.target === premiumModal) {
-                    premiumModal.classList.remove('active');
+                    closeQModal(premiumModal);
                     selectedPremiumProduct = null;
                 }
             });
@@ -12324,12 +12315,12 @@
             copyAccountId.addEventListener('click', copyAccountIdToClipboard);
             
             productDetailsClose.addEventListener('click', () => {
-                productDetailsModal.classList.remove('active');
+                closeQModal(productDetailsModal);
             });
             
             productDetailsModal.addEventListener('click', function(e) {
                 if (e.target === productDetailsModal) {
-                    productDetailsModal.classList.remove('active');
+                    closeQModal(productDetailsModal);
                 }
             });
             

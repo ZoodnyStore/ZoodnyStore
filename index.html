@@ -3266,18 +3266,30 @@
     <span id="mobileCartToggle" style="display:none"></span>
     <div id="mobileCartIcon" style="display:none"></div>
 
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>سلة المشتريات</h3>
+            <button class="close-cart" id="closeCart"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>المجموع</span>
+                <span id="cartTotalPrice">0$</span>
+            </div>
+            <div id="discountRow" style="display:none; justify-content:space-between; margin-bottom:10px; color:var(--success);">
+                <span>الخصم</span>
+                <span id="discountAmount">-0$</span>
+            </div>
+            <button class="checkout-btn" id="checkoutBtn">
+                <i class="fas fa-credit-card"></i> إتمام الطلب
+            </button>
+        </div>
+    </div>
+
     <!-- stubs مخفية للحفاظ على توافق الكود القديم -->
-    <div id="cartOverlay" style="display:none"></div>
-    <div id="cartSidebar" style="display:none"></div>
-    <div id="closeCart" style="display:none"></div>
-    <div id="cartItems" style="display:none"></div>
-    <div id="couponInput" style="display:none"></div>
-    <div id="applyCouponBtn" style="display:none"></div>
-    <div id="couponMessage" style="display:none"></div>
-    <div id="discountRow" style="display:none"></div>
-    <div id="discountAmount" style="display:none"></div>
-    <div id="cartTotalPrice" style="display:none">0$</div>
-    <div id="checkoutBtn" style="display:none"></div>
 
     <!-- نافذة إدخال الكمية المطلوبة لخدمات السوشال ميديا -->
     <!-- نافذة السوشال ميديا -->
@@ -12415,6 +12427,27 @@
                 e.preventDefault();
                 backToCategoriesView();
             });
+            
+            // Cart event handlers
+            if (closeCart) {
+                closeCart.addEventListener('click', function() {
+                    const cartSidebar = document.getElementById('cartSidebar');
+                    const cartOverlay = document.getElementById('cartOverlay');
+                    if (cartSidebar) cartSidebar.classList.remove('active');
+                    if (cartOverlay) cartOverlay.classList.remove('active');
+                    document.body.classList.remove('qmodal-open');
+                });
+            }
+            
+            if (cartOverlay) {
+                cartOverlay.addEventListener('click', function() {
+                    const cartSidebar = document.getElementById('cartSidebar');
+                    const cartOverlay = document.getElementById('cartOverlay');
+                    if (cartSidebar) cartSidebar.classList.remove('active');
+                    if (cartOverlay) cartOverlay.classList.remove('active');
+                    document.body.classList.remove('qmodal-open');
+                });
+            }
             
             // cart toggle removed
             

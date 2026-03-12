@@ -2194,22 +2194,23 @@
 
         @media (max-width: 768px) {
             .navbar {
-                height: 62px;
-                padding: 0 4%;
+                height: 50px;
+                padding: 0 3%;
             }
-            body { padding-top: 62px; }
-            .menu-toggle { display: block; }
+            body { padding-top: 50px; }
+            .menu-toggle { display: block; font-size: 1.2rem; }
             .nav-content {
                 grid-template-columns: 1fr auto 1fr;
-                padding: 0 .5rem;
+                padding: 0 .3rem;
             }
             .nav-left  { justify-content: flex-start; }
-            .nav-center .logo { font-size: 1.35rem; }
+            .nav-center .logo { font-size: 1.05rem; gap: 5px; }
+            .nav-center .logo i { font-size: .95rem; }
             .nav-links {
                 position: fixed;
-                top: 62px; left: -100%;
-                width: 85%; max-width: 320px;
-                height: calc(100vh - 62px);
+                top: 50px; left: -100%;
+                width: 85%; max-width: 300px;
+                height: calc(100vh - 50px);
                 background: linear-gradient(160deg, var(--primary) 0%, #1a3550 100%);
                 flex-direction: column;
                 padding: 1.2rem 0 6rem;
@@ -2241,7 +2242,7 @@
                 transition: background .2s;
             }
             #navAccountSlot .acct-drawer-btn:hover { background: rgba(247,200,115,.2); }
-            .logo { font-size: 1.3rem; margin-right: 0; }
+            .logo { font-size: 1.05rem; margin-right: 0; }
 
             .hero {
                 height: 70vh;
@@ -12764,6 +12765,19 @@
         }
         .wallet-plus-btn:hover { transform:scale(1.12); }
 
+        @media (max-width: 768px) {
+            .wallet-nav-wrap {
+                gap: 5px;
+                padding: 3px 8px 3px 4px;
+                font-size: .75rem;
+                border-radius: 22px;
+            }
+            .wallet-nav-icon { font-size: .82rem; }
+            #walletNavBal { font-size: .74rem; min-width: 28px; }
+            .wallet-plus-btn { width: 20px; height: 20px; font-size: .65rem; }
+            .menu-toggle { font-size: 1.15rem !important; }
+        }
+
         /* Generic overlay */
         .z-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:1200}
         .z-ov.on{display:block}
@@ -14766,7 +14780,7 @@
             <button class="acct-close-btn" id="acctCloseBtn"><i class="fas fa-times"></i></button>
             <div class="acct-avatar" id="acctAvatar">Z</div>
             <div class="acct-name" id="acctName">اسم المستخدم</div>
-            <div class="acct-email" id="acctEmail">email@example.com</div>
+            <div class="acct-email" id="acctEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4e2b232f27220e2b362f233e222b602d2123">[email&#160;protected]</a></div>
         </div>
         <div class="acct-balance-card">
             <div>
@@ -14827,9 +14841,4 @@
             </div>
         </div>
         <button class="order-succ-close" id="orderSuccessCloseBtn" style="width:100%;margin-top:.5rem">
-            <i class="fas fa-thumbs-up"></i> &nbsp; حسناً، شكراً!
-        </button>
-    </div>
-
-</body>
-</html>
+       

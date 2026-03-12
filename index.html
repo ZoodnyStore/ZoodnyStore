@@ -115,9 +115,27 @@
             transition: all 0.3s;
         }
 
-        @media (min-width: 769px) {
+        @media (max-width: 768px) {
             .menu-toggle {
                 display: flex;
+            }
+            #navWalletSlot, #navAccountSlot {
+                display: none;
+            }
+            #mobileMenuWalletSlot, #mobileMenuAccountSlot {
+                display: block;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            #mobileMenuWalletSlot, #mobileMenuAccountSlot {
+                display: none;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .menu-toggle {
+                display: none;
             }
         }
 
@@ -3191,6 +3209,8 @@
                 </button>
             </div>
             <div class="nav-right">
+                <div id="navWalletSlot"></div>
+                <div id="navAccountSlot"></div>
                 <div class="cart-icon-container" id="cartIconContainer">
                     <button class="cart-icon" id="cartIcon">
                         <i class="fas fa-shopping-bag"></i>
@@ -3217,6 +3237,7 @@
             <a href="#about" class="mobile-menu-item"><i class="fas fa-info-circle"></i> من نحن</a>
             <a href="#contact" class="mobile-menu-item"><i class="fas fa-phone-alt"></i> اتصل بنا</a>
             <div id="mobileMenuAccountSlot"></div>
+            <div id="mobileMenuWalletSlot" style="padding: 0.5rem 1.5rem;"></div>
         </div>
     </div>
 
@@ -13176,12 +13197,35 @@
 
         /* زر حسابي في nav-links على اللابتوب */
         #navAccountSlot { display:flex; align-items:center; }
+        #navWalletSlot { display:flex; align-items:center; }
+        #mobileMenuAccountSlot { display: none; padding: 0.5rem 1.5rem; }
+        #mobileMenuWalletSlot { display: none; padding: 0.5rem 1.5rem; }
+        
+        .acct-drawer-btn {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: rgba(247,200,115,0.1);
+            border: 1.5px solid rgba(247,200,115,0.3);
+            border-radius: 12px;
+            color: var(--secondary);
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: background 0.2s;
+        }
+        
+        .acct-drawer-btn:hover {
+            background: rgba(247,200,115,0.2);
+        }
+        
         @media (max-width: 768px) {
             /* على الموبايل: navAccountSlot داخل الدراور */
             #navAccountSlot {
-                display: block;
-                border-top: 1px solid rgba(255,255,255,.08);
-                padding-top: .5rem; margin-top: .3rem;
+                display: none;
             }
         }
         /* ══ Account Modal ══ */
@@ -13901,8 +13945,10 @@
         function buildNavButtons(user, uData) {
             var walletSlot  = document.getElementById('navWalletSlot');
             var accountSlot = document.getElementById('navAccountSlot');
+            var mobileWalletSlot = document.getElementById('mobileMenuWalletSlot');
             if (walletSlot)  walletSlot.innerHTML  = '';
             if (accountSlot) accountSlot.innerHTML = '';
+            if (mobileWalletSlot) mobileWalletSlot.innerHTML = '';
 
             if (!user) {
                 // ── غير مسجّل: زر دخول في يسار (wallet slot) ──
@@ -13913,6 +13959,16 @@
                     btn.innerHTML = '<i class="fas fa-user"></i> دخول / تسجيل';
                     btn.onclick = function() { openAuth('login'); };
                     walletSlot.appendChild(btn);
+                }
+                // Mobile menu login button
+                if (mobileWalletSlot) {
+                    var mobBtn = document.createElement('button');
+                    mobBtn.className = 'acct-drawer-btn';
+                    mobBtn.style.width = '100%';
+                    mobBtn.style.marginTop = '1rem';
+                    mobBtn.innerHTML = '<i class="fas fa-user"></i> دخول / تسجيل';
+                    mobBtn.onclick = function() { openAuth('login'); };
+                    mobileWalletSlot.appendChild(mobBtn);
                 }
             } else {
                 var bal      = (uData && uData.balance) ? parseFloat(uData.balance) : 0;
@@ -13935,6 +13991,22 @@
                     walletSlot.appendChild(ww);
                 }
 
+                // Mobile wallet
+                if (mobileWalletSlot) {
+                    var mw = document.createElement('div');
+                    mw.className = 'wallet-nav-wrap';
+                    mw.style.width = '100%';
+                    mw.style.marginTop = '1rem';
+                    mw.innerHTML = '<button class="wallet-plus-btn" id="__walletPlusBtnMob" title="شحن"><i class="fas fa-plus"></i></button>'
+                        + '<span>' + bal.toFixed(2) + '$</span>'
+                        + '<i class="wallet-nav-icon fas fa-wallet"></i>';
+                    mw.onclick = function(e) {
+                        if (e.target.closest('#__walletPlusBtnMob')) { openTopup(); return; }
+                        openWallet();
+                    };
+                    mobileWalletSlot.appendChild(mw);
+                }
+
                 // ── يمين (جانب اتصل بنا): زر حسابي ──
                 if (accountSlot) {
                     var ab = document.createElement('button');
@@ -13946,11 +14018,12 @@
                 }
 
                 // ── الدراور (موبايل): زر حسابي ──
-                var drawerSlot = document.getElementById('navAccountSlot');
-                if (drawerSlot && window.innerWidth < 769) {
-                    drawerSlot.innerHTML = '';
+                var drawerSlot = document.getElementById('mobileMenuAccountSlot');
+                if (drawerSlot) {
                     var db2 = document.createElement('button');
                     db2.className = 'acct-drawer-btn';
+                    db2.style.width = '100%';
+                    db2.style.marginTop = '0.5rem';
                     db2.innerHTML = '<div class="auth-avatar" style="width:28px;height:28px;font-size:.85rem">' + initials + '</div> ' + fname + ' — حسابي';
                     db2.onclick = function() { openAccountModal(); };
                     drawerSlot.appendChild(db2);

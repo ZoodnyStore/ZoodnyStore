@@ -41,7 +41,7 @@
         body {
             background: var(--light);
             color: var(--dark);
-            padding-top: 80px;
+            padding-top: 70px;
         }
 
         /* تثبيت الصفحة عند فتح أي modal */
@@ -52,14 +52,14 @@
         }
 
         .navbar {
-            background: rgba(42, 63, 84, 0.98);
-            padding: 0.8rem 5%;
+            background: linear-gradient(135deg, rgba(42, 63, 84, 0.98), rgba(30, 43, 56, 0.98));
+            padding: 0;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            height: 80px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            height: 70px;
         }
 
         .nav-content {
@@ -69,19 +69,36 @@
             justify-content: space-between;
             align-items: center;
             padding: 0 1.5rem;
+            height: 70px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
         .logo {
             color: var(--secondary);
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 700;
             text-decoration: none;
-            letter-spacing: 1px;
-            margin-right: 1.5rem;
+            letter-spacing: 0.5px;
             white-space: nowrap;
             display: flex;
             align-items: center;
             gap: 10px;
+            padding: 0.5rem 0;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            animation: pulse-logo 2s infinite;
+        }
+
+        @keyframes pulse-logo {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .menu-toggle {
@@ -89,38 +106,317 @@
             background: none;
             border: none;
             color: var(--light);
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             cursor: pointer;
-            margin-left: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(247, 200, 115, 0.2);
+        }
+
+        .menu-toggle.active i::before {
+            content: '\f00d';
         }
 
         .nav-links {
             display: flex;
-            gap: 2.5rem;
+            gap: 0.5rem;
             align-items: center;
         }
 
         .nav-links a {
             color: var(--light);
             text-decoration: none;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
+            font-weight: 600;
             transition: all 0.3s;
             position: relative;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--secondary);
+            background: rgba(247, 200, 115, 0.1);
         }
 
         .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--secondary);
-            transition: width 0.3s;
+            display: none;
         }
 
-        .nav-links a:hover::after {
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-balance {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            border: 1px solid rgba(247, 200, 115, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-balance:hover {
+            background: rgba(247, 200, 115, 0.15);
+            border-color: var(--secondary);
+        }
+
+        .user-balance i {
+            color: var(--secondary);
+            font-size: 1rem;
+        }
+
+        .user-balance span {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .auth-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--secondary), #e0a832);
+            color: var(--primary);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .auth-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(247, 200, 115, 0.4);
+        }
+
+        .wallet-nav-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            border: 1px solid rgba(247, 200, 115, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .wallet-nav-wrap:hover {
+            background: rgba(247, 200, 115, 0.15);
+            border-color: var(--secondary);
+        }
+
+        .wallet-nav-wrap i {
+            color: var(--secondary);
+            font-size: 1rem;
+        }
+
+        .wallet-nav-wrap span {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .wallet-plus-btn {
+            background: var(--success);
+            border: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 0.3rem;
+        }
+
+        .wallet-plus-btn:hover {
+            transform: scale(1.1);
+            background: #27ae60;
+        }
+
+        .wallet-plus-btn i {
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-dropdown .auth-nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.4rem 0.8rem;
+        }
+
+        .user-dropdown .auth-nav-btn:hover {
+            background: rgba(247, 200, 115, 0.15);
+            border-color: var(--secondary);
+        }
+
+        .auth-avatar {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--secondary), #e0a832);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--primary);
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            min-width: 220px;
+            display: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .user-menu.open {
+            display: block;
+            animation: fadeInDown 0.2s ease;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-menu-header {
+            background: linear-gradient(135deg, var(--primary), #1E2B38);
+            padding: 1rem;
+            color: white;
+        }
+
+        .um-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .um-email {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 0.2rem;
+        }
+
+        .user-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
             width: 100%;
+            padding: 0.9rem 1rem;
+            border: none;
+            background: none;
+            color: var(--dark);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Cairo', sans-serif;
+            text-align: right;
+        }
+
+        .user-menu-item:hover {
+            background: #f5f5f5;
+        }
+
+        .user-menu-item i {
+            color: var(--primary);
+            width: 20px;
+        }
+
+        .user-menu-item.red {
+            color: var(--accent);
+        }
+
+        .user-menu-item.red i {
+            color: var(--accent);
+        }
+
+        .user-menu-divider {
+            height: 1px;
+            background: #eee;
+            margin: 0.5rem 0;
+        }
+
+        .nav-divider {
+            width: 1px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 0.5rem;
+        }
+
+        .cart-icon-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .cart-icon-container:hover {
+            background: rgba(247, 200, 115, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .cart-icon {
+            color: var(--light);
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .cart-icon-container:hover .cart-icon {
+            color: var(--secondary);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            box-shadow: 0 2px 5px rgba(231, 76, 60, 0.4);
         }
 
         .menu-overlay {
@@ -2070,6 +2366,44 @@
         }
 
         @media (max-width: 992px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                width: 280px;
+                height: calc(100vh - 70px);
+                background: linear-gradient(180deg, var(--primary) 0%, #1a2535 100%);
+                flex-direction: column;
+                padding: 1.5rem 0;
+                gap: 0.5rem;
+                transition: right 0.3s ease;
+                z-index: 999;
+                overflow-y: auto;
+                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+            }
+            
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .nav-links a {
+                font-size: 1.1rem;
+                padding: 1rem 1.5rem;
+                width: 100%;
+                text-align: right;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            
+            .nav-links a:hover,
+            .nav-links a.active {
+                background: rgba(247, 200, 115, 0.15);
+                padding-right: 2rem;
+            }
+            
+            .menu-toggle {
+                display: flex;
+            }
+            
             .hero h1 {
                 font-size: 2.8rem;
             }
@@ -2102,62 +2436,42 @@
 
         @media (max-width: 768px) {
             .navbar {
-                height: 70px;
-                padding: 0.5rem 5%;
+                height: 65px;
+            }
+            
+            .nav-content {
+                height: 65px;
             }
             
             body {
-                padding-top: 70px;
-            }
-            
-            .menu-toggle {
-                display: block;
-            }
-            
-            .nav-links {
-                position: fixed;
-                top: 70px;
-                left: -100%;
-                width: 100%;
-                height: calc(100vh - 70px);
-                background: var(--primary);
-                flex-direction: column;
-                padding: 2rem 0;
-                gap: 1.5rem;
-                transition: left 0.3s ease;
-                z-index: 999;
-                overflow-y: auto;
-            }
-            
-            .nav-links.active {
-                left: 0;
-            }
-            
-            .nav-links a {
-                font-size: 1.2rem;
-                padding: 0.8rem 0;
-                width: 100%;
-                text-align: center;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            
-            .cart-icon-container {
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-            
-            .cart-icon {
-                font-size: 1.8rem;
+                padding-top: 65px;
             }
             
             .logo {
-                font-size: 1.5rem;
-                margin-right: 0;
+                font-size: 1.3rem;
+            }
+            
+            .logo i {
+                font-size: 1.4rem;
+            }
+            
+            .nav-links {
+                top: 65px;
+                height: calc(100vh - 65px);
+            }
+            
+            .cart-icon-container {
+                width: 38px;
+                height: 38px;
+            }
+            
+            .cart-icon {
+                font-size: 1.1rem;
             }
 
             .hero {
                 height: 70vh;
-                margin-top: 70px;
+                margin-top: 65px;
             }
 
             .hero h1 {
@@ -3014,30 +3328,41 @@
     <!-- شريط التنقل -->
     <nav class="navbar">
         <div class="nav-content">
-            <a href="#" class="logo"><i class="fas fa-store"></i> زودني zoodny</a>
+            <div class="nav-right">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <a href="#" class="logo">
+                    <i class="fas fa-store"></i>
+                    <span>زودني</span>
+                </a>
+            </div>
             
-            <button class="menu-toggle" id="menuToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <div class="nav-links">
-                <a href="#home">الرئيسية</a>
+            <div class="nav-links" id="navLinks">
+                <a href="#home" class="active">الرئيسية</a>
                 <a href="#categories">المتجر</a>
                 <a href="#branches">فروعنا</a>
                 <a href="#about">من نحن</a>
                 <a href="#contact">اتصل بنا</a>
-                <div class="cart-icon-container">
+            </div>
+            
+            <div class="nav-left">
+                <div class="user-balance" id="userBalance" title="رصيد محفظتك">
+                    <i class="fas fa-wallet"></i>
+                    <span id="walletBalance">0.00$</span>
+                </div>
+                
+                <div class="cart-icon-container" id="cartIconContainer">
                     <i class="fas fa-shopping-cart cart-icon" id="cartToggle"></i>
                     <span class="cart-count" id="cartCount">0</span>
                 </div>
             </div>
-            
-            <div class="cart-icon-container" id="mobileCartIcon" style="display: none;">
-                <i class="fas fa-shopping-cart cart-icon" id="mobileCartToggle"></i>
-                <span class="cart-count" id="mobileCartCount">0</span>
-            </div>
         </div>
     </nav>
+
+    <!-- Overlay for mobile menu -->
+    <div class="menu-overlay" id="menuOverlay"></div>
 
     <!-- سلة التسوق الجانبية -->
     <div class="cart-overlay" id="cartOverlay"></div>
@@ -8176,6 +8501,8 @@
         const menuToggle = document.getElementById('menuToggle');
         const navLinks = document.querySelector('.nav-links');
         const mobileCartIcon = document.getElementById('mobileCartIcon');
+        const userBalance = document.getElementById('userBalance');
+        const walletBalance = document.getElementById('walletBalance');
         
         const productDetailsModal = document.getElementById('productDetailsModal');
         const productDetailsClose = document.getElementById('productDetailsClose');
@@ -12094,35 +12421,39 @@
             menuToggle.addEventListener('click', () => {
                 navLinks.classList.toggle('active');
                 menuOverlay.classList.toggle('active');
+                menuToggle.classList.toggle('active');
                 var bottomNav = document.getElementById('mobileBottomNav');
                 if (bottomNav) bottomNav.style.display = menuOverlay.classList.contains('active') ? 'none' : '';
             });
             
+            // User balance click handler - open wallet
+            if (userBalance) {
+                userBalance.addEventListener('click', function() {
+                    if (typeof openWallet === 'function') {
+                        openWallet();
+                    } else {
+                        showToast('سجّل دخولك أولاً');
+                    }
+                });
+            }
+            
+            // Close menu when clicking overlay
             menuOverlay.addEventListener('click', () => {
                 navLinks.classList.remove('active');
                 menuOverlay.classList.remove('active');
+                menuToggle.classList.remove('active');
                 var bottomNav = document.getElementById('mobileBottomNav');
                 if (bottomNav) bottomNav.style.display = '';
             });
             
+            // Close menu when clicking a link
             document.querySelectorAll('.nav-links a').forEach(link => {
                 link.addEventListener('click', function(e) {
-                    if (!this.getAttribute('href').includes('#categories')) {
-                        navLinks.classList.remove('active');
-                        menuOverlay.classList.remove('active');
-                        var bottomNav = document.getElementById('mobileBottomNav');
-                        if (bottomNav) bottomNav.style.display = '';
-                        return;
-                    }
-                    
-                    if (productsSection.style.display === 'block') {
-                        e.preventDefault();
-                        backToCategoriesView();
-                        navLinks.classList.remove('active');
-                        menuOverlay.classList.remove('active');
-                        var bottomNav = document.getElementById('mobileBottomNav');
-                        if (bottomNav) bottomNav.style.display = '';
-                    }
+                    navLinks.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                    var bottomNav = document.getElementById('mobileBottomNav');
+                    if (bottomNav) bottomNav.style.display = '';
                 });
             });
             
@@ -13631,13 +13962,25 @@
 
         // ── inject navbar buttons ────────────────────────────────────────────
         function buildNavButtons(user, uData) {
+            // Update navbar wallet balance if exists
+            var navbarWalletBal = document.getElementById('walletBalance');
+            
             // remove old injected elements
             ['__authNavBtn','__walletNavWrap','__userDropDown'].forEach(function(id){
                 var el = $(id); if (el) el.remove();
             });
 
-            var cartCont = document.querySelector('.nav-links .cart-icon-container');
+            var cartCont = document.querySelector('.nav-left .cart-icon-container');
             if (!cartCont) return;
+            
+            // If navbar wallet exists, hide it (desktop will show injected one)
+            // Mobile will use the static one
+            if (navbarWalletBal) {
+                var userBalanceEl = document.getElementById('userBalance');
+                if (userBalanceEl) {
+                    userBalanceEl.style.display = '';
+                }
+            }
 
             if (!user) {
                 // Not logged in — show login button
@@ -13647,9 +13990,19 @@
                 btn.innerHTML = '<i class="fas fa-user"></i> دخول / تسجيل';
                 btn.onclick = () => openAuth('login');
                 cartCont.parentNode.insertBefore(btn, cartCont);
+                
+                // Update navbar balance to show guest
+                if (navbarWalletBal) {
+                    navbarWalletBal.textContent = '0.00$';
+                }
             } else {
                 // Logged in — show wallet + user menu
                 var bal = (uData && uData.balance) ? parseFloat(uData.balance) : 0;
+                
+                // Update navbar wallet balance
+                if (navbarWalletBal) {
+                    navbarWalletBal.textContent = bal.toFixed(2) + '$';
+                }
 
                 // Wallet wrap
                 var ww = document.createElement('div');

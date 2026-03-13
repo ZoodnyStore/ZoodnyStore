@@ -12657,23 +12657,53 @@
             display:flex;align-items:center;justify-content:center;
             font-size:.85rem;font-weight:700;
         }
-        /* Wallet button */
+        /* ── Wallet pill in navbar (redesigned) ── */
         .wallet-nav-wrap {
-            display:flex;align-items:center;gap:6px;
-            background:rgba(46,204,113,0.1);border:1.5px solid var(--success);
-            border-radius:24px;padding:4px 12px 4px 6px;cursor:pointer;
-            color:var(--success);font-size:.9rem;font-weight:700;
-            transition:background .25s;
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: linear-gradient(135deg, #1a8a4a 0%, #27ae60 100%);
+            border: none;
+            border-radius: 30px;
+            padding: 0;
+            cursor: pointer;
+            color: #fff;
+            font-size: .88rem;
+            font-weight: 800;
+            transition: all .28s;
+            box-shadow: 0 3px 14px rgba(39,174,96,.35);
+            overflow: hidden;
+            min-width: 110px;
         }
-        .wallet-nav-wrap:hover{background:rgba(46,204,113,.2)}
-        #walletNavBal{min-width:36px;font-size:.88rem}
-        .wallet-plus-btn{
-            background:var(--success);border:none;border-radius:50%;
-            width:26px;height:26px;display:flex;align-items:center;justify-content:center;
-            color:#fff;font-size:.85rem;cursor:pointer;
-            transition:transform .2s;
+        .wallet-nav-wrap:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 22px rgba(39,174,96,.50);
         }
-        .wallet-plus-btn:hover{transform:scale(1.15)}
+        .wallet-nav-left {
+            display: flex; align-items: center; gap: 6px;
+            padding: 6px 10px 6px 12px;
+            flex: 1;
+        }
+        .wallet-nav-left i { font-size: .92rem; opacity: .9; }
+        #walletNavBal {
+            font-size: .92rem;
+            font-weight: 900;
+            letter-spacing: .3px;
+            min-width: 42px;
+        }
+        .wallet-plus-btn {
+            background: rgba(255,255,255,.22);
+            border: none;
+            border-right: 1px solid rgba(255,255,255,.18);
+            width: 32px; height: 100%;
+            min-height: 34px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .88rem; cursor: pointer;
+            transition: background .2s;
+            flex-shrink: 0;
+            font-weight: 700;
+        }
+        .wallet-plus-btn:hover { background: rgba(255,255,255,.35); }
 
         /* Generic overlay */
         .z-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:1200}
@@ -12978,30 +13008,50 @@
         .bal-toast.show{transform:translateX(-50%) translateY(0);opacity:1}
         .bal-toast.green{background:#2ECC71;box-shadow:0 8px 24px rgba(46,204,113,.4)}
 
-        /* User dropdown */
-        .user-dropdown{
-            position:relative;
+        /* ── User dropdown ── */
+        .user-dropdown { position: relative; }
+        .user-menu {
+            position: absolute; top: calc(100% + 10px); left: 0;
+            background: #fff; border-radius: 16px; min-width: 220px;
+            box-shadow: 0 16px 48px rgba(0,0,0,.18); border: 1px solid #eee;
+            opacity: 0; pointer-events: none; transform: translateY(-10px);
+            transition: all .25s; z-index: 2000; overflow: hidden;
         }
-        .user-menu{
-            position:absolute;top:calc(100% + 10px);left:0;
-            background:#fff;border-radius:12px;min-width:200px;
-            box-shadow:0 12px 36px rgba(0,0,0,.15);border:1px solid #eee;
-            opacity:0;pointer-events:none;transform:translateY(-8px);
-            transition:all .25s;z-index:2000;overflow:hidden;
+        .user-menu.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+        .user-menu-header {
+            padding: 1rem 1.1rem;
+            background: linear-gradient(135deg, var(--primary), #243B5E);
+            color: #fff;
         }
-        .user-menu.open{opacity:1;pointer-events:all;transform:translateY(0)}
-        .user-menu-header{padding:.8rem 1rem;background:var(--primary);color:#fff}
-        .user-menu-header .um-name{font-weight:700;font-size:.95rem}
-        .user-menu-header .um-email{font-size:.75rem;opacity:.75}
-        .user-menu-item{
-            display:flex;align-items:center;gap:10px;padding:.75rem 1rem;
-            cursor:pointer;font-size:.88rem;color:var(--dark);transition:background .15s;border:none;background:none;width:100%;text-align:right;font-family:'Cairo',sans-serif;
+        .user-menu-header .um-avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: var(--secondary); color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; font-weight: 800; margin-bottom: .5rem;
         }
-        .user-menu-item:hover{background:#f8f9fa}
-        .user-menu-item i{color:var(--primary);width:18px}
-        .user-menu-item.red{color:#E74C3C}
-        .user-menu-item.red i{color:#E74C3C}
-        .user-menu-divider{height:1px;background:#f0f0f0}
+        .user-menu-header .um-name { font-weight: 800; font-size: .95rem; }
+        .user-menu-header .um-email { font-size: .73rem; opacity: .72; margin-top: .12rem; }
+        .user-menu-header .um-bal {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: rgba(39,174,96,.2); border: 1px solid rgba(39,174,96,.35);
+            border-radius: 20px; padding: .22rem .75rem;
+            font-size: .75rem; font-weight: 700; color: #2ED573;
+            margin-top: .55rem;
+        }
+        .user-menu-item {
+            display: flex; align-items: center; gap: 10px; padding: .78rem 1.1rem;
+            cursor: pointer; font-size: .88rem; color: var(--dark);
+            transition: background .15s; border: none; background: none;
+            width: 100%; text-align: right; font-family: 'Cairo', sans-serif;
+        }
+        .user-menu-item:hover { background: #f4f7fb; }
+        .user-menu-item i { width: 18px; text-align: center; }
+        .user-menu-item.wallet-item i { color: #27ae60; }
+        .user-menu-item.orders-item i { color: var(--primary); }
+        .user-menu-item.account-item i { color: #3498db; }
+        .user-menu-item.red { color: #E74C3C; }
+        .user-menu-item.red i { color: #E74C3C; }
+        .user-menu-divider { height: 1px; background: #f0f0f0; }
 
         /* Orders history modal */
         #ordersModal{max-width:600px;max-height:85vh;z-index:1601}
@@ -13325,6 +13375,252 @@
         @media (max-width: 768px) {
             .wa-float-btn { display: none !important; }
         }
+    
+        /* ══════════════════════════════════════════════
+           نافذة حسابي — My Account Modal
+        ══════════════════════════════════════════════ */
+        #accountModalOv { z-index: 1500; }
+        #accountModal {
+            z-index: 1501;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        /* Header */
+        .acc-modal-header {
+            background: linear-gradient(135deg, #0D1824 0%, #16253A 60%, #1E3250 100%);
+            padding: 1.8rem 1.6rem 1.4rem;
+            position: relative;
+            border-bottom: 3px solid var(--secondary);
+        }
+        .acc-modal-close {
+            position: absolute; top: 1rem; left: 1rem;
+            background: rgba(255,255,255,.1); border: none;
+            color: rgba(255,255,255,.75); font-size: 1rem;
+            width: 32px; height: 32px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all .25s;
+        }
+        .acc-modal-close:hover { background: rgba(255,255,255,.2); color: #fff; }
+
+        /* Profile section */
+        .acc-profile-row {
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .acc-avatar-wrap { position: relative; flex-shrink: 0; }
+        .acc-avatar {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: var(--secondary); color: #0D1824;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.7rem; font-weight: 900;
+            border: 3px solid rgba(247,201,42,.5);
+            box-shadow: 0 4px 16px rgba(0,0,0,.3);
+        }
+        .acc-status-dot {
+            position: absolute; bottom: 2px; right: 2px;
+            width: 14px; height: 14px;
+            background: #2ED573; border-radius: 50%;
+            border: 2px solid #16253A;
+        }
+        .acc-profile-info { flex: 1; min-width: 0; }
+        .acc-name {
+            color: #fff; font-size: 1.1rem; font-weight: 800;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .acc-email {
+            color: rgba(255,255,255,.62); font-size: .78rem; margin-top: .18rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .acc-phone {
+            color: rgba(255,255,255,.55); font-size: .76rem; margin-top: .1rem;
+        }
+
+        /* Balance card inside header */
+        .acc-balance-card {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(39,174,96,.15);
+            border: 1px solid rgba(39,174,96,.35);
+            border-radius: 14px; padding: .85rem 1.1rem;
+            margin-top: 1.2rem;
+        }
+        .acc-balance-left { display: flex; align-items: center; gap: .7rem; }
+        .acc-balance-icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: rgba(39,174,96,.25);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; color: #2ED573;
+        }
+        .acc-balance-label { color: rgba(255,255,255,.65); font-size: .75rem; }
+        .acc-balance-amount {
+            color: #2ED573; font-size: 1.35rem; font-weight: 900;
+            line-height: 1.1; margin-top: .08rem;
+        }
+        .acc-topup-btn {
+            background: linear-gradient(135deg, #27ae60, #1a8a4a);
+            color: #fff; border: none;
+            padding: .52rem 1rem; border-radius: 20px;
+            font-size: .82rem; font-weight: 800;
+            font-family: 'Cairo', sans-serif; cursor: pointer;
+            transition: all .25s; white-space: nowrap;
+            box-shadow: 0 3px 12px rgba(39,174,96,.35);
+        }
+        .acc-topup-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(39,174,96,.5); }
+
+        /* Body */
+        .acc-modal-body { padding: 1.4rem 1.5rem; }
+
+        /* Stats row */
+        .acc-stats-row {
+            display: grid; grid-template-columns: repeat(3,1fr);
+            gap: .7rem; margin-bottom: 1.4rem;
+        }
+        .acc-stat-card {
+            background: #f4f7fb;
+            border: 1px solid #e3e9f0;
+            border-radius: 14px; padding: .85rem .7rem;
+            text-align: center; transition: all .25s; cursor: default;
+        }
+        .acc-stat-card:hover { border-color: var(--secondary); box-shadow: 0 4px 14px rgba(13,27,42,.08); }
+        .acc-stat-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .95rem; margin: 0 auto .5rem;
+        }
+        .acc-stat-icon.green { background: rgba(39,174,96,.12); color: #27ae60; }
+        .acc-stat-icon.blue  { background: rgba(52,152,219,.12); color: #3498db; }
+        .acc-stat-icon.gold  { background: rgba(247,201,42,.15); color: #D4A800; }
+        .acc-stat-num  { font-size: 1.1rem; font-weight: 900; color: var(--primary); line-height: 1; }
+        .acc-stat-label { font-size: .7rem; color: var(--gray); margin-top: .2rem; }
+
+        /* Section title */
+        .acc-section-title {
+            font-size: .8rem; font-weight: 800; color: var(--gray);
+            letter-spacing: .5px; text-transform: uppercase;
+            margin-bottom: .75rem; margin-top: 1.2rem;
+            display: flex; align-items: center; gap: .5rem;
+        }
+        .acc-section-title::after {
+            content: ''; flex: 1; height: 1px; background: #e3e9f0;
+        }
+
+        /* Info rows */
+        .acc-info-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .75rem .9rem;
+            background: #f8fafc;
+            border: 1px solid #e3e9f0;
+            border-radius: 12px; margin-bottom: .55rem;
+            transition: background .2s;
+        }
+        .acc-info-row:hover { background: #eef2f8; }
+        .acc-info-left { display: flex; align-items: center; gap: .65rem; }
+        .acc-info-icon {
+            width: 32px; height: 32px; border-radius: 9px;
+            background: rgba(13,27,42,.07);
+            display: flex; align-items: center; justify-content: center;
+            font-size: .82rem; color: var(--primary); flex-shrink: 0;
+        }
+        .acc-info-key   { font-size: .78rem; color: var(--gray); }
+        .acc-info-value { font-size: .88rem; font-weight: 700; color: var(--primary); margin-top: .05rem; }
+        .acc-info-badge {
+            font-size: .73rem; font-weight: 700;
+            padding: .2rem .65rem; border-radius: 20px;
+        }
+        .acc-info-badge.active { background: rgba(46,213,115,.12); color: #2ED573; }
+        .acc-info-badge.member { background: rgba(247,201,42,.15); color: #D4A800; }
+
+        /* Action buttons */
+        .acc-actions-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: .65rem; margin-top: 1.3rem;
+        }
+        .acc-action-btn {
+            display: flex; align-items: center; justify-content: center; gap: .55rem;
+            padding: .82rem; border-radius: 12px; border: 1.5px solid #e3e9f0;
+            background: #fff; cursor: pointer; font-family: 'Cairo', sans-serif;
+            font-size: .86rem; font-weight: 700; color: var(--primary);
+            transition: all .25s;
+        }
+        .acc-action-btn:hover { border-color: var(--primary); background: var(--primary); color: #fff; }
+        .acc-action-btn:hover i { color: var(--secondary) !important; }
+        .acc-action-btn i { font-size: .92rem; transition: color .25s; }
+        .acc-action-btn.wallet-btn { border-color: rgba(39,174,96,.3); color: #27ae60; }
+        .acc-action-btn.wallet-btn i { color: #27ae60; }
+        .acc-action-btn.wallet-btn:hover { background: #27ae60; border-color: #27ae60; color: #fff; }
+        .acc-action-btn.logout-btn {
+            grid-column: 1 / -1;
+            border-color: rgba(231,76,60,.25); color: #E74C3C;
+        }
+        .acc-action-btn.logout-btn i { color: #E74C3C; }
+        .acc-action-btn.logout-btn:hover { background: #E74C3C; border-color: #E74C3C; color: #fff; }
+
+        /* Recent transactions inside account modal */
+        .acc-tx-list { margin-top: .55rem; }
+        .acc-tx-item {
+            display: flex; align-items: center; gap: .75rem;
+            padding: .68rem .75rem;
+            border-radius: 10px; margin-bottom: .42rem;
+            background: #f8fafc; border: 1px solid #e3e9f0;
+        }
+        .acc-tx-icon {
+            width: 34px; height: 34px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .88rem; flex-shrink: 0;
+        }
+        .acc-tx-icon.credit { background: rgba(46,213,115,.12); color: #2ED573; }
+        .acc-tx-icon.debit  { background: rgba(231,76,60,.1);   color: #E74C3C; }
+        .acc-tx-body { flex: 1; min-width: 0; }
+        .acc-tx-desc {
+            font-size: .82rem; font-weight: 700; color: var(--primary);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .acc-tx-date { font-size: .72rem; color: var(--gray); margin-top: .08rem; }
+        .acc-tx-amount { font-size: .9rem; font-weight: 900; flex-shrink: 0; }
+        .acc-tx-amount.credit { color: #2ED573; }
+        .acc-tx-amount.debit  { color: #E74C3C; }
+        .acc-tx-empty { text-align: center; padding: 1.2rem; color: var(--gray); font-size: .85rem; }
+
+        /* Mobile floating balance badge — visible always when logged in */
+        #floatingBalBadge {
+            position: fixed;
+            bottom: 82px;
+            left: 12px;
+            background: linear-gradient(135deg, #1a8a4a, #27ae60);
+            color: #fff;
+            border-radius: 30px;
+            padding: .48rem .9rem .48rem .7rem;
+            font-size: .82rem; font-weight: 800;
+            display: none;
+            align-items: center; gap: .45rem;
+            box-shadow: 0 4px 18px rgba(39,174,96,.45);
+            cursor: pointer; z-index: 1999;
+            transition: transform .25s, box-shadow .25s;
+            border: 1.5px solid rgba(255,255,255,.2);
+        }
+        #floatingBalBadge:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(39,174,96,.6); }
+        #floatingBalBadge i { font-size: .85rem; opacity: .9; }
+        #floatingBalBadge .fbal-amount { font-size: .88rem; font-weight: 900; }
+        @media (min-width: 769px) {
+            #floatingBalBadge { display: none !important; }
+        }
+        @media (max-width: 768px) {
+            #floatingBalBadge.show { display: flex !important; }
+        }
+
+        /* ── Responsive tweaks for account modal ── */
+        @media (max-width: 480px) {
+            #accountModal { max-width: 100%; border-radius: 20px 20px 0 0; }
+            .acc-modal-header { padding: 1.5rem 1.3rem 1.1rem; }
+            .acc-avatar { width: 54px; height: 54px; font-size: 1.4rem; }
+            .acc-name { font-size: 1rem; }
+            .acc-stats-row { gap: .5rem; }
+            .acc-stat-card { padding: .7rem .5rem; }
+            .acc-stat-num { font-size: .97rem; }
+            .acc-modal-body { padding: 1.1rem 1.1rem; }
+        }
+
     </style>
 
     <!-- ══════════════ AUTH BUTTON injected by JS ══════════════ -->
@@ -13640,54 +13936,64 @@
             var cartCont = document.querySelector('.nav-links .cart-icon-container');
             if (!cartCont) return;
 
+            // Floating balance badge (mobile)
+            var fbb = document.getElementById('floatingBalBadge');
+
             if (!user) {
-                // Not logged in — show login button
+                // Not logged in
                 var btn = document.createElement('button');
                 btn.id = '__authNavBtn';
                 btn.className = 'auth-nav-btn';
                 btn.innerHTML = '<i class="fas fa-user"></i> دخول / تسجيل';
                 btn.onclick = () => openAuth('login');
                 cartCont.parentNode.insertBefore(btn, cartCont);
+                if (fbb) fbb.classList.remove('show');
             } else {
-                // Logged in — show wallet + user menu
+                // Logged in
                 var bal = (uData && uData.balance) ? parseFloat(uData.balance) : 0;
+                var initials = (uData && uData.name) ? uData.name.charAt(0) : (user.email ? user.email.charAt(0).toUpperCase() : 'U');
 
-                // Wallet wrap
+                // ── Wallet pill ──
                 var ww = document.createElement('div');
                 ww.id = '__walletNavWrap';
                 ww.className = 'wallet-nav-wrap';
-                ww.title = 'محفظتي';
-                ww.innerHTML = '<i class="fas fa-wallet"></i>'
+                ww.title = 'رصيدي';
+                ww.innerHTML =
+                    '<div class="wallet-nav-left" id="__walletNavLeft">'
+                    + '<i class="fas fa-wallet"></i>'
                     + '<span id="walletNavBal">' + bal.toFixed(2) + '$</span>'
+                    + '</div>'
                     + '<button class="wallet-plus-btn" id="__walletPlusBtn" title="شحن رصيد"><i class="fas fa-plus"></i></button>';
-                ww.onclick = function(e) {
-                    if (e.target.closest('#__walletPlusBtn')) { openTopup(); return; }
-                    openWallet();
-                };
+                ww.querySelector('#__walletNavLeft').onclick = function(e) { openWallet(); };
+                ww.querySelector('#__walletPlusBtn').onclick = function(e) { e.stopPropagation(); openTopup(); };
                 cartCont.parentNode.insertBefore(ww, cartCont);
 
-                // User dropdown
-                var initials = (uData && uData.name) ? uData.name.charAt(0) : (user.email ? user.email.charAt(0).toUpperCase() : 'U');
+                // ── User "حسابي" dropdown ──
                 var ud = document.createElement('div');
                 ud.id = '__userDropDown';
                 ud.className = 'user-dropdown';
-                ud.innerHTML = '<div class="auth-nav-btn" id="__userNavBtn">'
+                ud.innerHTML =
+                    '<div class="auth-nav-btn" id="__userNavBtn">'
                     + '<div class="auth-avatar">' + initials + '</div>'
                     + '<span>' + ((uData && uData.name) ? uData.name.split(' ')[0] : 'حسابي') + '</span>'
                     + '</div>'
                     + '<div class="user-menu" id="__userMenu">'
                     + '<div class="user-menu-header">'
+                    + '<div class="um-avatar">' + initials + '</div>'
                     + '<div class="um-name">' + ((uData && uData.name) ? uData.name : '') + '</div>'
                     + '<div class="um-email">' + (user.email || '') + '</div>'
+                    + '<div class="um-bal"><i class="fas fa-wallet"></i> ' + bal.toFixed(2) + '$</div>'
                     + '</div>'
-                    + '<button class="user-menu-item" id="__menuWallet"><i class="fas fa-wallet"></i> محفظتي</button>'
-                    + '<button class="user-menu-item" id="__menuOrders"><i class="fas fa-box"></i> طلباتي</button>'
+                    + '<button class="user-menu-item account-item" id="__menuAccount"><i class="fas fa-id-card"></i> حسابي</button>'
+                    + '<button class="user-menu-item wallet-item" id="__menuWallet"><i class="fas fa-wallet"></i> محفظتي</button>'
+                    + '<button class="user-menu-item orders-item" id="__menuOrders"><i class="fas fa-box"></i> طلباتي</button>'
                     + '<div class="user-menu-divider"></div>'
                     + '<button class="user-menu-item red" id="__menuLogout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>'
                     + '</div>';
                 cartCont.parentNode.insertBefore(ud, cartCont);
 
                 $('__userNavBtn').onclick  = () => $('__userMenu').classList.toggle('open');
+                $('__menuAccount').onclick = () => { $('__userMenu').classList.remove('open'); openAccountModal(); };
                 $('__menuWallet').onclick  = () => { $('__userMenu').classList.remove('open'); openWallet(); };
                 $('__menuOrders').onclick  = () => { $('__userMenu').classList.remove('open'); openOrdersHistory(); };
                 $('__menuLogout').onclick  = () => { $('__userMenu').classList.remove('open'); auth.signOut(); };
@@ -13696,6 +14002,13 @@
                     var ud2 = $('__userDropDown');
                     if (ud2 && !ud2.contains(e.target)) $('__userMenu').classList.remove('open');
                 }, true);
+
+                // Show floating balance on mobile
+                if (fbb) {
+                    fbb.classList.add('show');
+                    var fbalAmt = document.getElementById('floatingBalAmt');
+                    if (fbalAmt) fbalAmt.textContent = bal.toFixed(2) + '$';
+                }
             }
         }
 
@@ -13820,8 +14133,21 @@
         window.getBalance = getBalance;
 
         function refreshNavBal() {
+            var bal = getBalance();
             var el = $('walletNavBal');
-            if (el) el.textContent = getBalance().toFixed(2) + '$';
+            if (el) el.textContent = bal.toFixed(2) + '$';
+            // Update floating badge
+            var fbalAmt = $('floatingBalAmt');
+            if (fbalAmt) fbalAmt.textContent = bal.toFixed(2) + '$';
+            // Update user menu balance
+            var um = $('__userMenu');
+            if (um) {
+                var umBal = um.querySelector('.um-bal');
+                if (umBal) umBal.innerHTML = '<i class="fas fa-wallet"></i> ' + bal.toFixed(2) + '$';
+            }
+            // Update account modal if open
+            var accBal = $('accBalanceAmt');
+            if (accBal) accBal.textContent = bal.toFixed(2) + ' $';
         }
 
         function refreshWalletModal() {
@@ -13851,6 +14177,84 @@
             refreshWalletModal();
             modalOn('walletOv','walletModal');
         }
+
+
+        // ══════════════════════════════════════════
+        // My Account Modal — openAccountModal()
+        // ══════════════════════════════════════════
+        window.openAccountModal = function openAccountModal() {
+            if (!currentUser) { openAuth('login'); return; }
+
+            var uData = userData;
+            var bal   = (uData && uData.balance) ? parseFloat(uData.balance) : 0;
+            var initials = (uData && uData.name) ? uData.name.charAt(0) : (currentUser.email ? currentUser.email.charAt(0).toUpperCase() : 'U');
+
+            // Fill header
+            $('accAvatarLetter').textContent = initials;
+            $('accDisplayName').textContent  = (uData && uData.name)  ? uData.name  : 'مستخدم';
+            $('accDisplayEmail').textContent = currentUser.email || '—';
+            $('accDisplayPhone').textContent = (uData && uData.phone) ? ('📞 ' + uData.phone) : '';
+            $('accBalanceAmt').textContent   = bal.toFixed(2) + ' $';
+            $('accInfoName').textContent     = (uData && uData.name)  ? uData.name  : '—';
+            $('accInfoEmail').textContent    = currentUser.email || '—';
+            $('accInfoPhone').textContent    = (uData && uData.phone) ? uData.phone : 'غير مضاف';
+            $('accInfoDate').textContent     = (uData && uData.createdAt) ? uData.createdAt : '—';
+
+            // Member level
+            var memberEl = $('accMemberBadge');
+            if (memberEl) {
+                if      (bal >= 100) memberEl.textContent = 'ذهبي 🥇';
+                else if (bal >= 30)  memberEl.textContent = 'فضي ⭐';
+                else                 memberEl.textContent = 'عميل';
+            }
+
+            // Load stats
+            dbRef('users/' + currentUser.uid + '/orders').once('value', function(snap) {
+                var count = snap.exists() ? Object.keys(snap.val() || {}).length : 0;
+                $('accOrderCount').textContent = count;
+            });
+
+            // Load transactions
+            dbRef('users/' + currentUser.uid + '/transactions').orderByChild('ts').limitToLast(30)
+                .once('value', function(snap) {
+                    var txs = [];
+                    snap.forEach(function(c) { txs.unshift(c.val()); });
+                    $('accTxCount').textContent = txs.length;
+
+                    var list = $('accTxList');
+                    if (!txs.length) {
+                        list.innerHTML = '<div class="acc-tx-empty"><i class="fas fa-inbox" style="display:block;font-size:1.5rem;margin-bottom:.5rem;color:#ddd"></i>لا توجد معاملات بعد</div>';
+                        return;
+                    }
+                    list.innerHTML = txs.slice(0, 5).map(function(tx) {
+                        var isCredit = tx.type === 'credit';
+                        var amtSign  = isCredit ? '+' : '-';
+                        var amtVal   = parseFloat(tx.amount || 0).toFixed(2);
+                        return '<div class="acc-tx-item">'
+                            + '<div class="acc-tx-icon ' + (isCredit ? 'credit' : 'debit') + '">'
+                            + '<i class="fas ' + (isCredit ? 'fa-arrow-down' : 'fa-arrow-up') + '"></i>'
+                            + '</div>'
+                            + '<div class="acc-tx-body">'
+                            + '<div class="acc-tx-desc">' + (tx.desc || 'معاملة') + '</div>'
+                            + '<div class="acc-tx-date">' + (tx.date || '') + '</div>'
+                            + '</div>'
+                            + '<div class="acc-tx-amount ' + (isCredit ? 'credit' : 'debit') + '">'
+                            + amtSign + amtVal + '$'
+                            + '</div>'
+                            + '</div>';
+                    }).join('');
+                });
+
+            // Button actions
+            $('accTopupBtn').onclick  = function() { modalOff('accountModalOv','accountModal'); openTopup(); };
+            $('accWalletBtn').onclick = function() { modalOff('accountModalOv','accountModal'); openWallet(); };
+            $('accOrdersBtn').onclick = function() { modalOff('accountModalOv','accountModal'); openOrdersHistory(); };
+            $('accLogoutBtn').onclick = function() { modalOff('accountModalOv','accountModal'); auth.signOut(); };
+            $('accModalClose').onclick = function() { modalOff('accountModalOv','accountModal'); };
+            $('accountModalOv').onclick = function() { modalOff('accountModalOv','accountModal'); };
+
+            modalOn('accountModalOv', 'accountModal');
+        };
 
         $('walletClose').onclick = () => modalOff('walletOv','walletModal');
         $('walletOv').onclick    = () => modalOff('walletOv','walletModal');
@@ -14547,6 +14951,135 @@
         </button>
 
     </nav>
+
+    <!-- ══ My Account Modal ══ -->
+    <div class="z-ov" id="accountModalOv" style="z-index:1500"></div>
+    <div class="z-modal" id="accountModal" style="z-index:1501">
+
+        <!-- Header with profile + balance -->
+        <div class="acc-modal-header">
+            <button class="acc-modal-close" id="accModalClose"><i class="fas fa-times"></i></button>
+            <div class="acc-profile-row">
+                <div class="acc-avatar-wrap">
+                    <div class="acc-avatar" id="accAvatarLetter">U</div>
+                    <div class="acc-status-dot"></div>
+                </div>
+                <div class="acc-profile-info">
+                    <div class="acc-name" id="accDisplayName">مستخدم</div>
+                    <div class="acc-email" id="accDisplayEmail">—</div>
+                    <div class="acc-phone" id="accDisplayPhone"></div>
+                </div>
+            </div>
+            <!-- Balance card -->
+            <div class="acc-balance-card">
+                <div class="acc-balance-left">
+                    <div class="acc-balance-icon"><i class="fas fa-wallet"></i></div>
+                    <div>
+                        <div class="acc-balance-label">رصيدك الحالي</div>
+                        <div class="acc-balance-amount" id="accBalanceAmt">0.00 $</div>
+                    </div>
+                </div>
+                <button class="acc-topup-btn" id="accTopupBtn">
+                    <i class="fas fa-plus-circle"></i> شحن رصيد
+                </button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="acc-modal-body">
+
+            <!-- Stats -->
+            <div class="acc-stats-row">
+                <div class="acc-stat-card">
+                    <div class="acc-stat-icon green"><i class="fas fa-shopping-bag"></i></div>
+                    <div class="acc-stat-num" id="accOrderCount">—</div>
+                    <div class="acc-stat-label">طلب منجز</div>
+                </div>
+                <div class="acc-stat-card">
+                    <div class="acc-stat-icon blue"><i class="fas fa-exchange-alt"></i></div>
+                    <div class="acc-stat-num" id="accTxCount">—</div>
+                    <div class="acc-stat-label">معاملة</div>
+                </div>
+                <div class="acc-stat-card">
+                    <div class="acc-stat-icon gold"><i class="fas fa-star"></i></div>
+                    <div class="acc-stat-num" id="accMemberBadge">عميل</div>
+                    <div class="acc-stat-label">المستوى</div>
+                </div>
+            </div>
+
+            <!-- Info section -->
+            <div class="acc-section-title">معلومات الحساب</div>
+
+            <div class="acc-info-row">
+                <div class="acc-info-left">
+                    <div class="acc-info-icon"><i class="fas fa-user"></i></div>
+                    <div>
+                        <div class="acc-info-key">الاسم</div>
+                        <div class="acc-info-value" id="accInfoName">—</div>
+                    </div>
+                </div>
+                <span class="acc-info-badge active">نشط</span>
+            </div>
+
+            <div class="acc-info-row">
+                <div class="acc-info-left">
+                    <div class="acc-info-icon"><i class="fas fa-envelope"></i></div>
+                    <div>
+                        <div class="acc-info-key">البريد الإلكتروني</div>
+                        <div class="acc-info-value" id="accInfoEmail">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-info-row">
+                <div class="acc-info-left">
+                    <div class="acc-info-icon"><i class="fas fa-phone"></i></div>
+                    <div>
+                        <div class="acc-info-key">رقم الهاتف</div>
+                        <div class="acc-info-value" id="accInfoPhone">غير مضاف</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-info-row">
+                <div class="acc-info-left">
+                    <div class="acc-info-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <div>
+                        <div class="acc-info-key">تاريخ التسجيل</div>
+                        <div class="acc-info-value" id="accInfoDate">—</div>
+                    </div>
+                </div>
+                <span class="acc-info-badge member">عضو</span>
+            </div>
+
+            <!-- Recent transactions -->
+            <div class="acc-section-title">آخر المعاملات</div>
+            <div class="acc-tx-list" id="accTxList">
+                <div class="acc-tx-empty"><i class="fas fa-inbox" style="display:block;font-size:1.5rem;margin-bottom:.5rem;color:#ddd"></i>لا توجد معاملات بعد</div>
+            </div>
+
+            <!-- Actions -->
+            <div class="acc-section-title">الإجراءات</div>
+            <div class="acc-actions-grid">
+                <button class="acc-action-btn wallet-btn" id="accWalletBtn">
+                    <i class="fas fa-wallet"></i> محفظتي
+                </button>
+                <button class="acc-action-btn" id="accOrdersBtn">
+                    <i class="fas fa-box" style="color:var(--primary)"></i> طلباتي
+                </button>
+                <button class="acc-action-btn logout-btn" id="accLogoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ══ Floating Balance Badge (Mobile) ══ -->
+    <div id="floatingBalBadge" onclick="openAccountModal()">
+        <i class="fas fa-wallet"></i>
+        <span class="fbal-amount" id="floatingBalAmt">0.00$</span>
+    </div>
 
     <!-- ══ Order Success Modal ══ -->
     <div class="z-ov" id="orderSuccessOv" style="z-index:5000;display:none"></div>

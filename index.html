@@ -3123,6 +3123,51 @@
         </div>
     </div>
 
+    <!-- ══ Unified Service Input Modal ══ -->
+    <div id="serviceInputModal">
+        <div class="svc-modal-box" id="svcModalBox">
+
+            <!-- Dynamic header (platform-colored) -->
+            <div class="svc-modal-header platform-default" id="svcModalHeader">
+                <div class="svc-header-icon" id="svcHeaderIcon"><i class="fas fa-shopping-bag" id="svcHeaderIconI"></i></div>
+                <div class="svc-header-info">
+                    <div class="svc-header-title" id="svcHeaderTitle">اسم الخدمة</div>
+                    <div class="svc-header-sub" id="svcHeaderSub">أدخل البيانات المطلوبة</div>
+                </div>
+                <button class="svc-close-btn" id="svcCloseBtn"><i class="fas fa-times"></i></button>
+            </div>
+
+            <!-- Body -->
+            <div class="svc-modal-body">
+
+                <!-- Steps indicator -->
+                <div class="svc-steps" id="svcSteps">
+                    <div class="svc-step active" id="svcStep1"><i class="fas fa-link"></i> الرابط</div>
+                    <div class="svc-step-sep">›</div>
+                    <div class="svc-step" id="svcStep2"><i class="fas fa-sort-amount-up"></i> الكمية</div>
+                    <div class="svc-step-sep">›</div>
+                    <div class="svc-step" id="svcStep3"><i class="fas fa-check"></i> تأكيد</div>
+                </div>
+
+                <!-- Dynamic fields container -->
+                <div id="svcFieldsContainer"></div>
+
+                <!-- Price preview -->
+                <div class="svc-price-box" id="svcPriceBox" style="display:none">
+                    <div class="svc-price-label">السعر المقدر</div>
+                    <span class="svc-price-amount" id="svcPriceAmt">0.00$</span>
+                    <div class="svc-price-sub" id="svcPriceSub"></div>
+                </div>
+
+                <!-- Confirm button -->
+                <button class="svc-confirm-btn" id="svcConfirmBtn">
+                    <i class="fas fa-shopping-cart"></i> إضافة للسلة
+                </button>
+
+            </div>
+        </div>
+    </div>
+
     <!-- نافذة إدخال الكمية المطلوبة لخدمات السوشال ميديا -->
     <div class="quantity-modal" id="quantityModal">
         <div class="quantity-container">
@@ -8712,7 +8757,7 @@
 
                 card.addEventListener('click', (e) => { 
                     e.preventDefault(); 
-                    openGameModal(game);
+                    openServiceInputModal(game);
                 });
                 productsGrid.appendChild(card);
             });
@@ -9853,7 +9898,7 @@
                 });
 
                 card.querySelector('.premium-cart').addEventListener('click', () => {
-                    openPremiumModal(premiumProductData);
+                    openServiceInputModal(premiumProductData);
                 });
 
 
@@ -10377,15 +10422,15 @@
                     const product = products.find(p => p.id === productId);
                     
                     if (product.category === 'social-media') {
-                        openQuantityModal(product);
+                        openServiceInputModal(product);
                     } else if (product.category === 'rased') {
-                        openCreditModal(product);
+                        openServiceInputModal(product);
                     } else if (product.category === 'games') {
-                        openGameModal(product);
+                        openServiceInputModal(product);
                     } else if (product.category === 'app') {
-                        openAppModal(product);
+                        openServiceInputModal(product);
                     } else if (product.category === 'تفعيلات بريميوم') {
-                        openPremiumModal(product);
+                        openServiceInputModal(product);
                     } else {
                         addToCart(productId);
                     }
@@ -10554,7 +10599,7 @@
                 btn.addEventListener('click', function() {
                     const productId = parseInt(this.getAttribute('data-id'));
                     const product = products.find(p => p.id === productId);
-                    openQuantityModal(product);
+                    openServiceInputModal(product);
                 });
             });
 
@@ -10567,7 +10612,7 @@
         }
         
         // -------------------- فتح نافذة إدخال الكمية للسوشال ميديا --------------------
-        function openQuantityModal(product) {
+        function openServiceInputModal(product) {
             selectedSocialProduct = product;
             
             selectedProductName.textContent = product.name;
@@ -10596,7 +10641,7 @@
         }
         
         // -------------------- فتح نافذة إدخال بيانات رصيد الموبايل --------------------
-        function openCreditModal(product) {
+        function openServiceInputModal(product) {
             selectedCreditProduct = product;
             
             selectedCreditName.textContent = product.name;
@@ -10643,7 +10688,7 @@
         }
         
         // -------------------- فتح نافذة إدخال بيانات شحن التطبيقات (APP) --------------------
-        function openAppModal(product) {
+        function openServiceInputModal(product) {
             selectedAppProduct = product;
             
             // البحث عن بيانات التطبيق في appsData
@@ -10707,7 +10752,7 @@
         }
         
         // -------------------- فتح نافذة إدخال بيانات شحن الألعاب (ذكية) --------------------
-        function openGameModal(product) {
+        function openServiceInputModal(product) {
             selectedGameProduct = product;
             
             selectedGameName.textContent = product.name;
@@ -10753,7 +10798,7 @@
         }
 
         // -------------------- فتح نافذة تفعيلات البريميوم --------------------
-        function openPremiumModal(product) {
+        function openServiceInputModal(product) {
             // الحصول على البيانات الكاملة من premiumActivationsData إذا لم تكن موجودة
             let fullProductData = product;
             if (!product.inputLabel || !product.inputPlaceholder) {
@@ -11139,11 +11184,13 @@
                 
                 let detailsHtml = '';
                 if (isSocialMedia) {
+                    const shortLink = item.socialLink ? (item.socialLink.length > 38 ? item.socialLink.substring(0,38)+'…' : item.socialLink) : '';
                     detailsHtml = `
                         <div style="flex: 1;">
                             <h4 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.3rem;">${item.name}</h4>
                             <p style="color: var(--accent); font-weight: 700;">${item.price.toFixed(2)}$</p>
                             <p style="color: var(--gray); font-size: 0.85rem;">الكمية: ${customQty.toLocaleString()}</p>
+                            ${shortLink ? `<p style="color:var(--gray);font-size:.75rem;direction:ltr;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px;"><i class="fas fa-link" style="color:#D4A800"></i> ${shortLink}</p>` : ''}
                         </div>
                     `;
                 } else if (isCredit) {
@@ -11789,16 +11836,16 @@
                         
                         if (p.category === 'social-media') {
                             productDetailsModal.classList.remove('active');
-                            openQuantityModal(p);
+                            openServiceInputModal(p);
                         } else if (p.category === 'rased') {
                             productDetailsModal.classList.remove('active');
-                            openCreditModal(p);
+                            openServiceInputModal(p);
                         } else if (p.category === 'games') {
                             productDetailsModal.classList.remove('active');
-                            openGameModal(p);
+                            openServiceInputModal(p);
                         } else if (p.category === 'app') {
                             productDetailsModal.classList.remove('active');
-                            openAppModal(p);
+                            openServiceInputModal(p);
                         } else {
                             addToCart(pid);
                             productDetailsModal.classList.remove('active');
@@ -12470,7 +12517,7 @@
                         if (i.category === 'games')             { obj.playerId = i.playerId||''; obj.gameValue = i.gameDisplay||i.gameValue||''; }
                         if (i.category === 'app')               { obj.playerId = i.playerId||''; obj.appValue  = i.appValue||''; }
                         if (i.category === 'rased')             { obj.phoneNumber = i.phoneNumber||''; obj.creditValue = i.creditValue||''; }
-                        if (i.category === 'social-media')      { obj.customQuantity = i.customQuantity||300; }
+                        if (i.category === 'social-media')      { obj.customQuantity = i.customQuantity||300; obj.socialLink = i.socialLink||''; }
                         if (i.category === 'تفعيلات بريميوم') { obj.premiumInput = i.premiumInput||''; }
                         items[key] = obj;
                     });
@@ -13752,6 +13799,160 @@
             .acc-modal-body { padding: 1.1rem 1.1rem; }
         }
 
+    
+        /* ══════════════════════════════════════════════════════════════
+           Service Input Modal — unified for social-media + other services
+        ══════════════════════════════════════════════════════════════ */
+        #serviceInputModal {
+            position: fixed; inset: 0;
+            background: rgba(8,15,24,0.72);
+            backdrop-filter: blur(5px);
+            z-index: 1350;
+            display: none; align-items: center; justify-content: center;
+            padding: 1rem;
+        }
+        #serviceInputModal.active { display: flex; }
+
+        .svc-modal-box {
+            background: #fff;
+            border-radius: 22px;
+            width: 100%; max-width: 480px;
+            max-height: 92vh; overflow-y: auto;
+            box-shadow: 0 24px 64px rgba(0,0,0,.22);
+            animation: svcModalIn .28s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes svcModalIn {
+            from { transform: translateY(40px) scale(.94); opacity:0; }
+            to   { transform: translateY(0) scale(1);      opacity:1; }
+        }
+
+        /* Platform-colored header */
+        .svc-modal-header {
+            padding: 1.4rem 1.5rem 1.1rem;
+            display: flex; align-items: center; gap: .9rem;
+            position: relative;
+            border-radius: 22px 22px 0 0;
+            border-bottom: 3px solid rgba(255,255,255,.2);
+            background: var(--primary);
+        }
+        .svc-modal-header.platform-instagram { background: linear-gradient(135deg,#833AB4,#E1306C,#F77737); }
+        .svc-modal-header.platform-facebook  { background: linear-gradient(135deg,#1877F2,#0056b3); }
+        .svc-modal-header.platform-tiktok    { background: linear-gradient(135deg,#010101,#2a2a2a); }
+        .svc-modal-header.platform-youtube   { background: linear-gradient(135deg,#FF0000,#cc0000); }
+        .svc-modal-header.platform-telegram  { background: linear-gradient(135deg,#26A5E4,#0088cc); }
+        .svc-modal-header.platform-default   { background: linear-gradient(135deg,#16253A,#1E3250); }
+
+        .svc-header-icon {
+            width: 48px; height: 48px; border-radius: 14px;
+            background: rgba(255,255,255,.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.45rem; color: #fff; flex-shrink: 0;
+        }
+        .svc-header-info { flex: 1; min-width: 0; }
+        .svc-header-title {
+            color: #fff; font-size: 1rem; font-weight: 800;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .svc-header-sub {
+            color: rgba(255,255,255,.72); font-size: .76rem; margin-top: .12rem;
+        }
+        .svc-close-btn {
+            position: absolute; top: .9rem; left: .9rem;
+            background: rgba(255,255,255,.15); border: none; color: #fff;
+            width: 30px; height: 30px; border-radius: 50%;
+            cursor: pointer; font-size: .9rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .2s;
+        }
+        .svc-close-btn:hover { background: rgba(255,255,255,.3); }
+
+        /* Body */
+        .svc-modal-body { padding: 1.5rem; }
+
+        /* Step pills */
+        .svc-steps {
+            display: flex; align-items: center; gap: .5rem;
+            margin-bottom: 1.4rem;
+        }
+        .svc-step {
+            display: flex; align-items: center; gap: .4rem;
+            font-size: .78rem; font-weight: 700;
+            padding: .3rem .8rem; border-radius: 20px;
+            border: 1.5px solid #e3e9f0; color: var(--gray);
+            background: #f8fafc;
+        }
+        .svc-step.active {
+            background: var(--primary); color: #fff; border-color: var(--primary);
+        }
+        .svc-step.done {
+            background: rgba(46,213,115,.1); color: #2ED573; border-color: rgba(46,213,115,.35);
+        }
+        .svc-step-sep { color: #ccc; font-size: .75rem; }
+
+        /* Input group */
+        .svc-input-group { margin-bottom: 1.1rem; }
+        .svc-input-label {
+            font-size: .85rem; font-weight: 800; color: var(--primary);
+            margin-bottom: .42rem; display: flex; align-items: center; gap: .4rem;
+        }
+        .svc-input-label .req { color: #E74C3C; }
+        .svc-input-help {
+            font-size: .75rem; color: var(--gray); margin-top: .32rem;
+            display: flex; align-items: center; gap: .38rem;
+        }
+        .svc-input-help i { color: var(--secondary-dk); }
+
+        .svc-input {
+            width: 100%; padding: .82rem 1rem;
+            border: 1.5px solid #e3e9f0; border-radius: 12px;
+            font-size: .93rem; font-family: 'Cairo', sans-serif;
+            color: var(--dark); transition: border .25s, box-shadow .25s;
+            background: #fff;
+        }
+        .svc-input:focus {
+            outline: none; border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(247,201,42,.14);
+        }
+        .svc-input.has-error { border-color: #E74C3C; box-shadow: 0 0 0 3px rgba(231,76,60,.1); }
+
+        /* Price preview */
+        .svc-price-box {
+            background: var(--primary);
+            border-radius: 14px; padding: 1.1rem;
+            margin: 1.1rem 0; text-align: center;
+        }
+        .svc-price-label { color: rgba(255,255,255,.62); font-size: .78rem; margin-bottom: .35rem; }
+        .svc-price-amount { color: var(--secondary); font-size: 1.65rem; font-weight: 900; display: block; }
+        .svc-price-sub { color: rgba(255,255,255,.55); font-size: .75rem; margin-top: .3rem; }
+
+        /* Confirm button */
+        .svc-confirm-btn {
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-dk));
+            color: var(--primary-deep); border: none; width: 100%;
+            padding: 1rem; border-radius: 14px;
+            font-size: 1rem; font-weight: 800;
+            font-family: 'Cairo', sans-serif; cursor: pointer;
+            transition: all .3s;
+            display: flex; align-items: center; justify-content: center; gap: .55rem;
+            box-shadow: 0 4px 18px rgba(247,201,42,.33);
+            margin-top: .5rem;
+        }
+        .svc-confirm-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(247,201,42,.5); }
+        .svc-confirm-btn:disabled { background: #e3e9f0; color: #999; cursor: not-allowed; box-shadow: none; transform: none; }
+
+        /* Quantity range hint */
+        .svc-qty-range {
+            display: flex; justify-content: space-between;
+            font-size: .73rem; color: var(--gray);
+            margin-top: .3rem; padding: 0 .1rem;
+        }
+
+        @media (max-width: 480px) {
+            .svc-modal-box { border-radius: 20px 20px 0 0; max-width: 100%; }
+            #serviceInputModal { align-items: flex-end; padding: 0; }
+            .svc-modal-header { border-radius: 20px 20px 0 0; }
+        }
+
     </style>
 
     <!-- ══════════════ AUTH BUTTON injected by JS ══════════════ -->
@@ -14821,6 +15022,7 @@
                         if (it.phoneNumber)    extras.push('<span><i class="fas fa-phone"></i> الهاتف: <b>' + it.phoneNumber + '</b></span>');
                         if (it.creditValue)    extras.push('<span><i class="fas fa-money-bill"></i> الرصيد: <b>' + it.creditValue + ' ل.س</b></span>');
                         if (it.customQuantity) extras.push('<span><i class="fas fa-sort-amount-up"></i> الكمية: <b>' + parseInt(it.customQuantity).toLocaleString() + '</b></span>');
+                        if (it.socialLink) extras.push('<span style="direction:ltr;display:inline-block"><i class="fas fa-link"></i> ' + (it.socialLink.length>50?it.socialLink.substring(0,50)+'…':it.socialLink) + '</span>');
                         if (it.premiumInput)   extras.push('<span><i class="fas fa-key"></i> البيانات: <b>' + it.premiumInput + '</b></span>');
                         return '<div class="adm-prod-item">'
                             + '<div style="flex:1">'
@@ -14965,6 +15167,534 @@
                 });
             }
         }, 1000);
+
+
+        // ══════════════════════════════════════════════════════════════════
+        //   Service Input Modal — unified handler for ALL product types
+        //   that require user input (social-media + others with inputLabel)
+        // ══════════════════════════════════════════════════════════════════
+
+        // Platform config
+        var SVC_PLATFORMS = {
+            instagram: { label:'إنستغرام',  icon:'fab fa-instagram', cls:'platform-instagram' },
+            facebook:  { label:'فيسبوك',    icon:'fab fa-facebook',  cls:'platform-facebook'  },
+            tiktok:    { label:'تيك توك',   icon:'fab fa-tiktok',    cls:'platform-tiktok'    },
+            youtube:   { label:'يوتيوب',    icon:'fab fa-youtube',   cls:'platform-youtube'   },
+            telegram:  { label:'تليغرام',   icon:'fab fa-telegram',  cls:'platform-telegram'  },
+            rased:     { label:'رصيد',       icon:'fas fa-phone-alt', cls:'platform-default'   },
+            games:     { label:'ألعاب',      icon:'fas fa-gamepad',   cls:'platform-default'   },
+            app:       { label:'تطبيقات',    icon:'fas fa-mobile-alt',cls:'platform-default'   },
+            default:   { label:'خدمة',       icon:'fas fa-shopping-bag',cls:'platform-default' }
+        };
+
+        // Determine what URL/link type is needed for a social product
+        function getSocialLinkConfig(product) {
+            var n = (product.name || '').toLowerCase();
+            var p = (product.platform || '').toLowerCase();
+
+            if (p === 'instagram' || n.includes('إنستغرام') || n.includes('instagram')) {
+                if (n.includes('مشاهدات') || n.includes('لايكات') || n.includes('مشاركات'))
+                    return { label:'رابط المنشور/الفيديو', placeholder:'https://www.instagram.com/p/...', help:'أدخل رابط المنشور أو الريلز الذي تريد دعمه' };
+                return { label:'رابط الحساب', placeholder:'https://www.instagram.com/username', help:'أدخل رابط حساب الإنستغرام الذي تريد دعمه' };
+            }
+            if (p === 'facebook' || n.includes('فيسبوك') || n.includes('facebook')) {
+                if (n.includes('اعضاء') || n.includes('كروب'))
+                    return { label:'رابط الكروب/المجموعة', placeholder:'https://www.facebook.com/groups/...', help:'أدخل رابط مجموعة الفيسبوك' };
+                if (n.includes('تفاعل') || n.includes('لايكات') || n.includes('قلوب') || n.includes('مشاهدات'))
+                    return { label:'رابط المنشور', placeholder:'https://www.facebook.com/username/posts/...', help:'أدخل رابط المنشور الذي تريد دعمه' };
+                return { label:'رابط الصفحة/الحساب', placeholder:'https://www.facebook.com/pagename', help:'أدخل رابط صفحة أو حساب الفيسبوك' };
+            }
+            if (p === 'tiktok' || n.includes('تيك توك') || n.includes('tiktok')) {
+                if (n.includes('مشاهدات') || n.includes('لايكات') || n.includes('مشاركات') || n.includes('نقاط'))
+                    return { label:'رابط الفيديو', placeholder:'https://www.tiktok.com/@username/video/...', help:'أدخل رابط فيديو التيك توك' };
+                return { label:'رابط الحساب', placeholder:'https://www.tiktok.com/@username', help:'أدخل رابط حساب التيك توك' };
+            }
+            if (p === 'telegram' || n.includes('تليغرام') || n.includes('telegram')) {
+                if (n.includes('اعضاء'))
+                    return { label:'رابط القناة/المجموعة', placeholder:'https://t.me/channelname', help:'أدخل رابط قناة أو مجموعة التليغرام' };
+                return { label:'رابط المنشور', placeholder:'https://t.me/username/123', help:'أدخل رابط المنشور في التليغرام' };
+            }
+            if (p === 'youtube' || n.includes('يوتيوب') || n.includes('youtube')) {
+                if (n.includes('مشتركين'))
+                    return { label:'رابط القناة', placeholder:'https://www.youtube.com/@channelname', help:'أدخل رابط قناة اليوتيوب' };
+                return { label:'رابط الفيديو', placeholder:'https://www.youtube.com/watch?v=...', help:'أدخل رابط فيديو اليوتيوب' };
+            }
+            return { label:'رابط الحساب/الصفحة', placeholder:'https://...', help:'أدخل الرابط المطلوب' };
+        }
+
+        // State
+        var _svcProduct = null;
+        var _svcType    = null; // 'social' | 'app' | 'credit' | 'game' | 'premium' | 'other'
+
+        // ── Hide / Show bottom nav ───────────────────────────────────────
+        function svcHideBottomNav() {
+            var bn = document.getElementById('mobileBottomNav');
+            if (bn) { bn.style.transform='translateX(-50%) translateY(120%)'; bn.style.opacity='0'; bn.style.pointerEvents='none'; }
+            var fb = document.getElementById('floatingBalBadge');
+            if (fb) fb.style.display='none';
+        }
+        function svcShowBottomNav() {
+            var bn = document.getElementById('mobileBottomNav');
+            if (bn) { bn.style.transform=''; bn.style.opacity=''; bn.style.pointerEvents=''; }
+            var fb = document.getElementById('floatingBalBadge');
+            if (fb && typeof currentUser !== 'undefined' && currentUser) fb.style.display='';
+        }
+
+        // ── Main open function ───────────────────────────────────────────
+        window.openServiceInputModal = function(product) {
+            _svcProduct = product;
+            var modal   = document.getElementById('serviceInputModal');
+            var header  = document.getElementById('svcModalHeader');
+            var iconEl  = document.getElementById('svcHeaderIconI');
+            var titleEl = document.getElementById('svcHeaderTitle');
+            var subEl   = document.getElementById('svcHeaderSub');
+            var fields  = document.getElementById('svcFieldsContainer');
+            var priceBox= document.getElementById('svcPriceBox');
+            var confirmBtn= document.getElementById('svcConfirmBtn');
+            var step1   = document.getElementById('svcStep1');
+            var step2   = document.getElementById('svcStep2');
+            var step3   = document.getElementById('svcStep3');
+
+            // Reset
+            fields.innerHTML = '';
+            priceBox.style.display = 'none';
+            confirmBtn.disabled = false;
+            confirmBtn.onclick = null;
+            [step1,step2,step3].forEach(function(s){ s.classList.remove('active','done'); });
+            step1.classList.add('active');
+
+            // Detect type
+            var cat = product.category || '';
+            var plt = (product.platform || cat || 'default').toLowerCase();
+
+            var pCfg = SVC_PLATFORMS[plt] || SVC_PLATFORMS[cat] || SVC_PLATFORMS.default;
+
+            // Platform class
+            header.className = 'svc-modal-header ' + pCfg.cls;
+            iconEl.className = pCfg.icon;
+            titleEl.textContent = product.name || 'خدمة';
+
+            // Build fields based on category
+            if (cat === 'social-media') {
+                _svcType = 'social';
+                var linkCfg = getSocialLinkConfig(product);
+                subEl.textContent = 'أدخل الرابط والكمية المطلوبة';
+                _buildSvcSteps3(fields, linkCfg, product, priceBox, confirmBtn, step1, step2, step3);
+            } else if (cat === 'app') {
+                _svcType = 'app';
+                var appData = appsData.find(function(a){ return a.name === product.name; });
+                if (!appData) { showToast('بيانات المنتج غير متوفرة', 'error'); return; }
+                if (!appData.unitPrice || appData.unitPrice === 0) {
+                    showToast('هذه الخدمة غير متوفرة حالياً', 'warn'); return;
+                }
+                subEl.textContent = 'أدخل رقم اللاعب والكمية';
+                _buildSvcApp(fields, appData, product, priceBox, confirmBtn, step1, step2, step3);
+            } else if (cat === 'rased') {
+                _svcType = 'credit';
+                subEl.textContent = 'اختر القيمة وأدخل رقم الهاتف';
+                _buildSvcCredit(fields, product, priceBox, confirmBtn, step1, step2, step3);
+            } else if (cat === 'games') {
+                _svcType = 'game';
+                var gameData = gamesData.find(function(g){ return g.name === product.name; });
+                if (!gameData) { showToast('بيانات اللعبة غير متوفرة', 'error'); return; }
+                subEl.textContent = 'اختر الكمية وأدخل رقم اللاعب';
+                _buildSvcGame(fields, gameData, product, priceBox, confirmBtn, step1, step2, step3);
+            } else if (cat === 'تفعيلات بريميوم') {
+                _svcType = 'premium';
+                subEl.textContent = 'أدخل البيانات المطلوبة';
+                _buildSvcPremium(fields, product, priceBox, confirmBtn, step1, step2, step3);
+            } else {
+                subEl.textContent = 'أدخل البيانات المطلوبة';
+                _svcType = 'other';
+                _buildSvcOther(fields, product, priceBox, confirmBtn);
+            }
+
+            // Show modal + hide bottom nav
+            modal.classList.add('active');
+            svcHideBottomNav();
+        };
+
+        // Close handlers
+        document.getElementById('svcCloseBtn').onclick = function() {
+            document.getElementById('serviceInputModal').classList.remove('active');
+            svcShowBottomNav();
+        };
+        document.getElementById('serviceInputModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+                svcShowBottomNav();
+            }
+        });
+
+        // ── Step helper ──────────────────────────────────────────────────
+        function _updateSteps(s1, s2, s3, linkFilled, qtyFilled) {
+            s1.classList.toggle('done',   linkFilled);
+            s1.classList.toggle('active', !linkFilled);
+            s2.classList.toggle('done',   qtyFilled && linkFilled);
+            s2.classList.toggle('active', linkFilled && !qtyFilled);
+            s3.classList.toggle('active', linkFilled && qtyFilled);
+        }
+
+        // ── SOCIAL MEDIA builder ─────────────────────────────────────────
+        function _buildSvcSteps3(container, linkCfg, product, priceBox, confirmBtn, s1, s2, s3) {
+            var minQ = product.minQuantity || 300;
+            var maxQ = product.maxQuantity || 1000000;
+            var ppt  = product.basePrice || 0;
+
+            container.innerHTML =
+                // Link field
+                '<div class="svc-input-group" id="svcLinkGrp">'
+                + '<div class="svc-input-label"><i class="fas fa-link"></i> ' + linkCfg.label + ' <span class="req">*</span></div>'
+                + '<input type="url" class="svc-input" id="svcLinkInput" placeholder="' + linkCfg.placeholder + '" autocomplete="off" dir="ltr">'
+                + '<div class="svc-input-help"><i class="fas fa-info-circle"></i> ' + linkCfg.help + '</div>'
+                + '</div>'
+                // Quantity field
+                + '<div class="svc-input-group" id="svcQtyGrp">'
+                + '<div class="svc-input-label"><i class="fas fa-sort-amount-up"></i> الكمية المطلوبة <span class="req">*</span></div>'
+                + '<input type="number" class="svc-input" id="svcQtyInput" placeholder="مثال: 1000" min="' + minQ + '" max="' + maxQ + '" step="1">'
+                + '<div class="svc-qty-range"><span>الحد الأدنى: ' + minQ.toLocaleString() + '</span><span>الحد الأقصى: ' + maxQ.toLocaleString() + '</span></div>'
+                + '</div>';
+
+            var linkEl = document.getElementById('svcLinkInput');
+            var qtyEl  = document.getElementById('svcQtyInput');
+            var barFill= document.getElementById('zNotifyBarFill');
+
+            function updatePriceSvc() {
+                var qty = parseInt(qtyEl.value);
+                var linkOk = linkEl.value.trim().length > 8;
+                _updateSteps(s1, s2, s3, linkOk, qty >= minQ && qty <= maxQ);
+                if (qty >= minQ && ppt > 0) {
+                    var price = (qty / 1000) * ppt;
+                    document.getElementById('svcPriceAmt').textContent = price.toFixed(2) + '$';
+                    document.getElementById('svcPriceSub').textContent = 'سعر الألف: ' + ppt.toFixed(2) + '$';
+                    priceBox.style.display = 'block';
+                } else {
+                    priceBox.style.display = 'none';
+                }
+            }
+            linkEl.addEventListener('input', updatePriceSvc);
+            qtyEl.addEventListener('input',  updatePriceSvc);
+
+            confirmBtn.onclick = function() {
+                var link = linkEl.value.trim();
+                var qty  = parseInt(qtyEl.value);
+
+                linkEl.classList.remove('has-error');
+                qtyEl.classList.remove('has-error');
+
+                if (!link || link.length < 10) {
+                    linkEl.classList.add('has-error');
+                    linkEl.focus();
+                    showToast('يرجى إدخال الرابط أولاً', 'warn'); return;
+                }
+                if (!link.startsWith('http')) {
+                    linkEl.classList.add('has-error');
+                    linkEl.focus();
+                    showToast('الرابط غير صحيح، يجب أن يبدأ بـ https://', 'warn'); return;
+                }
+                if (!qty || qty < minQ) {
+                    qtyEl.classList.add('has-error');
+                    qtyEl.focus();
+                    showToast('الحد الأدنى للكمية هو ' + minQ.toLocaleString(), 'warn'); return;
+                }
+                if (qty > maxQ) {
+                    qtyEl.classList.add('has-error');
+                    qtyEl.focus();
+                    showToast('الحد الأقصى للكمية هو ' + maxQ.toLocaleString(), 'warn'); return;
+                }
+
+                // Add to cart with socialLink
+                addToCartWithLink(product.id, qty, link);
+                document.getElementById('serviceInputModal').classList.remove('active');
+                svcShowBottomNav();
+            };
+        }
+
+        // ── APP builder ──────────────────────────────────────────────────
+        function _buildSvcApp(container, appData, product, priceBox, confirmBtn, s1, s2, s3) {
+            // Show steps: PlayerID → Quantity
+            var minQ = appData.minQuantity || 1;
+            var maxQ = appData.maxQuantity || 999999999;
+            var labelTxt = appData.inputLabel || 'رقم اللاعب (User ID)';
+            var phTxt    = appData.inputPlaceholder || 'أدخل رقم اللاعب';
+
+            // Update step labels
+            s1.innerHTML = '<i class="fas fa-id-badge"></i> ' + (labelTxt.includes('غير') ? 'المعرّف' : labelTxt.split('(')[0].trim());
+            s2.innerHTML = '<i class="fas fa-sort-amount-up"></i> الكمية';
+
+            container.innerHTML =
+                '<div class="svc-input-group">'
+                + '<div class="svc-input-label"><i class="fas fa-id-badge"></i> ' + labelTxt + ' <span class="req">*</span></div>'
+                + '<input type="text" class="svc-input" id="svcPlayerIdInput" placeholder="' + phTxt + '" autocomplete="off" dir="ltr">'
+                + '<div class="svc-input-help"><i class="fas fa-info-circle"></i> أدخل المعرّف الخاص بحسابك في التطبيق</div>'
+                + '</div>'
+                + '<div class="svc-input-group">'
+                + '<div class="svc-input-label"><i class="fas fa-coins"></i> الكمية المطلوبة <span class="req">*</span></div>'
+                + '<input type="number" class="svc-input" id="svcAppQtyInput" placeholder="أدخل الكمية" min="' + minQ + '" max="' + maxQ + '" step="1">'
+                + '<div class="svc-qty-range"><span>الحد الأدنى: ' + minQ.toLocaleString() + '</span><span>الحد الأقصى: ' + maxQ.toLocaleString() + '</span></div>'
+                + '</div>';
+
+            var pidEl = document.getElementById('svcPlayerIdInput');
+            var qtyEl = document.getElementById('svcAppQtyInput');
+
+            function updatePriceApp() {
+                var qty   = parseInt(qtyEl.value);
+                var pidOk = pidEl.value.trim().length > 0;
+                _updateSteps(s1, s2, s3, pidOk, qty >= minQ);
+                if (qty >= minQ && appData.unitPrice > 0) {
+                    var price = appData.unitPrice * qty;
+                    document.getElementById('svcPriceAmt').textContent = price.toFixed(2) + '$';
+                    document.getElementById('svcPriceSub').textContent = 'سعر القطعة: ' + appData.unitPrice + '$';
+                    priceBox.style.display = 'block';
+                } else {
+                    priceBox.style.display = 'none';
+                }
+            }
+            pidEl.addEventListener('input', updatePriceApp);
+            qtyEl.addEventListener('input', updatePriceApp);
+
+            confirmBtn.onclick = function() {
+                var pid = pidEl.value.trim();
+                var qty = parseInt(qtyEl.value);
+                pidEl.classList.remove('has-error');
+                qtyEl.classList.remove('has-error');
+
+                if (!pid) {
+                    pidEl.classList.add('has-error'); pidEl.focus();
+                    showToast('يرجى إدخال ' + labelTxt, 'warn'); return;
+                }
+                if (!qty || qty < minQ) {
+                    qtyEl.classList.add('has-error'); qtyEl.focus();
+                    showToast('الحد الأدنى للكمية هو ' + minQ.toLocaleString(), 'warn'); return;
+                }
+                if (qty > maxQ) {
+                    qtyEl.classList.add('has-error'); qtyEl.focus();
+                    showToast('الحد الأقصى للكمية هو ' + maxQ.toLocaleString(), 'warn'); return;
+                }
+                addToCart(product.id, null, null, null, null, null, pid, qty);
+                document.getElementById('serviceInputModal').classList.remove('active');
+                svcShowBottomNav();
+            };
+        }
+
+        // ── CREDIT builder ───────────────────────────────────────────────
+        function _buildSvcCredit(container, product, priceBox, confirmBtn, s1, s2, s3) {
+            s1.innerHTML = '<i class="fas fa-list"></i> الفئة';
+            s2.innerHTML = '<i class="fas fa-phone"></i> الهاتف';
+            s3.innerHTML = '<i class="fas fa-check"></i> تأكيد';
+
+            var priceList = [];
+            if (product.name.includes('سيرياتيل')) priceList = creditAmounts.syriatel;
+            else if (product.name.includes('MTN'))  priceList = creditAmounts.mtn;
+
+            var opts = '<option value="">-- اختر قيمة الرصيد --</option>';
+            priceList.forEach(function(item) {
+                opts += '<option value="' + item.value + '" data-price="' + item.price + '">' + item.value + ' ل.س — ' + item.price + '$</option>';
+            });
+
+            container.innerHTML =
+                '<div class="svc-input-group">'
+                + '<div class="svc-input-label"><i class="fas fa-list-alt"></i> قيمة الرصيد <span class="req">*</span></div>'
+                + '<select class="svc-input" id="svcCreditAmt">' + opts + '</select>'
+                + '</div>'
+                + '<div class="svc-input-group">'
+                + '<div class="svc-input-label"><i class="fas fa-phone"></i> رقم الهاتف <span class="req">*</span></div>'
+                + '<input type="tel" class="svc-input" id="svcPhoneInput" placeholder="09xxxxxxxx" dir="ltr">'
+                + '<div class="svc-input-help"><i class="fas fa-info-circle"></i> يجب أن يبدأ الرقم بـ 09 ويتكون من 10 أرقام</div>'
+                + '</div>';
+
+            var selEl   = document.getElementById('svcCreditAmt');
+            var phoneEl = document.getElementById('svcPhoneInput');
+
+            function updatePriceCredit() {
+                var opt   = selEl.options[selEl.selectedIndex];
+                var selOk = selEl.value !== '';
+                var phOk  = phoneEl.value.trim().length > 5;
+                _updateSteps(s1, s2, s3, selOk, phOk);
+                if (opt && opt.value) {
+                    document.getElementById('svcPriceAmt').textContent = parseFloat(opt.getAttribute('data-price')).toFixed(2) + '$';
+                    document.getElementById('svcPriceSub').textContent = 'قيمة: ' + opt.value + ' ل.س';
+                    priceBox.style.display = 'block';
+                } else {
+                    priceBox.style.display = 'none';
+                }
+            }
+            selEl.addEventListener('change', updatePriceCredit);
+            phoneEl.addEventListener('input', updatePriceCredit);
+
+            confirmBtn.onclick = function() {
+                var amount = selEl.value;
+                var phone  = phoneEl.value.trim();
+                selEl.classList.remove('has-error');
+                phoneEl.classList.remove('has-error');
+
+                if (!amount) {
+                    selEl.classList.add('has-error'); selEl.focus();
+                    showToast('يرجى اختيار قيمة الرصيد', 'warn'); return;
+                }
+                if (!phone) {
+                    phoneEl.classList.add('has-error'); phoneEl.focus();
+                    showToast('يرجى إدخال رقم الهاتف', 'warn'); return;
+                }
+                if (!/^09[0-9]{8}$/.test(phone)) {
+                    phoneEl.classList.add('has-error'); phoneEl.focus();
+                    showToast('رقم الهاتف غير صحيح، يجب أن يبدأ بـ 09 ويتكون من 10 أرقام', 'warn'); return;
+                }
+                addToCart(product.id, null, null, phone, amount);
+                document.getElementById('serviceInputModal').classList.remove('active');
+                svcShowBottomNav();
+            };
+        }
+
+        // ── GAME builder ─────────────────────────────────────────────────
+        function _buildSvcGame(container, gameData, product, priceBox, confirmBtn, s1, s2, s3) {
+            var labelTxt = gameData.inputLabel || 'رقم اللاعب (User ID)';
+            s1.innerHTML = '<i class="fas fa-list"></i> الكمية';
+            s2.innerHTML = '<i class="fas fa-id-badge"></i> المعرّف';
+            s3.innerHTML = '<i class="fas fa-check"></i> تأكيد';
+
+            var opts = '<option value="">-- اختر الكمية --</option>';
+            (gameData.amounts || []).forEach(function(a) {
+                opts += '<option value="' + a.value + '" data-price="' + a.price + '">' + a.display + ' — ' + a.price + '$</option>';
+            });
+
+            container.innerHTML =
+                '<div class="svc-input-group">'
+                + '<div class="svc-input-label"><i class="fas fa-coins"></i> الكمية <span class="req">*</span></div>'
+                + '<select class="svc-input" id="svcGameAmtSel">' + opts + '</select>'
+                + '</div>'
+                + '<div class="svc-input-group">'
+                + '<div class="svc-input-label"><i class="fas fa-id-badge"></i> ' + labelTxt + ' <span class="req">*</span></div>'
+                + '<input type="text" class="svc-input" id="svcGamePidInput" placeholder="أدخل المعرّف" autocomplete="off" dir="ltr">'
+                + '<div class="svc-input-help"><i class="fas fa-info-circle"></i> أدخل رقم اللاعب (User ID) الخاص بك</div>'
+                + '</div>';
+
+            var selEl = document.getElementById('svcGameAmtSel');
+            var pidEl = document.getElementById('svcGamePidInput');
+
+            function updatePriceGame() {
+                var opt   = selEl.options[selEl.selectedIndex];
+                var selOk = selEl.value !== '';
+                var pidOk = pidEl.value.trim().length > 0;
+                _updateSteps(s1, s2, s3, selOk, pidOk);
+                if (opt && opt.value) {
+                    document.getElementById('svcPriceAmt').textContent = parseFloat(opt.getAttribute('data-price')).toFixed(2) + '$';
+                    document.getElementById('svcPriceSub').textContent = opt.text.split('—')[0].trim();
+                    priceBox.style.display = 'block';
+                } else { priceBox.style.display = 'none'; }
+            }
+            selEl.addEventListener('change', updatePriceGame);
+            pidEl.addEventListener('input',  updatePriceGame);
+
+            confirmBtn.onclick = function() {
+                var amount = selEl.value;
+                var pid    = pidEl.value.trim();
+                selEl.classList.remove('has-error');
+                pidEl.classList.remove('has-error');
+
+                if (!amount) {
+                    selEl.classList.add('has-error'); selEl.focus();
+                    showToast('يرجى اختيار الكمية', 'warn'); return;
+                }
+                if (!pid) {
+                    pidEl.classList.add('has-error'); pidEl.focus();
+                    showToast('يرجى إدخال ' + labelTxt, 'warn'); return;
+                }
+                addToCart(product.id, null, null, null, null, amount, pid);
+                document.getElementById('serviceInputModal').classList.remove('active');
+                svcShowBottomNav();
+            };
+        }
+
+        // ── PREMIUM builder ──────────────────────────────────────────────
+        function _buildSvcPremium(container, product, priceBox, confirmBtn, s1, s2, s3) {
+            s1.innerHTML = '<i class="fas fa-key"></i> البيانات';
+            s2.classList.add('done');
+            s3.innerHTML = '<i class="fas fa-check"></i> تأكيد';
+
+            // Find premium data
+            var premData = null;
+            if (typeof premiumActivationsData !== 'undefined') {
+                premiumActivationsData.forEach(function(g) {
+                    (g.products || []).forEach(function(p) { if (p.id === product.id) premData = p; });
+                });
+            }
+            var labelTxt = (premData && premData.inputLabel) ? premData.inputLabel : 'أدخل البيانات المطلوبة';
+            var phTxt    = (premData && premData.inputPlaceholder) ? premData.inputPlaceholder : '';
+
+            // Price
+            priceBox.style.display = 'block';
+            document.getElementById('svcPriceAmt').textContent = (parseFloat(product.price)||0).toFixed(2) + '$';
+            document.getElementById('svcPriceSub').textContent = product.name;
+
+            container.innerHTML =
+                '<div class="svc-input-group">'
+                + '<div class="svc-input-label"><i class="fas fa-key"></i> ' + labelTxt + ' <span class="req">*</span></div>'
+                + '<input type="text" class="svc-input" id="svcPremiumInput" placeholder="' + phTxt + '" autocomplete="off">'
+                + '</div>';
+
+            var inputEl = document.getElementById('svcPremiumInput');
+            inputEl.addEventListener('input', function() {
+                _updateSteps(s1, s2, s3, inputEl.value.trim().length > 0, true);
+            });
+
+            confirmBtn.onclick = function() {
+                var val = inputEl.value.trim();
+                inputEl.classList.remove('has-error');
+                if (!val) {
+                    inputEl.classList.add('has-error'); inputEl.focus();
+                    showToast('يرجى إدخال البيانات المطلوبة', 'warn'); return;
+                }
+                addToCart(product.id, null, product.price, null, null, null, null, null, val);
+                document.getElementById('serviceInputModal').classList.remove('active');
+                svcShowBottomNav();
+            };
+        }
+
+        // ── OTHER/GENERIC builder ────────────────────────────────────────
+        function _buildSvcOther(container, product, priceBox, confirmBtn) {
+            priceBox.style.display = 'block';
+            document.getElementById('svcPriceAmt').textContent = (parseFloat(product.price)||0).toFixed(2) + '$';
+            document.getElementById('svcPriceSub').textContent = product.name;
+
+            container.innerHTML = '';
+
+            confirmBtn.onclick = function() {
+                addToCart(product.id);
+                document.getElementById('serviceInputModal').classList.remove('active');
+                svcShowBottomNav();
+            };
+        }
+
+        // ── addToCartWithLink: extends addToCart for social-media with link ─
+        function addToCartWithLink(productId, customQuantity, socialLink) {
+            var product = products.find(function(p){ return p.id === productId; });
+            if (!product) return;
+
+            var itemPrice = calculateSocialMediaPrice(productId, customQuantity);
+            var existing  = cart.find(function(i){ return i.id === productId && i.socialLink === socialLink; });
+
+            if (existing) {
+                existing.customQuantity = (existing.customQuantity || 0) + customQuantity;
+                existing.price = calculateSocialMediaPrice(productId, existing.customQuantity);
+            } else {
+                cart.push({
+                    id:            product.id,
+                    name:          product.name,
+                    basePrice:     product.basePrice || product.price,
+                    price:         itemPrice,
+                    quantity:      1,
+                    customQuantity:customQuantity,
+                    socialLink:    socialLink,
+                    category:      product.category,
+                    perThousand:   product.perThousand || null
+                });
+            }
+            saveCart();
+            updateCartDisplay();
+            showToast('تمت إضافة ' + product.name + ' للسلة!', 'success');
+        }
+
 
         // ── شريط التنقل السفلي للموبايل ──────────────────────────────────────
         window.mobileNavGo = function(sectionId, btn) {

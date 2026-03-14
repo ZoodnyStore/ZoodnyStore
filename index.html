@@ -2961,72 +2961,54 @@
         .stars { color: #FFB800; font-size: 0.8rem; }
         .rating-count { color: var(--gray); font-size: 0.75rem; }
 
-        /* ===== شريط البحث داخل كروت المنتجات ===== */
+        /* ══════════════════════════════════════════════════════
+           شريط البحث الداخلي — نفس مستوى الشريط الرئيسي
+        ══════════════════════════════════════════════════════ */
         .card-search-wrapper {
             grid-column: 1 / -1;
-            margin-bottom: 1.6rem;
+            margin-bottom: 1.8rem;
             position: relative;
         }
 
+        /* الحاوية الخارجية بتأثير ضبابي */
         .products-section-search {
             display: flex;
             align-items: center;
-            background: white;
-            border: none;
-            border-radius: 16px;
-            padding: 0;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(42,63,84,0.10), 0 1px 4px rgba(0,0,0,0.06);
-            transition: box-shadow 0.3s, transform 0.2s;
+            background: var(--primary);
+            border: 2px solid rgba(247,200,115,0.30);
+            border-radius: 50px;
+            padding: 0.3rem 0.3rem 0.3rem 0.9rem;
+            transition: border-color .3s, box-shadow .35s, background .3s;
+            box-shadow: 0 6px 28px rgba(13,27,42,0.18);
             position: relative;
-        }
-
-        .products-section-search::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 16px;
-            border: 2px solid transparent;
-            transition: border-color 0.3s;
-            pointer-events: none;
-            z-index: 1;
+            overflow: visible;
         }
 
         .products-section-search:focus-within {
-            box-shadow: 0 8px 32px rgba(42,63,84,0.14), 0 2px 8px rgba(247,200,115,0.18);
-            transform: translateY(-1px);
-        }
-
-        .products-section-search:focus-within::before {
             border-color: var(--secondary);
+            box-shadow: 0 8px 36px rgba(247,201,42,0.28), 0 2px 10px rgba(13,27,42,0.15);
+            background: var(--primary-mid, #1E3250);
         }
 
-        /* أيقونة البحث على اليمين */
+        /* أيقونة البحث — تتحرك عند التركيز */
         .card-search-icon-box {
-            width: 52px;
-            height: 52px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--primary);
             flex-shrink: 0;
-            transition: background 0.3s;
+            margin-left: 0.5rem;
+            transition: transform .3s;
         }
-
-        .products-section-search:focus-within .card-search-icon-box {
-            background: var(--secondary);
-        }
-
         .card-search-icon-box i {
-            color: white;
+            color: var(--secondary);
             font-size: 1rem;
-            transition: color 0.3s;
+            transition: transform .3s;
         }
-
         .products-section-search:focus-within .card-search-icon-box i {
-            color: var(--dark);
+            transform: scale(1.2);
         }
 
+        /* حقل النص */
         .products-section-search input {
             flex: 1;
             border: none;
@@ -3034,95 +3016,142 @@
             outline: none;
             font-family: 'Cairo', sans-serif;
             font-size: 0.95rem;
-            color: var(--dark);
-            padding: 0 1rem;
-            height: 52px;
+            color: #fff;
+            padding: 0.6rem 0.6rem 0.6rem 0;
+            height: auto;
             min-width: 0;
+            caret-color: var(--secondary);
         }
-
         .products-section-search input::placeholder {
-            color: #b0bac4;
+            color: rgba(255,255,255,0.50);
             font-weight: 400;
         }
 
-        /* شارة عدد المنتجات */
+        /* شارة العداد */
         .card-search-count {
-            font-size: 0.78rem;
-            color: var(--gray);
+            font-size: 0.73rem;
+            font-weight: 800;
             white-space: nowrap;
-            padding-left: 0.5rem;
-            padding-right: 0.5rem;
-            font-weight: 600;
-            background: #f4f6f8;
+            background: rgba(247,201,42,0.15);
+            color: var(--secondary);
+            border: 1px solid rgba(247,201,42,0.30);
             border-radius: 20px;
-            padding: 0.2rem 0.7rem;
-            margin-left: 0.5rem;
-            margin-right: 0.25rem;
+            padding: 0.18rem 0.65rem;
+            margin-left: 0.4rem;
             flex-shrink: 0;
-            transition: opacity 0.2s;
+            transition: all .25s;
         }
 
-        /* زر المسح */
+        /* زر المسح ✕ */
         .card-search-clear {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             border: none;
-            background: #eef0f3;
+            background: rgba(255,255,255,0.12);
             cursor: pointer;
-            color: var(--gray);
-            font-size: 0.78rem;
+            color: rgba(255,255,255,0.65);
+            font-size: 0.75rem;
             display: none;
             align-items: center;
             justify-content: center;
-            margin-left: 0.75rem;
-            margin-right: 0.25rem;
+            margin-left: 0.4rem;
             flex-shrink: 0;
-            transition: background 0.2s, color 0.2s, transform 0.2s;
+            transition: background .2s, color .2s, transform .2s;
         }
-
         .card-search-clear:hover {
             background: var(--accent);
-            color: white;
-            transform: scale(1.1);
+            color: #fff;
+            transform: scale(1.12);
         }
+        .card-search-clear.visible { display: flex; }
 
-        .card-search-clear.visible {
+        /* زر البحث — نفس تصميم الشريط الرئيسي */
+        .card-search-btn {
+            background: var(--secondary);
+            border: none;
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.88rem;
+            flex-shrink: 0;
+            transition: background .28s, transform .2s, box-shadow .2s;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            box-shadow: 0 3px 12px rgba(247,201,42,0.35);
+        }
+        .card-search-btn:hover {
+            background: var(--secondary-dk, #D4A800);
+            transform: scale(1.07);
+            box-shadow: 0 5px 18px rgba(247,201,42,0.52);
         }
 
-        /* خط فاصل متحرك تحت الشريط */
-        .card-search-underline {
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 0 0 4px 4px;
-            width: 0;
-            transition: width 0.4s ease;
-            margin-top: 0;
-        }
-
-        .products-section-search:focus-within ~ .card-search-underline {
-            width: 100%;
-        }
-
+        /* حالة لا توجد نتائج */
         .products-empty-search {
             grid-column: 1 / -1;
             text-align: center;
             padding: 3rem 1rem;
             color: var(--gray);
         }
-
         .products-empty-search i {
             font-size: 2.5rem;
             margin-bottom: 0.8rem;
-            color: #d0d5db;
+            color: #ccd3db;
             display: block;
+        }
+        .products-empty-search p {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+        .products-empty-search small {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* Suggestions row under the bar */
+        .card-search-suggestions {
+            display: flex;
+            gap: 0.4rem;
+            margin-top: 0.65rem;
+            flex-wrap: wrap;
+        }
+        .card-search-sug {
+            background: rgba(13,27,42,0.06);
+            color: var(--primary);
+            border: 1px solid rgba(13,27,42,0.10);
+            border-radius: 20px;
+            padding: 0.22rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .22s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .card-search-sug:hover {
+            background: var(--primary);
+            color: var(--secondary);
+            border-color: var(--primary);
+            transform: translateY(-1px);
         }
 
         @media (max-width: 768px) {
-            .card-search-icon-box { width: 44px; height: 44px; }
-            .products-section-search input { height: 44px; font-size: 0.88rem; }
+            .products-section-search { padding: 0.25rem 0.25rem 0.25rem 0.75rem; }
+            .products-section-search input { font-size: 0.88rem; }
             .card-search-count { display: none; }
+            .card-search-btn { width: 36px; height: 36px; }
+        }
+
+        @media (max-width: 480px) {
+            .card-search-suggestions { gap: 0.3rem; }
+            .card-search-sug { font-size: 0.7rem; padding: 0.18rem 0.6rem; }
         }
 
         @media (max-width: 768px) {
@@ -8147,67 +8176,6 @@
             });
         });
 
-        // ── إضافة جميع منتجات premiumActivationsData إلى مصفوفة البحث
-        if (typeof premiumActivationsData !== 'undefined') {
-            premiumActivationsData.forEach(function(group) {
-                (group.products || []).forEach(function(p) {
-                    // تجنب التكرار
-                    if (!products.find(function(x){ return x.id === p.id; })) {
-                        products.push({
-                            id:          p.id,
-                            name:        p.name,
-                            category:    group.category || 'تفعيلات بريميوم',
-                            price:       p.price || 0,
-                            description: group.description || '',
-                            image:       group.image || '',
-                            _groupId:    group.id,
-                            _groupName:  group.name
-                        });
-                    }
-                });
-            });
-        }
-
-        // ── إضافة جميع منتجات vpnData إلى مصفوفة البحث
-        if (typeof vpnData !== 'undefined') {
-            vpnData.forEach(function(group) {
-                (group.products || []).forEach(function(p) {
-                    if (!products.find(function(x){ return x.id === p.id; })) {
-                        products.push({
-                            id:          p.id,
-                            name:        p.name,
-                            category:    group.category || 'اشتراكات VPN',
-                            price:       p.price || 0,
-                            description: group.description || '',
-                            image:       group.image || '',
-                            _groupId:    group.id,
-                            _groupName:  group.name
-                        });
-                    }
-                });
-            });
-        }
-
-        // ── إضافة جميع منتجات electronicPaymentData إلى مصفوفة البحث
-        if (typeof electronicPaymentData !== 'undefined') {
-            electronicPaymentData.forEach(function(group) {
-                (group.products || []).forEach(function(p) {
-                    if (!products.find(function(x){ return x.id === p.id; })) {
-                        products.push({
-                            id:          p.id,
-                            name:        p.name,
-                            category:    group.category || 'الدفع electronique',
-                            price:       p.price || 0,
-                            description: group.description || '',
-                            image:       group.image || '',
-                            _groupId:    group.id,
-                            _groupName:  group.name
-                        });
-                    }
-                });
-            });
-        }
-
         // بيانات المنصات (لخدمات السوشيال ميديا)
         const platforms = [
             { id: "instagram", name: "إنستغرام", icon: "fab fa-instagram", color: "#E1306C" },
@@ -10273,51 +10241,152 @@
             });
         }
         
-        // -------------------- شريط البحث داخل الكروت --------------------
+        // ── شريط البحث الداخلي — تصميم موحد مع الشريط الرئيسي ──────────
         function injectCardSearchBar(grid, productsList, onSearch) {
             const wrapper = document.createElement('div');
-            wrapper.style.gridColumn = '1 / -1';
-            wrapper.style.marginBottom = '0';
+            wrapper.className = 'card-search-wrapper';
 
             const count = productsList.length;
-            const placeholder = count > 0 ? `ابحث في المنتجات...` : 'ابحث...';
+
+            // بناء تلميحات سريعة من أسماء المنتجات
+            const suggestions = buildSearchSuggestions(productsList);
+            const sugsHtml = suggestions.length > 0
+                ? '<div class="card-search-suggestions" id="cardSearchSugs">'
+                    + suggestions.map(s => `<span class="card-search-sug" data-sug="${s}"><i class="fas fa-bolt" style="font-size:.65rem;color:var(--secondary-dk,#D4A800)"></i>${s}</span>`).join('')
+                  + '</div>'
+                : '';
 
             wrapper.innerHTML = `
                 <div class="products-section-search" id="cardSearchBar">
                     <div class="card-search-icon-box">
                         <i class="fas fa-search"></i>
                     </div>
-                    <input type="text" id="cardSearchInput" placeholder="${placeholder}" autocomplete="off" />
+                    <input
+                        type="text"
+                        id="cardSearchInput"
+                        placeholder="ابحث في ${count} منتج..."
+                        autocomplete="off"
+                    />
                     <span class="card-search-count" id="cardSearchCount">${count} منتج</span>
-                    <button class="card-search-clear" id="cardSearchClear" title="مسح"><i class="fas fa-times"></i></button>
+                    <button class="card-search-clear" id="cardSearchClear" title="مسح البحث">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button class="card-search-btn" id="cardSearchBtn" title="بحث">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
-                <div class="card-search-underline"></div>
+                ${sugsHtml}
             `;
+
             grid.appendChild(wrapper);
 
-            const input = wrapper.querySelector('#cardSearchInput');
-            const clearBtn = wrapper.querySelector('#cardSearchClear');
-            const countBadge = wrapper.querySelector('#cardSearchCount');
+            const input     = wrapper.querySelector('#cardSearchInput');
+            const clearBtn  = wrapper.querySelector('#cardSearchClear');
+            const searchBtn = wrapper.querySelector('#cardSearchBtn');
+            const countBadge= wrapper.querySelector('#cardSearchCount');
+            const sugsRow   = wrapper.querySelector('#cardSearchSugs');
+
+            let _searchTimer = null;
+
+            function triggerSearch(val) {
+                clearTimeout(_searchTimer);
+                _searchTimer = setTimeout(function() {
+                    onSearch(val);
+                    // تحديث عداد النتائج
+                    requestAnimationFrame(function() {
+                        const visible = Array.from(
+                            document.querySelectorAll('#productsGrid .product-card, #productsGrid .platform-card, #productsGrid .game-group-card')
+                        ).filter(c => c.style.display !== 'none').length;
+
+                        if (val.trim()) {
+                            countBadge.textContent = visible + ' نتيجة';
+                            countBadge.style.background = visible > 0
+                                ? 'rgba(46,213,115,0.15)'
+                                : 'rgba(231,76,60,0.15)';
+                            countBadge.style.color = visible > 0
+                                ? 'var(--success,#2ED573)'
+                                : 'var(--accent,#E74C3C)';
+                            countBadge.style.borderColor = visible > 0
+                                ? 'rgba(46,213,115,0.3)'
+                                : 'rgba(231,76,60,0.3)';
+                            if (sugsRow) sugsRow.style.opacity = '0.4';
+                        } else {
+                            countBadge.textContent = count + ' منتج';
+                            countBadge.style.background = '';
+                            countBadge.style.color = '';
+                            countBadge.style.borderColor = '';
+                            if (sugsRow) sugsRow.style.opacity = '1';
+                        }
+                    });
+                }, 180);
+            }
 
             input.addEventListener('input', function() {
                 const val = this.value;
                 clearBtn.classList.toggle('visible', val.length > 0);
-                onSearch(val);
-                // تحديث عداد النتائج
-                setTimeout(() => {
-                    const visible = Array.from(document.querySelectorAll('#productsGrid .product-card, #productsGrid .platform-card'))
-                        .filter(c => c.style.display !== 'none').length;
-                    countBadge.textContent = val ? `${visible} نتيجة` : `${count} منتج`;
-                }, 10);
+                triggerSearch(val);
             });
 
-            clearBtn.addEventListener('click', function() {
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    clearSearch();
+                }
+            });
+
+            searchBtn.addEventListener('click', function() {
+                if (input.value.trim()) triggerSearch(input.value);
+                else input.focus();
+            });
+
+            clearBtn.addEventListener('click', clearSearch);
+
+            function clearSearch() {
                 input.value = '';
                 clearBtn.classList.remove('visible');
-                countBadge.textContent = `${count} منتج`;
                 onSearch('');
+                countBadge.textContent = count + ' منتج';
+                countBadge.style.background = '';
+                countBadge.style.color = '';
+                countBadge.style.borderColor = '';
+                if (sugsRow) sugsRow.style.opacity = '1';
                 input.focus();
+            }
+
+            // التلميحات السريعة — نقر عليها يملأ البحث
+            if (sugsRow) {
+                sugsRow.querySelectorAll('.card-search-sug').forEach(function(el) {
+                    el.addEventListener('click', function() {
+                        const sug = this.getAttribute('data-sug');
+                        input.value = sug;
+                        clearBtn.classList.add('visible');
+                        triggerSearch(sug);
+                        input.focus();
+                    });
+                });
+            }
+        }
+
+        // بناء تلميحات بحث من المنتجات
+        function buildSearchSuggestions(productsList) {
+            if (!productsList || productsList.length === 0) return [];
+            // استخرج الكلمات الأكثر تميزاً
+            const wordCount = {};
+            productsList.forEach(function(p) {
+                var words = (p.name || '').split(/[\s\-–—]+/);
+                words.forEach(function(w) {
+                    w = w.trim();
+                    if (w.length >= 3 && !/^[0-9]+$/.test(w)) {
+                        wordCount[w] = (wordCount[w] || 0) + 1;
+                    }
+                });
             });
+            // أخذ الكلمات الأكثر تكراراً (لكن ليست في كل المنتجات)
+            const sorted = Object.entries(wordCount)
+                .filter(function(e) { return e[1] >= 2 && e[1] < productsList.length; })
+                .sort(function(a, b) { return b[1] - a[1]; })
+                .slice(0, 5)
+                .map(function(e) { return e[0]; });
+            return sorted;
         }
 
         // -------------------- عرض منتجات التصنيف (بدون تغيير) --------------------
@@ -12803,6 +12872,88 @@
                 const searchClearBtn = document.getElementById('searchClearBtn');
                 const searchTags     = document.querySelectorAll('.search-tag');
 
+                // ── Build a dedicated search index that includes ALL products
+                //    from ALL data arrays — each entry has a unique _uid key
+                //    so there are NO ID collisions
+                var searchIndex = [];
+                var _uidCounter = 0;
+
+                // Helper: add a flat product to index
+                function addToIndex(obj) {
+                    searchIndex.push(Object.assign({ _uid: ++_uidCounter }, obj));
+                }
+
+                // 1. Main products array (accessories, social-media, rased…)
+                products.forEach(function(p) {
+                    addToIndex({
+                        id:       p.id,
+                        name:     p.name,
+                        category: p.category || '',
+                        price:    p.price || 0,
+                        basePrice:p.basePrice || 0,
+                        description: p.description || '',
+                        image:    p.image || '',
+                        _source:  'products'
+                    });
+                });
+
+                // 2. Premium activations (telegram stars, youtube premium…)
+                if (typeof premiumActivationsData !== 'undefined') {
+                    premiumActivationsData.forEach(function(group) {
+                        (group.products || []).forEach(function(p) {
+                            addToIndex({
+                                id:          group.id + '__' + p.id,
+                                name:        p.name,
+                                category:    group.category || 'تفعيلات بريميوم',
+                                price:       p.price || 0,
+                                description: group.description || '',
+                                image:       group.image || '',
+                                _groupId:    group.id,
+                                _groupName:  group.name,
+                                _source:     'premium'
+                            });
+                        });
+                    });
+                }
+
+                // 3. VPN data
+                if (typeof vpnData !== 'undefined') {
+                    vpnData.forEach(function(group) {
+                        (group.products || []).forEach(function(p) {
+                            addToIndex({
+                                id:          group.id + '__' + p.id,
+                                name:        p.name,
+                                category:    group.category || 'اشتراكات VPN',
+                                price:       p.price || 0,
+                                description: group.description || '',
+                                image:       group.image || '',
+                                _groupId:    group.id,
+                                _groupName:  group.name,
+                                _source:     'vpn'
+                            });
+                        });
+                    });
+                }
+
+                // 4. Electronic payment (iTunes, Steam, PSN, Visa…)
+                if (typeof electronicPaymentData !== 'undefined') {
+                    electronicPaymentData.forEach(function(group) {
+                        (group.products || []).forEach(function(p) {
+                            addToIndex({
+                                id:          group.id + '__' + p.id,
+                                name:        p.name,
+                                category:    group.category || 'الدفع electronique',
+                                price:       p.price || 0,
+                                description: group.description || '',
+                                image:       group.image || '',
+                                _groupId:    group.id,
+                                _groupName:  group.name,
+                                _source:     'payment'
+                            });
+                        });
+                    });
+                }
+
                 // Category labels & colors
                 const CAT_CONFIG = {
                     'social-media':           { name: 'سوشال ميديا',    color: '#E1306C' },
@@ -12822,9 +12973,12 @@
                 }
 
                 function getRating(product) {
-                    return productRatings && productRatings[product.id]
-                        ? productRatings[product.id].avg
-                        : (3.5 + (product.id % 10) * 0.15).toFixed(1);
+                    if (productRatings && productRatings[product.id]) {
+                        return productRatings[product.id].avg;
+                    }
+                    // For string IDs (grouped products), use _uid for variance
+                    var seed = typeof product.id === 'number' ? product.id : (product._uid || 1);
+                    return (3.5 + (seed % 10) * 0.15).toFixed(1);
                 }
 
                 function renderStars(rating) {
@@ -12849,52 +13003,67 @@
                 // Price display
                 function getPriceText(p) {
                     if (p.category === 'social-media') {
-                        return p.basePrice ? p.basePrice.toFixed(2) + '$/ألف' : 'بالكمية';
+                        return p.basePrice ? parseFloat(p.basePrice).toFixed(2) + '$/ألف' : 'بالكمية';
                     }
                     if (p.category === 'games' || p.category === 'rased') return 'اختر الكمية';
-                    if (p.price && parseFloat(p.price) > 0) return parseFloat(p.price).toFixed(2) + '$';
+                    var pr = parseFloat(p.price);
+                    if (!isNaN(pr) && pr > 0) return pr.toFixed(2) + '$';
                     return 'اختر';
                 }
 
-                // Search engine — scores results by relevance
+                // Search engine — uses searchIndex (collision-free)
                 function searchProducts(query) {
                     const q = query.toLowerCase().trim();
                     if (q.length < 1) return [];
 
-                    const scored = products.map(p => {
-                        let score = 0;
-                        const name = p.name.toLowerCase();
-                        const desc = (p.description || '').toLowerCase();
-                        const cat  = (p.category || '').toLowerCase();
-                        const catName = getCatCfg(p.category).name.toLowerCase();
+                    // Split query into words for multi-word matching
+                    const words = q.split(/\s+/).filter(w => w.length > 1);
 
-                        // Exact name match
-                        if (name === q)                         score += 100;
-                        // Name starts with query
-                        else if (name.startsWith(q))            score += 80;
-                        // Name contains query
-                        else if (name.includes(q))              score += 60;
-                        // Description contains query
-                        if (desc.includes(q))                   score += 20;
-                        // Category match
+                    const scored = searchIndex.map(function(p) {
+                        let score = 0;
+                        const name      = (p.name || '').toLowerCase();
+                        const desc      = (p.description || '').toLowerCase();
+                        const cat       = (p.category || '').toLowerCase();
+                        const catName   = getCatCfg(p.category).name.toLowerCase();
+                        const groupName = (p._groupName || '').toLowerCase();
+
+                        // ── Exact & prefix matches (highest weight) ──
+                        if (name === q)              { score += 100; }
+                        else if (name.startsWith(q)) { score += 80;  }
+                        else if (name.includes(q))   { score += 60;  }
+
+                        // ── Group name (telegram stars → group "نجوم تليغرام") ──
+                        if (groupName) {
+                            if (groupName === q)             score += 90;
+                            else if (groupName.startsWith(q))score += 70;
+                            else if (groupName.includes(q))  score += 50;
+                        }
+
+                        // ── Description ──
+                        if (desc.includes(q)) score += 20;
+
+                        // ── Category ──
                         if (cat.includes(q) || catName.includes(q)) score += 15;
 
-                        // Group name match (for premium/VPN/payment sub-products)
-                        const groupName = (p._groupName || '').toLowerCase();
-                        if (groupName && groupName.includes(q))   score += 25;
-                        if (groupName && groupName.startsWith(q)) score += 10;
+                        // ── Multi-word: every word must hit somewhere ──
+                        if (words.length > 1) {
+                            var allHit = words.every(function(w) {
+                                return name.includes(w) || groupName.includes(w) || desc.includes(w);
+                            });
+                            if (allHit) score += 40;
 
-                        // Multi-word partial: each word of query boosts score
-                        q.split(/\s+/).forEach(word => {
-                            if (word.length > 1 && name.includes(word))      score += 10;
-                            if (word.length > 1 && groupName.includes(word)) score += 8;
-                        });
+                            words.forEach(function(w) {
+                                if (name.includes(w))      score += 12;
+                                if (groupName.includes(w)) score += 10;
+                                if (desc.includes(w))      score += 4;
+                            });
+                        }
 
-                        return { product: p, score };
+                        return { product: p, score: score };
                     })
-                    .filter(x => x.score > 0)
-                    .sort((a, b) => b.score - a.score)
-                    .map(x => x.product);
+                    .filter(function(x) { return x.score > 0; })
+                    .sort(function(a, b) { return b.score - a.score; })
+                    .map(function(x) { return x.product; });
 
                     return scored;
                 }
@@ -12965,7 +13134,7 @@
                                     const cfg2  = getCatCfg(p.category);
 
                                     html += `
-                                        <div class="search-result-item" data-pid="${p.id}">
+                                        <div class="search-result-item" data-uid="${p._uid}">
                                             <img src="${img}"
                                                  class="search-result-img"
                                                  alt="${p.name}"
@@ -12995,29 +13164,36 @@
                         resultsOverlay.classList.add('active');
 
                         // Click handlers
-                        resultsOverlay.querySelectorAll('.search-result-item[data-pid]').forEach(el => {
+                        resultsOverlay.querySelectorAll('.search-result-item[data-uid]').forEach(function(el) {
                             el.addEventListener('click', function() {
-                                const pid = parseInt(this.getAttribute('data-pid'));
-                                closeSearch();
-                                const p = products.find(x => x.id === pid);
+                                var uid = parseInt(this.getAttribute('data-uid'));
+                                // Find from searchIndex by _uid
+                                var p = searchIndex.find(function(x){ return x._uid === uid; });
                                 if (!p) return;
+                                closeSearch();
 
-                                // For grouped products (premium / VPN / payment) — open parent group
+                                // For grouped products (premium / VPN / payment / games-sub)
                                 if (p._groupId) {
-                                    // Scroll to categories then open the right group product list
-                                    var cats = document.getElementById('categories');
-                                    if (cats) {
-                                        cats.style.display = 'block';
-                                        window.scrollTo({ top: cats.offsetTop - 80, behavior: 'smooth' });
-                                    }
-                                    // Use openServiceInputModal directly since product has price
                                     if (typeof openServiceInputModal === 'function') {
-                                        setTimeout(function() { openServiceInputModal(p); }, 300);
+                                        // Build a product-like object for the modal
+                                        var modalProd = {
+                                            id:          p.id,
+                                            name:        p.name,
+                                            category:    p.category,
+                                            price:       p.price || 0,
+                                            description: p.description || '',
+                                            image:       p.image || '',
+                                            _groupId:    p._groupId,
+                                            _groupName:  p._groupName,
+                                            _source:     p._source
+                                        };
+                                        openServiceInputModal(modalProd);
                                     }
                                     return;
                                 }
 
-                                // Normal products
+                                // Normal flat products
+                                var pid = typeof p.id === 'number' ? p.id : parseInt(p.id);
                                 if (typeof showProductDetails === 'function') showProductDetails(pid);
                                 else if (typeof openServiceInputModal === 'function') openServiceInputModal(p);
                             });

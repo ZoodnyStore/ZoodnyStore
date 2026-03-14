@@ -14731,6 +14731,12 @@
 
         <!-- ══ تبويب العملاء ══ -->
         <div class="adm-tab-panel" id="panel-users">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem">
+                <div style="font-size:.82rem;color:#888"><i class="fas fa-info-circle"></i> العملاء المستخرجون من الطلبات والشحن</div>
+                <button onclick="buildUsersFromData()" style="background:var(--primary);color:#fff;border:none;border-radius:8px;padding:.35rem .9rem;font-size:.8rem;cursor:pointer;font-family:'Cairo',sans-serif">
+                    <i class="fas fa-sync-alt"></i> تحديث
+                </button>
+            </div>
             <div class="adm-tbl-wrap">
                 <table class="adm-tbl">
                     <thead><tr><th>الاسم</th><th>الإيميل</th><th>الهاتف</th><th>الرصيد</th><th>الطلبات</th><th>تاريخ التسجيل</th><th>إجراء</th></tr></thead>
@@ -15614,6 +15620,7 @@
                 snap.forEach(function(c) { adminTopups.push(c.val()); });
                 renderTopupsTable();
                 renderTopupStats();
+                buildUsersFromData(); // إعادة بناء العملاء
             });
 
             // Store orders
@@ -15621,10 +15628,12 @@
                 adminOrders = [];
                 snap.forEach(function(c) { adminOrders.push(c.val()); });
                 renderOrdersTable();
+                buildUsersFromData(); // إعادة بناء العملاء
             });
 
-            // Users — تحميل كامل بيانات العملاء
+            // محاولة قراءة /users مباشرة (تنجح إذا كانت Rules تسمح)
             dbRef('users').on('value', function(snap) {
+                if (!snap.exists()) { buildUsersFromData(); return; }
                 adminUsers = [];
                 snap.forEach(function(c) {
                     var u = c.val();
@@ -15640,16 +15649,62 @@
                         });
                     }
                 });
-                renderUsersTable();
-            }, function(err) {
-                // خطأ في الصلاحيات — اعرضه في جدول العملاء
-                var tbody = $('usersBody');
-                if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="adm-no-data" style="color:#E74C3C">'
-                    + '<i class="fas fa-lock" style="display:block;font-size:2rem;margin-bottom:.5rem"></i>'
-                    + 'خطأ في الصلاحيات: ' + err.message + '<br>'
-                    + '<small style="color:#aaa">يرجى التحقق من Firebase Rules وإضافة حساب المدير</small>'
-                    + '</td></tr>';
+                if (adminUsers.length > 0) {
+                    renderUsersTable();
+                } else {
+                    buildUsersFromData();
+                }
+            }, function() {
+                // Firebase Rules تمنع القراءة — نبني العملاء من الطلبات
+                buildUsersFromData();
             });
+        }
+
+        // بناء قائمة العملاء من store_orders و topup_orders
+        window.buildUsersFromData = function buildUsersFromData() {
+            var map = {}; // uid أو phone كمفتاح
+
+            // من طلبات المتجر
+            adminOrders.forEach(function(o) {
+                var key = o.uid || o.phone || o.name;
+                if (!key) return;
+                if (!map[key]) {
+                    map[key] = {
+                        uid:         o.uid      || '-',
+                        name:        o.name     || '-',
+                        email:       o.email    || '-',
+                        phone:       o.phone    || '-',
+                        balance:     0,
+                        ordersCount: 0,
+                        createdAt:   o.date     || '-'
+                    };
+                }
+                map[key].ordersCount++;
+            });
+
+            // من طلبات الشحن
+            adminTopups.forEach(function(t) {
+                var key = t.uid || t.phone || t.name;
+                if (!key) return;
+                if (!map[key]) {
+                    map[key] = {
+                        uid:         t.uid    || '-',
+                        name:        t.name   || '-',
+                        email:       '-',
+                        phone:       t.phone  || '-',
+                        balance:     0,
+                        ordersCount: 0,
+                        createdAt:   t.date   || '-'
+                    };
+                }
+                // جمع المبالغ المقبولة كرصيد تقريبي
+                if (t.status === 'accepted') {
+                    map[key].balance += parseFloat(t.amount || 0);
+                }
+            });
+
+            adminUsers = Object.values(map);
+            renderUsersTable();
         }
 
         function renderTopupStats() {

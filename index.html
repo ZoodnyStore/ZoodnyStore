@@ -13667,10 +13667,24 @@
         .topup-submit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(26,37,53,.35)}
         .topup-submit-btn:active{transform:translateY(0)}
         .topup-err{
-            color:#E74C3C;font-size:.76rem;margin-top:.4rem;display:none;
-            background:#fff5f5;border-radius:7px;padding:.4rem .7rem;border:1px solid #fcc;
+            color:#E74C3C;font-size:.78rem;margin-bottom:.6rem;display:none;
+            background:#fff0f0;border-radius:8px;padding:.55rem .8rem;border:1.5px solid #f5c6c6;
+            font-weight:600;line-height:1.5;
+            animation: tuErrShake .3s ease;
         }
-        .topup-err.show{display:block}
+        .topup-err.show{display:flex;align-items:flex-start;gap:.4rem}
+        .topup-err.show::before{content:'\f071';font-family:'Font Awesome 6 Free';font-weight:900;font-size:.8rem;margin-top:1px;flex-shrink:0}
+        @keyframes tuErrShake {
+            0%,100%{transform:translateX(0)}
+            25%{transform:translateX(-5px)}
+            75%{transform:translateX(5px)}
+        }
+        .topup-form-group input.input-error,
+        .topup-form-group textarea.input-error {
+            border-color:#E74C3C !important;
+            background:#fff8f8 !important;
+            box-shadow:0 0 0 3px rgba(231,76,60,.15) !important;
+        }
 
         /* موبايل iOS: bottom sheet */
         @media(max-width:768px){
@@ -14607,7 +14621,7 @@
             </div>
             <div class="topup-form-group">
                 <label><i class="fas fa-phone"></i> رقم هاتفك *</label>
-                <input type="tel" id="tuPhone" placeholder="09xxxxxxxx"/>
+                <input type="tel" id="tuPhone" placeholder="09xxxxxxxx" oninput="this.classList.remove('input-error');document.getElementById('tuErr').className='topup-err'"/>
             </div>
             <div class="topup-form-group">
                 <label><i class="fas fa-dollar-sign"></i> المبلغ المُرسل ($) *</label>
@@ -14615,17 +14629,17 @@
             </div>
             <div class="topup-form-group">
                 <label><i class="fas fa-hashtag"></i> رقم عملية شام كاش *</label>
-                <input type="text" id="tuTxId" placeholder="رقم العملية"/>
+                <input type="text" id="tuTxId" placeholder="رقم العملية (7-10 أرقام)" inputmode="numeric" oninput="this.classList.remove('input-error');document.getElementById('tuErr').className='topup-err'"/>
             </div>
             <div class="topup-form-group">
                 <label><i class="fas fa-comment-alt"></i> ملاحظات</label>
                 <textarea id="tuNotes" placeholder="أي ملاحظات إضافية..."></textarea>
             </div>
 
+            <div class="topup-err" id="tuErr"></div>
             <button class="topup-submit-btn" id="tuSubmitBtn">
                 <i class="fas fa-paper-plane"></i> إرسال طلب الشحن
             </button>
-            <div class="topup-err" id="tuErr"></div>
 
         </div>
     </div>
@@ -14995,6 +15009,7 @@
             var pass  = $('regPass').value;
             $('registerErr').textContent = '';
             if (!name||!phone||!email||!pass) { $('registerErr').textContent = 'يرجى ملء جميع الحقول'; return; }
+            if (!/^09[0-9]{8}$/.test(phone)) { $('registerErr').textContent = 'رقم الهاتف غير صحيح، يجب أن يبدأ بـ 09 ويتكون من 10 أرقام مثل: 09XXXXXXXX'; return; }
             if (pass.length < 6) { $('registerErr').textContent = 'كلمة السر 6 أحرف على الأقل'; return; }
             $('registerBtn').disabled = true;
             auth.createUserWithEmailAndPassword(email, pass)
@@ -15172,11 +15187,31 @@
             var notes  = $('tuNotes').value.trim();
             var errEl  = $('tuErr');
 
-            if (!name||!phone||isNaN(amount)||amount<=0||!txId) {
-                errEl.textContent = 'يرجى ملء جميع الحقول المطلوبة';
-                errEl.className = 'topup-err show'; return;
+            // دالة لعرض الخطأ وتمييز الحقل
+            function showErr(msg, fieldId) {
+                errEl.textContent = msg;
+                errEl.className = 'topup-err show';
+                ['tuName','tuPhone','tuAmount','tuTxId'].forEach(function(id){ $(id).classList.remove('input-error'); });
+                if (fieldId) {
+                    $(fieldId).classList.add('input-error');
+                    $(fieldId).focus();
+                    // مرر للأعلى حتى يُرى الحقل والخطأ
+                    errEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
             }
+
+            // إزالة تمييز الأخطاء القديمة
+            ['tuName','tuPhone','tuAmount','tuTxId'].forEach(function(id){ $(id).classList.remove('input-error'); });
+
+            if (!name)             { showErr('يرجى إدخال اسمك الكامل', 'tuName'); return; }
+            if (!phone)            { showErr('يرجى إدخال رقم هاتفك', 'tuPhone'); return; }
+            if (!/^09[0-9]{8}$/.test(phone)) { showErr('رقم الهاتف غير صحيح — يجب أن يبدأ بـ 09 ويتكون من 10 أرقام: 09XXXXXXXX', 'tuPhone'); return; }
+            if (isNaN(amount)||amount<=0)     { showErr('يرجى إدخال مبلغ صحيح أكبر من صفر', 'tuAmount'); return; }
+            if (!txId)             { showErr('يرجى إدخال رقم عملية شام كاش', 'tuTxId'); return; }
+            if (!/^[0-9]{7,10}$/.test(txId)) { showErr('رقم عملية شام كاش غير صحيح — يجب أن يتكون من 7 إلى 10 أرقام فقط', 'tuTxId'); return; }
+
             errEl.className = 'topup-err';
+            errEl.textContent = '';
             var btn = $('tuSubmitBtn');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
@@ -15641,7 +15676,7 @@
                     + '  </div>'
                     + '  <div class="adm-topup-info">'
                     + '    <div class="adm-ti-box adm-ti-amount"><div class="adm-ti-lbl">المبلغ المطلوب شحنه</div><div class="adm-ti-val">' + amt + ' $</div></div>'
-                    + '    <div class="adm-ti-box"><div class="adm-ti-lbl">رقم عملية شام كاش</div><div class="adm-ti-val">' + (t.transferNumber||t.shamCashNumber||'-') + '</div></div>'
+                    + '    <div class="adm-ti-box"><div class="adm-ti-lbl">رقم عملية شام كاش</div><div class="adm-ti-val">' + (t.txId||t.transferNumber||t.shamCashNumber||'-') + '</div></div>'
                     + '  </div>'
                     + '</div>'
                     + '<div class="adm-card-foot">'

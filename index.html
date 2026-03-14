@@ -15459,21 +15459,33 @@
             $('adminLoginModal').classList.remove('on');
             $('adminDashboard').classList.remove('on');
         }
+        const ADMIN_EMAIL = 'admin@zoodny.com';   // ← بريد حساب المدير في Firebase
+
         function tryAdminLogin() {
-            if ($('adminPassInput').value === ADMIN_PASS) {
-                $('adminLoginModal').classList.remove('on');
-                $('adminDashboard').classList.add('on');
-                startAdminListeners();
-                // طلب صلاحية إشعارات المتصفح عند فتح لوحة الأدمن
-                requestBrowserNotifPermission(function(granted) {
-                    if (granted) {
-                        initTopupNotifListener();
-                    }
-                });
-            } else {
+            if ($('adminPassInput').value !== ADMIN_PASS) {
                 $('adminLoginErr').textContent = '✕ كلمة السر غير صحيحة';
                 $('adminPassInput').value = '';
+                return;
             }
+
+            var btn = $('adminLoginBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الدخول...';
+            $('adminLoginErr').textContent = '';
+
+            // تسجيل دخول Firebase بحساب المدير للحصول على صلاحية قراءة البيانات
+            auth.signInWithEmailAndPassword(ADMIN_EMAIL, ADMIN_PASS)
+                .catch(function() { return Promise.resolve(); }) // إذا فشل الدخول تابع بدونه
+                .finally(function() {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> دخول';
+                    $('adminLoginModal').classList.remove('on');
+                    $('adminDashboard').classList.add('on');
+                    startAdminListeners();
+                    requestBrowserNotifPermission(function(granted) {
+                        if (granted) initTopupNotifListener();
+                    });
+                });
         }
 
         // ── نظام إشعارات المتصفح ──────────────────────────────────────
@@ -15616,27 +15628,27 @@
                 adminUsers = [];
                 snap.forEach(function(c) {
                     var u = c.val();
-                    if (u && (u.email || u.name)) {
-                        // استثناء الحقول الضخمة لتجنب بطء العرض
-                        var clean = {
-                            uid:       u.uid       || c.key,
-                            name:      u.name      || '-',
-                            email:     u.email     || '-',
-                            phone:     u.phone     || '-',
-                            balance:   u.balance   || 0,
+                    if (u) {
+                        adminUsers.push({
+                            uid:         u.uid         || c.key,
+                            name:        u.name        || '-',
+                            email:       u.email       || '-',
+                            phone:       u.phone       || '-',
+                            balance:     u.balance     || 0,
                             ordersCount: u.ordersCount || 0,
-                            createdAt: u.createdAt || '-'
-                        };
-                        adminUsers.push(clean);
+                            createdAt:   u.createdAt   || '-'
+                        });
                     }
                 });
-                // إذا كان تاب العملاء مفتوحاً الآن أعد الرسم
-                var activeTab = document.querySelector('.adm-tab.active');
-                if (activeTab && activeTab.dataset.panel === 'users') {
-                    renderUsersTable();
-                } else {
-                    renderUsersTable(); // ارسم على أي حال (invisible لكن جاهز)
-                }
+                renderUsersTable();
+            }, function(err) {
+                // خطأ في الصلاحيات — اعرضه في جدول العملاء
+                var tbody = $('usersBody');
+                if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="adm-no-data" style="color:#E74C3C">'
+                    + '<i class="fas fa-lock" style="display:block;font-size:2rem;margin-bottom:.5rem"></i>'
+                    + 'خطأ في الصلاحيات: ' + err.message + '<br>'
+                    + '<small style="color:#aaa">يرجى التحقق من Firebase Rules وإضافة حساب المدير</small>'
+                    + '</td></tr>';
             });
         }
 

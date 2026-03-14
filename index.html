@@ -14694,7 +14694,7 @@
         <div class="adm-tabs">
             <div class="adm-tab active" data-panel="topups"><i class="fas fa-wallet"></i> شحن الرصيد</div>
             <div class="adm-tab" data-panel="orders"><i class="fas fa-shopping-bag"></i> طلبات المتجر</div>
-            <div class="adm-tab" data-panel="users"><i class="fas fa-users"></i> العملاء <span id="admUsersCount" style="background:var(--primary);color:#fff;border-radius:10px;padding:1px 7px;font-size:.72rem;margin-right:4px"></span></div>
+            <div class="adm-tab" data-panel="users"><i class="fas fa-users"></i> العملاء</div>
         </div>
 
         <!-- ══ تبويب طلبات الشحن ══ -->
@@ -14731,12 +14731,6 @@
 
         <!-- ══ تبويب العملاء ══ -->
         <div class="adm-tab-panel" id="panel-users">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem">
-                <div style="font-size:.82rem;color:#888"><i class="fas fa-info-circle"></i> العملاء المستخرجون من الطلبات والشحن</div>
-                <button onclick="buildUsersFromData()" style="background:var(--primary);color:#fff;border:none;border-radius:8px;padding:.35rem .9rem;font-size:.8rem;cursor:pointer;font-family:'Cairo',sans-serif">
-                    <i class="fas fa-sync-alt"></i> تحديث
-                </button>
-            </div>
             <div class="adm-tbl-wrap">
                 <table class="adm-tbl">
                     <thead><tr><th>الاسم</th><th>الإيميل</th><th>الهاتف</th><th>الرصيد</th><th>الطلبات</th><th>تاريخ التسجيل</th><th>إجراء</th></tr></thead>
@@ -15417,10 +15411,6 @@
                 document.querySelectorAll('.adm-tab-panel').forEach(p => p.classList.remove('active'));
                 tab.classList.add('active');
                 $('panel-' + tab.dataset.panel).classList.add('active');
-                // إعادة رسم البيانات عند تبديل التاب
-                if (tab.dataset.panel === 'users')  renderUsersTable();
-                if (tab.dataset.panel === 'orders') renderOrdersTable();
-                if (tab.dataset.panel === 'topups') { renderTopupsTable(); renderTopupStats(); }
             });
         });
 
@@ -15465,33 +15455,21 @@
             $('adminLoginModal').classList.remove('on');
             $('adminDashboard').classList.remove('on');
         }
-        const ADMIN_EMAIL = 'admin@zoodny.com';   // ← بريد حساب المدير في Firebase
-
         function tryAdminLogin() {
-            if ($('adminPassInput').value !== ADMIN_PASS) {
+            if ($('adminPassInput').value === ADMIN_PASS) {
+                $('adminLoginModal').classList.remove('on');
+                $('adminDashboard').classList.add('on');
+                startAdminListeners();
+                // طلب صلاحية إشعارات المتصفح عند فتح لوحة الأدمن
+                requestBrowserNotifPermission(function(granted) {
+                    if (granted) {
+                        initTopupNotifListener();
+                    }
+                });
+            } else {
                 $('adminLoginErr').textContent = '✕ كلمة السر غير صحيحة';
                 $('adminPassInput').value = '';
-                return;
             }
-
-            var btn = $('adminLoginBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الدخول...';
-            $('adminLoginErr').textContent = '';
-
-            // تسجيل دخول Firebase بحساب المدير للحصول على صلاحية قراءة البيانات
-            auth.signInWithEmailAndPassword(ADMIN_EMAIL, ADMIN_PASS)
-                .catch(function() { return Promise.resolve(); }) // إذا فشل الدخول تابع بدونه
-                .finally(function() {
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> دخول';
-                    $('adminLoginModal').classList.remove('on');
-                    $('adminDashboard').classList.add('on');
-                    startAdminListeners();
-                    requestBrowserNotifPermission(function(granted) {
-                        if (granted) initTopupNotifListener();
-                    });
-                });
         }
 
         // ── نظام إشعارات المتصفح ──────────────────────────────────────
@@ -15615,96 +15593,33 @@
             adminListenerOn = true;
 
             // Topup orders
+            console.log('Loading topup_orders...');
             dbRef('topup_orders').on('value', function(snap) {
+                console.log('topup_orders received:', snap.val());
                 adminTopups = [];
                 snap.forEach(function(c) { adminTopups.push(c.val()); });
+                console.log('adminTopups array:', adminTopups);
                 renderTopupsTable();
                 renderTopupStats();
-                buildUsersFromData(); // إعادة بناء العملاء
             });
-
             // Store orders
             dbRef('store_orders').on('value', function(snap) {
                 adminOrders = [];
                 snap.forEach(function(c) { adminOrders.push(c.val()); });
                 renderOrdersTable();
-                buildUsersFromData(); // إعادة بناء العملاء
             });
-
-            // محاولة قراءة /users مباشرة (تنجح إذا كانت Rules تسمح)
+            // Users
+            console.log('Loading users...');
             dbRef('users').on('value', function(snap) {
-                if (!snap.exists()) { buildUsersFromData(); return; }
+                console.log('users received:', snap.numChildren());
                 adminUsers = [];
                 snap.forEach(function(c) {
                     var u = c.val();
-                    if (u) {
-                        adminUsers.push({
-                            uid:         u.uid         || c.key,
-                            name:        u.name        || '-',
-                            email:       u.email       || '-',
-                            phone:       u.phone       || '-',
-                            balance:     u.balance     || 0,
-                            ordersCount: u.ordersCount || 0,
-                            createdAt:   u.createdAt   || '-'
-                        });
-                    }
+                    if (u) adminUsers.push(Object.assign({}, u, {transactions:undefined, orders:undefined}));
                 });
-                if (adminUsers.length > 0) {
-                    renderUsersTable();
-                } else {
-                    buildUsersFromData();
-                }
-            }, function() {
-                // Firebase Rules تمنع القراءة — نبني العملاء من الطلبات
-                buildUsersFromData();
+                console.log('adminUsers:', adminUsers);
+                renderUsersTable();
             });
-        }
-
-        // بناء قائمة العملاء من store_orders و topup_orders
-        window.buildUsersFromData = function buildUsersFromData() {
-            var map = {}; // uid أو phone كمفتاح
-
-            // من طلبات المتجر
-            adminOrders.forEach(function(o) {
-                var key = o.uid || o.phone || o.name;
-                if (!key) return;
-                if (!map[key]) {
-                    map[key] = {
-                        uid:         o.uid      || '-',
-                        name:        o.name     || '-',
-                        email:       o.email    || '-',
-                        phone:       o.phone    || '-',
-                        balance:     0,
-                        ordersCount: 0,
-                        createdAt:   o.date     || '-'
-                    };
-                }
-                map[key].ordersCount++;
-            });
-
-            // من طلبات الشحن
-            adminTopups.forEach(function(t) {
-                var key = t.uid || t.phone || t.name;
-                if (!key) return;
-                if (!map[key]) {
-                    map[key] = {
-                        uid:         t.uid    || '-',
-                        name:        t.name   || '-',
-                        email:       '-',
-                        phone:       t.phone  || '-',
-                        balance:     0,
-                        ordersCount: 0,
-                        createdAt:   t.date   || '-'
-                    };
-                }
-                // جمع المبالغ المقبولة كرصيد تقريبي
-                if (t.status === 'accepted') {
-                    map[key].balance += parseFloat(t.amount || 0);
-                }
-            });
-
-            adminUsers = Object.values(map);
-            renderUsersTable();
         }
 
         function renderTopupStats() {
@@ -15855,30 +15770,24 @@
         }
 
         function renderUsersTable() {
-            var tbody = $('usersBody');
-            if (!tbody) return;
-            // تحديث عداد العملاء في التاب
-            var countBadge = $('admUsersCount');
-            if (countBadge) countBadge.textContent = adminUsers.length || '';
-            if (!adminUsers || !adminUsers.length) {
-                tbody.innerHTML = '<tr><td colspan="7" class="adm-no-data"><i class="fas fa-users" style="display:block;font-size:2rem;margin-bottom:.5rem;color:#ddd"></i>لا يوجد عملاء مسجلون</td></tr>';
-                return;
-            }
-            tbody.innerHTML = adminUsers.slice().sort(function(a,b){
-                return (b.createdAt||'') > (a.createdAt||'') ? 1 : -1;
-            }).map(function(u) {
+            console.log('renderUsersTable called, adminUsers length:', adminUsers ? adminUsers.length : 0);
+            var tbody = document.getElementById('usersBody');
+            console.log('tbody found:', !!tbody);
+            if (!tbody) { console.log('tbody not found'); return; }
+            if (!adminUsers || !adminUsers.length) { tbody.innerHTML = '<tr><td colspan="7" class="adm-no-data">لا يوجد مستخدمون</td></tr>'; return; }
+            tbody.innerHTML = adminUsers.map(function(u) {
                 var uid = u.uid || '';
                 var bal = parseFloat(u.balance||0).toFixed(2);
                 return '<tr>'
                     + '<td><strong>' + (u.name||'-') + '</strong></td>'
-                    + '<td style="direction:ltr;text-align:right">' + (u.email||'-') + '</td>'
+                    + '<td>' + (u.email||'-') + '</td>'
                     + '<td>' + (u.phone||'-') + '</td>'
                     + '<td><strong style="color:var(--success)">' + bal + '$</strong>'
                     + '<div class="adm-topup-inline">'
                     + '<input type="number" id="topupAmt_' + uid + '" placeholder="$ مبلغ" min="0.01" step="0.01" style="width:80px"/>'
                     + '<button class="adm-act-btn topup" onclick="admAddBalance(\'' + uid + '\')">إضافة</button>'
                     + '</div></td>'
-                    + '<td style="text-align:center">' + (u.ordersCount||0) + '</td>'
+                    + '<td>' + (u.ordersCount||0) + '</td>'
                     + '<td><small>' + (u.createdAt||'-') + '</small></td>'
                     + '<td><button class="adm-act-btn del" onclick="admDelUser(\'' + uid + '\')"><i class="fas fa-trash"></i></button></td>'
                     + '</tr>';

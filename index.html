@@ -15425,11 +15425,129 @@
                 $('adminLoginModal').classList.remove('on');
                 $('adminDashboard').classList.add('on');
                 startAdminListeners();
+                // طلب صلاحية إشعارات المتصفح عند فتح لوحة الأدمن
+                requestBrowserNotifPermission(function(granted) {
+                    if (granted) {
+                        initTopupNotifListener();
+                    }
+                });
             } else {
                 $('adminLoginErr').textContent = '✕ كلمة السر غير صحيحة';
                 $('adminPassInput').value = '';
             }
         }
+
+        // ── نظام إشعارات المتصفح ──────────────────────────────────────
+        var _notifPermGranted = false;
+        var _topupNotifInit   = false;
+        var _knownTopupIds    = new Set();
+
+        function requestBrowserNotifPermission(cb) {
+            if (!('Notification' in window)) { if(cb) cb(false); return; }
+            if (Notification.permission === 'granted') {
+                _notifPermGranted = true; if(cb) cb(true); return;
+            }
+            if (Notification.permission === 'denied') { if(cb) cb(false); return; }
+            Notification.requestPermission().then(function(perm) {
+                _notifPermGranted = perm === 'granted';
+                if(cb) cb(_notifPermGranted);
+            });
+        }
+
+        function sendBrowserNotif(title, body, icon) {
+            if (!('Notification' in window)) return;
+            if (Notification.permission !== 'granted') return;
+            try {
+                var n = new Notification(title, {
+                    body: body,
+                    icon: icon || 'favicon.ico',
+                    badge: icon || 'favicon.ico',
+                    tag: 'zoodny-topup-' + Date.now(),
+                    requireInteraction: true,   // يبقى حتى يضغط عليه
+                    dir: 'rtl',
+                    lang: 'ar'
+                });
+                n.onclick = function() {
+                    window.focus();
+                    // فتح لوحة الأدمن مباشرة
+                    if (typeof openAdmin === 'function') openAdmin();
+                    n.close();
+                };
+                // صوت تنبيه
+                try {
+                    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    var osc = ctx.createOscillator();
+                    var gain = ctx.createGain();
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(880, ctx.currentTime);
+                    osc.frequency.setValueAtTime(660, ctx.currentTime + 0.15);
+                    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.30);
+                    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.5);
+                } catch(e) {}
+            } catch(e) { console.log('Notification error:', e); }
+        }
+
+        function initTopupNotifListener() {
+            if (_topupNotifInit) return;
+            _topupNotifInit = true;
+
+            // أولاً: اجمع الـ IDs الموجودة حالياً لتجنب الإشعار عنها
+            dbRef('topup_orders').once('value', function(snap) {
+                snap.forEach(function(c) { _knownTopupIds.add(c.key); });
+
+                // ثانياً: استمع للإضافات الجديدة فقط
+                dbRef('topup_orders').on('child_added', function(snap) {
+                    var key   = snap.key;
+                    var order = snap.val();
+                    if (!order) return;
+
+                    // تجاهل الطلبات القديمة
+                    if (_knownTopupIds.has(key)) return;
+                    _knownTopupIds.add(key);
+
+                    // إشعار المتصفح
+                    sendBrowserNotif(
+                        'طلب شحن رصيد جديد',
+                        'الاسم: ' + (order.name||'-') + ' | المبلغ: ' + parseFloat(order.amount||0).toFixed(2) + '$ | الهاتف: ' + (order.phone||'-'),
+                        'favicon.ico'
+                    );
+
+                    // شريط إشعار داخل الموقع أيضاً
+                    showInSiteTopupAlert(order, key);
+                });
+            });
+        }
+
+        // شريط إشعار داخلي
+        function showInSiteTopupAlert(order, reqId) {
+            var ex = document.getElementById('_topupAlertBar');
+            if (ex) ex.remove();
+            if (!document.getElementById('_topupBarStyle')) {
+                var st = document.createElement('style');
+                st.id = '_topupBarStyle';
+                st.textContent = '@keyframes _slideDownBar{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}';
+                document.head.appendChild(st);
+            }
+            var bar = document.createElement('div');
+            bar.id = '_topupAlertBar';
+            bar.style.cssText = 'position:fixed;top:72px;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#1a8a4a,#27ae60);color:#fff;padding:.75rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;box-shadow:0 4px 20px rgba(39,174,96,.5);font-family:Cairo,sans-serif;font-size:.9rem;font-weight:700;animation:_slideDownBar .35s ease;cursor:pointer;direction:rtl';
+            var amt = parseFloat(order.amount || 0).toFixed(2);
+            var info = document.createElement('span');
+            info.innerHTML = '<i class="fas fa-bell"></i> <strong>طلب شحن جديد</strong>: ' + (order.name||'-') + ' | ' + amt + '$ | ' + (order.date||'');
+            bar.appendChild(info);
+            var btn = document.createElement('button');
+            btn.textContent = '× إغلاق';
+            btn.style.cssText = 'background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:20px;padding:.3rem .9rem;cursor:pointer;font-weight:700;font-size:.82rem;font-family:Cairo,sans-serif';
+            btn.onclick = function(e) { e.stopPropagation(); bar.remove(); };
+            bar.appendChild(btn);
+            bar.onclick = function() { bar.remove(); if (typeof openAdmin === 'function') openAdmin(); };
+            document.body.appendChild(bar);
+            setTimeout(function() { if (bar.parentNode) bar.remove(); }, 15000);
+        }
+        // ─────────────────────────────────────────────────────────────────
 
         function startAdminListeners() {
             if (adminListenerOn) {

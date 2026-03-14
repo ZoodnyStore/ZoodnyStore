@@ -2633,39 +2633,48 @@
         ============================================================ */
 
         /* بحث داخل الهيرو */
+        /* ══════════════════════════════════════════════════════
+           Search Bar — Advanced
+        ══════════════════════════════════════════════════════ */
         .hero-search-wrapper {
             position: relative;
             width: 100%;
-            max-width: 680px;
-            margin: 2rem auto 0;
+            max-width: 700px;
+            margin: 2.2rem auto 0;
         }
 
+        /* Outer box */
         .hero-search-box {
             display: flex;
             align-items: center;
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 2px solid rgba(247,200,115,0.5);
-            border-radius: 50px;
-            padding: 0.4rem 0.4rem 0.4rem 0.6rem;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            background: rgba(255,255,255,0.10);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 2px solid rgba(247,200,115,0.40);
+            border-radius: 60px;
+            padding: 0.32rem 0.32rem 0.32rem 0.7rem;
+            transition: border-color .3s, box-shadow .3s, background .3s;
+            box-shadow: 0 8px 36px rgba(0,0,0,0.28);
         }
-
         .hero-search-box:focus-within {
             border-color: var(--secondary);
-            box-shadow: 0 8px 40px rgba(247,200,115,0.35);
-            background: rgba(255,255,255,0.18);
+            box-shadow: 0 8px 44px rgba(247,200,115,0.38);
+            background: rgba(255,255,255,0.17);
         }
 
+        /* Icon */
         .hero-search-icon {
             color: var(--secondary);
-            font-size: 1.1rem;
-            margin: 0 0.7rem;
+            font-size: 1rem;
+            margin-left: 0.6rem;
             flex-shrink: 0;
+            transition: transform .3s;
+        }
+        .hero-search-box:focus-within .hero-search-icon {
+            transform: scale(1.15);
         }
 
+        /* Input */
         #globalSearchInput {
             flex: 1;
             background: none;
@@ -2673,106 +2682,218 @@
             outline: none;
             color: white;
             font-family: 'Cairo', sans-serif;
-            font-size: 1rem;
-            padding: 0.6rem 0;
+            font-size: 0.97rem;
+            padding: 0.65rem 0;
             min-width: 0;
+            caret-color: var(--secondary);
         }
+        #globalSearchInput::placeholder { color: rgba(255,255,255,0.52); }
 
-        #globalSearchInput::placeholder { color: rgba(255,255,255,0.6); }
+        /* Clear button — shown when input has value */
+        #searchClearBtn {
+            background: rgba(255,255,255,0.15);
+            border: none; color: rgba(255,255,255,0.7);
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            cursor: pointer; font-size: 0.75rem;
+            display: none; align-items: center; justify-content: center;
+            transition: background .2s;
+            flex-shrink: 0; margin-left: 0.4rem;
+        }
+        #searchClearBtn:hover { background: rgba(255,255,255,0.28); }
+        #searchClearBtn.visible { display: flex; }
 
+        /* Search button */
         .hero-search-btn {
             background: var(--secondary);
             border: none;
-            color: var(--dark);
-            width: 42px;
-            height: 42px;
+            color: var(--primary);
+            width: 44px; height: 44px;
             border-radius: 50%;
-            cursor: pointer;
-            font-size: 1rem;
+            cursor: pointer; font-size: 0.95rem;
             flex-shrink: 0;
-            transition: background 0.3s, transform 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: background .28s, transform .2s, box-shadow .2s;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800;
+            box-shadow: 0 3px 14px rgba(247,200,115,0.38);
+        }
+        .hero-search-btn:hover {
+            background: var(--secondary-dk);
+            transform: scale(1.06);
+            box-shadow: 0 5px 20px rgba(247,200,115,0.55);
         }
 
-        .hero-search-btn:hover { background: #e8b84b; transform: scale(1.05); }
-
-        /* تاغات البحث السريع */
+        /* Quick tags */
         .hero-search-tags {
             display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
+            gap: 0.45rem;
+            margin-top: 0.9rem;
             flex-wrap: wrap;
             justify-content: center;
         }
-
         .search-tag {
-            background: rgba(255,255,255,0.12);
-            color: rgba(255,255,255,0.85);
-            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.10);
+            color: rgba(255,255,255,0.82);
+            border: 1px solid rgba(255,255,255,0.22);
             border-radius: 20px;
-            padding: 0.3rem 0.9rem;
-            font-size: 0.85rem;
+            padding: 0.28rem 0.85rem;
+            font-size: 0.82rem;
             cursor: pointer;
-            transition: all 0.25s;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            backdrop-filter: blur(6px);
+            transition: all .25s;
+            display: flex; align-items: center; gap: 0.38rem;
         }
-
         .search-tag:hover {
             background: var(--secondary);
-            color: var(--dark);
+            color: var(--primary);
             border-color: var(--secondary);
+            transform: translateY(-1px);
         }
 
-        /* نتائج البحث */
+        /* ── Results Dropdown ── */
         .search-results-overlay {
             position: absolute;
-            top: calc(100% + 0.6rem);
-            right: 0;
-            left: 0;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            top: calc(100% + 0.7rem);
+            right: 0; left: 0;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 24px 64px rgba(8,15,24,0.22), 0 2px 8px rgba(0,0,0,0.08);
             z-index: 1500;
-            max-height: 420px;
-            overflow-y: auto;
+            max-height: 480px;
+            overflow: hidden;
             display: none;
-            border: 1px solid #eee;
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: opacity .22s, transform .22s;
+            border: 1px solid rgba(13,27,42,0.07);
+        }
+        .search-results-overlay.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .search-results-overlay.active { display: block; }
+        /* Header row: count + view-all */
+        .search-results-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.75rem 1.1rem 0.55rem;
+            border-bottom: 1px solid #f0f4f8;
+        }
+        .search-results-count {
+            font-size: 0.78rem; font-weight: 700; color: var(--gray);
+            display: flex; align-items: center; gap: 0.38rem;
+        }
+        .search-results-count span {
+            background: rgba(247,200,115,0.18); color: var(--primary);
+            border-radius: 12px; padding: 0.1rem 0.55rem; font-weight: 800;
+        }
 
+        /* Scrollable list */
+        .search-results-list {
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        /* Each result item */
         .search-result-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.85rem 1.2rem;
+            display: flex; align-items: center; gap: 0.9rem;
+            padding: 0.75rem 1.1rem;
             cursor: pointer;
-            transition: background 0.2s;
-            border-bottom: 1px solid #f0f0f0;
+            transition: background .18s;
+            border-bottom: 1px solid #f4f6fa;
+            position: relative;
+        }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item:hover { background: rgba(247,200,115,0.07); }
+        .search-result-item:hover .sri-arrow { opacity: 1; transform: translateX(0); }
+
+        /* Thumbnail */
+        .search-result-img {
+            width: 54px; height: 54px;
+            border-radius: 12px;
+            object-fit: cover;
+            background: #edf0f5;
+            flex-shrink: 0;
+            border: 1.5px solid #e8edf2;
         }
 
-        .search-result-item:hover { background: #fef9ee; }
-        .search-result-item:last-child { border-bottom: none; }
+        /* Info */
+        .search-result-info { flex: 1; min-width: 0; }
+        .search-result-name {
+            font-weight: 800; color: var(--primary);
+            font-size: 0.92rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .search-result-name mark {
+            background: rgba(247,200,115,0.35);
+            color: var(--primary); border-radius: 3px;
+            padding: 0 2px;
+        }
+        .search-result-category {
+            font-size: 0.73rem; color: var(--gray);
+            margin-top: 0.1rem;
+            display: flex; align-items: center; gap: 0.3rem;
+        }
+        .search-result-cat-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--secondary-dk); flex-shrink: 0;
+        }
 
-        .search-result-img {
-            width: 52px;
-            height: 52px;
-            border-radius: 10px;
-            object-fit: cover;
-            background: #f0f0f0;
+        /* Stars */
+        .sri-stars { font-size: 0.68rem; color: #FFB800; margin-top: 0.2rem; }
+
+        /* Price badge */
+        .search-result-price {
+            font-weight: 900; font-size: 0.92rem;
+            color: var(--primary);
+            background: rgba(247,200,115,0.15);
+            border: 1px solid rgba(247,200,115,0.35);
+            padding: 0.22rem 0.65rem;
+            border-radius: 20px;
+            white-space: nowrap;
             flex-shrink: 0;
         }
 
-        .search-result-info { flex: 1; }
-        .search-result-name { font-weight: 700; color: var(--dark); font-size: 0.95rem; }
-        .search-result-category { color: var(--gray); font-size: 0.78rem; margin-top: 0.1rem; }
-        .search-result-price { color: var(--accent); font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
-        .search-no-results { padding: 2rem; text-align: center; color: var(--gray); }
+        /* Arrow icon on hover */
+        .sri-arrow {
+            position: absolute; left: 1rem; top: 50%;
+            transform: translateX(6px) translateY(-50%);
+            opacity: 0; transition: all .2s;
+            color: var(--secondary-dk); font-size: 0.85rem;
+        }
+
+        /* Empty / loading states */
+        .search-no-results {
+            padding: 2.5rem 1rem; text-align: center; color: var(--gray);
+        }
+        .search-no-results i {
+            font-size: 2.5rem; color: #ddd;
+            display: block; margin-bottom: 0.7rem;
+        }
+        .search-no-results p { font-size: 0.9rem; margin-bottom: 0.4rem; font-weight: 700; color: var(--primary); }
+        .search-no-results small { font-size: 0.78rem; }
+
+        .search-loading {
+            padding: 2rem; text-align: center; color: var(--gray);
+        }
+        .search-loading i { font-size: 1.3rem; animation: spin 1s linear infinite; display: block; margin-bottom: 0.5rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Section dividers inside results */
+        .search-section-label {
+            padding: 0.45rem 1.1rem 0.28rem;
+            font-size: 0.72rem; font-weight: 800;
+            color: var(--gray); letter-spacing: .5px;
+            background: #f8fafc;
+            border-bottom: 1px solid #f0f4f8;
+            text-transform: uppercase;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 480px) {
+            .search-results-overlay { border-radius: 16px; max-height: 65vh; }
+            .search-result-img { width: 46px; height: 46px; border-radius: 10px; }
+            .search-result-name { font-size: 0.87rem; }
+        }
 
         /* كوبون الخصم */
         .coupon-section {
@@ -3554,8 +3675,9 @@
             <div class="hero-search-wrapper">
                 <div class="hero-search-box">
                     <i class="fas fa-search hero-search-icon"></i>
-                    <input type="text" id="globalSearchInput" placeholder="ابحث عن منتج، خدمة، أو تصنيف..." autocomplete="off" />
-                    <button class="hero-search-btn" id="heroSearchBtn"><i class="fas fa-arrow-left"></i></button>
+                    <input type="text" id="globalSearchInput" placeholder="ابحث: ببجي، إنستغرام، رصيد سيرياتيل..." autocomplete="off" />
+                    <button id="searchClearBtn" title="مسح البحث"><i class="fas fa-times"></i></button>
+                    <button class="hero-search-btn" id="heroSearchBtn" title="بحث"><i class="fas fa-search"></i></button>
                 </div>
                 <div class="search-results-overlay" id="searchResultsOverlay"></div>
                 <div class="hero-search-tags">
@@ -8024,6 +8146,67 @@
                 image: app.image
             });
         });
+
+        // ── إضافة جميع منتجات premiumActivationsData إلى مصفوفة البحث
+        if (typeof premiumActivationsData !== 'undefined') {
+            premiumActivationsData.forEach(function(group) {
+                (group.products || []).forEach(function(p) {
+                    // تجنب التكرار
+                    if (!products.find(function(x){ return x.id === p.id; })) {
+                        products.push({
+                            id:          p.id,
+                            name:        p.name,
+                            category:    group.category || 'تفعيلات بريميوم',
+                            price:       p.price || 0,
+                            description: group.description || '',
+                            image:       group.image || '',
+                            _groupId:    group.id,
+                            _groupName:  group.name
+                        });
+                    }
+                });
+            });
+        }
+
+        // ── إضافة جميع منتجات vpnData إلى مصفوفة البحث
+        if (typeof vpnData !== 'undefined') {
+            vpnData.forEach(function(group) {
+                (group.products || []).forEach(function(p) {
+                    if (!products.find(function(x){ return x.id === p.id; })) {
+                        products.push({
+                            id:          p.id,
+                            name:        p.name,
+                            category:    group.category || 'اشتراكات VPN',
+                            price:       p.price || 0,
+                            description: group.description || '',
+                            image:       group.image || '',
+                            _groupId:    group.id,
+                            _groupName:  group.name
+                        });
+                    }
+                });
+            });
+        }
+
+        // ── إضافة جميع منتجات electronicPaymentData إلى مصفوفة البحث
+        if (typeof electronicPaymentData !== 'undefined') {
+            electronicPaymentData.forEach(function(group) {
+                (group.products || []).forEach(function(p) {
+                    if (!products.find(function(x){ return x.id === p.id; })) {
+                        products.push({
+                            id:          p.id,
+                            name:        p.name,
+                            category:    group.category || 'الدفع electronique',
+                            price:       p.price || 0,
+                            description: group.description || '',
+                            image:       group.image || '',
+                            _groupId:    group.id,
+                            _groupName:  group.name
+                        });
+                    }
+                });
+            });
+        }
 
         // بيانات المنصات (لخدمات السوشيال ميديا)
         const platforms = [
@@ -12614,98 +12797,277 @@
             // البحث داخل الهيرو
             // ============================================================
             (function initSearch() {
-                const searchInput = document.getElementById('globalSearchInput');
+                const searchInput    = document.getElementById('globalSearchInput');
                 const resultsOverlay = document.getElementById('searchResultsOverlay');
-                const heroSearchBtn = document.getElementById('heroSearchBtn');
-                const searchTags = document.querySelectorAll('.search-tag');
+                const heroSearchBtn  = document.getElementById('heroSearchBtn');
+                const searchClearBtn = document.getElementById('searchClearBtn');
+                const searchTags     = document.querySelectorAll('.search-tag');
+
+                // Category labels & colors
+                const CAT_CONFIG = {
+                    'social-media':           { name: 'سوشال ميديا',    color: '#E1306C' },
+                    'rased':                  { name: 'رصيد موبايل',     color: '#27ae60' },
+                    'games':                  { name: 'ألعاب',            color: '#E74C3C' },
+                    'app':                    { name: 'تطبيقات شحن',     color: '#3498db' },
+                    'chat':                   { name: 'ذكاء اصطناعي',    color: '#9b59b6' },
+                    'تفعيلات بريميوم':       { name: 'بريميوم',          color: '#F39C12' },
+                    'food':                   { name: 'طعام',             color: '#2ECC71' },
+                    'اشتراكات VPN':           { name: 'VPN',              color: '#16a085' },
+                    'الدفع electronique':     { name: 'دفع إلكتروني',     color: '#8e44ad' },
+                    'الدفع الالكتروني':       { name: 'دفع إلكتروني',     color: '#8e44ad' },
+                };
+
+                function getCatCfg(cat) {
+                    return CAT_CONFIG[cat] || { name: cat || 'أخرى', color: '#7F8C9A' };
+                }
 
                 function getRating(product) {
-                    return productRatings[product.id] ? productRatings[product.id].avg : (3.5 + Math.random() * 1.5).toFixed(1);
+                    return productRatings && productRatings[product.id]
+                        ? productRatings[product.id].avg
+                        : (3.5 + (product.id % 10) * 0.15).toFixed(1);
                 }
 
                 function renderStars(rating) {
                     const r = parseFloat(rating);
-                    let stars = '';
+                    let s = '';
                     for (let i = 1; i <= 5; i++) {
-                        if (i <= Math.floor(r)) stars += '<i class="fas fa-star"></i>';
-                        else if (i - r < 1 && i - r > 0) stars += '<i class="fas fa-star-half-alt"></i>';
-                        else stars += '<i class="far fa-star"></i>';
+                        if (i <= Math.floor(r))         s += '<i class="fas fa-star"></i>';
+                        else if (i - r < 1 && i > r)    s += '<i class="fas fa-star-half-alt"></i>';
+                        else                              s += '<i class="far fa-star"></i>';
                     }
-                    return stars;
+                    return s;
                 }
 
-                let searchTimeout;
-                searchInput.addEventListener('input', function() {
-                    clearTimeout(searchTimeout);
-                    const query = this.value.trim();
-                    if (query.length < 2) {
+                // Highlight matching text
+                function highlightMatch(text, query) {
+                    if (!query) return text;
+                    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const re = new RegExp('(' + escaped + ')', 'gi');
+                    return text.replace(re, '<mark>$1</mark>');
+                }
+
+                // Price display
+                function getPriceText(p) {
+                    if (p.category === 'social-media') {
+                        return p.basePrice ? p.basePrice.toFixed(2) + '$/ألف' : 'بالكمية';
+                    }
+                    if (p.category === 'games' || p.category === 'rased') return 'اختر الكمية';
+                    if (p.price && parseFloat(p.price) > 0) return parseFloat(p.price).toFixed(2) + '$';
+                    return 'اختر';
+                }
+
+                // Search engine — scores results by relevance
+                function searchProducts(query) {
+                    const q = query.toLowerCase().trim();
+                    if (q.length < 1) return [];
+
+                    const scored = products.map(p => {
+                        let score = 0;
+                        const name = p.name.toLowerCase();
+                        const desc = (p.description || '').toLowerCase();
+                        const cat  = (p.category || '').toLowerCase();
+                        const catName = getCatCfg(p.category).name.toLowerCase();
+
+                        // Exact name match
+                        if (name === q)                         score += 100;
+                        // Name starts with query
+                        else if (name.startsWith(q))            score += 80;
+                        // Name contains query
+                        else if (name.includes(q))              score += 60;
+                        // Description contains query
+                        if (desc.includes(q))                   score += 20;
+                        // Category match
+                        if (cat.includes(q) || catName.includes(q)) score += 15;
+
+                        // Group name match (for premium/VPN/payment sub-products)
+                        const groupName = (p._groupName || '').toLowerCase();
+                        if (groupName && groupName.includes(q))   score += 25;
+                        if (groupName && groupName.startsWith(q)) score += 10;
+
+                        // Multi-word partial: each word of query boosts score
+                        q.split(/\s+/).forEach(word => {
+                            if (word.length > 1 && name.includes(word))      score += 10;
+                            if (word.length > 1 && groupName.includes(word)) score += 8;
+                        });
+
+                        return { product: p, score };
+                    })
+                    .filter(x => x.score > 0)
+                    .sort((a, b) => b.score - a.score)
+                    .map(x => x.product);
+
+                    return scored;
+                }
+
+                let _searchTimer = null;
+                let _lastQuery   = '';
+
+                function doSearch(rawQuery) {
+                    const query = rawQuery.trim();
+                    _lastQuery  = query;
+
+                    // Toggle clear button
+                    if (searchClearBtn) {
+                        searchClearBtn.classList.toggle('visible', query.length > 0);
+                    }
+
+                    if (query.length < 1) {
                         resultsOverlay.classList.remove('active');
                         resultsOverlay.innerHTML = '';
                         return;
                     }
-                    searchTimeout = setTimeout(() => {
-                        const lowerQuery = query.toLowerCase();
-                        const results = products.filter(p => 
-                            p.name.toLowerCase().includes(lowerQuery) ||
-                            (p.description && p.description.toLowerCase().includes(lowerQuery)) ||
-                            p.category.toLowerCase().includes(lowerQuery)
-                        ).slice(0, 8);
+
+                    // Show loading immediately
+                    resultsOverlay.innerHTML = '<div class="search-loading"><i class="fas fa-spinner"></i>جارٍ البحث...</div>';
+                    resultsOverlay.classList.add('active');
+
+                    clearTimeout(_searchTimer);
+                    _searchTimer = setTimeout(function() {
+                        if (query !== _lastQuery) return; // stale
+
+                        const allResults = searchProducts(query);
+                        const results    = allResults.slice(0, 12);
 
                         if (results.length === 0) {
-                            resultsOverlay.innerHTML = `<div class="search-no-results"><i class="fas fa-search" style="font-size:2rem;color:#ddd;display:block;margin-bottom:0.5rem;"></i>لا توجد نتائج لـ "${query}"</div>`;
+                            resultsOverlay.innerHTML = `
+                                <div class="search-no-results">
+                                    <i class="fas fa-search-minus"></i>
+                                    <p>لا توجد نتائج لـ "${query}"</p>
+                                    <small>جرّب كلمة أخرى أو تصفّح التصنيفات</small>
+                                </div>`;
                         } else {
-                            resultsOverlay.innerHTML = results.map(p => {
-                                const img = p.image || 'images/placeholder.jpg';
-                                let priceText = p.price > 0 ? p.price + '$' : 'اختر الكمية';
-                                const catNames = { 'social-media': 'سوشال ميديا', 'rased': 'رصيد', 'games': 'ألعاب', 'app': 'تطبيقات', 'food': 'مأكولات' };
-                                const catName = catNames[p.category] || p.category;
-                                const rating = getRating(p);
-                                return `
-                                    <div class="search-result-item" data-product-id="${p.id}" data-category="${p.category}">
-                                        <img src="${img}" class="search-result-img" alt="${p.name}" onerror="this.src='images/placeholder.jpg'">
-                                        <div class="search-result-info">
-                                            <div class="search-result-name">${p.name}</div>
-                                            <div class="search-result-category">${catName}</div>
-                                            <div class="stars" style="font-size:0.75rem;color:#FFB800;">${renderStars(rating)}</div>
-                                        </div>
-                                        <div class="search-result-price">${priceText}</div>
+                            // Group by category
+                            const grouped = {};
+                            results.forEach(p => {
+                                const k = p.category || 'other';
+                                if (!grouped[k]) grouped[k] = [];
+                                grouped[k].push(p);
+                            });
+
+                            let html = `
+                                <div class="search-results-header">
+                                    <div class="search-results-count">
+                                        <i class="fas fa-check-circle" style="color:var(--secondary-dk)"></i>
+                                        <span>${allResults.length}</span> نتيجة
                                     </div>
-                                `;
-                            }).join('');
+                                </div>
+                                <div class="search-results-list">`;
+
+                            Object.entries(grouped).forEach(([cat, items]) => {
+                                const cfg = getCatCfg(cat);
+                                html += `<div class="search-section-label"><i style="color:${cfg.color}" class="fas fa-circle" style="font-size:.5rem"></i> ${cfg.name}</div>`;
+
+                                items.forEach(p => {
+                                    const img   = p.image || '';
+                                    const price = getPriceText(p);
+                                    const name  = highlightMatch(p.name, query);
+                                    const rating= getRating(p);
+                                    const cfg2  = getCatCfg(p.category);
+
+                                    html += `
+                                        <div class="search-result-item" data-pid="${p.id}">
+                                            <img src="${img}"
+                                                 class="search-result-img"
+                                                 alt="${p.name}"
+                                                 loading="lazy"
+                                                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                            <div class="search-result-img" style="display:none;align-items:center;justify-content:center;background:#edf0f5;font-size:1.3rem;color:#aaa">
+                                                <i class="fas fa-image"></i>
+                                            </div>
+                                            <div class="search-result-info">
+                                                <div class="search-result-name">${name}</div>
+                                                <div class="search-result-category">
+                                                    <span class="search-result-cat-dot" style="background:${cfg2.color}"></span>
+                                                    ${cfg2.name}
+                                                </div>
+                                                <div class="sri-stars">${renderStars(rating)} <span style="color:var(--gray);font-size:.68rem;">${parseFloat(rating).toFixed(1)}</span></div>
+                                            </div>
+                                            <div class="search-result-price">${price}</div>
+                                            <i class="fas fa-chevron-left sri-arrow"></i>
+                                        </div>`;
+                                });
+                            });
+
+                            html += '</div>';
+                            resultsOverlay.innerHTML = html;
                         }
+
                         resultsOverlay.classList.add('active');
 
-                        // عند الضغط على نتيجة، افتح تفاصيل المنتج
-                        resultsOverlay.querySelectorAll('.search-result-item').forEach(item => {
-                            item.addEventListener('click', function() {
-                                const pid = parseInt(this.getAttribute('data-product-id'));
-                                resultsOverlay.classList.remove('active');
-                                searchInput.value = '';
-                                showProductDetails(pid);
+                        // Click handlers
+                        resultsOverlay.querySelectorAll('.search-result-item[data-pid]').forEach(el => {
+                            el.addEventListener('click', function() {
+                                const pid = parseInt(this.getAttribute('data-pid'));
+                                closeSearch();
+                                const p = products.find(x => x.id === pid);
+                                if (!p) return;
+
+                                // For grouped products (premium / VPN / payment) — open parent group
+                                if (p._groupId) {
+                                    // Scroll to categories then open the right group product list
+                                    var cats = document.getElementById('categories');
+                                    if (cats) {
+                                        cats.style.display = 'block';
+                                        window.scrollTo({ top: cats.offsetTop - 80, behavior: 'smooth' });
+                                    }
+                                    // Use openServiceInputModal directly since product has price
+                                    if (typeof openServiceInputModal === 'function') {
+                                        setTimeout(function() { openServiceInputModal(p); }, 300);
+                                    }
+                                    return;
+                                }
+
+                                // Normal products
+                                if (typeof showProductDetails === 'function') showProductDetails(pid);
+                                else if (typeof openServiceInputModal === 'function') openServiceInputModal(p);
                             });
                         });
-                    }, 300);
+
+                    }, 220);
+                }
+
+                function closeSearch() {
+                    resultsOverlay.classList.remove('active');
+                    resultsOverlay.innerHTML = '';
+                    searchInput.value = '';
+                    if (searchClearBtn) searchClearBtn.classList.remove('visible');
+                }
+
+                // Events
+                searchInput.addEventListener('input', function() { doSearch(this.value); });
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') closeSearch();
+                    if (e.key === 'Enter') {
+                        const first = resultsOverlay.querySelector('.search-result-item[data-pid]');
+                        if (first) first.click();
+                    }
                 });
 
+                if (searchClearBtn) {
+                    searchClearBtn.addEventListener('click', function() { closeSearch(); searchInput.focus(); });
+                }
+
+                heroSearchBtn.addEventListener('click', function() {
+                    if (searchInput.value.trim()) doSearch(searchInput.value);
+                    else searchInput.focus();
+                });
+
+                // Click outside to close
                 document.addEventListener('click', function(e) {
-                    if (!searchInput.contains(e.target) && !resultsOverlay.contains(e.target)) {
+                    const wrapper = document.querySelector('.hero-search-wrapper');
+                    if (wrapper && !wrapper.contains(e.target)) {
                         resultsOverlay.classList.remove('active');
                     }
                 });
 
-                // تاغات البحث السريع
+                // Quick tags
                 searchTags.forEach(tag => {
                     tag.addEventListener('click', function() {
                         const q = this.getAttribute('data-query');
                         searchInput.value = q;
-                        searchInput.dispatchEvent(new Event('input'));
+                        doSearch(q);
                         searchInput.focus();
                     });
-                });
-
-                // زر البحث
-                heroSearchBtn.addEventListener('click', function() {
-                    searchInput.dispatchEvent(new Event('input'));
                 });
             })();
 

@@ -1193,32 +1193,77 @@
             font-size: 0.9rem;
         }
 
-        .toast {
+        /* ══ Center Notification Toast — replaces all old toasts ══ */
+        .z-notify-overlay {
+            position: fixed; inset: 0;
+            background: rgba(8,15,24,0.45);
+            backdrop-filter: blur(3px);
+            z-index: 19998;
+            opacity: 0; pointer-events: none;
+            transition: opacity .25s;
+        }
+        .z-notify-overlay.show { opacity: 1; }
+
+        .z-notify {
             position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.82);
+            z-index: 19999;
+            background: #fff;
+            border-radius: 20px;
+            padding: 2rem 2.2rem 1.7rem;
+            min-width: 280px; max-width: 340px;
+            width: calc(100% - 2.5rem);
+            text-align: center;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+            opacity: 0; pointer-events: none;
+            transition: all .28s cubic-bezier(.34,1.56,.64,1);
+            border-top: 4px solid var(--success);
+        }
+        .z-notify.show {
+            opacity: 1; pointer-events: all;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .z-notify.notify-error  { border-top-color: #E74C3C; }
+        .z-notify.notify-warn   { border-top-color: #F39C12; }
+        .z-notify.notify-info   { border-top-color: #3498db; }
+        .z-notify.notify-success{ border-top-color: #2ECC71; }
+
+        .z-notify-icon-wrap {
+            width: 58px; height: 58px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto .9rem;
+            font-size: 1.5rem;
+        }
+        .notify-success .z-notify-icon-wrap { background: rgba(46,204,113,.12); color: #2ECC71; }
+        .notify-error   .z-notify-icon-wrap { background: rgba(231,76,60,.10);  color: #E74C3C; }
+        .notify-warn    .z-notify-icon-wrap { background: rgba(243,156,18,.12); color: #F39C12; }
+        .notify-info    .z-notify-icon-wrap { background: rgba(52,152,219,.12); color: #3498db; }
+
+        .z-notify-msg {
+            font-size: .97rem; font-weight: 700;
+            color: #1a252f; line-height: 1.55;
+        }
+        .z-notify-bar {
+            height: 3px; border-radius: 3px;
+            background: #e3e9f0; margin-top: 1.1rem;
+            overflow: hidden;
+        }
+        .z-notify-bar-fill {
+            height: 100%; border-radius: 3px;
             background: var(--success);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1400;
-            display: none;
-            align-items: center;
-            gap: 10px;
-            animation: fadeInUp 0.3s, fadeOutDown 0.3s 2.7s;
+            width: 100%;
+            transition: width linear;
         }
+        .notify-error   .z-notify-bar-fill { background: #E74C3C; }
+        .notify-warn    .z-notify-bar-fill { background: #F39C12; }
+        .notify-info    .z-notify-bar-fill { background: #3498db; }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
+        /* Old toast — hide (kept for DOM reference) */
+        .toast { display: none !important; }
 
-        @keyframes fadeOutDown {
-            from { opacity: 1; transform: translateX(-50%) translateY(0); }
-            to { opacity: 0; transform: translateX(-50%) translateY(20px); }
-        }
+        @keyframes fadeInUp { from{opacity:0} to{opacity:1} }
+        @keyframes fadeOutDown { from{opacity:1} to{opacity:0} }
 
         .hero {
             height: 85vh;
@@ -2473,6 +2518,7 @@
             bottom: 18px;
             left: 50%;
             transform: translateX(-50%);
+            transition: transform .35s cubic-bezier(.4,0,.2,1), opacity .35s;
             width: 420px;
             max-width: calc(100vw - 32px);
             z-index: 2000;
@@ -3701,10 +3747,18 @@
         <p>Welcome to Zoodny Store - التجربة الأولى للتسوق الإلكتروني في سوريا</p>
     </footer>
 
-    <!-- رسائل التأكيد -->
-    <div class="toast" id="successToast">
+    <!-- رسائل التأكيد — old (hidden, kept for JS refs) -->
+    <div class="toast" id="successToast" style="display:none!important">
         <i class="fas fa-check-circle"></i>
         <span id="toastMessage">تمت إضافة المنتج إلى السلة بنجاح!</span>
+    </div>
+
+    <!-- ══ Center Notification System ══ -->
+    <div class="z-notify-overlay" id="zNotifyOv"></div>
+    <div class="z-notify" id="zNotify">
+        <div class="z-notify-icon-wrap" id="zNotifyIcon"><i class="fas fa-check" id="zNotifyIconI"></i></div>
+        <div class="z-notify-msg" id="zNotifyMsg">رسالة</div>
+        <div class="z-notify-bar"><div class="z-notify-bar-fill" id="zNotifyBarFill"></div></div>
     </div>
 
     <!-- مكتبات JS -->
@@ -11518,15 +11572,80 @@
             submitShamCashOrder(customerData);
         }
         
-        // -------------------- عرض رسالة نجاح --------------------
-        function showToast(message) {
-            toastMessage.textContent = message;
-            successToast.style.display = 'flex';
-            
-            setTimeout(() => {
-                successToast.style.display = 'none';
-            }, 3000);
+        // ─── Unified Center Notification System ──────────────────────────
+        var _zNotifyTimer = null;
+        var _zNotifyBarTimer = null;
+
+        function showToast(message, type) {
+            var duration = 1000; // 1 second
+            type = type || detectMsgType(message);
+
+            var notify  = document.getElementById('zNotify');
+            var ov      = document.getElementById('zNotifyOv');
+            var msgEl   = document.getElementById('zNotifyMsg');
+            var iconEl  = document.getElementById('zNotifyIconI');
+            var barFill = document.getElementById('zNotifyBarFill');
+            if (!notify) return;
+
+            // Clear previous timers
+            if (_zNotifyTimer)    clearTimeout(_zNotifyTimer);
+            if (_zNotifyBarTimer) clearTimeout(_zNotifyBarTimer);
+            notify.classList.remove('show','notify-success','notify-error','notify-warn','notify-info');
+            ov.classList.remove('show');
+
+            // Set type
+            var cfg = notifyConfig(type);
+            notify.classList.add('notify-' + type);
+            iconEl.className = 'fas ' + cfg.icon;
+            msgEl.textContent = message;
+
+            // Animate bar
+            barFill.style.transition = 'none';
+            barFill.style.width = '100%';
+            void barFill.offsetWidth; // reflow
+            barFill.style.transition = 'width ' + duration + 'ms linear';
+
+            // Show
+            requestAnimationFrame(function() {
+                notify.classList.add('show');
+                ov.classList.add('show');
+                barFill.style.width = '0%';
+            });
+
+            // Auto hide
+            _zNotifyTimer = setTimeout(function() {
+                notify.classList.remove('show');
+                ov.classList.remove('show');
+            }, duration);
         }
+
+        function detectMsgType(msg) {
+            var m = msg || '';
+            if (/غير كافٍ|غير كافي|خطأ|فشل|تعذر|غير صحيح|غير صالح|رفض|مرفوض/i.test(m)) return 'error';
+            if (/يرجى|الحد الأ|مطلوب/i.test(m)) return 'warn';
+            if (/تم|نجاح|بنجاح|مرحباً|تسجيل الدخول|أضيف|نُسخ/i.test(m)) return 'success';
+            return 'info';
+        }
+
+        function notifyConfig(type) {
+            var map = {
+                success: { icon: 'fa-check-circle' },
+                error:   { icon: 'fa-times-circle'  },
+                warn:    { icon: 'fa-exclamation-triangle' },
+                info:    { icon: 'fa-info-circle'   }
+            };
+            return map[type] || map.info;
+        }
+
+        // ─── Dismiss on overlay click ─────────────────────────────────────────
+        document.getElementById('zNotifyOv').addEventListener('click', function() {
+            var notify = document.getElementById('zNotify');
+            var ov     = document.getElementById('zNotifyOv');
+            if (notify) notify.classList.remove('show');
+            if (ov)     ov.classList.remove('show');
+            if (_zNotifyTimer) clearTimeout(_zNotifyTimer);
+        });
+
         
         // -------------------- تهيئة السلة --------------------
         function initCart() {
@@ -12132,6 +12251,20 @@
                 backToCategoriesView();
             });
             
+
+        function restoreBottomNav() {
+            var bottomNav = document.getElementById('mobileBottomNav');
+            if (bottomNav) {
+                bottomNav.style.transform   = '';
+                bottomNav.style.opacity     = '';
+                bottomNav.style.pointerEvents = '';
+            }
+            var floatBadge = document.getElementById('floatingBalBadge');
+            if (floatBadge && typeof currentUser !== 'undefined' && currentUser) {
+                floatBadge.style.display = '';
+            }
+        }
+
             const cartToggleElements = [cartToggle, mobileCartToggle].filter(el => el);
             cartToggleElements.forEach(el => {
                 el.addEventListener('click', () => {
@@ -12139,19 +12272,28 @@
                     cartOverlay.classList.add('active');
                     navLinks.classList.remove('active');
                     menuOverlay.classList.remove('active');
+                    // Hide mobile bottom nav while cart is open
                     var bottomNav = document.getElementById('mobileBottomNav');
-                    if (bottomNav) bottomNav.style.display = '';
+                    if (bottomNav) {
+                        bottomNav.style.transform = 'translateX(-50%) translateY(120%)';
+                        bottomNav.style.opacity   = '0';
+                        bottomNav.style.pointerEvents = 'none';
+                    }
+                    var floatBadge = document.getElementById('floatingBalBadge');
+                    if (floatBadge) floatBadge.style.display = 'none';
                 });
             });
             
             closeCart.addEventListener('click', () => {
                 cartSidebar.classList.remove('active');
                 cartOverlay.classList.remove('active');
+                restoreBottomNav();
             });
             
             cartOverlay.addEventListener('click', () => {
                 cartSidebar.classList.remove('active');
                 cartOverlay.classList.remove('active');
+                restoreBottomNav();
             });
             
             checkoutBtn.addEventListener('click', () => {
@@ -12175,8 +12317,7 @@
                     menuOverlay.classList.remove('active');
                     cartSidebar.classList.remove('active');
                     cartOverlay.classList.remove('active');
-                    var bottomNav = document.getElementById('mobileBottomNav');
-                    if (bottomNav) bottomNav.style.display = '';
+                    restoreBottomNav();
                     if (typeof openConfirmModal === 'function') {
                         openConfirmModal();
                     }
@@ -12358,7 +12499,7 @@
                     hasPremiumProduct = false;
                     localStorage.removeItem('zoodnyCart');
                     updateCartUI();
-                    try { cartSidebar.classList.remove('active'); cartOverlay.classList.remove('active'); } catch(e){}
+                    try { cartSidebar.classList.remove('active'); cartOverlay.classList.remove('active'); restoreBottomNav(); } catch(e){}
                     try { customerForm.reset(); } catch(e){}
                     try { socialMediaFields.classList.remove('active'); } catch(e){}
 
@@ -12995,18 +13136,8 @@
         .succ-ref{font-size:.8rem;color:var(--gray);background:#f8f9fa;border-radius:8px;padding:.4rem .8rem;margin-bottom:1.2rem}
         .succ-ok-btn{background:var(--primary);color:#fff;border:none;border-radius:30px;padding:.65rem 2rem;font-size:.95rem;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer}
 
-        /* Balance toast */
-        .bal-toast{
-            position:fixed;bottom:28px;left:50%;
-            transform:translateX(-50%) translateY(80px);
-            background:#E74C3C;color:#fff;padding:.75rem 1.4rem;border-radius:30px;
-            z-index:9000;font-size:.9rem;font-weight:600;
-            box-shadow:0 8px 24px rgba(231,76,60,.4);
-            transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;
-            opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;
-        }
-        .bal-toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-        .bal-toast.green{background:#2ECC71;box-shadow:0 8px 24px rgba(46,204,113,.4)}
+        /* Balance toast — routed to center notify */
+        .bal-toast { display: none !important; }
 
         /* ── User dropdown ── */
         .user-dropdown { position: relative; }
@@ -13919,11 +14050,8 @@
         }
 
         function balToast(msg, green) {
-            var el = $('balToast');
-            $('balToastMsg').textContent = msg;
-            el.classList.toggle('green', !!green);
-            el.classList.add('show');
-            setTimeout(() => el.classList.remove('show'), 3500);
+            // Route all balToast calls to the unified center notification
+            showToast(msg, green ? 'success' : 'error');
         }
 
         // ── inject navbar buttons ────────────────────────────────────────────
@@ -14024,6 +14152,7 @@
         });
 
         // ── Auth observer ────────────────────────────────────────────────────
+        var _authNotifyDone = false;
         auth.onAuthStateChanged(function(user) {
             currentUser = user;
             if (user) {
@@ -14044,10 +14173,25 @@
                     }
                     buildNavButtons(user, userData);
                     refreshWalletModal();
+                    // Show login success notification once
+                    if (!_authNotifyDone) {
+                        _authNotifyDone = true;
+                        var name = (userData && userData.name) ? userData.name.split(' ')[0] : '';
+                        setTimeout(function() {
+                            showToast('مرحباً ' + (name || 'بك') + '! تم تسجيل الدخول بنجاح', 'success');
+                        }, 400);
+                    }
                 });
             } else {
+                var wasLoggedIn = !!currentUser;
                 userData = null;
                 buildNavButtons(null, null);
+                _authNotifyDone = false;
+                if (wasLoggedIn) {
+                    setTimeout(function() {
+                        showToast('تم تسجيل الخروج بنجاح', 'info');
+                    }, 200);
+                }
             }
         });
 

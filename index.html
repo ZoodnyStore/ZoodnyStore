@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
@@ -2957,9 +2957,6 @@
         }
 
         /* تقييمات */
-        .product-rating { display: flex; align-items: center; gap: 0.3rem; margin: 0.3rem 0; }
-        .stars { color: #FFB800; font-size: 0.8rem; }
-        .rating-count { color: var(--gray); font-size: 0.75rem; }
 
         /* ══════════════════════════════════════════════════════
            شريط البحث الداخلي — نفس مستوى الشريط الرئيسي
@@ -9002,12 +8999,6 @@
 
                 const avgRaw = 3.5 + (product.id % 10) * 0.15;
                 const avg = Math.min(5, avgRaw);
-                const ratingCount = 20 + (product.id % 180);
-                const starsHtml = [1,2,3,4,5].map(i => {
-                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
-                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
-                    return '<i class="far fa-star"></i>';
-                }).join('');
 
                 const priceDisplay = product.price ? `${product.price}$` : 'تواصل معنا';
 
@@ -9020,10 +9011,6 @@
                     <div class="product-info">
                         <h3 class="product-title">${product.name}</h3>
                         <p class="product-price">${priceDisplay}</p>
-                        <div class="product-rating">
-                            <div class="stars">${starsHtml}</div>
-                            <span class="rating-count">(${ratingCount})</span>
-                        </div>
                         <div class="product-actions">
                             <button class="product-details-btn vpn-details">
                                 <i class="fas fa-info-circle"></i> تفاصيل المنتج
@@ -9280,12 +9267,6 @@
 
                 const avgRaw = 3.5 + (product.id % 10) * 0.15;
                 const avg = Math.min(5, avgRaw);
-                const ratingCount = 20 + (product.id % 180);
-                const starsHtml = [1,2,3,4,5].map(i => {
-                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
-                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
-                    return '<i class="far fa-star"></i>';
-                }).join('');
 
                 const priceDisplay = product.price ? `${product.price}$` : 'تواصل معنا';
 
@@ -9298,10 +9279,6 @@
                     <div class="product-info">
                         <h3 class="product-title">${product.name}</h3>
                         <p class="product-price">${priceDisplay}</p>
-                        <div class="product-rating">
-                            <div class="stars">${starsHtml}</div>
-                            <span class="rating-count">(${ratingCount})</span>
-                        </div>
                         <div class="product-actions">
                             <button class="product-details-btn payment-details">
                                 <i class="fas fa-info-circle"></i> تفاصيل المنتج
@@ -9446,12 +9423,6 @@
 
                 const avgRaw = 3.5 + (product.id % 10) * 0.15;
                 const avg = Math.min(5, avgRaw);
-                const ratingCount = 20 + (product.id % 180);
-                const starsHtml = [1,2,3,4,5].map(i => {
-                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
-                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
-                    return '<i class="far fa-star"></i>';
-                }).join('');
 
                 // عرض اسم المنتج كاملاً
                 const displayName = product.name;
@@ -9465,10 +9436,6 @@
                     <div class="product-info">
                         <h3 class="product-title">${displayName}</h3>
                         <p class="product-price">${priceDisplay}</p>
-                        <div class="product-rating">
-                            <div class="stars">${starsHtml}</div>
-                            <span class="rating-count">(${ratingCount})</span>
-                        </div>
                         <div class="product-actions">
                             <button class="product-details-btn tv-details"><i class="fas fa-info-circle"></i> تفاصيل المنتج</button>
                             <button class="add-to-cart-btn tv-cart"><i class="fas fa-shopping-cart"></i> أضف للسلة</button>
@@ -9598,12 +9565,6 @@
 
                 const avgRaw = 3.5 + (product.id % 10) * 0.15;
                 const avg = Math.min(5, avgRaw);
-                const ratingCount = 20 + (product.id % 180);
-                const starsHtml = [1,2,3,4,5].map(i => {
-                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
-                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
-                    return '<i class="far fa-star"></i>';
-                }).join('');
 
                 const displayName = product.name;
                 const priceDisplay = product.price > 0 ? `${product.price}$` : 'تواصل معنا';
@@ -9616,10 +9577,6 @@
                     <div class="product-info">
                         <h3 class="product-title">${displayName}</h3>
                         <p class="product-price">${priceDisplay}</p>
-                        <div class="product-rating">
-                            <div class="stars">${starsHtml}</div>
-                            <span class="rating-count">(${ratingCount})</span>
-                        </div>
                         <div class="product-actions">
                             <button class="product-details-btn design-details"><i class="fas fa-info-circle"></i> تفاصيل المنتج</button>
                             <button class="add-to-cart-btn design-cart"><i class="fas fa-shopping-cart"></i> أضف للسلة</button>
@@ -9875,12 +9832,6 @@
 
                 const avgRaw = 3.5 + (product.id % 10) * 0.15;
                 const avg    = Math.min(5, avgRaw);
-                const ratingCount = 20 + (product.id % 180);
-                const starsHtml = [1,2,3,4,5].map(i => {
-                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
-                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
-                    return '<i class="far fa-star"></i>';
-                }).join('');
 
                 const priceDisplay = product.price ? `${product.price}$` : 'تواصل معنا';
 
@@ -9896,10 +9847,6 @@
                     <div class="product-info">
                         <h3 class="product-title">${displayName}</h3>
                         <p class="product-price">${priceDisplay}</p>
-                        <div class="product-rating">
-                            <div class="stars">${starsHtml}</div>
-                            <span class="rating-count">(${ratingCount})</span>
-                        </div>
                         <div class="product-actions">
                             <button class="product-details-btn ap-details">
                                 <i class="fas fa-info-circle"></i> تفاصيل المنتج
@@ -10013,12 +9960,6 @@
 
                 const avgRaw = 3.5 + (product.id % 10) * 0.15;
                 const avg = Math.min(5, avgRaw);
-                const ratingCount = 20 + (product.id % 180);
-                const starsHtml = [1,2,3,4,5].map(i => {
-                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
-                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
-                    return '<i class="far fa-star"></i>';
-                }).join('');
 
                 card.innerHTML = `
                     <div class="product-img-container game-inner-img">
@@ -10029,10 +9970,6 @@
                     <div class="product-info">
                         <h3 class="product-title">${product.name}</h3>
                         <p class="product-price">${product.price}$</p>
-                        <div class="product-rating">
-                            <div class="stars">${starsHtml}</div>
-                            <span class="rating-count">(${ratingCount})</span>
-                        </div>
                         <div class="product-actions">
                             <button class="product-details-btn premium-details">
                                 <i class="fas fa-info-circle"></i> تفاصيل المنتج
@@ -10145,12 +10082,6 @@
 
                 const avgRaw = 3.5 + (product.id % 10) * 0.15;
                 const avg = Math.min(5, avgRaw);
-                const ratingCount = 20 + (product.id % 180);
-                const starsHtml = [1,2,3,4,5].map(i => {
-                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
-                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
-                    return '<i class="far fa-star"></i>';
-                }).join('');
 
                 const priceDisplay = product.price ? `${product.price}$` : 'تواصل معنا';
 
@@ -10163,10 +10094,6 @@
                     <div class="product-info">
                         <h3 class="product-title">${product.name}</h3>
                         <p class="product-price">${priceDisplay}</p>
-                        <div class="product-rating">
-                            <div class="stars">${starsHtml}</div>
-                            <span class="rating-count">(${ratingCount})</span>
-                        </div>
                         <div class="product-actions">
                             <button class="product-details-btn vpn-details">
                                 <i class="fas fa-info-circle"></i> تفاصيل المنتج
@@ -10516,12 +10443,6 @@
 
                 const avgRaw = 3.5 + (product.id % 10) * 0.15;
                 const avg = Math.min(5, avgRaw);
-                const ratingCount = 20 + (product.id % 180);
-                const starsHtml = [1,2,3,4,5].map(i => {
-                    if (i <= Math.floor(avg)) return '<i class="fas fa-star"></i>';
-                    if (i - avg < 1 && i - avg > 0) return '<i class="fas fa-star-half-alt"></i>';
-                    return '<i class="far fa-star"></i>';
-                }).join('');
 
                 const priceDisplay = product.price ? `${product.price}$` : 'تواصل معنا';
 
@@ -10533,10 +10454,6 @@
                     <div class="product-info">
                         <h3 class="product-title">${product.name}</h3>
                         <p class="product-price">${priceDisplay}</p>
-                        <div class="product-rating">
-                            <div class="stars">${starsHtml}</div>
-                            <span class="rating-count">(${ratingCount})</span>
-                        </div>
                         <div class="product-actions">
                             <button class="product-details-btn arqam-details"><i class="fas fa-info-circle"></i> تفاصيل</button>
                             <button class="add-to-cart-btn arqam-cart"><i class="fas fa-shopping-cart"></i> أضف للسلة</button>
@@ -13330,14 +13247,6 @@
             // إضافة التقييمات لبطاقات المنتجات (observer على DOM)
             function addRatingToProductCards() {
                 document.querySelectorAll('.product-card').forEach(card => {
-                    if (card.querySelector('.product-rating')) return;
-                    const addBtn = card.querySelector('.add-to-cart-btn');
-                    if (!addBtn) return;
-                    const pid = parseInt(addBtn.getAttribute('data-id'));
-                    if (!pid || !productRatings[pid]) return;
-                    const { avg, count } = productRatings[pid];
-                    const ratingDiv = document.createElement('div');
-                    ratingDiv.className = 'product-rating';
                     ratingDiv.innerHTML = `
                         <div class="stars">
                             ${[1,2,3,4,5].map(i => {

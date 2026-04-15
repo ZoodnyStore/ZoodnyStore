@@ -11665,12 +11665,14 @@
             // اقرأ بيانات العميل من Firebase profile
             var _uname  = (typeof userData !== 'undefined' && userData && userData.name)  ? userData.name  : (customerData.name  || '');
             var _uphone = (typeof userData !== 'undefined' && userData && userData.phone) ? userData.phone : (customerData.phone || '');
+            var _uemail = (typeof userData !== 'undefined' && userData && userData.email) ? userData.email : (customerData.email || '');
 
             var orderData = {
                 orderId,
                 uid:           (typeof auth !== 'undefined' && auth.currentUser) ? auth.currentUser.uid : 'guest',
                 name:          _uname,
                 phone:         _uphone,
+                email:         _uemail,
                 city:          customerData.city          || 'غير محدد',
                 accountUrl:    customerData.accountUrl    || '',
                 items,
@@ -12657,6 +12659,7 @@
                     var uid    = (typeof auth !== 'undefined' && auth.currentUser) ? auth.currentUser.uid : '';
                     var uname  = (typeof userData !== 'undefined' && userData) ? (userData.name  || '') : '';
                     var uphone = (typeof userData !== 'undefined' && userData) ? (userData.phone || '') : '';
+                    var uemail = (typeof userData !== 'undefined' && userData) ? (userData.email || '') : '';
 
                     // ── 1. إغلاق paymentModal تماماً ──
                     var pm = document.getElementById('paymentModal');
@@ -12686,7 +12689,7 @@
                     // ── 4. حفظ في Firebase في الخلفية ──
                     if (typeof db !== 'undefined' && uid) {
                         db.ref('store_orders/' + orderId).set({
-                            orderId:orderId, uid:uid, name:uname, phone:uphone,
+                            orderId:orderId, uid:uid, name:uname, phone:uphone, email:uemail,
                             city:'غير محدد', items:items, total:totalPrice,
                             paymentMethod:'wallet', date:orderDate, status:'pending', ts:Date.now()
                         });
@@ -15091,8 +15094,9 @@
 
             var reqId = 'TU-' + Date.now();
             var ts    = nowAr();
+            var email = currentUser.email || '';
             var order = {
-                reqId, uid: currentUser.uid, name, phone, amount,
+                reqId, uid: currentUser.uid, name, phone, email, amount,
                 txId, notes, date: ts, status: 'pending'
             };
 
@@ -15546,6 +15550,7 @@
                     + '  <div class="adm-client-row">'
                     + '    <div class="adm-client-item"><i class="fas fa-user"></i><strong>' + (t.name||'-') + '</strong></div>'
                     + '    <div class="adm-client-item"><i class="fas fa-phone-alt"></i><strong>' + (t.phone||'-') + '</strong></div>'
+                    + '    <div class="adm-client-item"><i class="fas fa-envelope"></i><strong>' + (t.email||'-') + '</strong></div>'
                     + '  </div>'
                     + '  <div class="adm-topup-info">'
                     + '    <div class="adm-ti-box adm-ti-amount"><div class="adm-ti-lbl">المبلغ المطلوب شحنه</div><div class="adm-ti-val">' + amt + ' $</div></div>'
@@ -15626,6 +15631,7 @@
                     + '  <div class="adm-client-row">'
                     + '    <div class="adm-client-item"><i class="fas fa-user"></i><strong>' + (o.name||'غير محدد') + '</strong></div>'
                     + '    <div class="adm-client-item"><i class="fas fa-phone-alt"></i><strong>' + (o.phone||'-') + '</strong></div>'
+                    + '    <div class="adm-client-item"><i class="fas fa-envelope"></i><strong>' + (o.email||'-') + '</strong></div>'
                     + '  </div>'
                     // المنتجات
                     + '  <div class="adm-products-wrap">'

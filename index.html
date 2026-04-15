@@ -16254,8 +16254,9 @@
                     perThousand:   product.perThousand || null
                 });
             }
-            saveCart();
-            updateCartDisplay();
+            localStorage.setItem('zoodnyCart', JSON.stringify(cart));
+            updateCartUI();
+            checkForSocialMediaProducts();
             showToast('تمت إضافة ' + product.name + ' للسلة!', 'success');
         }
 

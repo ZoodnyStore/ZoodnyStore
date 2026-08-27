@@ -15466,23 +15466,27 @@
                 renderTopupsTable();
                 renderTopupStats();
             });
-            // Store orders
-            dbRef('store_orders').on('value', function(snap) {
-                adminOrders = [];
-                snap.forEach(function(c) { adminOrders.push(c.val()); });
-                renderOrdersTable();
-            });
-            // Users
-            console.log('Loading users...');
+            // Users (نحملهم أولاً لأننا نحتاج الإيميل)
             dbRef('users').on('value', function(snap) {
-                console.log('users received:', snap.numChildren());
                 adminUsers = [];
                 snap.forEach(function(c) {
                     var u = c.val();
                     if (u) adminUsers.push(Object.assign({}, u, {transactions:undefined, orders:undefined}));
                 });
-                console.log('adminUsers:', adminUsers);
+                console.log('adminUsers loaded:', adminUsers.length, adminUsers);
                 renderUsersTable();
+                renderOrdersTable();
+            }, function(err) {
+                // هذا الجزء تمت إضافته للتشخيص: أي خطأ صلاحيات (permission_denied) من قواعد Firebase سيظهر هنا بدلاً من الفشل الصامت
+                console.error('خطأ في قراءة users من Firebase:', err);
+                var tbody = document.getElementById('usersBody');
+                if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="adm-no-data" style="color:#e74c3c">خطأ صلاحيات: ' + (err && err.message ? err.message : err) + '</td></tr>';
+            });
+            // Store orders
+            dbRef('store_orders').on('value', function(snap) {
+                adminOrders = [];
+                snap.forEach(function(c) { adminOrders.push(c.val()); });
+                renderOrdersTable();
             });
         }
 
@@ -15551,6 +15555,19 @@
                     + '</div>';
             }).join('');
         }
+        
+        function getOrderEmail(order) {
+            console.log('getOrderEmail order.uid:', order.uid, 'adminUsers:', adminUsers);
+            if (order.email) return order.email;
+            if (adminUsers && adminUsers.length > 0) {
+                console.log('Finding user with uid:', order.uid);
+                var user = adminUsers.find(function(u) { return u.uid === order.uid; });
+                console.log('Found user:', user);
+                if (user) return user.email || '-';
+            }
+            return '-';
+        }
+        
         function renderOrdersTable() {
             var filtered = adminOrderFilter==='all' ? adminOrders : adminOrders.filter(function(o){ return o.status===adminOrderFilter; });
             var wrap = $('ordersAdmCards');
@@ -15618,7 +15635,7 @@
                     + '  <div class="adm-client-row">'
                     + '    <div class="adm-client-item"><i class="fas fa-user"></i><strong>' + (o.name||'غير محدد') + '</strong></div>'
                     + '    <div class="adm-client-item"><i class="fas fa-phone-alt"></i><strong>' + (o.phone||'-') + '</strong></div>'
-                    + '    <div class="adm-client-item"><i class="fas fa-envelope"></i><strong>' + (o.email||'-') + '</strong></div>'
+                    + '    <div class="adm-client-item"><i class="fas fa-envelope"></i><strong>' + getOrderEmail(o) + '</strong></div>'
                     + '  </div>'
                     // المنتجات
                     + '  <div class="adm-products-wrap">'
@@ -15636,10 +15653,8 @@
         }
 
         function renderUsersTable() {
-            console.log('renderUsersTable called, adminUsers length:', adminUsers ? adminUsers.length : 0);
             var tbody = document.getElementById('usersBody');
-            console.log('tbody found:', !!tbody);
-            if (!tbody) { console.log('tbody not found'); return; }
+            if (!tbody) return;
             if (!adminUsers || !adminUsers.length) { tbody.innerHTML = '<tr><td colspan="7" class="adm-no-data">لا يوجد مستخدمون</td></tr>'; return; }
             tbody.innerHTML = adminUsers.map(function(u) {
                 var uid = u.uid || '';

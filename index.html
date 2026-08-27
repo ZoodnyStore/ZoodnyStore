@@ -14619,6 +14619,7 @@
 
         // ── constants ───────────────────────────────────────────────────────
         const ADMIN_PASS = 'zoodny2025';
+        const ADMIN_EMAIL = 'admin@zoodny.com'; // ⚠️ غيّرها لنفس بريد حساب الأدمن اللي أنشأته في Firebase Authentication
 
         // ── state ────────────────────────────────────────────────────────────
         let currentUser   = null;   // Firebase auth user
@@ -15320,20 +15321,32 @@
             $('adminDashboard').classList.remove('on');
         }
         function tryAdminLogin() {
-            if ($('adminPassInput').value === ADMIN_PASS) {
-                $('adminLoginModal').classList.remove('on');
-                $('adminDashboard').classList.add('on');
-                startAdminListeners();
-                // طلب صلاحية إشعارات المتصفح عند فتح لوحة الأدمن
-                requestBrowserNotifPermission(function(granted) {
-                    if (granted) {
-                        initTopupNotifListener();
-                    }
-                });
-            } else {
+            var pass = $('adminPassInput').value;
+            if (pass !== ADMIN_PASS) {
                 $('adminLoginErr').textContent = '✕ كلمة السر غير صحيحة';
                 $('adminPassInput').value = '';
+                return;
             }
+            // تسجيل دخول حقيقي في Firebase Auth بحساب الأدمن حتى تسمح قواعد
+            // قاعدة البيانات (Rules) بقراءة كل المستخدمين من مسار /users.
+            // بدون هذا، الطلب يُرفض بصلاحيات (permission_denied) بصمت.
+            $('adminLoginErr').textContent = 'جاري تسجيل الدخول...';
+            auth.signInWithEmailAndPassword(ADMIN_EMAIL, pass)
+                .then(function() {
+                    $('adminLoginModal').classList.remove('on');
+                    $('adminDashboard').classList.add('on');
+                    startAdminListeners();
+                    requestBrowserNotifPermission(function(granted) {
+                        if (granted) {
+                            initTopupNotifListener();
+                        }
+                    });
+                })
+                .catch(function(err) {
+                    console.error('فشل تسجيل دخول الأدمن في Firebase:', err);
+                    $('adminLoginErr').textContent = '✕ فشل تسجيل الدخول: ' + (err && err.message ? err.message : err);
+                    $('adminPassInput').value = '';
+                });
         }
 
         // ── نظام إشعارات المتصفح ──────────────────────────────────────

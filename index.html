@@ -6280,19 +6280,6 @@
             
             // خدمات سوشال ميديا - مع تحديث جميع الحدود الدنيا والقصوى وإضافة platform
             { 
-                id: 4747, 
-                name: "متابعين إنستغرام عرب حقيقي", 
-                category: "social-media", 
-                platform: "instagram",
-                basePrice: 15,
-                price: 1,
-                description: "متابعين عرب حقيقي عن طريق اعلانات إنستغرام - سعر الألف: 15$", 
-                perThousand: 1,
-                minQuantity: 300,
-                maxQuantity: 1000000,
-                image: "انستغرام.png"
-            },
-            { 
                 id: 46, 
                 name: "متابعين إنستغرام وهمي", 
                 category: "social-media", 
@@ -15792,8 +15779,21 @@
                         return (cur || 0) + refundAmount;
                     });
 
+                    // استخراج اسم المنتج (أو المنتجات) بدل كود الطلب لعرضه في وصف الاسترجاع
+                    var itemsRaw = o.items || o.products || [];
+                    var itemsArr = Array.isArray(itemsRaw) ? itemsRaw : (itemsRaw && typeof itemsRaw === 'object' ? Object.values(itemsRaw) : []);
+                    var productLabel;
+                    if (itemsArr.length === 1) {
+                        productLabel = itemsArr[0].name || itemsArr[0].productName || ('طلب #' + orderId);
+                    } else if (itemsArr.length > 1) {
+                        var pNames = itemsArr.map(function(it){ return it.name || it.productName; }).filter(Boolean);
+                        productLabel = pNames.slice(0,2).join('، ') + (pNames.length > 2 ? ' +' + (pNames.length - 2) : '');
+                    } else {
+                        productLabel = 'طلب #' + orderId;
+                    }
+
                     dbRef('users/' + o.uid + '/transactions/REFUND-' + Date.now()).set({
-                        desc: 'استرجاع من طلب ' + orderId,
+                        desc: 'استرجاع من طلب ' + productLabel,
                         date: nowAr(),
                         amount: refundAmount,
                         type: 'credit',

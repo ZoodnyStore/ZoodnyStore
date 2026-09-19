@@ -6280,19 +6280,6 @@
             
             // خدمات سوشال ميديا - مع تحديث جميع الحدود الدنيا والقصوى وإضافة platform
             { 
-                id: 6236, 
-                name: "متابعين إنستغرام حقيقي عرب", 
-                category: "social-media", 
-                platform: "instagram",
-                basePrice: 15,
-                price: 1,
-                description: "متابعين حقيقي عرب عن طريق اعلانات إنستغرام - سعر الألف: 15$", 
-                perThousand: 1,
-                minQuantity: 300,
-                maxQuantity: 1000000,
-                image: "انستغرام.png"
-            },
-            { 
                 id: 46, 
                 name: "متابعين إنستغرام وهمي", 
                 category: "social-media", 
@@ -11741,6 +11728,7 @@
                             amount:  totalPrice,
                             type:    'debit',
                             orderId: orderId,
+                            txCategory: 'order',
                             ts:      Date.now()
                         });
                     }
@@ -12698,7 +12686,7 @@
                         db.ref('users/'+uid+'/balance').transaction(function(cur){ var n=(cur||0)-totalPrice; return n<0?0:n; });
                         db.ref('users/'+uid+'/transactions/TX-'+Date.now()).set({
                             desc:'دفع طلب '+orderId, date:orderDate,
-                            amount:totalPrice, type:'debit', orderId:orderId, ts:Date.now()
+                            amount:totalPrice, type:'debit', orderId:orderId, txCategory:'order', ts:Date.now()
                         });
                     }
                 }
@@ -14929,18 +14917,27 @@
             if (!currentUser) return;
             $('walletBalDisplay').textContent = getBalance().toFixed(2) + ' $';
             refreshNavBal();
-            dbRef('users/' + currentUser.uid + '/transactions').orderByChild('ts').limitToLast(30)
+            dbRef('users/' + currentUser.uid + '/transactions').orderByChild('ts').limitToLast(60)
                 .once('value', function(snap) {
                     var txs = [];
                     snap.forEach(function(c) { txs.unshift(c.val()); });
+                    // سجل الشحن يعرض فقط عمليات الشحن والاسترجاع — لا يعرض عمليات دفع الطلبات (debit)
+                    txs = txs.filter(function(t) { return t.type === 'credit'; }).slice(0, 30);
                     var list = $('walletTxList');
-                    if (!txs.length) { list.innerHTML = '<div class="wallet-empty-tx">لا توجد معاملات</div>'; return; }
+                    if (!txs.length) { list.innerHTML = '<div class="wallet-empty-tx">لا توجد عمليات شحن</div>'; return; }
                     list.innerHTML = txs.map(function(t) {
+                        var isRefund = t.txCategory === 'refund';
+                        var refLine = '';
+                        if (t.txId) {
+                            refLine = '<div class="wtx-date" style="direction:ltr;text-align:right"><i class="fas fa-receipt"></i> رقم عملية شام كاش: ' + t.txId + '</div>';
+                        }
                         return '<div class="wallet-tx-item">'
-                            + '<div><div class="wtx-desc">' + t.desc + '</div>'
-                            + '<div class="wtx-date">' + t.date + '</div></div>'
-                            + '<div style="text-align:left"><div class="wtx-amt ' + (t.type==='credit'?'cr':'db') + '">'
-                            + (t.type==='credit'?'+':'-') + Math.abs(t.amount).toFixed(2) + '$</div>'
+                            + '<div><div class="wtx-desc">' + (isRefund ? '<i class="fas fa-undo" style="color:#4fc3f7"></i> ' : '') + t.desc + '</div>'
+                            + '<div class="wtx-date">' + t.date + '</div>'
+                            + refLine
+                            + '</div>'
+                            + '<div style="text-align:left"><div class="wtx-amt cr">'
+                            + '+' + Math.abs(t.amount).toFixed(2) + '$</div>'
                             + (t.status ? '<span class="tx-badge '+(t.status==='pending'?'pending':'done')+'">'+(t.status==='pending'?'قيد المراجعة':'مكتمل')+'</span>' : '')
                             + '</div></div>';
                     }).join('');
@@ -15107,7 +15104,7 @@
                     // Save pending transaction in user profile
                     return dbRef('users/' + currentUser.uid + '/transactions/' + reqId).set({
                         desc: 'شحن رصيد عبر شام كاش', date: ts,
-                        amount, type: 'credit', status: 'pending', reqId, ts: Date.now()
+                        amount, type: 'credit', status: 'pending', reqId, txId, txCategory: 'topup', ts: Date.now()
                     });
                 })
                 .then(function() {
@@ -15141,27 +15138,74 @@
                 }
                 var statusMap = { pending:'🕐 جديد', processing:'⚙️ قيد التنفيذ', done:'✅ منجز', rejected:'❌ مرفوض' };
                 var statusColor = { pending:'#F7C873', processing:'#4fc3f7', done:'#2ECC71', rejected:'#E74C3C' };
+
+                // يبني قائمة "التفاصيل الإضافية" لكل منتج حسب نوعه (رابط حساب، رقم هاتف، آيدي لاعب، بريد اشتراك...)
+                function itemExtras(it) {
+                    var extras = [];
+                    if (it.playerId)       extras.push('<span><i class="fas fa-gamepad"></i> رقم اللاعب: <b>' + it.playerId + '</b></span>');
+                    if (it.gameValue)      extras.push('<span><i class="fas fa-coins"></i> الكمية: <b>' + it.gameValue + '</b></span>');
+                    if (it.appValue)       extras.push('<span><i class="fas fa-mobile-alt"></i> الباقة: <b>' + it.appValue + '</b></span>');
+                    if (it.phoneNumber)    extras.push('<span><i class="fas fa-phone"></i> الهاتف: <b>' + it.phoneNumber + '</b></span>');
+                    if (it.creditValue)    extras.push('<span><i class="fas fa-money-bill"></i> الرصيد: <b>' + it.creditValue + ' ل.س</b></span>');
+                    if (it.customQuantity) extras.push('<span><i class="fas fa-sort-amount-up"></i> الكمية: <b>' + parseInt(it.customQuantity).toLocaleString() + '</b></span>');
+                    if (it.accountUrl)     extras.push('<span style="direction:ltr;display:inline-block"><i class="fas fa-link"></i> ' + it.accountUrl + '</span>');
+                    if (it.socialLink)     extras.push('<span style="direction:ltr;display:inline-block"><i class="fas fa-link"></i> ' + it.socialLink + '</span>');
+                    if (it.premiumInput)   extras.push('<span><i class="fas fa-envelope"></i> البريد/البيانات المُدخلة: <b>' + it.premiumInput + '</b></span>');
+                    return extras;
+                }
+
                 $('ordersBody').innerHTML = orders.map(function(o) {
                     var stClass = o.status || 'pending';
                     var color = statusColor[stClass] || '#aaa';
                     var itemsHtml = '';
-                    var itemsArr = o.items || o.products || [];
-                    if (Array.isArray(itemsArr) && itemsArr.length) {
+
+                    // items قد تصل كمصفوفة أو ككائن (حسب تخزين Firebase) — ندعم الحالتين
+                    var itemsRaw = o.items || o.products || [];
+                    var itemsArr = Array.isArray(itemsRaw) ? itemsRaw : (itemsRaw && typeof itemsRaw === 'object' ? Object.values(itemsRaw) : []);
+
+                    if (itemsArr.length) {
                         itemsHtml = itemsArr.map(function(item) {
                             var name = item.name || item.productName || '-';
                             var qty  = item.quantity || 1;
                             var price = parseFloat(item.price || item.totalItem || 0);
-                            return '<div class="order-item-row"><span>' + name + ' × ' + qty + '</span><span>' + (price * qty).toFixed(2) + '$</span></div>';
+                            var extras = itemExtras(item);
+                            return '<div class="order-item-row" style="flex-direction:column;align-items:flex-start;gap:.25rem;padding:.4rem 0;border-bottom:1px dashed #eee">'
+                                + '<div style="display:flex;justify-content:space-between;width:100%">'
+                                + '<span style="font-weight:700"><i class="fas fa-tag" style="color:#F7C873;font-size:.7rem"></i> ' + name + ' × ' + qty + '</span>'
+                                + '<span>' + (price * qty).toFixed(2) + '$</span>'
+                                + '</div>'
+                                + (extras.length ? '<div style="font-size:.72rem;color:#666;display:flex;flex-wrap:wrap;gap:.5rem">' + extras.join('') + '</div>' : '')
+                                + '</div>';
                         }).join('');
                     }
+
+                    // عنوان البطاقة: اسم/أسماء المنتجات بدل رقم الطلب
+                    var titleText;
+                    if (itemsArr.length === 1) {
+                        titleText = itemsArr[0].name || itemsArr[0].productName || ('طلب #' + (o.orderId||'-'));
+                    } else if (itemsArr.length > 1) {
+                        var names = itemsArr.map(function(it){ return it.name || it.productName; }).filter(Boolean);
+                        titleText = names.slice(0,2).join('، ') + (names.length > 2 ? ' +' + (names.length - 2) : '');
+                    } else {
+                        titleText = 'طلب #' + (o.orderId||'-');
+                    }
+
+                    // بيانات إضافية على مستوى الطلب (بريد/مدينة/رابط حساب عام) إن وُجدت
+                    var orderExtras = [];
+                    if (o.email && o.email.trim())   orderExtras.push('<span><i class="fas fa-envelope"></i> البريد: <b>' + o.email + '</b></span>');
+                    if (o.city && o.city.trim() && o.city !== 'غير محدد') orderExtras.push('<span><i class="fas fa-map-marker-alt"></i> المدينة: <b>' + o.city + '</b></span>');
+                    if (o.accountUrl && o.accountUrl.trim()) orderExtras.push('<span style="direction:ltr;display:inline-block"><i class="fas fa-link"></i> ' + o.accountUrl + '</span>');
+
                     return '<div class="order-card" style="border-right:3px solid ' + color + ';margin-bottom:.7rem;background:#fff;border-radius:10px;padding:.7rem .9rem">'
-                        + '<div class="order-card-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">'
-                        + '<div><div class="order-card-id" style="font-weight:700;font-size:.82rem;color:#2A3F54">طلب: ' + (o.orderId||'-') + '</div>'
+                        + '<div class="order-card-header" style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.4rem;gap:.5rem">'
+                        + '<div><div class="order-card-title" style="font-weight:700;font-size:.88rem;color:#2A3F54">' + titleText + '</div>'
+                        + '<div class="order-card-id" style="font-size:.68rem;color:#bbb">رقم الطلب: ' + (o.orderId||'-') + '</div>'
                         + '<div class="order-card-date" style="font-size:.72rem;color:#aaa">' + (o.date||'-') + '</div></div>'
-                        + '<span style="background:' + color + '20;color:' + color + ';border:1px solid ' + color + ';padding:.15rem .5rem;border-radius:20px;font-size:.72rem;font-weight:700">' + (statusMap[stClass]||stClass) + '</span>'
+                        + '<span style="white-space:nowrap;background:' + color + '20;color:' + color + ';border:1px solid ' + color + ';padding:.15rem .5rem;border-radius:20px;font-size:.72rem;font-weight:700">' + (statusMap[stClass]||stClass) + '</span>'
                         + '</div>'
                         + '<div class="order-card-body">'
                         + (itemsHtml || '<div style="color:#aaa;font-size:.75rem">لا تفاصيل منتجات</div>')
+                        + (orderExtras.length ? '<div style="font-size:.72rem;color:#666;display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed #eee">' + orderExtras.join('') + '</div>' : '')
                         + '<div class="order-total-row" style="display:flex;justify-content:space-between;border-top:1px solid #eee;margin-top:.4rem;padding-top:.4rem;font-weight:700"><span>الإجمالي</span><span style="color:#E74C3C">' + parseFloat(o.total||0).toFixed(2) + '$</span></div>'
                         + '</div></div>';
                 }).join('');
@@ -15722,6 +15766,34 @@
         };
         window.admUpdateOrderStatus = function(orderId, status) {
             dbRef('store_orders/' + orderId).update({ status: status });
+
+            // عند رفض الطلب: إعادة قيمة الطلب لرصيد العميل + تسجيلها في سجل الشحن كاسترجاع
+            if (status === 'rejected') {
+                dbRef('store_orders/' + orderId).once('value', function(snap) {
+                    var o = snap.val();
+                    if (!o || !o.uid || o.uid === 'guest') return;
+                    var refundAmount = parseFloat(o.total || 0);
+                    if (!(refundAmount > 0)) return;
+
+                    dbRef('users/' + o.uid + '/balance').transaction(function(cur) {
+                        return (cur || 0) + refundAmount;
+                    });
+
+                    dbRef('users/' + o.uid + '/transactions/REFUND-' + Date.now()).set({
+                        desc: 'استرجاع من طلب ' + orderId,
+                        date: nowAr(),
+                        amount: refundAmount,
+                        type: 'credit',
+                        status: 'completed',
+                        orderId: orderId,
+                        txCategory: 'refund',
+                        ts: Date.now()
+                    });
+
+                    // تحديث حالة طلب المستخدم المختصر أيضاً
+                    dbRef('users/' + o.uid + '/orders/' + orderId).update({ status: 'rejected' });
+                });
+            }
         };
         window.admDeleteOrder = function(orderId) {
             if (confirm('حذف هذا الطلب نهائياً؟')) {

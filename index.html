@@ -13758,6 +13758,80 @@
         #adminHint{position:fixed;bottom:6px;right:6px;font-size:.6rem;color:rgba(0,0,0,.1);z-index:100;cursor:pointer;user-select:none}
 
 
+        /* ══ إدارة المنتجات (تبويب جديد في لوحة المدير) ══ */
+        .pmg-toolbar{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+        .pmg-select, .pmg-search{
+            padding:.55rem .8rem;border:1.5px solid #ddd;border-radius:10px;
+            font-family:'Cairo',sans-serif;font-size:.85rem;background:#fff;color:var(--dark);
+        }
+        .pmg-select:focus, .pmg-search:focus{outline:none;border-color:var(--secondary)}
+        .pmg-search{flex:1;min-width:160px}
+        .pmg-add-btn{
+            margin-right:auto;background:linear-gradient(135deg,var(--success),#27b462);
+            color:#fff;border:none;border-radius:10px;padding:.6rem 1.1rem;
+            font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;
+            display:flex;align-items:center;gap:6px;transition:transform .2s;
+        }
+        .pmg-add-btn:hover{transform:translateY(-2px)}
+        .pmg-count{font-size:.78rem;color:var(--gray);margin-bottom:.8rem}
+        .pmg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.9rem}
+        .pmg-card{
+            background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);
+            border:1px solid #f0f0f0;display:flex;flex-direction:column;
+        }
+        .pmg-card-img{width:100%;height:110px;background:#f4f6f9;display:flex;align-items:center;justify-content:center;overflow:hidden}
+        .pmg-card-img img{width:100%;height:100%;object-fit:cover}
+        .pmg-card-img i{font-size:1.8rem;color:#ccc}
+        .pmg-card-body{padding:.7rem .85rem;flex:1;display:flex;flex-direction:column;gap:.3rem}
+        .pmg-card-name{font-weight:700;font-size:.9rem;color:var(--dark);line-height:1.4}
+        .pmg-card-cat{font-size:.72rem;color:var(--gray);background:#f4f6f9;border-radius:6px;padding:.15rem .5rem;display:inline-block;width:fit-content}
+        .pmg-card-price{font-weight:800;color:var(--primary);font-size:.88rem}
+        .pmg-card-sub{font-size:.72rem;color:var(--gray)}
+        .pmg-card-foot{display:flex;gap:6px;padding:.6rem .85rem;border-top:1px solid #f0f0f0}
+        .pmg-card-foot button{
+            flex:1;border:none;border-radius:8px;padding:.45rem;font-size:.78rem;
+            font-family:'Cairo',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .2s;
+        }
+        .pmg-edit-btn{background:#e8f4fd;color:#0066cc}
+        .pmg-edit-btn:hover{background:#0066cc;color:#fff}
+        .pmg-del-btn{background:#fde8e8;color:#c00}
+        .pmg-del-btn:hover{background:#E74C3C;color:#fff}
+        #prodEditModal{width:94%;max-width:560px;max-height:88vh;overflow-y:auto;padding:1.4rem 1.3rem}
+        .pmg-form-title{color:var(--primary);font-size:1.1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+        .pmg-field{margin-bottom:.8rem}
+        .pmg-field label{display:block;font-size:.8rem;color:var(--gray);margin-bottom:.3rem;font-weight:600}
+        .pmg-field input, .pmg-field textarea, .pmg-field select{
+            width:100%;padding:.6rem .8rem;border:1.5px solid #ddd;border-radius:10px;
+            font-family:'Cairo',sans-serif;font-size:.88rem;color:var(--dark);
+        }
+        .pmg-field input:focus, .pmg-field textarea:focus, .pmg-field select:focus{outline:none;border-color:var(--secondary)}
+        .pmg-field textarea{resize:vertical;min-height:60px}
+        .pmg-row2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+        .pmg-sub-title{font-size:.85rem;font-weight:700;color:var(--primary);margin:1rem 0 .5rem;display:flex;align-items:center;justify-content:space-between}
+        .pmg-sub-add{background:#eaf4ff;color:#0066cc;border:none;border-radius:7px;padding:.3rem .7rem;font-size:.75rem;cursor:pointer;font-family:'Cairo',sans-serif}
+        .pmg-sub-row{display:flex;gap:.4rem;margin-bottom:.4rem;align-items:center}
+        .pmg-sub-row input{flex:1;padding:.45rem .6rem;border:1.5px solid #ddd;border-radius:8px;font-family:'Cairo',sans-serif;font-size:.82rem}
+        .pmg-sub-row button{background:#fde8e8;color:#c00;border:none;border-radius:7px;width:30px;height:30px;flex-shrink:0;cursor:pointer}
+        .pmg-form-actions{display:flex;gap:.6rem;margin-top:1.1rem}
+        .pmg-save-btn{
+            flex:1;background:linear-gradient(135deg,var(--primary),#3a5a78);color:#fff;border:none;
+            border-radius:10px;padding:.75rem;font-size:.92rem;font-weight:700;font-family:'Cairo',sans-serif;
+            cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+        }
+        .pmg-cancel-btn{
+            background:#f0f0f0;color:var(--gray);border:none;border-radius:10px;padding:.75rem 1.2rem;
+            font-size:.92rem;font-family:'Cairo',sans-serif;cursor:pointer;
+        }
+        .pmg-code-wrap{margin-top:1.3rem;background:#fff;border-radius:12px;border:1px solid #eee;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+        .pmg-code-head{display:flex;justify-content:space-between;align-items:center;padding:.7rem 1rem;border-bottom:1px solid #eee}
+        .pmg-code-head strong{font-size:.85rem;color:var(--primary)}
+        .pmg-code-copy{background:var(--secondary);color:var(--dark);border:none;border-radius:8px;padding:.4rem .8rem;font-size:.78rem;font-family:'Cairo',sans-serif;cursor:pointer;font-weight:700}
+        .pmg-code-hint{font-size:.74rem;color:var(--gray);padding:.5rem 1rem 0}
+        #prodCodeOutput{
+            width:100%;min-height:160px;border:none;padding:1rem;font-family:monospace;
+            font-size:.78rem;direction:ltr;text-align:left;color:#2A3F54;background:#f8f9fa;resize:vertical;
+        }
+        #prodCodeOutput:focus{outline:none}
 
         /* ══ Order Cards in Admin ══ */
         .adm-order-card {
@@ -14546,6 +14620,7 @@
             <div class="adm-tab active" data-panel="topups"><i class="fas fa-wallet"></i> شحن الرصيد</div>
             <div class="adm-tab" data-panel="orders"><i class="fas fa-shopping-bag"></i> طلبات المتجر</div>
             <div class="adm-tab" data-panel="users"><i class="fas fa-users"></i> العملاء</div>
+            <div class="adm-tab" data-panel="products"><i class="fas fa-box-open"></i> إدارة المنتجات</div>
         </div>
 
         <!-- ══ تبويب طلبات الشحن ══ -->
@@ -14589,6 +14664,41 @@
                 </table>
             </div>
         </div>
+
+        <!-- ══ تبويب إدارة المنتجات ══ -->
+        <div class="adm-tab-panel" id="panel-products">
+            <div class="pmg-toolbar">
+                <select class="pmg-select" id="pmgSourceSelect"></select>
+                <select class="pmg-select" id="pmgCategorySelect"></select>
+                <input type="text" class="pmg-search" id="pmgSearchInput" placeholder="بحث بالاسم...">
+                <button class="pmg-add-btn" id="pmgAddBtn"><i class="fas fa-plus"></i> إضافة منتج جديد</button>
+            </div>
+            <div class="pmg-count" id="pmgCount"></div>
+            <div class="pmg-grid" id="pmgGrid"></div>
+
+            <div class="pmg-code-wrap" id="pmgCodeWrap" style="display:none">
+                <div class="pmg-code-head">
+                    <strong><i class="fas fa-code"></i> كود آخر تعديل — انسخه وضعه مكان المنتج المطابق في ملف الموقع</strong>
+                    <button class="pmg-code-copy" id="pmgCodeCopyBtn"><i class="fas fa-copy"></i> نسخ الكود</button>
+                </div>
+                <div class="pmg-code-hint">هذا الكود مُطبَّق الآن مباشرة على المتجر (بذاكرة الصفحة)، لكن لحفظه بشكل دائم يجب نسخه ولصقه في ملف الموقع الأساسي بنفس مكان هذا المنتج.</div>
+                <textarea id="prodCodeOutput" readonly spellcheck="false"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ نافذة إضافة/تعديل منتج ══ -->
+    <div class="z-ov" id="prodModalOv" style="z-index:4200"></div>
+    <div class="z-modal" id="prodEditModal" style="z-index:4201">
+        <div class="pmg-form-title"><i class="fas fa-box-open"></i> <span id="pmgFormTitle">تعديل منتج</span></div>
+        <form id="pmgForm">
+            <div id="pmgFieldsWrap"></div>
+            <div id="pmgSubListWrap"></div>
+            <div class="pmg-form-actions">
+                <button type="submit" class="pmg-save-btn"><i class="fas fa-save"></i> حفظ</button>
+                <button type="button" class="pmg-cancel-btn" id="pmgCancelBtn">إلغاء</button>
+            </div>
+        </form>
     </div>
 
     <div id="adminHint">admin</div>
@@ -16456,6 +16566,381 @@
                 }
             });
         });
+
+        // ████████████████████████████████████████████████████████████████████████
+        //  إدارة المنتجات — تبويب داخل لوحة المدير (يعمل فقط بعد تسجيل دخول المدير)
+        //  يعدّل بيانات المنتجات في ذاكرة الصفحة الحالية (لتظهر التغييرات فوراً في المتجر)
+        //  ويولّد كود جاهز للنسخ ليضعه المدير يدوياً داخل ملف الموقع للحفظ الدائم.
+        // ████████████████████████████████████████████████████████████████████████
+        function pmgEsc(s) {
+            return String(s === null || s === undefined ? '' : s)
+                .replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        var PMG_SOURCES = [
+            {
+                key: 'products', label: 'منتجات عامة (إكسسوارات، أرقام، اشتراكات فردية...)',
+                getArr: function () { return products; }, idType: 'number',
+                fields: [
+                    { key: 'name', label: 'اسم المنتج', type: 'text', required: true },
+                    { key: 'category', label: 'التصنيف (Category)', type: 'text', required: true },
+                    { key: 'price', label: 'السعر ($)', type: 'number' },
+                    { key: 'description', label: 'الوصف', type: 'textarea' },
+                    { key: 'image', label: 'اسم ملف الصورة', type: 'text' }
+                ]
+            },
+            {
+                key: 'appsData', label: 'شحن التطبيقات (عملات داخل التطبيق)',
+                getArr: function () { return appsData; }, idType: 'number',
+                fields: [
+                    { key: 'name', label: 'اسم التطبيق', type: 'text', required: true },
+                    { key: 'category', label: 'التصنيف (Category)', type: 'text', required: true, default: 'app' },
+                    { key: 'description', label: 'الوصف', type: 'textarea' },
+                    { key: 'image', label: 'اسم ملف الصورة', type: 'text' },
+                    { key: 'inputLabel', label: 'نص حقل الإدخال', type: 'text' },
+                    { key: 'inputPlaceholder', label: 'نص توضيحي لحقل الإدخال', type: 'text' },
+                    { key: 'unitPrice', label: 'سعر الوحدة الواحدة ($)', type: 'number' },
+                    { key: 'minQuantity', label: 'الحد الأدنى للكمية', type: 'number' },
+                    { key: 'maxQuantity', label: 'الحد الأقصى للكمية', type: 'number' }
+                ]
+            },
+            {
+                key: 'gamesData', label: 'شحن الألعاب',
+                getArr: function () { return gamesData; }, idType: 'number',
+                fields: [
+                    { key: 'name', label: 'اسم اللعبة', type: 'text', required: true },
+                    { key: 'category', label: 'التصنيف (Category)', type: 'text', required: true, default: 'games' },
+                    { key: 'description', label: 'الوصف', type: 'textarea' },
+                    { key: 'image', label: 'اسم ملف الصورة', type: 'text' },
+                    { key: 'inputLabel', label: 'نص حقل الإدخال', type: 'text' }
+                ],
+                subList: {
+                    key: 'amounts', label: 'فئات الشحن (الكمية / السعر / النص المعروض)',
+                    fields: [
+                        { key: 'value', label: 'القيمة', type: 'number' },
+                        { key: 'price', label: 'السعر ($)', type: 'number' },
+                        { key: 'display', label: 'النص المعروض', type: 'text' }
+                    ]
+                }
+            },
+            {
+                key: 'premiumActivationsData', label: 'تفعيلات بريميوم',
+                getArr: function () { return premiumActivationsData; }, idType: 'string',
+                fields: [
+                    { key: 'name', label: 'اسم المجموعة', type: 'text', required: true },
+                    { key: 'category', label: 'التصنيف (Category)', type: 'text', required: true, default: 'تفعيلات بريميوم' },
+                    { key: 'description', label: 'الوصف', type: 'textarea' },
+                    { key: 'image', label: 'اسم ملف الصورة', type: 'text' },
+                    { key: 'inputLabel', label: 'نص حقل الإدخال', type: 'text' },
+                    { key: 'inputPlaceholder', label: 'نص توضيحي لحقل الإدخال', type: 'text' },
+                    { key: 'inputHelp', label: 'شرح مساعد لحقل الإدخال', type: 'text' }
+                ],
+                subList: {
+                    key: 'products', label: 'الباقات والأسعار',
+                    fields: [
+                        { key: 'id', label: 'رقم', type: 'number' },
+                        { key: 'name', label: 'اسم الباقة', type: 'text' },
+                        { key: 'price', label: 'السعر ($)', type: 'text' }
+                    ]
+                }
+            },
+            {
+                key: 'vpnData', label: 'اشتراكات VPN',
+                getArr: function () { return vpnData; }, idType: 'string',
+                fields: [
+                    { key: 'name', label: 'اسم المجموعة', type: 'text', required: true },
+                    { key: 'category', label: 'التصنيف (Category)', type: 'text', required: true, default: 'اشتراكات VPN' },
+                    { key: 'description', label: 'الوصف', type: 'textarea' },
+                    { key: 'image', label: 'اسم ملف الصورة', type: 'text' }
+                ],
+                subList: {
+                    key: 'products', label: 'الباقات والأسعار',
+                    fields: [
+                        { key: 'id', label: 'رقم', type: 'number' },
+                        { key: 'name', label: 'اسم الباقة', type: 'text' },
+                        { key: 'price', label: 'السعر ($)', type: 'text' }
+                    ]
+                }
+            },
+            {
+                key: 'electronicPaymentData', label: 'الدفع الالكتروني',
+                getArr: function () { return electronicPaymentData; }, idType: 'string',
+                fields: [
+                    { key: 'name', label: 'اسم المجموعة', type: 'text', required: true },
+                    { key: 'category', label: 'التصنيف (Category)', type: 'text', required: true, default: 'الدفع الالكتروني' },
+                    { key: 'description', label: 'الوصف', type: 'textarea' },
+                    { key: 'image', label: 'اسم ملف الصورة', type: 'text' }
+                ],
+                subList: {
+                    key: 'products', label: 'الباقات والأسعار',
+                    fields: [
+                        { key: 'id', label: 'رقم', type: 'number' },
+                        { key: 'name', label: 'اسم الباقة', type: 'text' },
+                        { key: 'price', label: 'السعر ($)', type: 'text' }
+                    ]
+                }
+            }
+        ];
+
+        function pmgGetSource(key) { return PMG_SOURCES.filter(function (s) { return s.key === key; })[0]; }
+
+        function pmgFindItem(sourceKey, id) {
+            var src = pmgGetSource(sourceKey);
+            return src.getArr().filter(function (it) { return String(it.id) === String(id); })[0];
+        }
+
+        function pmgInitSourceSelect() {
+            var sel = $('pmgSourceSelect');
+            sel.innerHTML = PMG_SOURCES.map(function (s) { return '<option value="' + s.key + '">' + pmgEsc(s.label) + '</option>'; }).join('');
+            sel.addEventListener('change', function () { pmgPopulateCategoryFilter(); pmgRenderGrid(); });
+        }
+
+        function pmgPopulateCategoryFilter() {
+            var src = pmgGetSource($('pmgSourceSelect').value);
+            var arr = src.getArr();
+            var seen = {};
+            var cats = [];
+            arr.forEach(function (it) {
+                var c = it.category || '';
+                if (c && !seen[c]) { seen[c] = true; cats.push(c); }
+            });
+            cats.sort();
+            $('pmgCategorySelect').innerHTML = '<option value="">كل التصنيفات</option>' +
+                cats.map(function (c) { return '<option value="' + pmgEsc(c) + '">' + pmgEsc(c) + '</option>'; }).join('');
+        }
+
+        function pmgRenderGrid() {
+            var src = pmgGetSource($('pmgSourceSelect').value);
+            var arr = src.getArr();
+            var catFilter = $('pmgCategorySelect').value;
+            var q = ($('pmgSearchInput').value || '').trim().toLowerCase();
+            var filtered = arr.filter(function (it) {
+                if (catFilter && it.category !== catFilter) return false;
+                if (q && String(it.name || '').toLowerCase().indexOf(q) === -1) return false;
+                return true;
+            });
+            $('pmgCount').textContent = 'عدد العناصر المعروضة: ' + filtered.length + ' (من أصل ' + arr.length + ')';
+            var grid = $('pmgGrid');
+            if (!filtered.length) {
+                grid.innerHTML = '<div class="adm-no-data" style="grid-column:1/-1">لا توجد نتائج</div>';
+                return;
+            }
+            grid.innerHTML = filtered.map(function (it) {
+                var priceLine = '';
+                if (src.key === 'products') priceLine = (it.price !== undefined && it.price !== null) ? (it.price + ' $') : '';
+                else if (src.key === 'appsData') priceLine = 'سعر الوحدة: ' + (it.unitPrice !== undefined ? it.unitPrice : '-') + ' $';
+                else if (src.subList) priceLine = ((it[src.subList.key] || []).length) + ' باقة/فئة';
+                var imgHtml = it.image
+                    ? '<img src="' + pmgEsc(it.image) + '" onerror="this.parentElement.innerHTML=\'<i class=\\\'fas fa-image\\\'></i>\'">'
+                    : '<i class="fas fa-image"></i>';
+                return '' +
+                    '<div class="pmg-card">' +
+                        '<div class="pmg-card-img">' + imgHtml + '</div>' +
+                        '<div class="pmg-card-body">' +
+                            '<div class="pmg-card-name">' + pmgEsc(it.name) + '</div>' +
+                            '<span class="pmg-card-cat">' + pmgEsc(it.category || '—') + '</span>' +
+                            (priceLine ? '<div class="pmg-card-price">' + pmgEsc(priceLine) + '</div>' : '') +
+                            '<div class="pmg-card-sub">ID: ' + pmgEsc(it.id) + '</div>' +
+                        '</div>' +
+                        '<div class="pmg-card-foot">' +
+                            '<button type="button" class="pmg-edit-btn" data-id="' + pmgEsc(it.id) + '"><i class="fas fa-edit"></i> تعديل</button>' +
+                            '<button type="button" class="pmg-del-btn" data-id="' + pmgEsc(it.id) + '"><i class="fas fa-trash"></i> حذف</button>' +
+                        '</div>' +
+                    '</div>';
+            }).join('');
+
+            Array.prototype.forEach.call(grid.querySelectorAll('.pmg-edit-btn'), function (b) {
+                b.addEventListener('click', function () { pmgOpenForm(src.key, b.dataset.id); });
+            });
+            Array.prototype.forEach.call(grid.querySelectorAll('.pmg-del-btn'), function (b) {
+                b.addEventListener('click', function () { pmgDeleteItem(src.key, b.dataset.id); });
+            });
+        }
+
+        function pmgDeleteItem(sourceKey, id) {
+            var src = pmgGetSource(sourceKey);
+            var arr = src.getArr();
+            var idx = -1;
+            for (var i = 0; i < arr.length; i++) { if (String(arr[i].id) === String(id)) { idx = i; break; } }
+            if (idx === -1) return;
+            var item = arr[idx];
+            if (!confirm('هل تريد حذف "' + (item.name || '') + '" من عرض المتجر الحالي؟\nملاحظة: هذا يحذفه من الصفحة المفتوحة الآن فقط؛ لحذفه بشكل دائم يجب حذفه يدوياً من ملف الموقع.')) return;
+            arr.splice(idx, 1);
+            pmgPopulateCategoryFilter();
+            pmgRenderGrid();
+            $('pmgCodeWrap').style.display = 'block';
+            $('prodCodeOutput').value =
+                '// تم حذف هذا المنتج من عرض المتجر الحالي (بذاكرة الصفحة فقط، الحذف مؤقت حتى تحديث الصفحة).\n' +
+                '// لحذفه بشكل دائم: افتح ملف الموقع، وداخل مصفوفة `' + sourceKey + '` احذف يدوياً العنصر الذي معرفه (id) = ' + JSON.stringify(item.id) + '.';
+            showToast('تم حذف المنتج من المتجر الحالي', 'success');
+        }
+
+        function pmgFormatValue(v) {
+            if (typeof v === 'number') return String(v);
+            if (v === null || v === undefined) return '""';
+            return JSON.stringify(String(v));
+        }
+
+        function pmgObjToCode(obj, keyOrder, indent) {
+            var keys = keyOrder.filter(function (k) { return Object.prototype.hasOwnProperty.call(obj, k); });
+            var lines = keys.map(function (k) {
+                var v = obj[k];
+                if (Object.prototype.toString.call(v) === '[object Array]') {
+                    var subLines = v.map(function (sub) {
+                        var subStr = Object.keys(sub).map(function (sk) { return sk + ': ' + pmgFormatValue(sub[sk]); }).join(', ');
+                        return indent + '    { ' + subStr + ' },';
+                    });
+                    return indent + k + ': [\n' + subLines.join('\n') + '\n' + indent + '],';
+                }
+                return indent + k + ': ' + pmgFormatValue(v) + ',';
+            });
+            return '{\n' + lines.join('\n') + '\n' + indent.slice(0, Math.max(0, indent.length - 4)) + '}';
+        }
+
+        function pmgBuildCodeSnippet(src, obj, isNew) {
+            var order = ['id'].concat(src.fields.map(function (f) { return f.key; }));
+            if (src.subList) order.push(src.subList.key);
+            var code = pmgObjToCode(obj, order, '    ');
+            var note = isNew
+                ? ('// عنصر جديد — انسخه وأضفه داخل مصفوفة `' + src.key + '` في ملف الموقع (بعد أي عنصر آخر فيها، وقبل القوس الأخير ]):\n')
+                : ('// تعديل — ابحث داخل مصفوفة `' + src.key + '` في ملف الموقع عن العنصر الذي معرفه (id) = ' + JSON.stringify(obj.id) + ' واستبدله بالكامل بهذا الكود:\n');
+            return note + code + ',';
+        }
+
+        var pmgEditingCtx = null;
+
+        function pmgOpenForm(sourceKey, id) {
+            var src = pmgGetSource(sourceKey);
+            var item = id !== null && id !== undefined ? pmgFindItem(sourceKey, id) : null;
+            pmgEditingCtx = { sourceKey: sourceKey, id: item ? item.id : null };
+            $('pmgFormTitle').textContent = item ? ('تعديل: ' + item.name) : ('إضافة منتج جديد — ' + src.label);
+
+            var idVal = item ? item.id : '';
+            var idFieldHtml = '<div class="pmg-field"><label>المعرف (ID)' +
+                (src.idType === 'string' ? ' — نص فريد، مثال: my-new-item' : ' — رقم فريد غير مستخدم') + '</label>' +
+                '<input type="text" id="pmgFieldId" value="' + pmgEsc(idVal) + '"' + (item ? ' readonly style="background:#f4f6f9;color:#888"' : '') + '></div>';
+
+            var fieldsHtml = src.fields.map(function (f) {
+                var val = item ? (item[f.key] !== undefined && item[f.key] !== null ? item[f.key] : '') : (f.default !== undefined ? f.default : '');
+                if (f.type === 'textarea') {
+                    return '<div class="pmg-field"><label>' + f.label + '</label><textarea data-field="' + f.key + '">' + pmgEsc(val) + '</textarea></div>';
+                }
+                return '<div class="pmg-field"><label>' + f.label + '</label><input type="' + (f.type === 'number' ? 'number' : 'text') + '" ' + (f.type === 'number' ? 'step="any"' : '') + ' data-field="' + f.key + '" value="' + pmgEsc(val) + '"></div>';
+            }).join('');
+
+            $('pmgFieldsWrap').innerHTML = idFieldHtml + fieldsHtml;
+
+            var subWrap = $('pmgSubListWrap');
+            if (src.subList) {
+                var rows = item && Object.prototype.toString.call(item[src.subList.key]) === '[object Array]' ? item[src.subList.key] : [];
+                subWrap.innerHTML = '<div class="pmg-sub-title"><span>' + src.subList.label + '</span> <button type="button" class="pmg-sub-add" id="pmgSubAddRow"><i class="fas fa-plus"></i> إضافة سطر</button></div>' +
+                    '<div id="pmgSubRows"></div>';
+                rows.forEach(function (r) { pmgAddSubRow(src.subList, r); });
+                $('pmgSubAddRow').addEventListener('click', function () { pmgAddSubRow(src.subList, null); });
+            } else {
+                subWrap.innerHTML = '';
+            }
+
+            modalOn('prodModalOv', 'prodEditModal');
+        }
+
+        function pmgAddSubRow(subListSpec, data) {
+            var rowsWrap = $('pmgSubRows');
+            var row = document.createElement('div');
+            row.className = 'pmg-sub-row';
+            row.innerHTML = subListSpec.fields.map(function (f) {
+                var v = data && data[f.key] !== undefined && data[f.key] !== null ? data[f.key] : '';
+                return '<input type="text" placeholder="' + f.label + '" data-subfield="' + f.key + '" value="' + pmgEsc(v) + '">';
+            }).join('') + '<button type="button" title="حذف السطر"><i class="fas fa-times"></i></button>';
+            row.querySelector('button').addEventListener('click', function () { row.parentNode.removeChild(row); });
+            rowsWrap.appendChild(row);
+        }
+
+        function pmgInit() {
+            pmgInitSourceSelect();
+            pmgPopulateCategoryFilter();
+            pmgRenderGrid();
+
+            $('pmgAddBtn').addEventListener('click', function () { pmgOpenForm($('pmgSourceSelect').value, null); });
+            $('pmgCategorySelect').addEventListener('change', pmgRenderGrid);
+            $('pmgSearchInput').addEventListener('input', pmgRenderGrid);
+            $('pmgCancelBtn').addEventListener('click', function () { modalOff('prodModalOv', 'prodEditModal'); });
+            $('prodModalOv').addEventListener('click', function () { modalOff('prodModalOv', 'prodEditModal'); });
+            $('pmgCodeCopyBtn').addEventListener('click', function () {
+                var ta = $('prodCodeOutput');
+                ta.focus(); ta.select();
+                var ok = false;
+                try { ok = document.execCommand('copy'); } catch (e) {}
+                if (!ok && navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(ta.value).catch(function () {});
+                }
+                showToast('تم نسخ الكود', 'success');
+            });
+
+            $('pmgForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                var src = pmgGetSource(pmgEditingCtx.sourceKey);
+                var idRaw = $('pmgFieldId').value.trim();
+                if (!idRaw) { alert('الرجاء إدخال معرف (ID) للمنتج'); return; }
+                var newId = src.idType === 'number' ? Number(idRaw) : idRaw;
+                if (src.idType === 'number' && isNaN(newId)) { alert('المعرف يجب أن يكون رقماً لهذا النوع من البيانات'); return; }
+
+                var arr = src.getArr();
+                var existing = pmgEditingCtx.id !== null ? pmgFindItem(pmgEditingCtx.sourceKey, pmgEditingCtx.id) : null;
+
+                var dup = null;
+                for (var i = 0; i < arr.length; i++) { if (String(arr[i].id) === String(newId)) { dup = arr[i]; break; } }
+                if (dup && (!existing || dup !== existing)) {
+                    alert('هذا المعرف (ID) مستخدم مسبقاً لمنتج آخر، الرجاء اختيار معرف مختلف');
+                    return;
+                }
+
+                var nameEl = $('pmgFieldsWrap').querySelector('[data-field="name"]');
+                if (!nameEl || !nameEl.value.trim()) { alert('الرجاء إدخال اسم المنتج'); return; }
+
+                var obj = existing || {};
+                obj.id = newId;
+                src.fields.forEach(function (f) {
+                    var el = $('pmgFieldsWrap').querySelector('[data-field="' + f.key + '"]');
+                    if (!el) return;
+                    var v = el.value;
+                    if (f.type === 'number') { v = v === '' ? 0 : Number(v); }
+                    obj[f.key] = v;
+                });
+
+                if (src.subList) {
+                    var subRows = document.querySelectorAll('#pmgSubRows .pmg-sub-row');
+                    var subArr = [];
+                    Array.prototype.forEach.call(subRows, function (row) {
+                        var subObj = {};
+                        var hasAny = false;
+                        src.subList.fields.forEach(function (f) {
+                            var input = row.querySelector('[data-subfield="' + f.key + '"]');
+                            var v = input ? input.value : '';
+                            if (v !== '') hasAny = true;
+                            if (f.type === 'number') { v = v === '' ? 0 : Number(v); }
+                            subObj[f.key] = v;
+                        });
+                        if (hasAny) subArr.push(subObj);
+                    });
+                    obj[src.subList.key] = subArr;
+                }
+
+                var isNew = !existing;
+                if (isNew) { arr.push(obj); }
+
+                pmgPopulateCategoryFilter();
+                pmgRenderGrid();
+                modalOff('prodModalOv', 'prodEditModal');
+                showToast(isNew ? 'تمت إضافة المنتج إلى المتجر الحالي' : 'تم حفظ التعديلات على المتجر الحالي', 'success');
+
+                $('pmgCodeWrap').style.display = 'block';
+                $('prodCodeOutput').value = pmgBuildCodeSnippet(src, obj, isNew);
+            });
+        }
+
+        pmgInit();
 
     }());
     </script>

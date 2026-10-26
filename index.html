@@ -3184,6 +3184,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCvmyeM02Z0rP5foukXop1lIEQAlfOPr5o",
@@ -12750,6 +12751,11 @@
                 var searchIndex = [];
                 var _uidCounter = 0;
 
+                // دالة بناء الفهرس — يُعاد استدعاؤها تلقائياً عند أي تعديل من لوحة المدير
+                function buildSearchIndex() {
+                searchIndex.length = 0;
+                _uidCounter = 0;
+
                 // Helper: add a flat product to index
                 function addToIndex(obj) {
                     searchIndex.push(Object.assign({ _uid: ++_uidCounter }, obj));
@@ -12825,6 +12831,10 @@
                         });
                     });
                 }
+
+                }
+                buildSearchIndex();
+                window.__rebuildSearchIndex = buildSearchIndex;
 
                 // Category labels & colors
                 const CAT_CONFIG = {
@@ -13842,6 +13852,19 @@
         .pmg-sync-note i{color:var(--success)}
         .pmg-sync-note.err{background:#fdecec;border-color:#f6caca;color:#c00}
         .pmg-sync-note.err i{color:#E74C3C}
+        .pmg-img-row{display:flex;gap:.8rem;align-items:flex-start}
+        .pmg-img-prev{width:96px;height:96px;flex-shrink:0;border:1.5px dashed #ccd3dc;border-radius:12px;background:#f4f6f9;display:flex;align-items:center;justify-content:center;overflow:hidden}
+        .pmg-img-prev img{width:100%;height:100%;object-fit:cover}
+        .pmg-img-prev i{font-size:1.6rem;color:#c3cad4}
+        .pmg-img-ctl{flex:1;min-width:0;display:flex;flex-direction:column;gap:.45rem}
+        .pmg-img-btns{display:flex;gap:.4rem;flex-wrap:wrap}
+        .pmg-upload-btn{display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;border-radius:9px;padding:.5rem .9rem;font-size:.82rem;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif}
+        .pmg-upload-btn:hover{background:#1e2e3f}
+        .pmg-img-clear{background:#fde8e8;color:#c00;border:none;border-radius:9px;padding:.5rem .8rem;font-size:.8rem;cursor:pointer;font-family:'Cairo',sans-serif}
+        .pmg-img-status{font-size:.74rem;color:var(--gray);min-height:1em}
+        .pmg-img-status.ok{color:#1e8449}
+        .pmg-img-status.err{color:#c00}
+        .pmg-save-btn:disabled{opacity:.55;cursor:wait}
 
         /* ══ Order Cards in Admin ══ */
         .adm-order-card {
@@ -14684,7 +14707,7 @@
                 <button class="pmg-add-btn" id="pmgAddBtn"><i class="fas fa-plus"></i> إضافة منتج جديد</button>
             </div>
             <div class="pmg-count" id="pmgCount"></div>
-            <div class="pmg-sync-note" id="pmgSyncNote"><i class="fas fa-cloud"></i> أي تعديل أو إضافة أو حذف هنا يُحفظ مباشرة وبشكل دائم على المتجر (لكل الزوار وعلى كل الأجهزة، بما فيها الهاتف).</div>
+            <div class="pmg-sync-note" id="pmgSyncNote"><i class="fas fa-cloud"></i> أي تعديل أو إضافة أو حذف أو رفع صورة هنا يُحفظ مباشرة ويظهر لكل الزوار فوراً وعلى كل الأجهزة، دون الحاجة لتعديل الكود أو رفع ملفات.</div>
             <div class="pmg-grid" id="pmgGrid"></div>
         </div>
     </div>
@@ -16682,6 +16705,16 @@
                         { key: 'price', label: 'السعر ($)', type: 'text' }
                     ]
                 }
+            },
+            {
+                key: 'categories', label: 'التصنيفات الرئيسية (بطاقات الصفحة الرئيسية)',
+                getArr: function () { return categories; }, idType: 'string',
+                fields: [
+                    { key: 'name', label: 'اسم التصنيف', type: 'text', required: true },
+                    { key: 'description', label: 'الوصف', type: 'text' },
+                    { key: 'image', label: 'الصورة', type: 'text' },
+                    { key: 'count', label: 'العدد المعروض (منتج)', type: 'number' }
+                ]
             }
         ];
 
@@ -16730,8 +16763,10 @@
                 if (c && !seen[c]) { seen[c] = true; cats.push(c); }
             });
             cats.sort();
+            var prevCat = $('pmgCategorySelect').value;
             $('pmgCategorySelect').innerHTML = '<option value="">كل التصنيفات</option>' +
                 cats.map(function (c) { return '<option value="' + pmgEsc(c) + '">' + pmgEsc(c) + '</option>'; }).join('');
+            if (prevCat && cats.indexOf(prevCat) !== -1) $('pmgCategorySelect').value = prevCat;
         }
 
         function pmgRenderGrid() {
@@ -16816,7 +16851,7 @@
             pmgEditingCtx = { sourceKey: sourceKey, id: item ? item.id : null };
             $('pmgFormTitle').textContent = item ? ('تعديل: ' + item.name) : ('إضافة منتج جديد — ' + src.label);
 
-            var idVal = item ? item.id : '';
+            var idVal = item ? item.id : pmgSuggestId(src);
             var idFieldHtml = '<div class="pmg-field"><label>المعرف (ID)' +
                 (src.idType === 'string' ? ' — نص فريد، مثال: my-new-item' : ' — رقم فريد غير مستخدم') + '</label>' +
                 '<input type="text" id="pmgFieldId" value="' + pmgEsc(idVal) + '"' + (item ? ' readonly style="background:#f4f6f9;color:#888"' : '') + '></div>';
@@ -16826,10 +16861,12 @@
                 if (f.type === 'textarea') {
                     return '<div class="pmg-field"><label>' + f.label + '</label><textarea data-field="' + f.key + '">' + pmgEsc(val) + '</textarea></div>';
                 }
+                if (f.key === 'image') return pmgImageFieldHtml(val);
                 return '<div class="pmg-field"><label>' + f.label + '</label><input type="' + (f.type === 'number' ? 'number' : 'text') + '" ' + (f.type === 'number' ? 'step="any"' : '') + ' data-field="' + f.key + '" value="' + pmgEsc(val) + '"></div>';
             }).join('');
 
             $('pmgFieldsWrap').innerHTML = idFieldHtml + fieldsHtml;
+            pmgWireImageField();
 
             var subWrap = $('pmgSubListWrap');
             if (src.subList) {
@@ -16857,21 +16894,300 @@
             rowsWrap.appendChild(row);
         }
 
+        // ═══════════════════════════════════════════════════════════════
+        //  المزامنة الحيّة: أي تغيير في قاعدة البيانات يصل لكل الزوار فوراً
+        // ═══════════════════════════════════════════════════════════════
+        var PMG_BASE = null;                 // نسخة البيانات الأصلية المكتوبة في الملف
+        var PMG_DERIVED = {};                // مفاتيح نسخ الألعاب/التطبيقات داخل مصفوفة products
+        var pmgLast = { overrides: {}, deletions: {} };
+        var pmgHave = { o: false, d: false };
+        var pmgTimer = null, pmgCatSig = null;
+        var pmgView = null, pmgDepth = 0, pmgReplaying = false;
+        var PMG_SAFE_VIEWS = ['showCategoryProducts', 'renderProductsByCategory', 'showPlatformProducts'];
+
+        function pmgDerivedKey(kind, it) { return kind + '|' + it.id + '|' + (it.category || ''); }
+
+        function pmgSnapshotBase() {
+            if (PMG_BASE) return;
+            PMG_BASE = {};
+            PMG_SOURCES.forEach(function (s) { PMG_BASE[s.key] = JSON.parse(JSON.stringify(s.getArr())); });
+            gamesData.forEach(function (g) { PMG_DERIVED[pmgDerivedKey('g', g)] = true; });
+            appsData.forEach(function (a) { PMG_DERIVED[pmgDerivedKey('a', a)] = true; });
+            try { pmgCatSig = JSON.stringify(categories); } catch (e) {}
+        }
+
+        function pmgResetToBase() {
+            PMG_SOURCES.forEach(function (s) {
+                var arr = s.getArr();
+                arr.length = 0;
+                PMG_BASE[s.key].forEach(function (it) { arr.push(JSON.parse(JSON.stringify(it))); });
+            });
+        }
+
+        // الألعاب والتطبيقات يُنسخ منها عنصر داخل products (للبحث) — نُبقيها متزامنة
+        function pmgSyncDerived() {
+            [['g', gamesData], ['a', appsData]].forEach(function (pair) {
+                var kind = pair[0], arr = pair[1], cur = {};
+                arr.forEach(function (it) { cur[pmgDerivedKey(kind, it)] = true; });
+                for (var i = products.length - 1; i >= 0; i--) {
+                    var k = pmgDerivedKey(kind, products[i]);
+                    if (PMG_DERIVED[k] && !cur[k]) products.splice(i, 1);
+                }
+                arr.forEach(function (it) {
+                    var k = pmgDerivedKey(kind, it), found = null;
+                    for (var j = 0; j < products.length; j++) { if (pmgDerivedKey(kind, products[j]) === k) { found = products[j]; break; } }
+                    if (found) { found.name = it.name; found.description = it.description; found.image = it.image; }
+                    else { products.push({ id: it.id, name: it.name, category: it.category, price: 0, description: it.description, image: it.image }); }
+                    PMG_DERIVED[k] = true;
+                });
+            });
+        }
+
+        function pmgSig() {
+            try {
+                return (typeof productsGrid !== 'undefined' && productsGrid ? productsGrid.innerHTML.length : 0) + '|' +
+                       (typeof categoryProductsTitle !== 'undefined' && categoryProductsTitle ? categoryProductsTitle.textContent : '');
+            } catch (e) { return ''; }
+        }
+
+        function pmgTrackViews() {
+            ['showCategoryProducts', 'renderProductsByCategory', 'showPlatformProducts', 'showGameTypes', 'showVpnProducts',
+             'showPaymentSuperGroup', 'showPaymentProducts', 'showTvProducts', 'showDesignProducts', 'showAppProducts',
+             'showPremiumProducts', 'showArqamProducts'].forEach(function (name) {
+                var orig = window[name];
+                if (typeof orig !== 'function') return;
+                window[name] = function () {
+                    var isTop = pmgDepth === 0 && !pmgReplaying;
+                    var args = Array.prototype.slice.call(arguments);
+                    pmgDepth++;
+                    try { return orig.apply(this, arguments); }
+                    finally {
+                        pmgDepth--;
+                        if (isTop) pmgView = { name: name, args: args, safe: PMG_SAFE_VIEWS.indexOf(name) !== -1, sig: pmgSig() };
+                    }
+                };
+            });
+        }
+
+        function pmgShowUpdateBanner() {
+            if (document.getElementById('pmgUpdateBanner')) return;
+            var b = document.createElement('div');
+            b.id = 'pmgUpdateBanner';
+            b.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:4500;background:#2A3F54;color:#fff;padding:.7rem 1rem;border-radius:12px;box-shadow:0 6px 22px rgba(0,0,0,.3);display:flex;gap:.8rem;align-items:center;font-size:.88rem;max-width:92vw;font-family:Cairo,sans-serif';
+            b.innerHTML = '<span><i class="fas fa-sync-alt"></i> تم تحديث المنتجات والأسعار</span>' +
+                '<button type="button" style="background:#F7C873;color:#1A252F;border:none;border-radius:8px;padding:.35rem .8rem;font-weight:700;cursor:pointer;font-family:inherit">تحديث</button>' +
+                '<button type="button" aria-label="إغلاق" style="background:none;border:none;color:#fff;cursor:pointer;font-size:1.1rem">×</button>';
+            b.children[1].onclick = function () { location.reload(); };
+            b.children[2].onclick = function () { b.parentNode && b.parentNode.removeChild(b); };
+            document.body.appendChild(b);
+        }
+
+        function pmgRefreshStorefront() {
+            try { if (window.__rebuildSearchIndex) window.__rebuildSearchIndex(); } catch (e) { console.error(e); }
+
+            // بطاقات التصنيفات في الصفحة الرئيسية
+            try {
+                var sig = JSON.stringify(categories);
+                if (sig !== pmgCatSig) {
+                    pmgCatSig = sig;
+                    if (typeof categoriesGrid !== 'undefined' && categoriesGrid && typeof renderCategories === 'function') {
+                        renderCategories();
+                        if (window.AOS && AOS.refreshHard) AOS.refreshHard();
+                    }
+                }
+            } catch (e) { console.error(e); }
+
+            // القائمة المفتوحة حالياً عند الزائر
+            try {
+                var visible = typeof productsSection !== 'undefined' && productsSection && getComputedStyle(productsSection).display !== 'none';
+                if (!visible || !pmgView) return;
+                var adminEmail = (typeof ADMIN_EMAIL !== 'undefined') ? ADMIN_EMAIL : 'admin@zoodny.com';
+                var isAdmin = !!(auth.currentUser && auth.currentUser.email === adminEmail);
+                if (pmgView.safe && pmgView.sig === pmgSig()) {
+                    var y = window.pageYOffset;
+                    var fn = window[pmgView.name];
+                    pmgReplaying = true;
+                    try { fn.apply(null, pmgView.args); } finally { pmgReplaying = false; }
+                    try { window.scrollTo({ top: y, behavior: 'instant' }); } catch (e2) { window.scrollTo(0, y); }
+                    pmgView.sig = pmgSig();
+                } else if (!isAdmin) {
+                    pmgShowUpdateBanner();   // الزائر داخل صفحة فرعية: نعرض زر تحديث بدل قطع تصفحه
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function pmgReapply() {
+            if (!pmgHave.o || !pmgHave.d) return;
+            try {
+                pmgSnapshotBase();
+                pmgResetToBase();
+                pmgApplyOverridesToArrays(pmgLast.overrides, pmgLast.deletions);
+                pmgSyncDerived();
+                pmgPopulateCategoryFilter();
+                pmgRenderGrid();
+                pmgRefreshStorefront();
+            } catch (e) { console.error('pmgReapply', e); }
+        }
+
+        function pmgSchedule() {
+            clearTimeout(pmgTimer);
+            pmgTimer = setTimeout(pmgReapply, 120);
+        }
+
+        function pmgStartLive() {
+            pmgTrackViews();
+            function listen(path, slot, flag) {
+                dbRef(path).on('value', function (snap) {
+                    pmgLast[slot] = snap.val() || {};
+                    pmgHave[flag] = true;
+                    pmgSchedule();
+                }, function (err) {
+                    console.error('تعذر قراءة ' + path, err);
+                    pmgHave[flag] = true;
+                    pmgSchedule();
+                });
+            }
+            listen('product_overrides', 'overrides', 'o');
+            listen('product_deletions', 'deletions', 'd');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        //  رفع الصور من لوحة المدير
+        //  1) محاولة الرفع إلى Firebase Storage  2) وإن لم يتوفر: حفظ الصورة مضغوطة في قاعدة البيانات
+        // ═══════════════════════════════════════════════════════════════
+        var pmgUploading = false;
+
+        function pmgSuggestId(src) {
+            if (src.idType === 'string') return 'item-' + Date.now().toString(36);
+            var max = 0;
+            ['products', 'gamesData', 'appsData'].forEach(function (k) {
+                pmgGetSource(k).getArr().forEach(function (it) { var n = Number(it.id); if (!isNaN(n) && n > max) max = n; });
+            });
+            return max + 1;
+        }
+
+        function pmgImageFieldHtml(val) {
+            return '<div class="pmg-field"><label>صورة المنتج</label>' +
+                '<div class="pmg-img-row">' +
+                    '<div class="pmg-img-prev" id="pmgImgPrev"><i class="fas fa-image"></i></div>' +
+                    '<div class="pmg-img-ctl">' +
+                        '<div class="pmg-img-btns">' +
+                            '<label class="pmg-upload-btn"><i class="fas fa-cloud-upload-alt"></i> رفع صورة من الجهاز<input type="file" accept="image/*" id="pmgImgFile" style="display:none"></label>' +
+                            '<button type="button" class="pmg-img-clear" id="pmgImgClear"><i class="fas fa-times"></i> إزالة</button>' +
+                        '</div>' +
+                        '<input type="text" id="pmgImgVal" data-field="image" placeholder="أو اكتب اسم ملف / رابط الصورة" value="' + pmgEsc(val) + '">' +
+                        '<div class="pmg-img-status" id="pmgImgStatus"></div>' +
+                    '</div>' +
+                '</div></div>';
+        }
+
+        function pmgSetPreview(val) {
+            var box = $('pmgImgPrev');
+            if (!box) return;
+            box.innerHTML = '';
+            if (!val) { box.innerHTML = '<i class="fas fa-image"></i>'; return; }
+            var im = new Image();
+            im.onerror = function () { box.innerHTML = '<i class="fas fa-image"></i>'; };
+            im.src = val;
+            box.appendChild(im);
+        }
+
+        function pmgImgStatus(msg, cls) {
+            var el = $('pmgImgStatus');
+            if (el) { el.textContent = msg || ''; el.className = 'pmg-img-status' + (cls ? ' ' + cls : ''); }
+        }
+
+        function pmgSetUploading(on) {
+            pmgUploading = on;
+            var b = document.querySelector('#pmgForm .pmg-save-btn');
+            if (b) b.disabled = on;
+        }
+
+        function pmgWireImageField() {
+            var inp = $('pmgImgVal'), file = $('pmgImgFile'), clr = $('pmgImgClear');
+            if (!inp || !file) return;
+            pmgSetPreview(inp.value);
+            inp.addEventListener('input', function () { pmgSetPreview(inp.value); });
+            clr.addEventListener('click', function () { inp.value = ''; pmgSetPreview(''); pmgImgStatus(''); });
+            file.addEventListener('change', function () {
+                var f = file.files && file.files[0];
+                if (!f) return;
+                if (!/^image\//.test(f.type)) { pmgImgStatus('الملف المختار ليس صورة', 'err'); return; }
+                pmgSetUploading(true);
+                pmgImgStatus('جارٍ تجهيز ورفع الصورة...');
+                var tag = ($('pmgFieldId') && $('pmgFieldId').value) || 'item';
+                pmgUploadImage(f, tag).then(function (res) {
+                    inp.value = res.url;
+                    pmgSetPreview(res.url);
+                    pmgImgStatus(res.mode === 'storage' ? 'تم رفع الصورة — اضغط حفظ لتثبيتها' : 'تم تجهيز الصورة — اضغط حفظ لتثبيتها', 'ok');
+                }).catch(function (err) {
+                    pmgImgStatus('تعذر رفع الصورة: ' + (err && err.message ? err.message : err), 'err');
+                }).then(function () { pmgSetUploading(false); file.value = ''; });
+            });
+        }
+
+        // تصغير الصورة وضغطها (لا تتجاوز ~90KB تقريباً)
+        function pmgCompressImage(file) {
+            return new Promise(function (resolve, reject) {
+                var url = URL.createObjectURL(file);
+                var img = new Image();
+                img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('تعذر قراءة الصورة')); };
+                img.onload = function () {
+                    var steps = [[640, 0.82], [520, 0.74], [400, 0.66], [320, 0.58]];
+                    var out = null, type = 'image/webp';
+                    for (var i = 0; i < steps.length; i++) {
+                        var max = steps[i][0], q = steps[i][1];
+                        var ratio = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+                        var w = Math.max(1, Math.round(img.naturalWidth * ratio)), h = Math.max(1, Math.round(img.naturalHeight * ratio));
+                        var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+                        var ctx = cv.getContext('2d');
+                        out = cv.toDataURL('image/webp', q);
+                        if (out.indexOf('data:image/webp') !== 0) {   // المتصفح لا يدعم WebP → JPEG بخلفية بيضاء
+                            type = 'image/jpeg';
+                            ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+                            ctx.drawImage(img, 0, 0, w, h);
+                            out = cv.toDataURL('image/jpeg', q);
+                        } else {
+                            ctx.drawImage(img, 0, 0, w, h);
+                            out = cv.toDataURL('image/webp', q);
+                        }
+                        if (out.length < 120000) break;
+                    }
+                    URL.revokeObjectURL(url);
+                    fetch(out).then(function (r) { return r.blob(); })
+                        .then(function (blob) { resolve({ dataUrl: out, blob: blob, type: type }); })
+                        .catch(reject);
+                };
+                img.src = url;
+            });
+        }
+
+        function pmgUploadImage(file, tag) {
+            return pmgCompressImage(file).then(function (res) {
+                var fallback = { url: res.dataUrl, mode: 'database' };
+                var task = null;
+                try {
+                    if (typeof firebase.storage === 'function') {
+                        var st = firebase.storage();
+                        try { st.setMaxUploadRetryTime(8000); } catch (e0) {}
+                        var ext = res.type === 'image/webp' ? 'webp' : 'jpg';
+                        var ref = st.ref('product_images/' + pmgSafeKey(tag) + '_' + Date.now() + '.' + ext);
+                        task = Promise.race([
+                            ref.put(res.blob, { contentType: res.type }).then(function () { return ref.getDownloadURL(); }),
+                            new Promise(function (_, rej) { setTimeout(function () { rej(new Error('timeout')); }, 12000); })
+                        ]).then(function (u) { return { url: u, mode: 'storage' }; });
+                    }
+                } catch (e) { task = null; }
+                return task ? task.catch(function () { return fallback; }) : fallback;
+            });
+        }
+
         function pmgInit() {
             pmgInitSourceSelect();
             pmgPopulateCategoryFilter();
             pmgRenderGrid();
 
-            var overridesPromise = window.__pmgOverridesPromise ||
-                Promise.all([dbRef('product_overrides').once('value'), dbRef('product_deletions').once('value')])
-                    .then(function (snaps) { return { overrides: snaps[0].val() || {}, deletions: snaps[1].val() || {} }; })
-                    .catch(function () { return { overrides: {}, deletions: {} }; });
-
-            overridesPromise.then(function (res) {
-                pmgApplyOverridesToArrays(res.overrides, res.deletions);
-                pmgPopulateCategoryFilter();
-                pmgRenderGrid();
-            });
+            pmgStartLive();
 
             $('pmgAddBtn').addEventListener('click', function () { pmgOpenForm($('pmgSourceSelect').value, null); });
             $('pmgCategorySelect').addEventListener('change', pmgRenderGrid);
@@ -16881,6 +17197,7 @@
 
             $('pmgForm').addEventListener('submit', function (e) {
                 e.preventDefault();
+                if (pmgUploading) { alert('انتظر حتى ينتهي رفع الصورة ثم اضغط حفظ'); return; }
                 var src = pmgGetSource(pmgEditingCtx.sourceKey);
                 var idRaw = $('pmgFieldId').value.trim();
                 if (!idRaw) { alert('الرجاء إدخال معرف (ID) للمنتج'); return; }

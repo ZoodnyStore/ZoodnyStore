@@ -1,0 +1,51 @@
+{
+  "rules": {
+    "users": {
+      ".read": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')",
+        ".write": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')",
+        "balance": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || (!data.exists() && newData.val() === 0) || (data.exists() && data.isNumber() && newData.val() <= data.val()))"
+        },
+        "transactions": {
+          ".indexOn": ["ts"]
+        }
+      }
+    },
+    "wallets": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')",
+        ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'"
+      }
+    },
+    "topup_orders": {
+      ".read": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      "$id": {
+        ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid && newData.child('status').val() === 'pending'"
+      }
+    },
+    "store_orders": {
+      ".read": "auth != null && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || (query.orderByChild === 'uid' && query.equalTo === auth.uid))",
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      ".indexOn": ["uid"],
+      "$id": {
+        ".read": "auth != null && data.child('uid').val() === auth.uid",
+        ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid && newData.child('status').val() === 'pending'"
+      }
+    },
+    "products": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'"
+    },
+    "product_overrides": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'"
+    },
+    "product_deletions": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'"
+    }
+  }
+}

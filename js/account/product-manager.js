@@ -19,8 +19,16 @@
             getArr: function () { return products; }, idType: 'number',
             fields: [
                 { key: 'name', label: 'اسم المنتج', type: 'text', required: true },
-                { key: 'category', label: 'التصنيف (Category)', type: 'text', required: true },
-                { key: 'price', label: 'السعر ($)', type: 'number' },
+                { key: 'category', label: 'التصنيف (Category)', type: 'category', required: true },
+                { key: 'price', label: 'السعر ($)', type: 'number', hideFor: ['social-media'] },
+                // ── حقول خاصة بخدمات السوشال ميديا (السعر الفعلي = سعر الألف) ──
+                { key: 'platform', label: 'المنصة', type: 'select', showFor: ['social-media'],
+                  options: function () { return platforms.map(function (p) { return [p.id, p.name]; }); } },
+                { key: 'basePrice', label: 'سعر الألف ($)', type: 'number', showFor: ['social-media'] },
+                { key: 'minQuantity', label: 'الحد الأدنى للكمية', type: 'number', showFor: ['social-media'] },
+                { key: 'maxQuantity', label: 'الحد الأقصى للكمية', type: 'number', showFor: ['social-media'] },
+                // ── حقل خاص ببرامج التصميم ──
+                { key: 'inputLabel', label: 'نص حقل الإدخال (مثل: الإيميل)', type: 'text', showFor: ['برامج التصميم'] },
                 { key: 'description', label: 'الوصف', type: 'textarea' },
                 { key: 'image', label: 'اسم ملف الصورة', type: 'text' }
             ]
@@ -30,7 +38,7 @@
             getArr: function () { return appsData; }, idType: 'number',
             fields: [
                 { key: 'name', label: 'اسم التطبيق', type: 'text', required: true },
-                { key: 'category', label: 'التصنيف (Category)', type: 'text', required: true, default: 'app' },
+                { key: 'category', label: 'التصنيف (Category)', type: 'category', required: true, default: 'app' },
                 { key: 'description', label: 'الوصف', type: 'textarea' },
                 { key: 'image', label: 'اسم ملف الصورة', type: 'text' },
                 { key: 'inputLabel', label: 'نص حقل الإدخال', type: 'text' },
@@ -45,7 +53,7 @@
             getArr: function () { return gamesData; }, idType: 'number',
             fields: [
                 { key: 'name', label: 'اسم اللعبة', type: 'text', required: true },
-                { key: 'category', label: 'التصنيف (Category)', type: 'text', required: true, default: 'games' },
+                { key: 'category', label: 'التصنيف (Category)', type: 'category', required: true, default: 'games' },
                 { key: 'description', label: 'الوصف', type: 'textarea' },
                 { key: 'image', label: 'اسم ملف الصورة', type: 'text' },
                 { key: 'inputLabel', label: 'نص حقل الإدخال', type: 'text' }
@@ -64,7 +72,7 @@
             getArr: function () { return premiumActivationsData; }, idType: 'string',
             fields: [
                 { key: 'name', label: 'اسم المجموعة', type: 'text', required: true },
-                { key: 'category', label: 'التصنيف (Category)', type: 'text', required: true, default: 'تفعيلات بريميوم' },
+                { key: 'category', label: 'التصنيف (Category)', type: 'category', required: true, default: 'تفعيلات بريميوم' },
                 { key: 'description', label: 'الوصف', type: 'textarea' },
                 { key: 'image', label: 'اسم ملف الصورة', type: 'text' },
                 { key: 'inputLabel', label: 'نص حقل الإدخال', type: 'text' },
@@ -76,7 +84,7 @@
                 fields: [
                     { key: 'id', label: 'رقم', type: 'number' },
                     { key: 'name', label: 'اسم الباقة', type: 'text' },
-                    { key: 'price', label: 'السعر ($)', type: 'text' }
+                    { key: 'price', label: 'السعر ($)', type: 'number' }
                 ]
             }
         },
@@ -85,7 +93,7 @@
             getArr: function () { return vpnData; }, idType: 'string',
             fields: [
                 { key: 'name', label: 'اسم المجموعة', type: 'text', required: true },
-                { key: 'category', label: 'التصنيف (Category)', type: 'text', required: true, default: 'اشتراكات VPN' },
+                { key: 'category', label: 'التصنيف (Category)', type: 'category', required: true, default: 'اشتراكات VPN' },
                 { key: 'description', label: 'الوصف', type: 'textarea' },
                 { key: 'image', label: 'اسم ملف الصورة', type: 'text' }
             ],
@@ -94,7 +102,7 @@
                 fields: [
                     { key: 'id', label: 'رقم', type: 'number' },
                     { key: 'name', label: 'اسم الباقة', type: 'text' },
-                    { key: 'price', label: 'السعر ($)', type: 'text' }
+                    { key: 'price', label: 'السعر ($)', type: 'number' }
                 ]
             }
         },
@@ -103,7 +111,7 @@
             getArr: function () { return electronicPaymentData; }, idType: 'string',
             fields: [
                 { key: 'name', label: 'اسم المجموعة', type: 'text', required: true },
-                { key: 'category', label: 'التصنيف (Category)', type: 'text', required: true, default: 'الدفع الالكتروني' },
+                { key: 'category', label: 'التصنيف (Category)', type: 'category', required: true, default: 'الدفع الالكتروني' },
                 { key: 'description', label: 'الوصف', type: 'textarea' },
                 { key: 'image', label: 'اسم ملف الصورة', type: 'text' }
             ],
@@ -112,7 +120,7 @@
                 fields: [
                     { key: 'id', label: 'رقم', type: 'number' },
                     { key: 'name', label: 'اسم الباقة', type: 'text' },
-                    { key: 'price', label: 'السعر ($)', type: 'text' }
+                    { key: 'price', label: 'السعر ($)', type: 'number' }
                 ]
             }
         },
@@ -130,6 +138,34 @@
 
     function pmgGetSource(key) { return PMG_SOURCES.filter(function (s) { return s.key === key; })[0]; }
 
+    // الحقول الرقمية قد تكون محفوظة كنص (من نسخ سابقة) — نحولها لأرقام حتى لا تتعطل السلة والحسابات
+    function pmgToNumber(v) {
+        if (typeof v === 'number') return v;
+        if (typeof v !== 'string' || v.trim() === '') return v;
+        var s = v.replace(/[٠-٩]/g, function (d) { return String(d.charCodeAt(0) - 0x0660); })   // أرقام عربية
+                 .replace(/[۰-۹]/g, function (d) { return String(d.charCodeAt(0) - 0x06F0); })   // أرقام فارسية
+                 .replace(/[٫,]/g, '.').replace(/[$\s]/g, '');
+        if (!/^-?\d+(\.\d+)?$/.test(s) && !/^-?\.\d+$/.test(s)) return v;   // نرفض "1e" و "2.5.1" وغيرها
+        var n = Number(s);
+        return isNaN(n) ? v : n;
+    }
+    function pmgNormalizeItem(src, data) {
+        src.fields.forEach(function (f) {
+            if (f.type === 'number' && data[f.key] !== undefined) data[f.key] = pmgToNumber(data[f.key]);
+        });
+        if (src.subList && data[src.subList.key]) {
+            var list = data[src.subList.key];
+            if (!Array.isArray(list)) list = data[src.subList.key] = Object.keys(list).map(function (k) { return list[k]; });
+            list.forEach(function (row) {
+                if (!row) return;
+                src.subList.fields.forEach(function (f) {
+                    if (f.type === 'number' && row[f.key] !== undefined) row[f.key] = pmgToNumber(row[f.key]);
+                });
+            });
+            data[src.subList.key] = list.filter(Boolean);
+        }
+    }
+
     function pmgApplyOverridesToArrays(overrides, deletions) {
         PMG_SOURCES.forEach(function (src) {
             var arr = src.getArr();
@@ -142,6 +178,7 @@
                 var data = ovMap[k];
                 if (!data || data.id === undefined || data.id === null) return;
                 if (typeof data.image === 'string') data.image = window.zoodnyImagePath(data.image);
+                pmgNormalizeItem(src, data);
                 var existing = null;
                 for (var j = 0; j < arr.length; j++) { if (String(arr[j].id) === String(data.id)) { existing = arr[j]; break; } }
                 if (existing) {
@@ -256,6 +293,37 @@
 
     var pmgEditingCtx = null;
 
+    // قائمة اقتراحات للتصنيف: تصنيفات الصفحة الرئيسية + التصنيفات المستخدمة فعلاً
+    function pmgCategoryDatalist(src) {
+        var seen = {}, opts = [];
+        function add(val, label) {
+            if (!val || seen[val]) return;
+            seen[val] = true;
+            opts.push('<option value="' + pmgEsc(val) + '"' + (label && label !== val ? ' label="' + pmgEsc(label) + '"' : '') + '>' + (label && label !== val ? pmgEsc(label) : '') + '</option>');
+        }
+        if (src.key === 'products') categories.forEach(function (c) { add(c.id, c.name); });
+        src.getArr().forEach(function (it) { add(it.category); });
+        return '<datalist id="pmgCategoryList">' + opts.join('') + '</datalist>';
+    }
+
+    // إظهار/إخفاء الحقول الخاصة حسب التصنيف المكتوب
+    function pmgApplyFieldVisibility() {
+        var wrap = $('pmgFieldsWrap');
+        var catEl = wrap.querySelector('[data-field="category"]');
+        var cat = catEl ? catEl.value.trim() : '';
+        Array.prototype.forEach.call(wrap.querySelectorAll('.pmg-field[data-show-for], .pmg-field[data-hide-for]'), function (box) {
+            var show = true;
+            if (box.dataset.showFor) show = box.dataset.showFor.split('|').indexOf(cat) !== -1;
+            if (box.dataset.hideFor && box.dataset.hideFor.split('|').indexOf(cat) !== -1) show = false;
+            box.style.display = show ? '' : 'none';
+        });
+    }
+
+    function pmgFieldIsVisible(el) {
+        var box = el.closest('.pmg-field');
+        return !box || box.style.display !== 'none';
+    }
+
     function pmgOpenForm(sourceKey, id) {
         var src = pmgGetSource(sourceKey);
         var item = id !== null && id !== undefined ? pmgFindItem(sourceKey, id) : null;
@@ -269,15 +337,35 @@
 
         var fieldsHtml = src.fields.map(function (f) {
             var val = item ? (item[f.key] !== undefined && item[f.key] !== null ? item[f.key] : '') : (f.default !== undefined ? f.default : '');
+            var cond = (f.showFor ? ' data-show-for="' + pmgEsc(f.showFor.join('|')) + '"' : '') +
+                       (f.hideFor ? ' data-hide-for="' + pmgEsc(f.hideFor.join('|')) + '"' : '');
+            var open = '<div class="pmg-field"' + cond + '><label>' + f.label + '</label>';
             if (f.type === 'textarea') {
-                return '<div class="pmg-field"><label>' + f.label + '</label><textarea data-field="' + f.key + '">' + pmgEsc(val) + '</textarea></div>';
+                return open + '<textarea data-field="' + f.key + '">' + pmgEsc(val) + '</textarea></div>';
             }
             if (f.key === 'image') return pmgImageFieldHtml(val);
-            return '<div class="pmg-field"><label>' + f.label + '</label><input type="' + (f.type === 'number' ? 'number' : 'text') + '" ' + (f.type === 'number' ? 'step="any"' : '') + ' data-field="' + f.key + '" value="' + pmgEsc(val) + '"></div>';
+            if (f.type === 'select') {
+                var opts = f.options();
+                var known = opts.some(function (o) { return String(o[0]) === String(val); });
+                return open + '<select data-field="' + f.key + '">' +
+                    (known ? '' : '<option value="' + pmgEsc(val) + '">' + (val ? pmgEsc(val) : '— اختر —') + '</option>') +
+                    opts.map(function (o) {
+                        return '<option value="' + pmgEsc(o[0]) + '"' + (String(o[0]) === String(val) ? ' selected' : '') + '>' + pmgEsc(o[1]) + '</option>';
+                    }).join('') + '</select></div>';
+            }
+            if (f.type === 'category') {
+                return open + '<input type="text" list="pmgCategoryList" data-field="' + f.key + '" value="' + pmgEsc(val) + '" placeholder="اختر من القائمة أو اكتب تصنيفاً">' +
+                    pmgCategoryDatalist(src) + '</div>';
+            }
+            // الحقول الرقمية نصية مع لوحة أرقام: حقل type=number في المتصفح يحذف الفاصلة بصمت ("2,5" تصبح 25)
+            return open + '<input type="text"' + (f.type === 'number' ? ' inputmode="decimal" dir="ltr" placeholder="0.00"' : '') + ' data-field="' + f.key + '" value="' + pmgEsc(val) + '"></div>';
         }).join('');
 
         $('pmgFieldsWrap').innerHTML = idFieldHtml + fieldsHtml;
         pmgWireImageField();
+        var catInput = $('pmgFieldsWrap').querySelector('[data-field="category"]');
+        if (catInput) catInput.addEventListener('input', pmgApplyFieldVisibility);
+        pmgApplyFieldVisibility();
 
         var subWrap = $('pmgSubListWrap');
         if (src.subList) {
@@ -312,6 +400,7 @@
     var PMG_DERIVED = {};                // مفاتيح نسخ الألعاب/التطبيقات داخل مصفوفة products
     var pmgLast = { overrides: {}, deletions: {} };
     var pmgHave = { o: false, d: false };
+    var pmgOk = { o: false, d: false };   // هل نجحت القراءة فعلاً (وليس خطأ صلاحيات)
     var pmgTimer = null, pmgCatSig = null;
     var pmgView = null, pmgDepth = 0, pmgReplaying = false;
     var PMG_SAFE_VIEWS = ['showCategoryProducts', 'renderProductsByCategory', 'showPlatformProducts'];
@@ -438,6 +527,10 @@
             pmgRenderGrid();
             pmgRefreshStorefront();
         } catch (e) { console.error('pmgReapply', e); }
+        // تحديث أسعار السلة؛ الحذف من السلة فقط إذا حُمّلت بيانات المدير بنجاح
+        try {
+            if (typeof syncCartWithCatalog === 'function') syncCartWithCatalog(pmgOk.o && pmgOk.d);
+        } catch (e) { console.error('syncCartWithCatalog', e); }
     }
 
     function pmgSchedule() {
@@ -451,10 +544,12 @@
             dbRef(path).on('value', function (snap) {
                 pmgLast[slot] = snap.val() || {};
                 pmgHave[flag] = true;
+                pmgOk[flag] = true;
                 pmgSchedule();
             }, function (err) {
-                console.error('تعذر قراءة ' + path, err);
+                console.error('تعذر قراءة ' + path + ' — تأكد من قواعد Firebase (يجب السماح بالقراءة للجميع)', err);
                 pmgHave[flag] = true;
+                pmgOk[flag] = false;
                 pmgSchedule();
             });
         }
@@ -628,32 +723,56 @@
             var nameEl = $('pmgFieldsWrap').querySelector('[data-field="name"]');
             if (!nameEl || !nameEl.value.trim()) { alert('الرجاء إدخال اسم المنتج'); return; }
 
-            var obj = existing || {};
-            obj.id = newId;
+            // ── قراءة الحقول والتحقق من الأرقام قبل أي تعديل ──
+            var values = {}, badField = null;
             src.fields.forEach(function (f) {
+                if (badField) return;
                 var el = $('pmgFieldsWrap').querySelector('[data-field="' + f.key + '"]');
-                if (!el) return;
+                if (!el || !pmgFieldIsVisible(el)) return;   // الحقول المخفية تبقى كما هي
                 var v = el.value;
-                if (f.type === 'number') { v = v === '' ? 0 : Number(v); }
-                obj[f.key] = v;
+                if (f.type === 'number') {
+                    // المتصفح يعيد قيمة فارغة إذا كُتب نص غير رقمي في حقل رقمي — لا نحفظها كصفر
+                    if (el.validity && el.validity.badInput) { badField = f.label; return; }
+                    v = v.trim() === '' ? 0 : pmgToNumber(v.trim());
+                    if (typeof v !== 'number' || v < 0) { badField = f.label; return; }
+                } else {
+                    v = v.trim();
+                }
+                values[f.key] = v;
             });
+            if (badField) { alert('قيمة غير صحيحة في حقل: ' + badField + '\nاكتب رقماً صحيحاً (مثال: 2.5)'); return; }
 
+            var subArr = null;
             if (src.subList) {
+                subArr = [];
                 var subRows = document.querySelectorAll('#pmgSubRows .pmg-sub-row');
-                var subArr = [];
-                Array.prototype.forEach.call(subRows, function (row) {
+                Array.prototype.forEach.call(subRows, function (row, idx) {
+                    if (badField) return;
                     var subObj = {};
                     var hasAny = false;
                     src.subList.fields.forEach(function (f) {
                         var input = row.querySelector('[data-subfield="' + f.key + '"]');
-                        var v = input ? input.value : '';
+                        var v = input ? input.value.trim() : '';
                         if (v !== '') hasAny = true;
-                        if (f.type === 'number') { v = v === '' ? 0 : Number(v); }
+                        if (f.type === 'number') {
+                            v = v === '' ? 0 : pmgToNumber(v);
+                            if (typeof v !== 'number' || v < 0) badField = f.label + ' (السطر ' + (idx + 1) + ')';
+                        }
                         subObj[f.key] = v;
                     });
                     if (hasAny) subArr.push(subObj);
                 });
-                obj[src.subList.key] = subArr;
+                if (badField) { alert('قيمة غير صحيحة في: ' + badField + '\nاكتب رقماً صحيحاً (مثال: 2.5)'); return; }
+            }
+
+            var obj = existing || {};
+            obj.id = newId;
+            Object.keys(values).forEach(function (k) { obj[k] = values[k]; });
+            if (subArr) obj[src.subList.key] = subArr;
+
+            // خدمات السوشال ميديا: نحدّث نص "سعر الألف" داخل الوصف إن وُجد
+            if (obj.category === 'social-media' && typeof obj.basePrice === 'number' && typeof obj.description === 'string') {
+                obj.description = obj.description.replace(/سعر الألف:\s*[\d.]+\s*\$/, 'سعر الألف: ' + obj.basePrice + '$');
             }
 
             var isNew = !existing;

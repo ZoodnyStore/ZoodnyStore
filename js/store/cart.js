@@ -899,6 +899,98 @@ function initCart() {
     }
 }
 
+// -------------------- مزامنة السلة مع الأسعار الحالية --------------------
+// تُستدعى بعد تحميل تعديلات المدير من Firebase (وعند كل تعديل جديد):
+//  - تحدّث سعر أي منتج في السلة تغيّر سعره
+//  - تحذف من السلة أي منتج حذفه المدير أو أصبح غير متوفر (فقط إذا allowRemove = true،
+//    أي عندما تكون بيانات المدير قد حُمّلت بنجاح، حتى لا نحذف شيئاً بالخطأ)
+function syncCartWithCatalog(allowRemove) {
+    if (!Array.isArray(cart) || !cart.length) return;
+
+    const num = v => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+    const findSub = (groups, id) => {
+        for (const g of groups || []) {
+            const s = (g.products || []).find(p => String(p.id) === String(id));
+            if (s) return s;
+        }
+        return null;
+    };
+    const findProduct = (id, category) => products.find(p => p.id === id && p.category === category);
+
+    // يرجع السعر الحالي (رقم)، أو 0 إذا لم يعد المنتج متوفراً، أو null إذا لا يمكن تحديده (يبقى كما هو)
+    const currentPrice = item => {
+        switch (item.category) {
+            case 'social-media':
+                return findProduct(item.id, 'social-media') ? calculateSocialMediaPrice(item.id, item.customQuantity || 300) : 0;
+            case 'app': {
+                const a = appsData.find(x => x.id === item.id);
+                return a ? Math.round(num(a.unitPrice) * num(item.appValue) * 10000) / 10000 : 0;
+            }
+            case 'games': {
+                const g = gamesData.find(x => x.id === item.id);
+                const amt = g && (g.amounts || []).find(x => String(x.value) === String(item.gameValue));
+                return amt ? num(amt.price) : 0;
+            }
+            case 'rased':
+                return null;   // أسعار الرصيد ثابتة في الكود (creditAmounts)
+            case 'تفعيلات بريميوم': {
+                const s = findSub(premiumActivationsData, item.id);
+                return s ? num(s.price) : 0;
+            }
+            case 'اشتراكات VPN': {
+                const s = findSub(vpnData, item.id) || findProduct(item.id, 'اشتراكات VPN');
+                return s ? num(s.price) : 0;
+            }
+            case 'الدفع الالكتروني':
+            case 'الدفع electronique': {
+                const s = findSub(electronicPaymentData, item.id) || findProduct(item.id, 'الدفع الالكتروني');
+                return s ? num(s.price) : 0;
+            }
+            default: {
+                const sameId = products.filter(x => x.id === item.id);
+                const p = findProduct(item.id, item.category) || (sameId.length === 1 ? sameId[0] : null);
+                if (p) return num(p.price);
+                return (allowRemove && !sameId.length) ? 0 : null;   // يُحذف فقط إذا اختفى المنتج تماماً
+            }
+        }
+    };
+
+    let changed = 0, removed = [];
+    for (let i = cart.length - 1; i >= 0; i--) {
+        const item = cart[i];
+        const price = currentPrice(item);
+        if (price === null) continue;
+        if (price <= 0) {
+            if (allowRemove) { removed.push(item.name); cart.splice(i, 1); }
+            continue;
+        }
+        if (Math.abs(num(item.price) - price) > 0.0001) {
+            item.price = price;
+            if (item.category === 'app') {
+                const a = appsData.find(x => x.id === item.id);
+                if (a) item.unitPrice = num(a.unitPrice);
+            }
+            changed++;
+        } else if (typeof item.price !== 'number') {
+            item.price = price;   // تصحيح سعر محفوظ كنص
+        }
+    }
+
+    if (!changed && !removed.length) return;
+    localStorage.setItem('zoodnyCart', JSON.stringify(cart));
+    checkForSocialMediaProducts();
+    checkForCreditProducts();
+    checkForGameProducts();
+    checkForAppProducts();
+    checkForPremiumProducts();
+    updateCartUI();
+    if (removed.length) {
+        showToast('تم حذف من سلتك ما لم يعد متوفراً: ' + removed.join('، '), 'error');
+    } else {
+        showToast('تم تحديث أسعار بعض المنتجات في سلتك', 'success');
+    }
+}
+
 // -------------------- العودة إلى التصنيفات --------------------
 function backToCategoriesView() {
     categoriesSection.style.display = 'block';

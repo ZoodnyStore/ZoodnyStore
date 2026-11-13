@@ -202,6 +202,7 @@
                 }
                 buildNavButtons(user, userData);
                 refreshWalletModal();
+                checkProfileComplete();
                 // Show login success notification once
                 if (!_authNotifyDone) {
                     _authNotifyDone = true;
@@ -214,6 +215,7 @@
         } else {
             var wasLoggedIn = !!currentUser;
             userData = null;
+            closeProfileModal();
             buildNavButtons(null, null);
             _authNotifyDone = false;
             if (wasLoggedIn) {
@@ -288,6 +290,7 @@
         if (!/^09[0-9]{8}$/.test(phone)) { $('registerErr').textContent = 'رقم الهاتف غير صحيح، يجب أن يبدأ بـ 09 ويتكون من 10 أرقام مثل: 09XXXXXXXX'; return; }
         if (pass.length < 6) { $('registerErr').textContent = 'كلمة السر 6 أحرف على الأقل'; return; }
         $('registerBtn').disabled = true;
+        _registering = true;   // الاسم والهاتف قادمان مع التسجيل — لا نعرض نافذة إكمال البيانات
         auth.createUserWithEmailAndPassword(email, pass)
             .then(function(cred) {
                 var uid = cred.user.uid;
@@ -299,8 +302,83 @@
                 var msgs = { 'auth/email-already-in-use':'البريد مسجل مسبقاً', 'auth/invalid-email':'بريد غير صالح', 'auth/weak-password':'كلمة السر ضعيفة جداً' };
                 $('registerErr').textContent = msgs[err.code] || err.message;
             })
-            .finally(() => $('registerBtn').disabled = false);
+            .finally(function() {
+                $('registerBtn').disabled = false;
+                _registering = false;
+                checkProfileComplete();
+            });
     };
+
+    // ── إكمال بيانات الحساب (الاسم + الهاتف) ─────────────────────────────
+    // حساب Google لا يعطينا رقم الهاتف، فنطلبه من أي مستخدم حسابه بلا رقم هاتف صحيح.
+    var _registering  = false;
+    var _profileOpen  = false;
+    var PHONE_RE = /^09[0-9]{8}$/;
+
+    function normalizePhone(v) {
+        return String(v || '')
+            .replace(/[٠-٩]/g, function(d) { return String(d.charCodeAt(0) - 0x0660); })
+            .replace(/[۰-۹]/g, function(d) { return String(d.charCodeAt(0) - 0x06F0); })
+            .replace(/[\s\-()]/g, '')
+            .replace(/^\+?963/, '0')
+            .replace(/^00963/, '0');
+    }
+
+    function profileIncomplete() {
+        if (!currentUser || !userData || _registering) return false;
+        if ((currentUser.email || '').toLowerCase() === ADMIN_EMAIL.toLowerCase()) return false;
+        var name = String(userData.name || '').trim();
+        return !PHONE_RE.test(normalizePhone(userData.phone)) || !name || name === 'مستخدم';
+    }
+
+    function checkProfileComplete() {
+        if (profileIncomplete()) {
+            if (_profileOpen) return;
+            _profileOpen = true;
+            var name = String(userData.name || '').trim();
+            $('pfName').value  = (name && name !== 'مستخدم') ? name : (currentUser.displayName || '');
+            $('pfPhone').value = userData.phone || '';
+            $('pfErr').textContent = '';
+            modalOn('profileOv', 'profileModal');
+            setTimeout(function() { ($('pfName').value ? $('pfPhone') : $('pfName')).focus(); }, 300);
+        } else {
+            closeProfileModal();
+        }
+    }
+
+    function closeProfileModal() {
+        if (!_profileOpen) return;
+        _profileOpen = false;
+        modalOff('profileOv', 'profileModal');
+    }
+
+    function saveProfile() {
+        var name  = $('pfName').value.trim();
+        var phone = normalizePhone($('pfPhone').value);
+        $('pfErr').textContent = '';
+        if (name.length < 2) { $('pfErr').textContent = 'يرجى كتابة اسمك الكامل'; return; }
+        if (!PHONE_RE.test(phone)) { $('pfErr').textContent = 'رقم الهاتف غير صحيح، يجب أن يبدأ بـ 09 ويتكون من 10 أرقام مثل: 09XXXXXXXX'; return; }
+        if (!currentUser) return;
+        var btn = $('pfSaveBtn');
+        btn.disabled = true;
+        var upd = { name: name, phone: phone };
+        if (!userData || !userData.email) upd.email = currentUser.email || '';
+        dbRef('users/' + currentUser.uid).update(upd)
+            .then(function() {
+                if (userData) { userData.name = name; userData.phone = phone; }
+                closeProfileModal();
+                showToast('تم حفظ بياناتك، أهلاً ' + name.split(' ')[0] + '!', 'success');
+            })
+            .catch(function(err) {
+                $('pfErr').textContent = 'تعذّر الحفظ: ' + (err && err.message ? err.message : err);
+            })
+            .finally(function() { btn.disabled = false; });
+    }
+
+    $('pfSaveBtn').onclick = saveProfile;
+    $('pfPhone').addEventListener('keydown', function(e) { if (e.key === 'Enter') saveProfile(); });
+    $('pfName').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('pfPhone').focus(); });
+    $('pfLogoutBtn').onclick = function() { auth.signOut(); };
 
     // ── Wallet ───────────────────────────────────────────────────────────
     function getBalance() { return userData ? (parseFloat(userData.balance) || 0) : 0; }

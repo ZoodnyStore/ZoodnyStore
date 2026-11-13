@@ -846,6 +846,22 @@
         </div>
     </div>
 
+    <!-- ══ إكمال بيانات الحساب (بعد الدخول بـ Google لأول مرة) ══ -->
+    <div class="z-ov" id="profileOv" style="z-index:1300"></div>
+    <div class="z-modal" id="profileModal" style="z-index:1301" role="dialog" aria-modal="true">
+        <div class="z-mh">
+            <h3><i class="fas fa-id-card"></i> أكمل بيانات حسابك</h3>
+        </div>
+        <div class="z-mb">
+            <p style="font-size:.85rem;color:#666;margin:0 0 .9rem">مرحباً بك! نحتاج اسمك ورقم هاتفك للتواصل معك بخصوص طلباتك.</p>
+            <div class="auth-form-group"><label>الاسم الكامل *</label><input type="text" id="pfName" placeholder="اسمك الكامل" autocomplete="name"/></div>
+            <div class="auth-form-group"><label>رقم الهاتف *</label><input type="tel" id="pfPhone" placeholder="09xxxxxxxx" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right"/></div>
+            <div class="auth-err" id="pfErr"></div>
+            <button class="auth-submit-btn" id="pfSaveBtn"><i class="fas fa-check"></i> حفظ ومتابعة</button>
+            <button type="button" id="pfLogoutBtn" style="display:block;margin:.8rem auto 0;background:none;border:none;color:#999;font-family:'Cairo',sans-serif;font-size:.8rem;cursor:pointer;text-decoration:underline">تسجيل الخروج</button>
+        </div>
+    </div>
+
     <!-- ══ Wallet overlay + modal ══ -->
     <div class="z-ov" id="walletOv" style="z-index:1300"></div>
     <div class="z-modal" id="walletModal" style="z-index:1301">

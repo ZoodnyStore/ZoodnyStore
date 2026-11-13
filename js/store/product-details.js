@@ -62,7 +62,7 @@ function showProductDetails(productId) {
     } else {
         featuresHtml = `
                     <li><i class="fas fa-check-circle"></i> جودة عالية</li>
-                    <li><i class="fas fa-check-circle"></i> توصيل سريع</li>
+                    <li><i class="fas fa-check-circle"></i> تنفيذ سريع</li>
                     <li><i class="fas fa-check-circle"></i> ضمان الجودة</li>
                 `;
     }

@@ -589,7 +589,17 @@
     .adm-user-actions input{width:110px;padding:.4rem .6rem;border:1.5px solid #ddd;border-radius:7px;font-family:'Cairo',sans-serif}
     @media(max-width:600px){
         .adm-tab-panel{padding:1rem .7rem}
-        .adm-tab{font-size:.75rem;padding:.7rem .3rem}
+        /* التبويبات الأربعة كشبكة 2×2 حتى يظهر "إدارة المنتجات" ولا يُقصّ أي تبويب */
+        .adm-tabs{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;padding:.6rem;border-bottom:1px solid #e6e9ee}
+        .adm-tab{
+            display:flex;align-items:center;justify-content:center;gap:6px;
+            font-size:.82rem;padding:.65rem .4rem;margin:0;white-space:nowrap;
+            background:#f4f6f9;border:1.5px solid #e3e7ed;border-radius:10px;
+        }
+        .adm-tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
+        .adm-tab.active i{color:var(--secondary)}
+        .adm-topbar{padding:.75rem .9rem}
+        .adm-topbar-title{font-size:.88rem}
         .adm-user-ov{padding:0}
         .adm-user-modal{max-height:100vh;height:100%;border-radius:0}
     }
@@ -1277,3 +1287,18 @@
         #serviceInputModal { align-items: flex-end; padding: 0; }
         .svc-modal-header { border-radius: 20px 20px 0 0; }
     }
+
+/* ══ إدارة المنتجات على الهاتف (في آخر الملف حتى تتغلب على الأنماط الأساسية) ══ */
+@media(max-width:600px){
+    .pmg-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+    .pmg-select{width:100%;min-width:0;font-size:.8rem}
+    .pmg-search{grid-column:1 / -1;min-width:0;width:100%}
+    .pmg-add-btn{grid-column:1 / -1;justify-content:center;width:100%}
+    .pmg-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
+    .pmg-card-img{height:95px}
+    .pmg-card-body{padding:.55rem .6rem}
+    .pmg-card-name{font-size:.8rem}
+    .pmg-card-foot{padding:.5rem .5rem;gap:5px}
+    .pmg-card-foot button{flex:1;min-width:0;padding:.4rem .2rem;font-size:.74rem}
+    .pmg-row2{grid-template-columns:1fr}
+}

@@ -789,6 +789,12 @@
                 })
                 .then(function () {
                     showToast(isNew ? 'تمت إضافة المنتج وحفظه بشكل دائم على المتجر' : 'تم حفظ التعديلات بشكل دائم على المتجر', 'success');
+                    // منتج جديد: نعرض على المدير إرسال إشعار للعملاء عنه (جاهز للتعديل قبل الإرسال)
+                    if (isNew && typeof window.admPrefillBroadcast === 'function'
+                        && confirm('تمت إضافة "' + (obj.name || 'المنتج') + '".\n\nهل تريد إرسال إشعار للعملاء بالمنتج الجديد؟')) {
+                        var priceTxt = (typeof obj.price === 'number' && obj.price > 0) ? ' بسعر ' + obj.price + '$' : '';
+                        window.admPrefillBroadcast('منتج جديد في زودني 🎉', 'وصلنا الآن: ' + (obj.name || '') + priceTxt + ' — اطلبه الآن!');
+                    }
                 })
                 .catch(function (err) {
                     showToast('تم التعديل على الشاشة لكن تعذر حفظه بشكل دائم: ' + (err && err.message ? err.message : err), 'error');

@@ -30,6 +30,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
     <script src="js/firebase.js"></script>
 
 </head>
@@ -55,9 +56,15 @@
                 </div>
             </div>
             
-            <div class="cart-icon-container" id="mobileCartIcon" style="display: none;">
-                <i class="fas fa-shopping-cart cart-icon" id="mobileCartToggle"></i>
-                <span class="cart-count" id="mobileCartCount">0</span>
+            <div class="nav-actions">
+                <button type="button" class="notif-bell" id="notifBell" aria-label="الإشعارات">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+                </button>
+                <div class="cart-icon-container" id="mobileCartIcon" style="display: none;">
+                    <i class="fas fa-shopping-cart cart-icon" id="mobileCartToggle"></i>
+                    <span class="cart-count" id="mobileCartCount">0</span>
+                </div>
             </div>
         </div>
     </nav>
@@ -972,6 +979,7 @@
             <div class="adm-tab" data-panel="orders"><i class="fas fa-shopping-bag"></i> طلبات المتجر</div>
             <div class="adm-tab" data-panel="users"><i class="fas fa-users"></i> العملاء</div>
             <div class="adm-tab" data-panel="products"><i class="fas fa-box-open"></i> إدارة المنتجات</div>
+            <div class="adm-tab" data-panel="notify"><i class="fas fa-bullhorn"></i> إرسال إشعار</div>
         </div>
 
         <!-- ══ تبويب طلبات الشحن ══ -->
@@ -1053,6 +1061,39 @@
             <div class="pmg-sync-note" id="pmgSyncNote"><i class="fas fa-cloud"></i> أي تعديل أو إضافة أو حذف أو رفع صورة هنا يُحفظ مباشرة ويظهر لكل الزوار فوراً وعلى كل الأجهزة، دون الحاجة لتعديل الكود أو رفع ملفات.</div>
             <div class="pmg-grid" id="pmgGrid"></div>
         </div>
+
+        <!-- ══ تبويب إرسال إشعار لكل العملاء ══ -->
+        <div class="adm-tab-panel" id="panel-notify">
+            <div class="adm-sec">
+                <h4><i class="fas fa-bullhorn"></i> إرسال إشعار لكل زوار المتجر</h4>
+                <div class="bc-templates">
+                    <span>قوالب سريعة:</span>
+                    <button type="button" class="adm-filter-btn" data-bc-tpl="new">🎉 منتج جديد</button>
+                    <button type="button" class="adm-filter-btn" data-bc-tpl="offer">🔥 عرض / خصم</button>
+                    <button type="button" class="adm-filter-btn" data-bc-tpl="prices">💲 تحديث أسعار</button>
+                </div>
+                <div class="pmg-field"><label for="bcTitle">عنوان الإشعار *</label><input type="text" id="bcTitle" maxlength="60" placeholder="مثال: منتج جديد في زودني 🎉"></div>
+                <div class="pmg-field"><label for="bcBody">نص الإشعار *</label><textarea id="bcBody" maxlength="200" rows="3" placeholder="مثال: وصلنا الآن شحن جواكر بأفضل الأسعار — اطلبه الآن!"></textarea></div>
+                <div class="pmg-field"><label for="bcUrl">رابط عند الضغط على الإشعار (اختياري)</label><input type="text" id="bcUrl" dir="ltr" placeholder="https://..."></div>
+                <button type="button" class="pmg-save-btn" id="bcSendBtn"><i class="fas fa-paper-plane"></i> إرسال الإشعار</button>
+                <div class="pmg-sync-note" style="margin-top:.8rem"><i class="fas fa-info-circle"></i> يظهر الإشعار في جرس الإشعارات لكل الزوار، ويصل كإشعار على الجهاز لمن فعّل الإشعارات وموقع المتجر مفتوح عنده (ولو بالخلفية). من كان الموقع مغلقاً عنده يراه عند فتحه.</div>
+            </div>
+            <div class="adm-sec">
+                <h4><i class="fas fa-satellite-dish"></i> إشعارات والموقع مغلق (إعداد لمرة واحدة)</h4>
+                <div class="push-status" id="pushStatus"></div>
+                <div class="pmg-field"><label for="pushWorkerUrl">رابط المُرسل (Cloudflare Worker)</label><input type="text" id="pushWorkerUrl" dir="ltr" placeholder="https://zoodny-push.xxxx.workers.dev"></div>
+                <div class="pmg-field"><label for="pushVapidKey">مفتاح Web Push (من Firebase ← Cloud Messaging)</label><input type="text" id="pushVapidKey" dir="ltr" placeholder="BExxxxxxxx..."></div>
+                <div class="push-btns">
+                    <button type="button" class="pmg-save-btn" id="pushSaveBtn"><i class="fas fa-save"></i> حفظ</button>
+                    <button type="button" class="adm-act-btn view" id="pushTestBtn"><i class="fas fa-vial"></i> إرسال إشعار تجريبي لأجهزتي</button>
+                </div>
+                <div class="push-result" id="pushResult"></div>
+            </div>
+            <div class="adm-sec">
+                <h4><i class="fas fa-history"></i> الإشعارات المرسلة</h4>
+                <div id="bcList"><div style="color:#aaa;font-size:.82rem">لا توجد إشعارات مرسلة</div></div>
+            </div>
+        </div>
     </div>
 
     <!-- ══ نافذة إضافة/تعديل منتج ══ -->
@@ -1073,6 +1114,7 @@
 
     <!-- ══ الحساب والمحفظة ولوحة الإدارة ══ -->
     <script src="js/account/core.js"></script>
+    <script src="js/account/notifications.js"></script>
     <script src="js/account/admin.js"></script>
     <script src="js/account/service-modal.js"></script>
     <script src="js/account/mobile-nav.js"></script>

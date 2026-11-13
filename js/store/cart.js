@@ -747,6 +747,21 @@ function goToStep(step) {
     }
 }
 
+// إشعار للمدير بطلب جديد (لا يوقف الطلب إن فشل)
+function notifyAdminNewOrder(orderId, customerName, items, total) {
+    try {
+        if (!window.ZoodnyNotify || typeof auth === 'undefined' || !auth.currentUser) return;
+        var names = (items || []).map(function(it) { return it.name || it.productName; }).filter(Boolean);
+        var label = names.slice(0, 2).join('، ') + (names.length > 2 ? ' +' + (names.length - 2) : '');
+        window.ZoodnyNotify.toAdmin({
+            type: 'order',
+            title: 'طلب جديد 🛒',
+            body: (customerName || auth.currentUser.email || 'زبون') + ' — ' + (label || 'طلب') + ' — ' + (parseFloat(total) || 0).toFixed(2) + '$',
+            ref: orderId
+        });
+    } catch (e) { console.warn('notify admin failed:', e); }
+}
+
 // -------------------- إرسال طلب شام كاش مع رابط الصورة (معدل للعمل على iPhone) --------------------
 function submitShamCashOrder(customerData) {
     // ── بناء بيانات الطلب بالتفصيل ──
@@ -840,6 +855,7 @@ function submitShamCashOrder(customerData) {
         db.ref('store_orders/' + orderId).set(orderData).catch(function(e) {
             console.error('order save failed:', e.message);
         });
+        notifyAdminNewOrder(orderId, _uname, items, totalPrice);
 
         if (typeof auth !== 'undefined' && auth.currentUser) {
             var uid = auth.currentUser.uid;

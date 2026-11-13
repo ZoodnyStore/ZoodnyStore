@@ -1302,3 +1302,90 @@
     .pmg-card-foot button{flex:1;min-width:0;padding:.4rem .2rem;font-size:.74rem}
     .pmg-row2{grid-template-columns:1fr}
 }
+
+/* ══ الإشعارات: الجرس + القائمة ══ */
+.nav-actions{display:flex;align-items:center;gap:1rem;order:3}
+.notif-bell{
+    position:relative;background:none;border:none;color:var(--light,#fff);cursor:pointer;
+    font-size:1.35rem;padding:.25rem .35rem;line-height:1;display:flex;align-items:center;
+}
+.notif-bell:hover{color:var(--secondary)}
+.notif-badge{
+    position:absolute;top:-6px;left:-8px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;
+    background:#E74C3C;color:#fff;font-size:.66rem;font-weight:800;font-family:'Cairo',sans-serif;
+    align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--primary,#2A3F54);
+}
+.notif-panel{
+    position:fixed;top:78px;left:14px;z-index:1250;width:min(380px,calc(100vw - 20px));
+    max-height:min(560px,calc(100vh - 100px));display:none;flex-direction:column;
+    background:#fff;border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.25);overflow:hidden;direction:rtl;
+}
+.notif-panel.open{display:flex;animation:notifIn .18s ease-out}
+@keyframes notifIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.notif-head{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:linear-gradient(135deg,var(--primary),#3a5a78);color:#fff}
+.notif-head b{font-size:.95rem;display:flex;align-items:center;gap:7px}
+.notif-head b i{color:var(--secondary)}
+.notif-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer}
+.notif-perm-btn{
+    margin:.7rem .8rem 0;padding:.6rem;border:none;border-radius:10px;cursor:pointer;
+    background:linear-gradient(135deg,var(--secondary),#f9d99a);color:var(--primary);font-weight:800;
+    font-family:'Cairo',sans-serif;font-size:.85rem;display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.notif-perm-note{margin:.6rem .8rem 0;padding:.45rem .7rem;border-radius:9px;background:#f4f6f9;color:#666;font-size:.75rem;line-height:1.6}
+.notif-perm-note.ok{background:#eafaf1;color:#1e8449}
+.notif-list{overflow-y:auto;padding:.5rem .5rem .7rem;flex:1}
+.notif-item{
+    width:100%;display:flex;align-items:flex-start;gap:.7rem;text-align:right;background:none;border:none;
+    padding:.65rem .55rem;border-radius:11px;cursor:pointer;font-family:'Cairo',sans-serif;position:relative;
+}
+.notif-item:hover{background:#f6f8fb}
+.notif-item.unread{background:#fff8e6}
+.notif-ic{flex-shrink:0;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#eef3f9;color:var(--primary);font-size:.95rem}
+.notif-ic.t-order{background:#e8f4fd;color:#0b5cad}
+.notif-ic.t-topup,.notif-ic.t-balance{background:#eafaf1;color:#1e8449}
+.notif-ic.t-user{background:#f3ecfd;color:#6c3fb5}
+.notif-ic.t-broadcast{background:#fff1e0;color:#d35400}
+.notif-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:.1rem}
+.notif-tx b{font-size:.86rem;color:#222}
+.notif-bd{font-size:.8rem;color:#555;line-height:1.55;word-break:break-word}
+.notif-tm{font-size:.68rem;color:#999}
+.notif-dot{width:9px;height:9px;border-radius:50%;background:#E74C3C;flex-shrink:0;margin-top:.4rem}
+.notif-empty{text-align:center;color:#aaa;padding:2rem 1rem;font-size:.85rem}
+.notif-empty i{display:block;font-size:2rem;margin-bottom:.5rem;color:#ddd}
+
+/* شريط "فعّل الإشعارات" */
+.notif-prompt{
+    position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:1240;
+    width:min(520px,calc(100vw - 20px));display:flex;align-items:center;gap:.7rem;
+    background:#fff;border-radius:14px;padding:.75rem .85rem;box-shadow:0 12px 40px rgba(0,0,0,.22);
+    border-right:4px solid var(--secondary);direction:rtl;animation:notifIn .25s ease-out;
+}
+.notif-prompt > i{font-size:1.3rem;color:var(--secondary)}
+.notif-prompt .np-tx{flex:1;min-width:0;display:flex;flex-direction:column;font-size:.78rem;color:#666;line-height:1.5}
+.notif-prompt .np-tx b{font-size:.88rem;color:var(--primary)}
+.notif-prompt button{border:none;border-radius:9px;padding:.45rem .8rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer;white-space:nowrap}
+.notif-prompt .np-yes{background:var(--primary);color:#fff}
+.notif-prompt .np-no{background:#f0f0f0;color:#777}
+
+@media(max-width:768px){
+    .notif-panel{top:74px;left:10px}
+    .notif-prompt{bottom:84px}   /* فوق الشريط السفلي للموبايل */
+    .nav-actions{gap:.85rem}
+    .notif-bell{font-size:1.3rem}
+}
+
+/* لوحة المدير: تبويب "إرسال إشعار" */
+.bc-templates{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-bottom:.8rem;font-size:.8rem;color:#777}
+@media(max-width:600px){
+    /* 5 تبويبات: الأخير يأخذ عرض الصف كاملاً */
+    .adm-tab:last-child:nth-child(odd){grid-column:1 / -1}
+}
+
+/* إعداد إشعارات الموقع المغلق */
+.push-status{display:flex;flex-direction:column;gap:.25rem;font-size:.8rem;background:#f8f9fa;border:1px solid #eee;border-radius:10px;padding:.6rem .8rem;margin-bottom:.8rem}
+.push-btns{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.push-btns .pmg-save-btn{flex:0 0 auto;padding-left:1.4rem;padding-right:1.4rem}
+.push-btns .adm-act-btn{padding:.6rem .9rem}
+.push-result{margin-top:.6rem;font-size:.8rem;line-height:1.6;min-height:1em}
+.push-result.ok{color:#1e8449}
+.push-result.err{color:#c0392b}

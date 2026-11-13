@@ -46,6 +46,33 @@
     "product_deletions": {
       ".read": true,
       ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'"
+    },
+    "notifications": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')",
+        ".write": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')"
+      }
+    },
+    "admin_notifications": {
+      ".read": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      "$id": {
+        ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid && newData.child('read').val() === false"
+      }
+    },
+    "broadcasts": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'"
+    },
+    "push_tokens": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "config": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'"
     }
   }
 }

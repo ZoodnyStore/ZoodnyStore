@@ -30,14 +30,31 @@
     $('adminPanelOv').addEventListener('click', closeAdmin);
 
     // Tab switching
+    function switchAdmTab(panel) {
+        var tab = document.querySelector('.adm-tab[data-panel="' + panel + '"]');
+        if (!tab || !$('panel-' + panel)) return;
+        document.querySelectorAll('.adm-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.adm-tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        $('panel-' + panel).classList.add('active');
+    }
     document.querySelectorAll('.adm-tab').forEach(function(tab) {
-        tab.addEventListener('click', function() {
-            document.querySelectorAll('.adm-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.adm-tab-panel').forEach(p => p.classList.remove('active'));
-            tab.classList.add('active');
-            $('panel-' + tab.dataset.panel).classList.add('active');
-        });
+        tab.addEventListener('click', function() { switchAdmTab(tab.dataset.panel); });
     });
+
+    function isAdminSignedIn() {
+        var u = auth.currentUser;
+        return !!u && String(u.email || '').toLowerCase() === String(ADMIN_EMAIL).toLowerCase();
+    }
+    // فتح لوحة المدير على تبويب محدد (يُستخدم عند الضغط على إشعار للمدير)
+    window.openAdminPanel = function(panel) {
+        if (!isAdminSignedIn()) { openAdminLogin(); return; }
+        ovOn('adminPanelOv');
+        $('adminLoginModal').classList.remove('on');
+        $('adminDashboard').classList.add('on');
+        startAdminListeners();
+        if (panel) switchAdmTab(panel);
+    };
 
     // Topup filters
     document.querySelectorAll('[data-f]').forEach(function(b) {
@@ -95,11 +112,10 @@
                 $('adminLoginModal').classList.remove('on');
                 $('adminDashboard').classList.add('on');
                 startAdminListeners();
-                requestBrowserNotifPermission(function(granted) {
-                    if (granted) {
-                        initTopupNotifListener();
-                    }
-                });
+                // إشعارات المدير (طلب جديد / شحن / مستخدم جديد) تُدار في notifications.js
+                if (window.ZoodnyNotify && typeof Notification !== 'undefined' && Notification.permission === 'default') {
+                    window.ZoodnyNotify.requestPermission();
+                }
             })
             .catch(function(err) {
                 var wrongPass = err && /wrong-password|invalid-credential|invalid-login-credentials|user-not-found/.test(err.code || '');
@@ -108,118 +124,6 @@
             });
     }
 
-    // ── نظام إشعارات المتصفح ──────────────────────────────────────
-    var _notifPermGranted = false;
-    var _topupNotifInit   = false;
-    var _knownTopupIds    = new Set();
-
-    function requestBrowserNotifPermission(cb) {
-        if (!('Notification' in window)) { if(cb) cb(false); return; }
-        if (Notification.permission === 'granted') {
-            _notifPermGranted = true; if(cb) cb(true); return;
-        }
-        if (Notification.permission === 'denied') { if(cb) cb(false); return; }
-        Notification.requestPermission().then(function(perm) {
-            _notifPermGranted = perm === 'granted';
-            if(cb) cb(_notifPermGranted);
-        });
-    }
-
-    function sendBrowserNotif(title, body, icon) {
-        if (!('Notification' in window)) return;
-        if (Notification.permission !== 'granted') return;
-        try {
-            var n = new Notification(title, {
-                body: body,
-                icon: icon || 'images/logo.jpg',
-                badge: icon || 'images/logo.jpg',
-                tag: 'zoodny-topup-' + Date.now(),
-                requireInteraction: true,   // يبقى حتى يضغط عليه
-                dir: 'rtl',
-                lang: 'ar'
-            });
-            n.onclick = function() {
-                window.focus();
-                // فتح لوحة الأدمن مباشرة
-                if (typeof openAdmin === 'function') openAdmin();
-                n.close();
-            };
-            // صوت تنبيه
-            try {
-                var ctx = new (window.AudioContext || window.webkitAudioContext)();
-                var osc = ctx.createOscillator();
-                var gain = ctx.createGain();
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.frequency.setValueAtTime(880, ctx.currentTime);
-                osc.frequency.setValueAtTime(660, ctx.currentTime + 0.15);
-                osc.frequency.setValueAtTime(880, ctx.currentTime + 0.30);
-                gain.gain.setValueAtTime(0.4, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 0.5);
-            } catch(e) {}
-        } catch(e) { console.log('Notification error:', e); }
-    }
-
-    function initTopupNotifListener() {
-        if (_topupNotifInit) return;
-        _topupNotifInit = true;
-
-        // أولاً: اجمع الـ IDs الموجودة حالياً لتجنب الإشعار عنها
-        dbRef('topup_orders').once('value', function(snap) {
-            snap.forEach(function(c) { _knownTopupIds.add(c.key); });
-
-            // ثانياً: استمع للإضافات الجديدة فقط
-            dbRef('topup_orders').on('child_added', function(snap) {
-                var key   = snap.key;
-                var order = snap.val();
-                if (!order) return;
-
-                // تجاهل الطلبات القديمة
-                if (_knownTopupIds.has(key)) return;
-                _knownTopupIds.add(key);
-
-                // إشعار المتصفح
-                sendBrowserNotif(
-                    'طلب شحن رصيد جديد',
-                    'الاسم: ' + (order.name||'-') + ' | المبلغ: ' + parseFloat(order.amount||0).toFixed(2) + '$ | الهاتف: ' + (order.phone||'-'),
-                    'images/logo.jpg'
-                );
-
-                // شريط إشعار داخل الموقع أيضاً
-                showInSiteTopupAlert(order, key);
-            });
-        });
-    }
-
-    // شريط إشعار داخلي
-    function showInSiteTopupAlert(order, reqId) {
-        var ex = document.getElementById('_topupAlertBar');
-        if (ex) ex.remove();
-        if (!document.getElementById('_topupBarStyle')) {
-            var st = document.createElement('style');
-            st.id = '_topupBarStyle';
-            st.textContent = '@keyframes _slideDownBar{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}';
-            document.head.appendChild(st);
-        }
-        var bar = document.createElement('div');
-        bar.id = '_topupAlertBar';
-        bar.style.cssText = 'position:fixed;top:72px;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#1a8a4a,#27ae60);color:#fff;padding:.75rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;box-shadow:0 4px 20px rgba(39,174,96,.5);font-family:Cairo,sans-serif;font-size:.9rem;font-weight:700;animation:_slideDownBar .35s ease;cursor:pointer;direction:rtl';
-        var amt = parseFloat(order.amount || 0).toFixed(2);
-        var info = document.createElement('span');
-        info.innerHTML = '<i class="fas fa-bell"></i> <strong>طلب شحن جديد</strong>: ' + esc(order.name||'-') + ' | ' + amt + '$ | ' + esc(order.date||'');
-        bar.appendChild(info);
-        var btn = document.createElement('button');
-        btn.textContent = '× إغلاق';
-        btn.style.cssText = 'background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:20px;padding:.3rem .9rem;cursor:pointer;font-weight:700;font-size:.82rem;font-family:Cairo,sans-serif';
-        btn.onclick = function(e) { e.stopPropagation(); bar.remove(); };
-        bar.appendChild(btn);
-        bar.onclick = function() { bar.remove(); if (typeof openAdmin === 'function') openAdmin(); };
-        document.body.appendChild(bar);
-        setTimeout(function() { if (bar.parentNode) bar.remove(); }, 15000);
-    }
-    // ─────────────────────────────────────────────────────────────────
-
     function startAdminListeners() {
         if (adminListenerOn) {
             renderTopupsTable(); renderTopupStats();
@@ -227,6 +131,8 @@
             return;
         }
         adminListenerOn = true;
+        startBroadcastListener();
+        loadPushConfig();
 
         // Topup orders
         dbRef('topup_orders').on('value', function(snap) {
@@ -760,16 +666,44 @@
         });
     }
 
+    // إشعار للزبون (لا يوقف أي عملية إن فشل)
+    function notifyUser(uid, type, title, body, ref) {
+        try {
+            if (window.ZoodnyNotify) window.ZoodnyNotify.toUser(uid, { type: type, title: title, body: body, ref: ref || '' });
+        } catch (e) { console.warn('notify user failed:', e); }
+    }
+
+    // اسم المنتج (أو المنتجات) بدل رقم الطلب — للإشعارات وسجل العمليات
+    function orderLabel(o, orderId) {
+        var itemsArr = orderItems(o);
+        if (itemsArr.length === 1) return itemsArr[0].name || itemsArr[0].productName || ('طلب #' + orderId);
+        if (itemsArr.length > 1) {
+            var pNames = itemsArr.map(function(it){ return it.name || it.productName; }).filter(Boolean);
+            if (pNames.length) return pNames.slice(0,2).join('، ') + (pNames.length > 2 ? ' +' + (pNames.length - 2) : '');
+        }
+        return 'طلب #' + orderId;
+    }
+
+    function findTopup(reqId) {
+        for (var i = 0; i < adminTopups.length; i++) if (adminTopups[i].reqId === reqId) return adminTopups[i];
+        return null;
+    }
+
     window.admAcceptTopup = function(reqId, uid, amount) {
+        var amt = num(amount);
         dbRef('topup_orders/' + reqId).update({ status: 'accepted' });
-        addToBalance(uid, num(amount));
+        addToBalance(uid, amt);
         dbRef('users/' + uid + '/transactions/' + reqId).update({ status: 'completed' });
-        balToast('✓ تم قبول الطلب وإضافة ' + num(amount).toFixed(2) + '$', true);
+        notifyUser(uid, 'topup', 'تم شحن رصيدك 💰', 'تمت إضافة ' + amt.toFixed(2) + '$ إلى رصيدك بنجاح', reqId);
+        balToast('✓ تم قبول الطلب وإضافة ' + amt.toFixed(2) + '$', true);
     };
     window.admRejectTopup = function(reqId, uid) {
         if (!confirm('رفض هذا الطلب؟')) return;
+        var t = findTopup(reqId);
         dbRef('topup_orders/' + reqId).update({ status: 'rejected' });
         dbRef('users/' + uid + '/transactions/' + reqId).remove();
+        notifyUser(uid, 'topup', 'تم رفض طلب شحن الرصيد',
+            'تم رفض طلب شحن ' + (t ? num(t.amount).toFixed(2) + '$ ' : '') + '— تأكد من رقم العملية أو تواصل معنا', reqId);
     };
     window.admDelTopup = function(reqId) {
         dbRef('topup_orders/' + reqId).remove();
@@ -782,29 +716,30 @@
             var o = snap.val();
             if (!o || !o.uid || o.uid === 'guest') return;
             var orderId = o.orderId || orderKey;
+            var label = orderLabel(o, orderId);
             // تحديث حالة الطلب في سجل الزبون أيضاً
             dbRef('users/' + o.uid + '/orders/' + orderId).once('value', function(s) {
                 if (s.exists()) dbRef('users/' + o.uid + '/orders/' + orderId).update({ status: status });
             });
 
-            // عند الرفض: إعادة قيمة الطلب لرصيد العميل + تسجيلها في سجل العمليات كاسترجاع
+            if (status === 'processing') {
+                notifyUser(o.uid, 'order', 'جاري تنفيذ طلبك ⚙️', 'بدأنا تنفيذ طلبك: ' + label, orderId);
+                return;
+            }
+            if (status === 'done') {
+                notifyUser(o.uid, 'order', 'تم تنفيذ طلبك ✅', 'تم إتمام طلب ' + label + ' بنجاح. شكراً لثقتك بزودني!', orderId);
+                return;
+            }
             if (status !== 'rejected') return;
+
+            // عند الرفض: إعادة قيمة الطلب لرصيد العميل + تسجيلها في سجل العمليات كاسترجاع
             var refundAmount = num(o.total);
+            notifyUser(o.uid, 'order', 'تم رفض طلبك',
+                'تم رفض طلب ' + label + (refundAmount > 0 ? ' وإرجاع ' + refundAmount.toFixed(2) + '$ إلى رصيدك' : ''), orderId);
             if (!(refundAmount > 0)) return;
             addToBalance(o.uid, refundAmount);
-
-            var itemsArr = orderItems(o);
-            var productLabel;
-            if (itemsArr.length === 1) {
-                productLabel = itemsArr[0].name || itemsArr[0].productName || ('طلب #' + orderId);
-            } else if (itemsArr.length > 1) {
-                var pNames = itemsArr.map(function(it){ return it.name || it.productName; }).filter(Boolean);
-                productLabel = pNames.slice(0,2).join('، ') + (pNames.length > 2 ? ' +' + (pNames.length - 2) : '');
-            } else {
-                productLabel = 'طلب #' + orderId;
-            }
             dbRef('users/' + o.uid + '/transactions/REFUND-' + Date.now()).set({
-                desc: 'استرجاع من طلب ' + productLabel,
+                desc: 'استرجاع من طلب ' + label,
                 date: nowAr(),
                 amount: refundAmount,
                 type: 'credit',
@@ -880,6 +815,8 @@
                 status: 'completed', ts: Date.now()
             });
             if ($('admUdAmt')) $('admUdAmt').value = '';
+            notifyUser(uid, 'balance', sign > 0 ? 'تمت إضافة رصيد 💰' : 'تم خصم من رصيدك',
+                (sign > 0 ? 'أضاف المدير ' : 'خصم المدير ') + amt.toFixed(2) + '$ ' + (sign > 0 ? 'إلى' : 'من') + ' رصيدك');
             balToast('✓ تم ' + (sign > 0 ? 'إضافة ' : 'خصم ') + amt.toFixed(2) + '$', true);
         }).catch(function(err) { alert('فشل تعديل الرصيد: ' + (err && err.message ? err.message : err)); });
     };
@@ -894,6 +831,7 @@
             amount: amt, type: 'credit', status: 'completed', ts: Date.now()
         });
         if (inp) inp.value = '';
+        notifyUser(uid, 'balance', 'تمت إضافة رصيد 💰', 'أضاف المدير ' + amt.toFixed(2) + '$ إلى رصيدك');
         balToast('✓ تم إضافة ' + amt.toFixed(2) + '$ للعميل', true);
     };
     window.admDelUser = function(uid) {
@@ -901,6 +839,169 @@
         dbRef('users/' + uid).remove();
         if (openUserKey === uid) closeUserModal();
     };
+
+    // ── إرسال إشعار لكل العملاء (إعلانات) ───────────────────────────────
+    var adminBroadcasts = [];
+    var bcTemplates = {
+        'new':    ['منتج جديد في زودني 🎉', 'وصلنا الآن: [اسم المنتج] بأفضل سعر — اطلبه الآن!'],
+        'offer':  ['عرض خاص لفترة محدودة 🔥', 'خصم على [اسم الخدمة] — العرض ساري حتى [التاريخ]'],
+        'prices': ['تحديث الأسعار 💲', 'تم تحديث أسعار [القسم] — تصفّح الأسعار الجديدة الآن']
+    };
+
+    function startBroadcastListener() {
+        dbRef('broadcasts').limitToLast(50).on('value', function(snap) {
+            adminBroadcasts = [];
+            snap.forEach(function(c) { var v = c.val(); if (v && typeof v === 'object') adminBroadcasts.push(Object.assign({ _key: c.key }, v)); });
+            adminBroadcasts.sort(function(a, b) { return num(b.ts) - num(a.ts); });
+            renderBroadcasts();
+        }, function(err) {
+            if ($('bcList')) $('bcList').innerHTML = '<div style="color:#e74c3c;font-size:.82rem">تعذّر تحميل الإشعارات: ' + esc(err && err.message ? err.message : err) + ' — تأكد من قواعد Firebase</div>';
+        });
+    }
+
+    function renderBroadcasts() {
+        var wrap = $('bcList');
+        if (!wrap) return;
+        if (!adminBroadcasts.length) { wrap.innerHTML = '<div style="color:#aaa;font-size:.82rem">لا توجد إشعارات مرسلة</div>'; return; }
+        wrap.innerHTML = adminBroadcasts.map(function(b) {
+            return '<div class="adm-mini-row">'
+                + '<div class="t"><div><b>' + esc(b.title || '') + '</b></div>'
+                + '<div style="color:#555">' + esc(b.body || '') + '</div>'
+                + (b.url ? '<div class="d" style="direction:ltr;text-align:right">' + esc(b.url) + '</div>' : '')
+                + '<div class="d">' + esc(b.ts ? new Date(b.ts).toLocaleString('ar-SY') : '') + '</div></div>'
+                + '<button class="adm-act-btn del" title="حذف" onclick="admDelBroadcast(\'' + escJs(b._key) + '\')"><i class="fas fa-trash"></i></button>'
+                + '</div>';
+        }).join('');
+    }
+
+    window.admDelBroadcast = function(key) {
+        if (!confirm('حذف هذا الإشعار من جرس الإشعارات عند كل العملاء؟')) return;
+        dbRef('broadcasts/' + key).remove().catch(function(err) { alert('فشل الحذف: ' + (err && err.message ? err.message : err)); });
+    };
+
+    // ── إعداد إشعارات الموقع المغلق (رابط المُرسل + مفتاح Web Push) ──
+    var pushCfgLoaded = false;
+    function pushStatusLine(icon, color, text) {
+        return '<div style="color:' + color + '"><i class="fas ' + icon + '"></i> ' + text + '</div>';
+    }
+    function renderPushStatus() {
+        var el = $('pushStatus');
+        if (!el || !window.ZoodnyNotify || !window.ZoodnyNotify.pushStatus) return;
+        var s = window.ZoodnyNotify.pushStatus();
+        var html = '';
+        html += s.configured ? pushStatusLine('fa-check-circle', '#1e8449', 'الإعدادات محفوظة')
+                             : pushStatusLine('fa-exclamation-circle', '#b9770e', 'غير مُعدّ بعد — الإشعارات تعمل فقط والموقع مفتوح');
+        if (s.permission === 'granted') html += pushStatusLine('fa-check-circle', '#1e8449', 'الإشعارات مفعّلة على هذا الجهاز');
+        else if (s.permission === 'denied') html += pushStatusLine('fa-times-circle', '#c0392b', 'الإشعارات محظورة على هذا الجهاز (من إعدادات المتصفح)');
+        else if (s.permission === 'unsupported') html += pushStatusLine('fa-times-circle', '#c0392b', 'هذا المتصفح لا يدعم الإشعارات');
+        else html += pushStatusLine('fa-bell', '#b9770e', 'فعّل الإشعارات على هذا الجهاز من جرس الإشعارات 🔔');
+        if (s.configured && s.permission === 'granted') {
+            html += s.accountLinked ? pushStatusLine('fa-check-circle', '#1e8449', 'هذا الجهاز مسجّل لاستقبال إشعارات المدير')
+                                    : pushStatusLine('fa-spinner fa-spin', '#777', 'جاري تسجيل هذا الجهاز...');
+        }
+        el.innerHTML = html;
+    }
+    function loadPushConfig() {
+        dbRef('config/push').on('value', function(snap) {
+            var v = snap.val() || {};
+            if (!pushCfgLoaded || document.activeElement !== $('pushWorkerUrl')) $('pushWorkerUrl').value = v.workerUrl || '';
+            if (!pushCfgLoaded || document.activeElement !== $('pushVapidKey'))  $('pushVapidKey').value  = v.vapidKey || '';
+            pushCfgLoaded = true;
+            setTimeout(renderPushStatus, 300);
+        });
+        setInterval(function() { if ($('panel-notify') && $('panel-notify').classList.contains('active')) renderPushStatus(); }, 3000);
+    }
+    function showPushResult(ok, msg) {
+        var el = $('pushResult');
+        if (!el) return;
+        el.className = 'push-result ' + (ok ? 'ok' : 'err');
+        el.textContent = msg;
+    }
+    if ($('pushSaveBtn')) {
+        $('pushSaveBtn').addEventListener('click', function() {
+            var url = $('pushWorkerUrl').value.trim().replace(/\/+$/, '');
+            var key = $('pushVapidKey').value.trim().replace(/\s+/g, '');
+            if (url && !/^https:\/\/[^\s\/]+\.[^\s\/]+(\/\S*)?$/i.test(url)) { showPushResult(false, 'الرابط يجب أن يبدأ بـ https:// مثل https://zoodny-push.xxxx.workers.dev'); return; }
+            if (key && !/^[A-Za-z0-9_\-]{80,100}$/.test(key)) { showPushResult(false, 'مفتاح Web Push غير صحيح — انسخ "Key pair" كاملاً من Firebase'); return; }
+            var btn = this; btn.disabled = true;
+            showPushResult(true, 'جاري الحفظ والفحص...');
+            dbRef('config/push').set({ workerUrl: url, vapidKey: key }).then(function() {
+                if (!url) { showPushResult(true, '✓ تم الحفظ'); return; }
+                return window.ZoodnyNotify.pingWorker(url).then(function(r) {
+                    if (r && r.ok && r.service === 'zoodny-push') {
+                        showPushResult(!!r.configured, r.configured ? '✓ تم الحفظ — المُرسل يعمل ومُعدّ بشكل صحيح. جرّب "إرسال إشعار تجريبي".'
+                                                                   : '✓ تم الحفظ، لكن المُرسل ينقصه FIREBASE_SERVICE_ACCOUNT أو ADMIN_UID في إعدادات Cloudflare');
+                    } else {
+                        showPushResult(false, 'تم الحفظ، لكن تعذّر الوصول للمُرسل على هذا الرابط: ' + ((r && r.error) || 'رد غير متوقع') + ' — تأكد من الرابط ومن نشر الكود');
+                    }
+                });
+            }).catch(function(err) {
+                showPushResult(false, 'فشل الحفظ: ' + (err && err.message ? err.message : err) + ' — تأكد من تحديث قواعد Firebase');
+            }).then(function() { btn.disabled = false; setTimeout(renderPushStatus, 500); });
+        });
+    }
+    if ($('pushTestBtn')) {
+        $('pushTestBtn').addEventListener('click', function() {
+            var s = window.ZoodnyNotify && window.ZoodnyNotify.pushStatus ? window.ZoodnyNotify.pushStatus() : null;
+            if (!s || !s.configured) { showPushResult(false, 'احفظ رابط المُرسل والمفتاح أولاً'); return; }
+            var btn = this; btn.disabled = true;
+            var go = s.permission === 'granted' ? Promise.resolve('granted') : window.ZoodnyNotify.requestPermission();
+            go.then(function(perm) {
+                if (perm !== 'granted') { showPushResult(false, 'يجب تفعيل الإشعارات على هذا الجهاز أولاً'); return; }
+                showPushResult(true, 'جاري الإرسال...');
+                return window.ZoodnyNotify.testPush().then(function(r) {
+                    if (r && r.ok && r.sent > 0) showPushResult(true, '✓ تم إرسال إشعار تجريبي إلى ' + r.sent + ' جهاز. أغلق الموقع وجرّب من لوحة الطلبات على جهاز آخر أيضاً.');
+                    else if (r && r.ok) showPushResult(false, 'المُرسل يعمل لكن لا يوجد جهاز مسجّل لحساب المدير بعد — انتظر ثوانٍ وأعد المحاولة');
+                    else showPushResult(false, 'فشل: ' + ((r && r.error) || 'خطأ غير معروف'));
+                });
+            }).catch(function(err) { showPushResult(false, 'فشل: ' + (err && err.message ? err.message : err)); })
+              .then(function() { btn.disabled = false; renderPushStatus(); });
+        });
+    }
+
+    // يُستدعى من إدارة المنتجات بعد إضافة منتج جديد
+    window.admPrefillBroadcast = function(title, body) {
+        switchAdmTab('notify');
+        if ($('bcTitle')) $('bcTitle').value = title || '';
+        if ($('bcBody'))  $('bcBody').value  = body  || '';
+        if ($('bcUrl'))   $('bcUrl').value   = '';
+        var dash = $('adminDashboard');
+        if (dash) dash.scrollTop = 0;
+        setTimeout(function() { if ($('bcBody')) $('bcBody').focus(); }, 200);
+    };
+
+    document.querySelectorAll('[data-bc-tpl]').forEach(function(b) {
+        b.addEventListener('click', function() {
+            var t = bcTemplates[b.getAttribute('data-bc-tpl')];
+            if (!t) return;
+            $('bcTitle').value = t[0];
+            $('bcBody').value = t[1];
+            $('bcBody').focus();
+        });
+    });
+
+    if ($('bcSendBtn')) {
+        $('bcSendBtn').addEventListener('click', function() {
+            var title = $('bcTitle').value.trim();
+            var body  = $('bcBody').value.trim();
+            var url   = $('bcUrl').value.trim();
+            if (!title) { alert('اكتب عنوان الإشعار'); $('bcTitle').focus(); return; }
+            if (!body)  { alert('اكتب نص الإشعار'); $('bcBody').focus(); return; }
+            if (/\[[^\]]+\]/.test(title + body)) { alert('استبدل النص بين الأقواس [ ] بالمعلومة الصحيحة قبل الإرسال'); return; }
+            if (url && !/^https?:\/\/\S+$/i.test(url) && !/^#\S*$/.test(url)) { alert('الرابط يجب أن يبدأ بـ https://'); $('bcUrl').focus(); return; }
+            if (!window.ZoodnyNotify) { alert('نظام الإشعارات غير محمّل'); return; }
+            if (!confirm('إرسال هذا الإشعار لكل زوار المتجر؟\n\n' + title + '\n' + body)) return;
+            var btn = this;
+            btn.disabled = true;
+            window.ZoodnyNotify.broadcast({ title: title, body: body, url: url })
+                .then(function() {
+                    $('bcTitle').value = ''; $('bcBody').value = ''; $('bcUrl').value = '';
+                    balToast('✓ تم إرسال الإشعار لكل العملاء', true);
+                })
+                .catch(function(err) { alert('فشل الإرسال: ' + (err && err.message ? err.message : err) + '\nتأكد من تحديث قواعد Firebase'); })
+                .then(function() { btn.disabled = false; });
+        });
+    }
 
     // ── زر حسناً شكراً ──────────────────────────────────────────────────
     setTimeout(function() {

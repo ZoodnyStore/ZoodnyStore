@@ -83,6 +83,14 @@
     };
 
 
+    // إشعار للمدير (notifications.js يُحمَّل بعد هذا الملف — نتحقق عند الاستدعاء)
+    function notifyAdmin(type, title, body, ref) {
+        try {
+            if ((currentUser && String(currentUser.email || '').toLowerCase() === ADMIN_EMAIL.toLowerCase())) return;
+            if (window.ZoodnyNotify) window.ZoodnyNotify.toAdmin({ type: type, title: title, body: body, ref: ref || '' });
+        } catch (e) { console.warn('notify admin failed:', e); }
+    }
+
     // ── inject navbar buttons ────────────────────────────────────────────
     function buildNavButtons(user, uData) {
         // remove old injected elements
@@ -199,6 +207,8 @@
                         createdAt: nowAr()
                     };
                     dbRef('users/' + user.uid).set(userData);
+                    // حساب Google جديد (التسجيل بالإيميل يرسل إشعاره بنفسه بعد حفظ الاسم والهاتف)
+                    if (!_registering) notifyAdmin('user', 'مستخدم جديد 👤', (user.displayName || 'مستخدم') + ' — ' + (user.email || '') + ' (Google)', user.uid);
                 }
                 buildNavButtons(user, userData);
                 refreshWalletModal();
@@ -296,6 +306,8 @@
                 var uid = cred.user.uid;
                 return dbRef('users/' + uid).set({
                     uid, name, phone, email, balance: 0, createdAt: nowAr()
+                }).then(function() {
+                    notifyAdmin('user', 'مستخدم جديد 👤', name + ' — ' + email + ' — ' + phone, uid);
                 });
             })
             .catch(function(err) {
@@ -597,6 +609,7 @@
                 });
             })
             .then(function() {
+                notifyAdmin('topup', 'طلب شحن رصيد 💰', (name || email || 'زبون') + ' — ' + amount.toFixed(2) + '$ — رقم العملية: ' + txId, reqId);
                 modalOff('topupOv','topupModal');
                 $('successRef').textContent = 'رقم الطلب: ' + reqId + ' | المبلغ: ' + amount.toFixed(2) + '$';
                 modalOn('successOv','successModal');

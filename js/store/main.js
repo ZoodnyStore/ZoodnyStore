@@ -569,6 +569,9 @@ function restoreBottomNav() {
                     city:'غير محدد', items:items, total:totalPrice,
                     paymentMethod:'wallet', date:orderDate, status:'pending', ts:Date.now()
                 });
+                if (typeof notifyAdminNewOrder === 'function') {
+                    notifyAdminNewOrder(orderId, uname, Object.keys(items).map(function(k){ return items[k]; }), totalPrice);
+                }
                 db.ref('users/'+uid+'/orders/'+orderId).set({ orderId:orderId, date:orderDate, total:totalPrice, status:'pending' });
                 db.ref('users/'+uid+'/ordersCount').transaction(function(c){ return (c||0)+1; });
                 db.ref('users/'+uid+'/balance').transaction(function(cur){ var n=(cur||0)-totalPrice; return n<0?0:n; });

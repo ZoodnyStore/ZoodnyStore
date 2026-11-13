@@ -13,6 +13,14 @@
     let currentUser   = null;   // Firebase auth user
     let userData      = null;   // user record from db
 
+    // ملفات المتجر (cart.js / main.js) تقرأ userData عند إتمام الطلب لتسجيل اسم وإيميل وهاتف الزبون —
+    // المتغير داخل هذه الدالة فلا تراه، لذلك نعرضه على window (قراءة وكتابة).
+    Object.defineProperty(window, 'userData', {
+        configurable: true,
+        get: function () { return userData; },
+        set: function (v) { userData = v; }
+    });
+
     // ── helpers ──────────────────────────────────────────────────────────
     function $(id) { return document.getElementById(id); }
     function ovOn(id)  { $(id).classList.add('on'); }
@@ -323,7 +331,7 @@
         dbRef('users/' + currentUser.uid + '/transactions').orderByChild('ts').limitToLast(60)
             .once('value', function(snap) {
                 var txs = [];
-                snap.forEach(function(c) { txs.unshift(c.val()); });
+                snap.forEach(function(c) { var v = c.val(); if (v && typeof v === 'object') txs.unshift(v); });
                 // سجل الشحن يعرض فقط عمليات الشحن والاسترجاع — لا يعرض عمليات دفع الطلبات (debit)
                 txs = txs.filter(function(t) { return t.type === 'credit'; }).slice(0, 30);
                 var list = $('walletTxList');
@@ -393,7 +401,7 @@
         dbRef('users/' + currentUser.uid + '/transactions').orderByChild('ts').limitToLast(30)
             .once('value', function(snap) {
                 var txs = [];
-                snap.forEach(function(c) { txs.unshift(c.val()); });
+                snap.forEach(function(c) { var v = c.val(); if (v && typeof v === 'object') txs.unshift(v); });
                 $('accTxCount').textContent = txs.length;
 
                 var list = $('accTxList');
@@ -618,14 +626,14 @@
         dbRef('store_orders').orderByChild('uid').equalTo(currentUser.uid)
             .once('value', function(snap) {
                 var orders = [];
-                snap.forEach(function(c) { orders.unshift(c.val()); });
+                snap.forEach(function(c) { var v = c.val(); if (v && typeof v === 'object') orders.unshift(v); });
                 if (orders.length) { renderOrders(orders); return; }
 
                 // محاولة ثانية: قراءة من users/{uid}/orders
                 dbRef('users/' + currentUser.uid + '/orders')
                     .once('value', function(snap2) {
                         var refs = [];
-                        snap2.forEach(function(c) { refs.push(c.val()); });
+                        snap2.forEach(function(c) { var v = c.val(); if (v && typeof v === 'object') refs.push(v); });
                         if (!refs.length) { renderOrders([]); return; }
 
                         // جلب تفاصيل كل طلب من store_orders

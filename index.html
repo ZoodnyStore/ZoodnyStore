@@ -1019,6 +1019,13 @@
 
         <!-- ══ تبويب طلبات المتجر ══ -->
         <div class="adm-tab-panel" id="panel-orders">
+            <div class="adm-stats">
+                <div class="adm-stat s1"><i class="fas fa-list"></i><div><div class="adm-stat-lbl">إجمالي الطلبات</div><div class="adm-stat-val" id="soTotal">0</div></div></div>
+                <div class="adm-stat s2"><i class="fas fa-clock"></i><div><div class="adm-stat-lbl">جديد / قيد التنفيذ</div><div class="adm-stat-val" id="soOpen">0</div></div></div>
+                <div class="adm-stat s3"><i class="fas fa-check-circle"></i><div><div class="adm-stat-lbl">منجزة</div><div class="adm-stat-val" id="soDone">0</div></div></div>
+                <div class="adm-stat s4"><i class="fas fa-dollar-sign"></i><div><div class="adm-stat-lbl">مبيعات منجزة</div><div class="adm-stat-val" id="soRevenue">0$</div></div></div>
+            </div>
+            <input type="search" class="adm-search" id="admOrderSearch" placeholder="بحث: الاسم، الإيميل، الهاتف، رقم الطلب، رقم اللاعب...">
             <div class="adm-filters">
                 <button class="adm-filter-btn active" data-fo="all">الكل</button>
                 <button class="adm-filter-btn" data-fo="pending">🆕 جديد</button>
@@ -1032,11 +1039,29 @@
 
         <!-- ══ تبويب العملاء ══ -->
         <div class="adm-tab-panel" id="panel-users">
+            <div class="adm-stats">
+                <div class="adm-stat s1"><i class="fas fa-users"></i><div><div class="adm-stat-lbl">عدد العملاء</div><div class="adm-stat-val" id="suCount">0</div></div></div>
+                <div class="adm-stat s2"><i class="fas fa-wallet"></i><div><div class="adm-stat-lbl">مجموع الأرصدة</div><div class="adm-stat-val" id="suBalance">0$</div></div></div>
+                <div class="adm-stat s3"><i class="fas fa-shopping-bag"></i><div><div class="adm-stat-lbl">عملاء لديهم طلبات</div><div class="adm-stat-val" id="suBuyers">0</div></div></div>
+                <div class="adm-stat s4"><i class="fas fa-coins"></i><div><div class="adm-stat-lbl">مجموع المشتريات</div><div class="adm-stat-val" id="suSpent">0$</div></div></div>
+            </div>
+            <input type="search" class="adm-search" id="admUserSearch" placeholder="بحث: الاسم، الإيميل، الهاتف، المعرّف (UID)...">
             <div class="adm-tbl-wrap">
                 <table class="adm-tbl">
-                    <thead><tr><th>الاسم</th><th>الإيميل</th><th>الهاتف</th><th>الرصيد</th><th>الطلبات</th><th>تاريخ التسجيل</th><th>إجراء</th></tr></thead>
-                    <tbody id="usersBody"><tr><td colspan="7" class="adm-no-data"><i class="fas fa-spinner fa-spin"></i></td></tr></tbody>
+                    <thead><tr><th>الاسم</th><th>الإيميل</th><th>الهاتف</th><th>الرصيد</th><th>الطلبات</th><th>المشتريات</th><th>تاريخ التسجيل</th><th>إجراء</th></tr></thead>
+                    <tbody id="usersBody"><tr><td colspan="8" class="adm-no-data"><i class="fas fa-spinner fa-spin"></i></td></tr></tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- ══ نافذة تفاصيل العميل ══ -->
+        <div class="adm-user-ov" id="admUserOv">
+            <div class="adm-user-modal" id="admUserModal" role="dialog" aria-modal="true">
+                <div class="adm-user-head">
+                    <div class="adm-user-title" id="admUserTitle">تفاصيل العميل</div>
+                    <button class="adm-user-close" id="admUserClose" aria-label="إغلاق"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="adm-user-body" id="admUserBody"></div>
             </div>
         </div>
 

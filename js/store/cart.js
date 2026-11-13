@@ -784,6 +784,11 @@ function submitShamCashOrder(customerData) {
     var _uname  = (typeof userData !== 'undefined' && userData && userData.name)  ? userData.name  : (customerData.name  || '');
     var _uphone = (typeof userData !== 'undefined' && userData && userData.phone) ? userData.phone : (customerData.phone || '');
     var _uemail = (typeof userData !== 'undefined' && userData && userData.email) ? userData.email : (customerData.email || '');
+    var _authUser = (typeof auth !== 'undefined' && auth.currentUser) ? auth.currentUser : null;
+    if (_authUser) {
+        if (!_uemail) _uemail = _authUser.email || '';
+        if (!_uname)  _uname  = _authUser.displayName || '';
+    }
 
     var orderData = {
         orderId,

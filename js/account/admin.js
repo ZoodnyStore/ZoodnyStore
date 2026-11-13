@@ -231,30 +231,42 @@
         // Topup orders
         dbRef('topup_orders').on('value', function(snap) {
             adminTopups = [];
-            snap.forEach(function(c) { adminTopups.push(c.val()); });
+            snap.forEach(function(c) { var v = c.val(); if (v) adminTopups.push(v); });
             renderTopupsTable();
             renderTopupStats();
+            refreshUserModal();
         });
-        // Users (نحملهم أولاً لأننا نحتاج الإيميل)
+        // Users (كامل البيانات: الحساب + سجل العمليات + الطلبات)
         dbRef('users').on('value', function(snap) {
             adminUsers = [];
+            var adminUid = auth.currentUser ? auth.currentUser.uid : null;
             snap.forEach(function(c) {
                 var u = c.val();
-                if (u) adminUsers.push(Object.assign({}, u, {transactions:undefined, orders:undefined}));
+                if (c.key === adminUid) return;   // حساب المدير نفسه ليس عميلاً
+                if (u && typeof u === 'object') adminUsers.push(Object.assign({}, u, { uid: u.uid || c.key, _key: c.key }));
             });
             renderUsersTable();
             renderOrdersTable();
+            refreshUserModal();
         }, function(err) {
-            // هذا الجزء تمت إضافته للتشخيص: أي خطأ صلاحيات (permission_denied) من قواعد Firebase سيظهر هنا بدلاً من الفشل الصامت
+            // أي خطأ صلاحيات (permission_denied) من قواعد Firebase يظهر هنا بدلاً من الفشل الصامت
             console.error('خطأ في قراءة users من Firebase:', err);
             var tbody = document.getElementById('usersBody');
-            if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="adm-no-data" style="color:#e74c3c">خطأ صلاحيات: ' + (err && err.message ? err.message : err) + '</td></tr>';
+            if (tbody) tbody.innerHTML = '<tr><td colspan="8" class="adm-no-data" style="color:#e74c3c">خطأ صلاحيات: ' + esc(err && err.message ? err.message : err) + '</td></tr>';
         });
         // Store orders
         dbRef('store_orders').on('value', function(snap) {
             adminOrders = [];
-            snap.forEach(function(c) { adminOrders.push(c.val()); });
+            snap.forEach(function(c) {
+                var v = c.val();
+                if (v && typeof v === 'object') adminOrders.push(Object.assign({}, v, { _key: c.key }));
+            });
+            adminOrders.sort(function(a, b) {
+                return (num(b.ts) - num(a.ts)) || String(b._key).localeCompare(String(a._key));
+            });
             renderOrdersTable();
+            renderUsersTable();
+            refreshUserModal();
         });
     }
 
@@ -324,132 +336,435 @@
         }).join('');
     }
     
-    function getOrderEmail(order) {
-        if (order.email) return order.email;
-        if (adminUsers && adminUsers.length > 0) {
-            var user = adminUsers.find(function(u) { return u.uid === order.uid; });
-            if (user) return user.email || '-';
+    // ── أدوات مساعدة ─────────────────────────────────────────────────────
+    function num(v) { var n = parseFloat(v); return isFinite(n) ? n : 0; }
+    function money(v) { return num(v).toFixed(2) + '$'; }
+
+    function findUser(uid) {
+        if (!uid) return null;
+        for (var i = 0; i < adminUsers.length; i++) {
+            if (adminUsers[i].uid === uid || adminUsers[i]._key === uid) return adminUsers[i];
         }
-        return '-';
+        return null;
     }
-    
+
+    // عناصر الطلب قد تُخزَّن كمصفوفة (cart.js) أو ككائن item_1, item_2... (main.js)
+    function orderItems(o) {
+        var raw = o.items || o.products || [];
+        if (Array.isArray(raw)) return raw.filter(Boolean);
+        if (raw && typeof raw === 'object') {
+            return Object.keys(raw).sort(function(a, b) {
+                return (parseInt(a.replace(/\D/g, ''), 10) || 0) - (parseInt(b.replace(/\D/g, ''), 10) || 0);
+            }).map(function(k) { return raw[k]; }).filter(function(it) { return it && typeof it === 'object'; });
+        }
+        return [];
+    }
+
+    // بيانات الزبون في الطلب، ومع الطلبات القديمة التي حُفظت بدون اسم/إيميل نكملها من حسابه
+    function orderClient(o) {
+        var u = findUser(o.uid) || {};
+        return {
+            user:  findUser(o.uid),
+            name:  o.name  || u.name  || '',
+            email: o.email || u.email || '',
+            phone: o.phone || u.phone || ''
+        };
+    }
+
+    function orderSpent(o) { return o.status === 'rejected' ? 0 : num(o.total); }
+
+    function copyBtn(val) {
+        return '<button type="button" class="adm-copy-btn" data-copy="' + esc(val) + '" title="نسخ"><i class="far fa-copy"></i> نسخ</button>';
+    }
+    function copyVal(val) {
+        if (val === null || val === undefined || val === '') return '<span>-</span>';
+        return '<span class="adm-copy-val"><b>' + esc(val) + '</b>' + copyBtn(val) + '</span>';
+    }
+    function keyField(icon, label, val) {
+        return '<div class="adm-key-field"><span class="lbl"><i class="fas ' + icon + '"></i> ' + label + ':</span>'
+            + '<b>' + esc(val) + '</b>' + copyBtn(val) + '</div>';
+    }
+
+    function copyText(text, btn) {
+        function fallback() {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { ta.setSelectionRange(0, text.length); } catch (e) {}
+            var ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) {}
+            document.body.removeChild(ta);
+            return ok;
+        }
+        function done(ok) {
+            if (!ok) { window.prompt('انسخ النص يدوياً:', text); return; }
+            if (!btn) return;
+            if (!btn.dataset.html) btn.dataset.html = btn.innerHTML;
+            btn.classList.add('ok');
+            btn.innerHTML = '<i class="fas fa-check"></i> تم النسخ';
+            clearTimeout(btn._t);
+            btn._t = setTimeout(function() { btn.classList.remove('ok'); btn.innerHTML = btn.dataset.html; }, 1400);
+        }
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(function() { done(true); }, function() { done(fallback()); });
+        } else {
+            done(fallback());
+        }
+    }
+    document.addEventListener('click', function(e) {
+        var b = e.target.closest && e.target.closest('.adm-copy-btn');
+        if (!b) return;
+        e.preventDefault();
+        e.stopPropagation();
+        copyText(b.getAttribute('data-copy') || '', b);
+    });
+
+    var stLabel = { pending:'🆕 جديد', processing:'⚙️ قيد التنفيذ', done:'✓ منجز', rejected:'✕ مرفوض' };
+
+    // ── عرض منتج واحد داخل الطلب ──
+    function renderOrderItem(it) {
+        var name = it.productName || it.name || '-';
+        var qty  = parseInt(it.quantity, 10) || 1;
+        var unit = num(it.price);
+        var line = (it.totalItem !== undefined && it.totalItem !== null && it.totalItem !== '') ? num(it.totalItem) : unit * qty;
+
+        // الحقول التي يدخلها الزبون — تُعرض بارزة مع زر نسخ لتفادي الأخطاء
+        var keys = [];
+        if (it.playerId)     keys.push(keyField('fa-gamepad', 'رقم اللاعب / المعرّف', it.playerId));
+        if (it.phoneNumber)  keys.push(keyField('fa-phone', 'رقم الهاتف', it.phoneNumber));
+        var link = it.socialLink || it.accountUrl;
+        if (link)            keys.push(keyField('fa-link', 'رابط الحساب', link));
+        if (it.premiumInput) keys.push(keyField('fa-key', 'البريد / بيانات الاشتراك', it.premiumInput));
+
+        var info = [];
+        if (it.gameValue)      info.push('<span><i class="fas fa-coins"></i> الفئة: <b>' + esc(it.gameValue) + '</b></span>');
+        if (it.appValue)       info.push('<span><i class="fas fa-mobile-alt"></i> الباقة: <b>' + esc(it.appValue) + '</b></span>');
+        if (it.creditValue)    info.push('<span><i class="fas fa-money-bill"></i> الرصيد: <b>' + esc(it.creditValue) + ' ل.س</b></span>');
+        if (it.customQuantity) info.push('<span><i class="fas fa-sort-amount-up"></i> الكمية المطلوبة: <b>' + (parseInt(it.customQuantity, 10) || 0).toLocaleString('en-US') + '</b></span>');
+        if (it.category)       info.push('<span><i class="fas fa-folder"></i> ' + esc(it.category) + '</span>');
+        info.push('<span>العدد: <b>' + qty + '</b>' + (qty > 1 ? ' × ' + unit.toFixed(2) + '$' : '') + '</span>');
+
+        return '<div class="adm-prod-item">'
+            + '<div style="flex:1;min-width:0">'
+            + '<div class="adm-prod-name"><i class="fas fa-tag" style="color:var(--secondary);font-size:.72rem;margin-left:4px"></i>' + esc(name) + '</div>'
+            + keys.join('')
+            + '<div class="adm-prod-extra">' + info.join(' &nbsp;|&nbsp; ') + '</div>'
+            + '</div>'
+            + '<div class="adm-prod-price">' + line.toFixed(2) + '$</div>'
+            + '</div>';
+    }
+
+    function orderMatches(o, q) {
+        if (!q) return true;
+        var c = orderClient(o);
+        var parts = [o._key, o.orderId, o.uid, c.name, c.email, c.phone, o.accountUrl, o.city];
+        orderItems(o).forEach(function(it) {
+            parts.push(it.productName, it.name, it.playerId, it.phoneNumber, it.socialLink, it.accountUrl, it.premiumInput, it.gameValue, it.appValue);
+        });
+        return parts.join(' ').toLowerCase().indexOf(q) !== -1;
+    }
+
+    function renderOrderStats() {
+        if (!$('soTotal')) return;
+        var open = 0, done = 0, rev = 0;
+        adminOrders.forEach(function(o) {
+            if (o.status === 'done') { done++; rev += num(o.total); }
+            else if (o.status !== 'rejected') open++;
+        });
+        $('soTotal').textContent   = adminOrders.length;
+        $('soOpen').textContent    = open;
+        $('soDone').textContent    = done;
+        $('soRevenue').textContent = rev.toFixed(2) + '$';
+    }
+
     function renderOrdersTable() {
-        var filtered = adminOrderFilter==='all' ? adminOrders : adminOrders.filter(function(o){ return o.status===adminOrderFilter; });
         var wrap = $('ordersAdmCards');
         if (!wrap) return;
-        var stLabel = { pending:'🆕 جديد', processing:'⚙️ قيد التنفيذ', done:'✓ منجز', rejected:'✕ مرفوض' };
+        renderOrderStats();
+        var q = (($('admOrderSearch') || {}).value || '').trim().toLowerCase();
+        var filtered = adminOrders.filter(function(o) {
+            var st = o.status || 'pending';
+            return (adminOrderFilter === 'all' || st === adminOrderFilter) && orderMatches(o, q);
+        });
 
         if (!filtered.length) {
-            wrap.innerHTML = '<div style="text-align:center;padding:2.5rem;color:#aaa"><i class="fas fa-box-open" style="font-size:2.5rem;display:block;margin-bottom:.7rem"></i>لا توجد طلبات</div>';
+            wrap.innerHTML = '<div style="text-align:center;padding:2.5rem;color:#aaa"><i class="fas fa-box-open" style="font-size:2.5rem;display:block;margin-bottom:.7rem"></i>' + (q ? 'لا توجد نتائج للبحث' : 'لا توجد طلبات') + '</div>';
             return;
         }
 
-        wrap.innerHTML = filtered.slice().reverse().map(function(o) {
-            var st = esc(o.status || 'pending');
+        wrap.innerHTML = filtered.map(function(o) {
+            var st  = esc(o.status || 'pending');
+            var key = escJs(o._key);
+            var c   = orderClient(o);
+            var items = orderItems(o);
 
-            // ── بناء المنتجات ──
-            var prodsHtml = '';
-            var itemsObj = o.items;
-            if (itemsObj && typeof itemsObj === 'object' && !Array.isArray(itemsObj)) {
-                prodsHtml = Object.keys(itemsObj).map(function(k) {
-                    var it = itemsObj[k];
-                    var extras = [];
-                    if (it.playerId)       extras.push('<span><i class="fas fa-gamepad"></i> رقم اللاعب: <b>' + esc(it.playerId) + '</b></span>');
-                    if (it.gameValue)      extras.push('<span><i class="fas fa-coins"></i> الكمية: <b>' + esc(it.gameValue) + '</b></span>');
-                    if (it.appValue)       extras.push('<span><i class="fas fa-mobile-alt"></i> الباقة: <b>' + esc(it.appValue) + '</b></span>');
-                    if (it.phoneNumber)    extras.push('<span><i class="fas fa-phone"></i> الهاتف: <b>' + esc(it.phoneNumber) + '</b></span>');
-                    if (it.creditValue)    extras.push('<span><i class="fas fa-money-bill"></i> الرصيد: <b>' + esc(it.creditValue) + ' ل.س</b></span>');
-                    if (it.customQuantity) extras.push('<span><i class="fas fa-sort-amount-up"></i> الكمية: <b>' + parseInt(it.customQuantity).toLocaleString() + '</b></span>');
-                    if (it.socialLink) extras.push('<span style="direction:ltr;display:inline-block"><i class="fas fa-link"></i> ' + esc(it.socialLink.length>50?it.socialLink.substring(0,50)+'…':it.socialLink) + '</span>');
-                    if (it.premiumInput)   extras.push('<span><i class="fas fa-key"></i> البيانات: <b>' + esc(it.premiumInput) + '</b></span>');
-                    return '<div class="adm-prod-item">'
-                        + '<div style="flex:1">'
-                        + '<div class="adm-prod-name"><i class="fas fa-tag" style="color:var(--secondary);font-size:.72rem;margin-left:4px"></i>' + esc(it.productName || it.name || '-') + '</div>'
-                        + (extras.length ? '<div class="adm-prod-extra">' + extras.join(' &nbsp;|&nbsp; ') + '</div>' : '')
-                        + '<div class="adm-prod-extra"><i class="fas fa-times-circle" style="color:#ccc"></i> الكمية: ' + (it.quantity||1) + '</div>'
-                        + '</div>'
-                        + '<div class="adm-prod-price">' + parseFloat(it.totalItem || it.price || 0).toFixed(2) + '$</div>'
-                        + '</div>';
-                }).join('');
-            } else if (Array.isArray(itemsObj)) {
-                prodsHtml = itemsObj.map(function(it) {
-                    return '<div class="adm-prod-item">'
-                        + '<div class="adm-prod-name">' + esc(it.productName||it.name||'-') + '</div>'
-                        + '<div class="adm-prod-price">' + parseFloat(it.price||0).toFixed(2) + '$</div>'
-                        + '</div>';
-                }).join('');
-            }
+            var prodsHtml = items.map(renderOrderItem).join('');
+            // رابط الحساب على مستوى الطلب (إن لم يكن ظاهراً داخل أحد المنتجات)
+            var itemHasLink = items.some(function(it) { return it.socialLink || it.accountUrl; });
+            var orderExtra = '';
+            if (o.accountUrl && !itemHasLink) orderExtra += keyField('fa-link', 'رابط الحساب', o.accountUrl);
+            if (o.city && o.city !== 'غير محدد') orderExtra += '<div class="adm-prod-extra"><i class="fas fa-map-marker-alt"></i> المدينة: <b>' + esc(o.city) + '</b></div>';
 
-            // ── بناء أزرار الإجراء حسب الحالة ──
+            var nameHtml = c.user
+                ? '<button type="button" class="adm-user-link" onclick="admOpenUser(\'' + escJs(c.user._key) + '\')">' + esc(c.name || 'غير محدد') + '</button>'
+                : '<strong>' + esc(c.name || (o.uid === 'guest' ? 'زائر' : 'غير محدد')) + '</strong>';
+
             var btns = '';
-            if (st === 'pending')    btns += '<button class="adm-act-btn accept" onclick="admUpdateOrderStatus(\''+escJs(o.orderId)+'\',\'processing\')"><i class="fas fa-cog"></i> بدء التنفيذ</button>';
-            if (st === 'processing') btns += '<button class="adm-act-btn view"   onclick="admUpdateOrderStatus(\''+escJs(o.orderId)+'\',\'done\')"><i class="fas fa-check"></i> تم</button>';
-            if (st !== 'done' && st !== 'rejected') btns += '<button class="adm-act-btn reject" onclick="admUpdateOrderStatus(\''+escJs(o.orderId)+'\',\'rejected\')"><i class="fas fa-times"></i> رفض</button>';
-            btns += '<button class="adm-act-btn del" onclick="admDeleteOrder(\''+escJs(o.orderId)+'\')"><i class="fas fa-trash"></i></button>';
+            if (st === 'pending')    btns += '<button class="adm-act-btn accept" onclick="admUpdateOrderStatus(\'' + key + '\',\'processing\')"><i class="fas fa-cog"></i> بدء التنفيذ</button>';
+            if (st === 'processing') btns += '<button class="adm-act-btn view"   onclick="admUpdateOrderStatus(\'' + key + '\',\'done\')"><i class="fas fa-check"></i> تم</button>';
+            if (st !== 'done' && st !== 'rejected') btns += '<button class="adm-act-btn reject" onclick="admUpdateOrderStatus(\'' + key + '\',\'rejected\')"><i class="fas fa-times"></i> رفض وإرجاع المبلغ</button>';
+            btns += '<button class="adm-act-btn del" title="حذف نهائي" onclick="admDeleteOrder(\'' + key + '\')"><i class="fas fa-trash"></i> حذف</button>';
 
             return '<div class="adm-card ' + st + '">'
-                // رأس البطاقة
                 + '<div class="adm-card-head">'
-                + '  <span class="adm-card-id"><i class="fas fa-hashtag"></i> ' + esc(o.orderId) + '</span>'
-                + '  <span class="st-badge ' + st + '">' + (stLabel[st]||st) + '</span>'
-                + '  <span class="adm-card-date"><i class="far fa-clock"></i> ' + esc(o.date||'-') + '</span>'
+                + '  <span class="adm-card-id"><i class="fas fa-hashtag"></i> ' + esc(o.orderId || o._key) + '</span>'
+                + '  <span class="st-badge ' + st + '">' + (stLabel[st] || st) + '</span>'
+                + '  <span class="adm-card-date"><i class="far fa-clock"></i> ' + esc(o.date || '-') + '</span>'
                 + '</div>'
-                // جسم البطاقة
                 + '<div class="adm-card-body">'
-                // بيانات العميل
                 + '  <div class="adm-client-row">'
-                + '    <div class="adm-client-item"><i class="fas fa-user"></i><strong>' + esc(o.name||'غير محدد') + '</strong></div>'
-                + '    <div class="adm-client-item"><i class="fas fa-phone-alt"></i><strong>' + esc(o.phone||'-') + '</strong></div>'
-                + '    <div class="adm-client-item"><i class="fas fa-envelope"></i><strong>' + esc(getOrderEmail(o)) + '</strong></div>'
+                + '    <div class="adm-client-item"><i class="fas fa-user"></i>' + nameHtml + '</div>'
+                + '    <div class="adm-client-item"><i class="fas fa-envelope"></i>' + copyVal(c.email) + '</div>'
+                + '    <div class="adm-client-item"><i class="fas fa-phone-alt"></i>' + copyVal(c.phone) + '</div>'
                 + '  </div>'
-                // المنتجات
                 + '  <div class="adm-products-wrap">'
-                + '    <div class="adm-products-title"><i class="fas fa-shopping-cart"></i> المنتجات المطلوبة</div>'
+                + '    <div class="adm-products-title"><i class="fas fa-shopping-cart"></i> المنتجات المطلوبة (' + items.length + ')</div>'
                 + (prodsHtml || '<div style="color:#aaa;font-size:.83rem;padding:.4rem">لا توجد تفاصيل</div>')
+                + orderExtra
                 + '  </div>'
                 + '</div>'
-                // ذيل البطاقة
                 + '<div class="adm-card-foot">'
-                + '  <div class="adm-total-lbl"><i class="fas fa-dollar-sign"></i> المجموع: ' + parseFloat(o.total||0).toFixed(2) + '$</div>'
+                + '  <div class="adm-total-lbl"><i class="fas fa-dollar-sign"></i> المجموع: ' + money(o.total) + '</div>'
                 + '  <div class="adm-card-btns">' + btns + '</div>'
                 + '</div>'
                 + '</div>';
         }).join('');
     }
 
+    // ── العملاء ──────────────────────────────────────────────────────────
+    function userStats(u) {
+        var orders = adminOrders.filter(function(o) { return o.uid && (o.uid === u.uid || o.uid === u._key); });
+        var spent = orders.reduce(function(s, o) { return s + orderSpent(o); }, 0);
+        return { orders: orders, spent: spent };
+    }
+
+    function userMatches(u, q) {
+        if (!q) return true;
+        return [u.name, u.email, u.phone, u.uid, u._key].join(' ').toLowerCase().indexOf(q) !== -1;
+    }
+
     function renderUsersTable() {
         var tbody = document.getElementById('usersBody');
         if (!tbody) return;
-        if (!adminUsers || !adminUsers.length) { tbody.innerHTML = '<tr><td colspan="7" class="adm-no-data">لا يوجد مستخدمون</td></tr>'; return; }
-        tbody.innerHTML = adminUsers.map(function(u) {
-            var uid = u.uid || '';
-            var bal = parseFloat(u.balance||0).toFixed(2);
+
+        var totalBal = 0, buyers = 0, totalSpent = 0;
+        var stats = {};
+        adminUsers.forEach(function(u) {
+            var s = userStats(u);
+            stats[u._key] = s;
+            totalBal += num(u.balance);
+            totalSpent += s.spent;
+            if (s.orders.length) buyers++;
+        });
+        if ($('suCount')) {
+            $('suCount').textContent   = adminUsers.length;
+            $('suBalance').textContent = totalBal.toFixed(2) + '$';
+            $('suBuyers').textContent  = buyers;
+            $('suSpent').textContent   = totalSpent.toFixed(2) + '$';
+        }
+
+        if (!adminUsers.length) { tbody.innerHTML = '<tr><td colspan="8" class="adm-no-data">لا يوجد مستخدمون</td></tr>'; return; }
+
+        var q = (($('admUserSearch') || {}).value || '').trim().toLowerCase();
+        var list = adminUsers.filter(function(u) { return userMatches(u, q); });
+        if (!list.length) { tbody.innerHTML = '<tr><td colspan="8" class="adm-no-data">لا توجد نتائج للبحث</td></tr>'; return; }
+
+        tbody.innerHTML = list.map(function(u) {
+            var key = u._key;
+            var s = stats[key];
             return '<tr>'
-                + '<td><strong>' + esc(u.name||'-') + '</strong></td>'
-                + '<td>' + esc(u.email||'-') + '</td>'
-                + '<td>' + esc(u.phone||'-') + '</td>'
-                + '<td><strong style="color:var(--success)">' + bal + '$</strong>'
+                + '<td><button type="button" class="adm-user-link" onclick="admOpenUser(\'' + escJs(key) + '\')">' + esc(u.name || '-') + '</button></td>'
+                + '<td>' + copyVal(u.email) + '</td>'
+                + '<td>' + copyVal(u.phone) + '</td>'
+                + '<td><strong style="color:var(--success)">' + money(u.balance) + '</strong>'
                 + '<div class="adm-topup-inline">'
-                + '<input type="number" id="topupAmt_' + esc(uid) + '" placeholder="$ مبلغ" min="0.01" step="0.01" style="width:80px"/>'
-                + '<button class="adm-act-btn topup" onclick="admAddBalance(\'' + escJs(uid) + '\')">إضافة</button>'
+                + '<input type="number" id="topupAmt_' + esc(key) + '" placeholder="$ مبلغ" min="0.01" step="0.01" style="width:80px"/>'
+                + '<button class="adm-act-btn topup" onclick="admAddBalance(\'' + escJs(key) + '\')">إضافة</button>'
                 + '</div></td>'
-                + '<td>' + (u.ordersCount||0) + '</td>'
-                + '<td><small>' + esc(u.createdAt||'-') + '</small></td>'
-                + '<td><button class="adm-act-btn del" onclick="admDelUser(\'' + escJs(uid) + '\')"><i class="fas fa-trash"></i></button></td>'
+                + '<td>' + s.orders.length + '</td>'
+                + '<td>' + s.spent.toFixed(2) + '$</td>'
+                + '<td><small>' + esc(u.createdAt || '-') + '</small></td>'
+                + '<td style="white-space:nowrap">'
+                + '<button class="adm-act-btn view" onclick="admOpenUser(\'' + escJs(key) + '\')"><i class="fas fa-id-card"></i> التفاصيل</button>'
+                + '<button class="adm-act-btn del" title="حذف العميل" onclick="admDelUser(\'' + escJs(key) + '\')"><i class="fas fa-trash"></i></button>'
+                + '</td>'
                 + '</tr>';
         }).join('');
     }
 
+    // ── نافذة تفاصيل العميل ──
+    var openUserKey = null;
+    var userFieldLabels = {
+        name: 'الاسم', email: 'البريد الإلكتروني', phone: 'الهاتف', uid: 'المعرّف (UID)',
+        balance: 'الرصيد الحالي', createdAt: 'تاريخ التسجيل', ordersCount: 'عدّاد الطلبات'
+    };
+    var copyableFields = { email: 1, phone: 1, uid: 1 };
+
+    function txTime(t) { return num(t && t.ts) || (parseInt(String((t && t._k) || '').replace(/\D/g, '').slice(0, 13), 10) || 0); }
+
+    function renderUserModal() {
+        var u = findUser(openUserKey);
+        var body = $('admUserBody');
+        if (!body) return;
+        if (!u) {
+            body.innerHTML = '<div class="adm-sec" style="text-align:center;color:#999">هذا العميل لم يعد موجوداً</div>';
+            return;
+        }
+        $('admUserTitle').textContent = 'تفاصيل العميل: ' + (u.name || u.email || u._key);
+
+        // 1) كل بيانات الحساب (بما فيها أي حقل إضافي محفوظ)
+        var order = ['name', 'email', 'phone', 'uid', 'balance', 'createdAt'];
+        var keys = order.slice();
+        Object.keys(u).forEach(function(k) {
+            // ordersCount عدّاد داخلي قد لا يطابق الواقع — العدد الحقيقي يظهر في "ملخص"
+            if (k.charAt(0) === '_' || k === 'ordersCount' || keys.indexOf(k) !== -1) return;
+            if (u[k] !== null && typeof u[k] === 'object') return; // orders / transactions تُعرض بالأسفل
+            keys.push(k);
+        });
+        var kv = keys.map(function(k) {
+            var v = (k === 'uid') ? (u.uid || u._key) : u[k];
+            if (v === undefined || v === null || v === '') v = (k === 'balance' ? 0 : '');
+            var shown = (k === 'balance') ? money(v) : (copyableFields[k] && v !== '' ? copyVal(v) : esc(v === '' ? '-' : v));
+            if (k === 'balance') shown = '<span style="color:var(--success)">' + shown + '</span>';
+            return '<div class="adm-kv-item"><div class="k">' + esc(userFieldLabels[k] || k) + '</div><div class="v">' + shown + '</div></div>';
+        }).join('');
+
+        // 2) ملخص مالي
+        var s = userStats(u);
+        var topups = adminTopups.filter(function(t) { return t.uid === u.uid || t.uid === u._key; });
+        var topAccepted = topups.filter(function(t) { return t.status === 'accepted'; }).reduce(function(a, t) { return a + num(t.amount); }, 0);
+        var topPending  = topups.filter(function(t) { return t.status === 'pending'; }).length;
+        var txs = [];
+        if (u.transactions && typeof u.transactions === 'object') {
+            Object.keys(u.transactions).forEach(function(k) {
+                var t = u.transactions[k];
+                if (t && typeof t === 'object') txs.push(Object.assign({ _k: k }, t));
+            });
+        }
+        txs.sort(function(a, b) { return txTime(b) - txTime(a); });
+        var refunds = txs.filter(function(t) { return t.txCategory === 'refund'; }).reduce(function(a, t) { return a + num(t.amount); }, 0);
+
+        var summary = [
+            ['عدد الطلبات', s.orders.length],
+            ['مجموع المشتريات', money(s.spent)],
+            ['شحن رصيد مقبول', money(topAccepted)],
+            ['طلبات شحن معلّقة', topPending],
+            ['مبالغ مُسترجعة', money(refunds)],
+            ['عدد العمليات', txs.length]
+        ].map(function(p) {
+            return '<div class="adm-kv-item"><div class="k">' + p[0] + '</div><div class="v">' + p[1] + '</div></div>';
+        }).join('');
+
+        // 3) الطلبات
+        var ordersHtml = s.orders.length ? s.orders.map(function(o) {
+            var st = esc(o.status || 'pending');
+            var items = orderItems(o);
+            var names = items.map(function(it) { return esc(it.productName || it.name || '-') + (num(it.quantity) > 1 ? ' ×' + parseInt(it.quantity, 10) : ''); }).join('، ');
+            var ids = items.filter(function(it) { return it.playerId; }).map(function(it) { return keyField('fa-gamepad', 'رقم اللاعب', it.playerId); }).join('');
+            return '<div class="adm-mini-row">'
+                + '<div class="t"><div><b>' + (names || 'طلب') + '</b> <span class="st-badge ' + st + '">' + (stLabel[st] || st) + '</span></div>'
+                + '<div class="d">' + esc(o.orderId || o._key) + ' — ' + esc(o.date || '-') + '</div>' + ids + '</div>'
+                + '<span class="adm-amt-minus">' + money(o.total) + '</span>'
+                + '<button class="adm-act-btn del" title="حذف الطلب" onclick="admDeleteOrder(\'' + escJs(o._key) + '\')"><i class="fas fa-trash"></i></button>'
+                + '</div>';
+        }).join('') : '<div style="color:#aaa;font-size:.82rem">لا توجد طلبات</div>';
+
+        // 4) سجل العمليات
+        var txHtml = txs.length ? txs.map(function(t) {
+            var credit = t.type === 'credit';
+            var stTxt = t.status === 'pending' ? ' <span class="st-badge pending">معلّق</span>' : '';
+            return '<div class="adm-mini-row">'
+                + '<div class="t"><div>' + esc(t.desc || t._k) + stTxt + '</div><div class="d">' + esc(t.date || '-') + '</div></div>'
+                + '<span class="' + (credit ? 'adm-amt-plus' : 'adm-amt-minus') + '">' + (credit ? '+' : '-') + money(t.amount) + '</span>'
+                + '</div>';
+        }).join('') : '<div style="color:#aaa;font-size:.82rem">لا توجد عمليات</div>';
+
+        // 5) طلبات الشحن
+        var tuLabel = { pending:'⏳ انتظار', accepted:'✓ مقبول', rejected:'✕ مرفوض' };
+        var topHtml = topups.length ? topups.slice().reverse().map(function(t) {
+            var st = esc(t.status || 'pending');
+            return '<div class="adm-mini-row">'
+                + '<div class="t"><div>رقم العملية: ' + copyVal(t.txId || t.transferNumber || '') + ' <span class="st-badge ' + (st === 'accepted' ? 'done' : st) + '">' + (tuLabel[st] || st) + '</span></div>'
+                + '<div class="d">' + esc(t.reqId || '') + ' — ' + esc(t.date || '-') + '</div></div>'
+                + '<span class="adm-amt-plus">' + money(t.amount) + '</span>'
+                + '</div>';
+        }).join('') : '<div style="color:#aaa;font-size:.82rem">لا توجد طلبات شحن</div>';
+
+        var k = escJs(u._key);
+        body.innerHTML =
+              '<div class="adm-sec"><h4><i class="fas fa-user"></i> بيانات الحساب</h4><div class="adm-kv">' + kv + '</div></div>'
+            + '<div class="adm-sec"><h4><i class="fas fa-chart-pie"></i> ملخص</h4><div class="adm-kv">' + summary + '</div></div>'
+            + '<div class="adm-sec"><h4><i class="fas fa-wallet"></i> تعديل الرصيد</h4><div class="adm-user-actions">'
+            + '<input type="number" id="admUdAmt" placeholder="$ مبلغ" min="0.01" step="0.01">'
+            + '<button class="adm-act-btn topup" onclick="admAdjustBalance(\'' + k + '\',1)"><i class="fas fa-plus"></i> إضافة</button>'
+            + '<button class="adm-act-btn reject" onclick="admAdjustBalance(\'' + k + '\',-1)"><i class="fas fa-minus"></i> خصم</button>'
+            + '</div></div>'
+            + '<div class="adm-sec"><h4><i class="fas fa-shopping-bag"></i> الطلبات (' + s.orders.length + ')</h4>' + ordersHtml + '</div>'
+            + '<div class="adm-sec"><h4><i class="fas fa-receipt"></i> سجل العمليات (' + txs.length + ')</h4>' + txHtml + '</div>'
+            + '<div class="adm-sec"><h4><i class="fas fa-money-check-alt"></i> طلبات الشحن (' + topups.length + ')</h4>' + topHtml + '</div>';
+    }
+
+    function refreshUserModal() {
+        if (!openUserKey) return;
+        var ov = $('admUserOv');
+        if (!ov || !ov.classList.contains('on')) return;
+        // لا نعيد الرسم أثناء كتابة مبلغ حتى لا يُمسح ما يكتبه المدير
+        var amt = $('admUdAmt');
+        var typed = amt ? amt.value : '';
+        var focused = amt && document.activeElement === amt;
+        var scroll = $('admUserBody').scrollTop;
+        renderUserModal();
+        $('admUserBody').scrollTop = scroll;
+        if ($('admUdAmt')) { $('admUdAmt').value = typed; if (focused) $('admUdAmt').focus(); }
+    }
+
+    window.admOpenUser = function(key) {
+        openUserKey = key;
+        renderUserModal();
+        $('admUserBody').scrollTop = 0;
+        $('admUserOv').classList.add('on');
+    };
+    function closeUserModal() {
+        openUserKey = null;
+        $('admUserOv').classList.remove('on');
+    }
+    if ($('admUserOv')) {
+        $('admUserClose').addEventListener('click', closeUserModal);
+        $('admUserOv').addEventListener('click', function(e) { if (e.target === this) closeUserModal(); });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && $('admUserOv').classList.contains('on')) closeUserModal();
+        });
+    }
+    if ($('admOrderSearch')) $('admOrderSearch').addEventListener('input', renderOrdersTable);
+    if ($('admUserSearch'))  $('admUserSearch').addEventListener('input', renderUsersTable);
+
     // ── Admin actions ────────────────────────────────────────────────────
+    // الرصيد قد يكون محفوظاً كنص في حسابات قديمة — نحوله لرقم قبل الجمع حتى لا يصير "5" + 3 = "53"
+    function addToBalance(uid, delta) {
+        return dbRef('users/' + uid + '/balance').transaction(function(cur) {
+            var n = Math.round((num(cur) + delta) * 100) / 100;
+            return n < 0 ? 0 : n;
+        });
+    }
+
     window.admAcceptTopup = function(reqId, uid, amount) {
         dbRef('topup_orders/' + reqId).update({ status: 'accepted' });
-        // Add balance to user
-        dbRef('users/' + uid + '/balance').transaction(function(cur) {
-            return (cur || 0) + amount;
-        });
-        // Update tx status
+        addToBalance(uid, num(amount));
         dbRef('users/' + uid + '/transactions/' + reqId).update({ status: 'completed' });
-        balToast('✓ تم قبول الطلب وإضافة ' + amount.toFixed(2) + '$', true);
+        balToast('✓ تم قبول الطلب وإضافة ' + num(amount).toFixed(2) + '$', true);
     };
     window.admRejectTopup = function(reqId, uid) {
         if (!confirm('رفض هذا الطلب؟')) return;
@@ -459,62 +774,122 @@
     window.admDelTopup = function(reqId) {
         dbRef('topup_orders/' + reqId).remove();
     };
-    window.admUpdateOrderStatus = function(orderId, status) {
-        dbRef('store_orders/' + orderId).update({ status: status });
+    window.admUpdateOrderStatus = function(orderKey, status) {
+        if (status === 'rejected' && !confirm('رفض الطلب وإرجاع المبلغ لرصيد الزبون؟')) return;
+        dbRef('store_orders/' + orderKey).update({ status: status });
 
-        // عند رفض الطلب: إعادة قيمة الطلب لرصيد العميل + تسجيلها في سجل الشحن كاسترجاع
-        if (status === 'rejected') {
-            dbRef('store_orders/' + orderId).once('value', function(snap) {
-                var o = snap.val();
-                if (!o || !o.uid || o.uid === 'guest') return;
-                var refundAmount = parseFloat(o.total || 0);
-                if (!(refundAmount > 0)) return;
-
-                dbRef('users/' + o.uid + '/balance').transaction(function(cur) {
-                    return (cur || 0) + refundAmount;
-                });
-
-                // استخراج اسم المنتج (أو المنتجات) بدل كود الطلب لعرضه في وصف الاسترجاع
-                var itemsRaw = o.items || o.products || [];
-                var itemsArr = Array.isArray(itemsRaw) ? itemsRaw : (itemsRaw && typeof itemsRaw === 'object' ? Object.values(itemsRaw) : []);
-                var productLabel;
-                if (itemsArr.length === 1) {
-                    productLabel = itemsArr[0].name || itemsArr[0].productName || ('طلب #' + orderId);
-                } else if (itemsArr.length > 1) {
-                    var pNames = itemsArr.map(function(it){ return it.name || it.productName; }).filter(Boolean);
-                    productLabel = pNames.slice(0,2).join('، ') + (pNames.length > 2 ? ' +' + (pNames.length - 2) : '');
-                } else {
-                    productLabel = 'طلب #' + orderId;
-                }
-
-                dbRef('users/' + o.uid + '/transactions/REFUND-' + Date.now()).set({
-                    desc: 'استرجاع من طلب ' + productLabel,
-                    date: nowAr(),
-                    amount: refundAmount,
-                    type: 'credit',
-                    status: 'completed',
-                    orderId: orderId,
-                    txCategory: 'refund',
-                    ts: Date.now()
-                });
-
-                // تحديث حالة طلب المستخدم المختصر أيضاً
-                dbRef('users/' + o.uid + '/orders/' + orderId).update({ status: 'rejected' });
+        dbRef('store_orders/' + orderKey).once('value', function(snap) {
+            var o = snap.val();
+            if (!o || !o.uid || o.uid === 'guest') return;
+            var orderId = o.orderId || orderKey;
+            // تحديث حالة الطلب في سجل الزبون أيضاً
+            dbRef('users/' + o.uid + '/orders/' + orderId).once('value', function(s) {
+                if (s.exists()) dbRef('users/' + o.uid + '/orders/' + orderId).update({ status: status });
             });
-        }
+
+            // عند الرفض: إعادة قيمة الطلب لرصيد العميل + تسجيلها في سجل العمليات كاسترجاع
+            if (status !== 'rejected') return;
+            var refundAmount = num(o.total);
+            if (!(refundAmount > 0)) return;
+            addToBalance(o.uid, refundAmount);
+
+            var itemsArr = orderItems(o);
+            var productLabel;
+            if (itemsArr.length === 1) {
+                productLabel = itemsArr[0].name || itemsArr[0].productName || ('طلب #' + orderId);
+            } else if (itemsArr.length > 1) {
+                var pNames = itemsArr.map(function(it){ return it.name || it.productName; }).filter(Boolean);
+                productLabel = pNames.slice(0,2).join('، ') + (pNames.length > 2 ? ' +' + (pNames.length - 2) : '');
+            } else {
+                productLabel = 'طلب #' + orderId;
+            }
+            dbRef('users/' + o.uid + '/transactions/REFUND-' + Date.now()).set({
+                desc: 'استرجاع من طلب ' + productLabel,
+                date: nowAr(),
+                amount: refundAmount,
+                type: 'credit',
+                status: 'completed',
+                orderId: orderId,
+                txCategory: 'refund',
+                ts: Date.now()
+            });
+        });
     };
-    window.admDeleteOrder = function(orderId) {
-        if (confirm('حذف هذا الطلب نهائياً؟')) {
-            dbRef('store_orders/' + orderId).remove();
-        }
+
+    // حذف الطلب نهائياً: من store_orders + من سجل طلبات الزبون + من سجل عملياته (الدفع/الاسترجاع المرتبط به)
+    window.admDeleteOrder = function(orderKey) {
+        var cached = null;
+        for (var i = 0; i < adminOrders.length; i++) if (adminOrders[i]._key === orderKey) { cached = adminOrders[i]; break; }
+        var msg = 'حذف هذا الطلب نهائياً؟\n\nسيُحذف من لوحة المدير، ومن سجل طلبات الزبون وسجل عملياته، ومن قاعدة البيانات.'
+            + (cached && cached.status !== 'rejected' && num(cached.total) > 0 ? '\n\nملاحظة: الحذف لا يُرجع المبلغ للزبون — لإرجاعه استخدم "رفض" أولاً.' : '');
+        if (!confirm(msg)) return;
+
+        dbRef('store_orders/' + orderKey).once('value').then(function(snap) {
+            var o = snap.val() || cached || {};
+            var orderId = o.orderId || orderKey;
+            var uid = (o.uid && o.uid !== 'guest') ? o.uid : null;
+            var updates = {};
+            updates['store_orders/' + orderKey] = null;
+            if (!uid) return { updates: updates, uid: null, hadRef: false };
+
+            return dbRef('users/' + uid).once('value').then(function(us) {
+                var u = us.val() || {};
+                var hadRef = false;
+                var ordersNode = (u.orders && typeof u.orders === 'object') ? u.orders : {};
+                Object.keys(ordersNode).forEach(function(k) {
+                    var r = ordersNode[k];
+                    if (k === orderId || k === orderKey || (r && (r.orderId === orderId || r.orderId === orderKey))) {
+                        updates['users/' + uid + '/orders/' + k] = null;
+                        hadRef = true;
+                    }
+                });
+                var txNode = (u.transactions && typeof u.transactions === 'object') ? u.transactions : {};
+                Object.keys(txNode).forEach(function(k) {
+                    var t = txNode[k];
+                    if (!t || typeof t !== 'object') return;
+                    if (t.orderId === orderId || t.orderId === orderKey
+                        || (typeof t.desc === 'string' && t.desc.indexOf(orderId) !== -1)) {
+                        updates['users/' + uid + '/transactions/' + k] = null;
+                    }
+                });
+                return { updates: updates, uid: uid, hadRef: hadRef };
+            });
+        }).then(function(r) {
+            return db.ref().update(r.updates).then(function() { return r; });
+        }).then(function(r) {
+            if (r.uid && r.hadRef) {
+                dbRef('users/' + r.uid + '/ordersCount').transaction(function(c) { c = num(c); return c > 0 ? c - 1 : 0; });
+            }
+            balToast('✓ تم حذف الطلب نهائياً', true);
+        }).catch(function(err) {
+            console.error('delete order failed:', err);
+            alert('فشل حذف الطلب: ' + (err && err.message ? err.message : err));
+        });
     };
+
+    window.admAdjustBalance = function(uid, sign) {
+        var inp = $('admUdAmt');
+        var amt = num(inp ? inp.value : 0);
+        if (!(amt > 0)) { alert('أدخل مبلغاً صحيحاً'); return; }
+        var u = findUser(uid);
+        if (sign < 0 && !confirm('خصم ' + amt.toFixed(2) + '$ من رصيد ' + ((u && u.name) || 'العميل') + '؟')) return;
+        addToBalance(uid, sign * amt).then(function() {
+            dbRef('users/' + uid + '/transactions/ADM-' + Date.now()).set({
+                desc: sign > 0 ? 'إضافة رصيد من المدير' : 'خصم رصيد من المدير',
+                date: nowAr(), amount: amt, type: sign > 0 ? 'credit' : 'debit',
+                status: 'completed', ts: Date.now()
+            });
+            if ($('admUdAmt')) $('admUdAmt').value = '';
+            balToast('✓ تم ' + (sign > 0 ? 'إضافة ' : 'خصم ') + amt.toFixed(2) + '$', true);
+        }).catch(function(err) { alert('فشل تعديل الرصيد: ' + (err && err.message ? err.message : err)); });
+    };
+
     window.admAddBalance = function(uid) {
         var inp = $('topupAmt_' + uid);
-        var amt = parseFloat(inp ? inp.value : 0);
-        if (!amt || amt <= 0) { alert('أدخل مبلغاً صحيحاً'); return; }
-        dbRef('users/' + uid + '/balance').transaction(function(cur) { return (cur||0)+amt; });
-        var txKey = 'ADM-' + Date.now();
-        dbRef('users/' + uid + '/transactions/' + txKey).set({
+        var amt = num(inp ? inp.value : 0);
+        if (!(amt > 0)) { alert('أدخل مبلغاً صحيحاً'); return; }
+        addToBalance(uid, amt);
+        dbRef('users/' + uid + '/transactions/ADM-' + Date.now()).set({
             desc: 'إضافة رصيد من المدير', date: nowAr(),
             amount: amt, type: 'credit', status: 'completed', ts: Date.now()
         });
@@ -524,6 +899,7 @@
     window.admDelUser = function(uid) {
         if (!confirm('حذف هذا المستخدم نهائياً؟')) return;
         dbRef('users/' + uid).remove();
+        if (openUserKey === uid) closeUserModal();
     };
 
     // ── زر حسناً شكراً ──────────────────────────────────────────────────

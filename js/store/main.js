@@ -532,6 +532,10 @@ function restoreBottomNav() {
             var uname  = (typeof userData !== 'undefined' && userData) ? (userData.name  || '') : '';
             var uphone = (typeof userData !== 'undefined' && userData) ? (userData.phone || '') : '';
             var uemail = (typeof userData !== 'undefined' && userData) ? (userData.email || '') : '';
+            if (typeof auth !== 'undefined' && auth.currentUser) {
+                if (!uemail) uemail = auth.currentUser.email || '';
+                if (!uname)  uname  = auth.currentUser.displayName || '';
+            }
 
             // ── 1. إغلاق paymentModal تماماً ──
             var pm = document.getElementById('paymentModal');

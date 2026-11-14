@@ -58,6 +58,11 @@ function serviceAccount(env) {
     return sa;
 }
 
+// معرّف المدير من الإعدادات — نتجاهل المسافات وعلامات التنصيص التي قد تُلصق بالخطأ
+function adminUid(env) {
+    return String(env.ADMIN_UID || '').trim().replace(/^["']+|["']+$/g, '').trim();
+}
+
 class HttpError extends Error {
     constructor(status, message) { super(message); this.status = status; }
 }
@@ -204,14 +209,16 @@ async function handleSubscribe(env, body) {
 
 async function handleNotify(env, body) {
     const sa = serviceAccount(env);
-    if (!env.ADMIN_UID) throw new HttpError(500, 'ADMIN_UID غير مضبوط في إعدادات Cloudflare');
+    const ADMIN = adminUid(env);
+    if (!ADMIN) throw new HttpError(500, 'ADMIN_UID غير مضبوط في إعدادات Cloudflare');
     const caller = await verifyIdToken(body.idToken, sa.project_id);
-    const isAdmin = caller.uid === env.ADMIN_UID;
+    const isAdmin = caller.uid === ADMIN;
     const kind = body.kind;
 
     if (kind === 'test') {
-        if (!isAdmin) throw new HttpError(403, 'للمدير فقط');
-        const r = await sendToUser(env, env.ADMIN_UID, {
+        // رسالة توضيحية للمدير عند الإعداد: معرّفه الحالي لا يطابق ADMIN_UID في Cloudflare
+        if (!isAdmin) throw new HttpError(403, 'للمدير فقط — قيمة ADMIN_UID في Cloudflare لا تطابق حسابك. معرّف حسابك الحالي هو: ' + caller.uid);
+        const r = await sendToUser(env, ADMIN, {
             id: 'test:' + Date.now(), title: 'زودني — إشعار تجريبي ✅',
             body: 'الإشعارات تعمل! ستصلك حتى والموقع مغلق.', url: linkFor(env, 'test', '')
         });
@@ -238,7 +245,7 @@ async function handleNotify(env, body) {
         if (!rec.ts || Date.now() - Number(rec.ts) > ADMIN_MAX_AGE_MS) throw new HttpError(410, 'انتهت صلاحية الإشعار');
         await rtdb(env, 'admin_notifications/' + id, 'PATCH', { pushed: true });
         const nid = 'a:' + body.id;
-        const r = await sendToUser(env, env.ADMIN_UID, { id: nid, title: rec.title || 'زودني', body: rec.body || '', url: linkFor(env, nid, '') });
+        const r = await sendToUser(env, ADMIN, { id: nid, title: rec.title || 'زودني', body: rec.body || '', url: linkFor(env, nid, '') });
         return Object.assign({ ok: true }, r);
     }
 
@@ -275,7 +282,7 @@ export default {
         const path = new URL(req.url).pathname.replace(/\/+$/, '') || '/';
         try {
             if (req.method === 'GET' && path === '/') {
-                const configured = !!env.FIREBASE_SERVICE_ACCOUNT && !!env.ADMIN_UID;
+                const configured = !!env.FIREBASE_SERVICE_ACCOUNT && !!adminUid(env);
                 return reply(req, 200, { ok: true, service: 'zoodny-push', configured: configured });
             }
             if (req.method !== 'POST') throw new HttpError(405, 'Method not allowed');

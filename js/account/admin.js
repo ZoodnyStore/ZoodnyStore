@@ -15,8 +15,61 @@
     let adminListenerOn = false;
 
     // ── ADMIN PANEL ───────────────────────────────────────────────────────
-    $('adminHint').addEventListener('click', openAdminLogin);
-    if (window.location.hash === '#admin') openAdminLogin();
+    // ── الدخول المخفي للوحة المدير: 10 ضغطات سريعة على الشعار، أو ضغط مطوّل 4 ثوانٍ ──
+    (function setupSecretAdminEntry() {
+        var logo = document.querySelector('.navbar .logo');
+        if (!logo) return;
+        var TAPS = 10, TAP_GAP = 1200, HOLD_MS = 4000, MOVE_TOL = 12;
+        var taps = 0, lastTap = 0, holdTimer = null, startX = 0, startY = 0;
+        // بعد فتح النافذة بالضغط المطوّل: رفع الإصبع يولّد "ضغطة" على ما تحته (خلفية النافذة) فتُغلق فوراً
+        // ← نتجاهل أي ضغطة حتى رفع الإصبع وبعده بلحظة
+        var swallowUntil = 0;
+        document.addEventListener('click', function(e) {
+            if (Date.now() < swallowUntil) { e.preventDefault(); e.stopPropagation(); }
+        }, true);
+
+        function openEntry() {
+            taps = 0;
+            if (navigator.vibrate) { try { navigator.vibrate(40); } catch (e) {} }
+            // المدير مسجّل دخوله أصلاً ← اللوحة مباشرة، وإلا نافذة كلمة السر
+            if (typeof window.openAdminPanel === 'function') window.openAdminPanel();
+            else openAdminLogin();
+        }
+        function cancelHold() { if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; } }
+
+        // الضغطات المتتالية (أي توقف أطول من 1.2 ثانية يبدأ العد من جديد)
+        logo.addEventListener('click', function(e) {
+            var now = Date.now();
+            taps = (now - lastTap <= TAP_GAP) ? taps + 1 : 1;
+            lastTap = now;
+            if (taps >= TAPS) { e.preventDefault(); openEntry(); }
+        });
+
+        // الضغط المطوّل (إصبع على الهاتف أو زر الماوس على اللابتوب)
+        logo.addEventListener('pointerdown', function(e) {
+            if (e.button !== undefined && e.button > 0) return;
+            startX = e.clientX; startY = e.clientY;
+            cancelHold();
+            holdTimer = setTimeout(function() {
+                holdTimer = null;
+                swallowUntil = Infinity;
+                setTimeout(function() { if (swallowUntil === Infinity) swallowUntil = 0; }, 8000);   // حدّ أمان
+                openEntry();
+            }, HOLD_MS);
+        });
+        logo.addEventListener('pointermove', function(e) {
+            if (holdTimer && (Math.abs(e.clientX - startX) > MOVE_TOL || Math.abs(e.clientY - startY) > MOVE_TOL)) cancelHold();
+        });
+        ['pointerup', 'pointercancel', 'pointerleave'].forEach(function(ev) {
+            logo.addEventListener(ev, function() {
+                cancelHold();
+                if (swallowUntil === Infinity) swallowUntil = Date.now() + 600;
+            });
+        });
+        // منع قائمة "حفظ الصورة" وسحب الصورة عند الضغط المطوّل
+        logo.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+        logo.addEventListener('dragstart', function(e) { e.preventDefault(); });
+    })();
 
     $('adminEyeBtn').addEventListener('click', function() {
         var inp = $('adminPassInput');

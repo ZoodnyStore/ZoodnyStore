@@ -107,12 +107,16 @@
             var name = (uData && uData.name) || (user && user.email) || '';
             if (user && name) {
                 ub.classList.add('in');
-                ub.innerHTML = '<span class="mob-user-av">' + esc(name.trim().charAt(0).toUpperCase()) + '</span>';
+                // الاسم يظهر على اللابتوب فقط (على الهاتف دائرة الحرف الأول)
+                ub.innerHTML = '<span class="mob-user-av">' + esc(name.trim().charAt(0).toUpperCase()) + '</span>'
+                    + '<span class="mob-user-name">' + esc(name.trim().split(/\s+/)[0]) + '</span>';
                 ub.setAttribute('aria-label', 'حسابي: ' + name);
+                ub.title = 'حسابي';
             } else {
                 ub.classList.remove('in');
-                ub.innerHTML = '<i class="fas fa-user"></i>';
+                ub.innerHTML = '<i class="fas fa-user"></i><span class="mob-user-name">دخول / تسجيل</span>';
                 ub.setAttribute('aria-label', 'تسجيل الدخول');
+                ub.title = 'دخول / تسجيل';
             }
         }
     }

@@ -1461,13 +1461,8 @@
     .nav-content { display: flex; align-items: center; justify-content: flex-start; gap: .55rem; padding: 0 .2rem; }
     .navbar .logo { order: 1; margin: 0 !important; flex-shrink: 0; }
     .navbar .logo img { width: 44px !important; height: 44px !important; }
-    .mob-wallet {
-        order: 2; display: inline-flex; align-items: center; gap: .4rem; flex-shrink: 0;
-        background: linear-gradient(135deg, #1a8a4a, #27ae60); color: #fff; border: 1.5px solid rgba(255,255,255,.22);
-        border-radius: 20px; padding: .32rem .75rem; font-family: 'Cairo', sans-serif; font-size: .82rem; font-weight: 800;
-        box-shadow: 0 3px 12px rgba(39,174,96,.35); cursor: pointer; direction: ltr; white-space: nowrap;
-    }
-    .mob-wallet i { font-size: .8rem; opacity: .9; }
+    .mob-wallet { order: 2; padding: .32rem .75rem; font-size: .82rem; }
+    .mob-user-name { display: none; }
     .nav-actions { order: 3; margin-right: auto; gap: .95rem; }
     #mobileCartIcon { display: block !important; margin: 0 !important; }
     /* ترتيب ثابت في كل المقاسات (قاعدة قديمة عند 480px كانت تغيّر ترتيب السلة) */
@@ -1496,3 +1491,46 @@
 /* ══ إلغاء السلة: الطلب مباشر من زر "طلب" (js/store/direct-order.js) ══ */
 .cart-icon-container, #mobileCartIcon, .nav-links .cart-icon-container,
 #cartSidebar, #cartOverlay { display: none !important; }
+
+/* ══ المحفظة بلون المتجر الذهبي (هاتف + لابتوب) ══ */
+.mob-wallet {
+    align-items: center; gap: .4rem; flex-shrink: 0; cursor: pointer; direction: ltr; white-space: nowrap;
+    background: linear-gradient(135deg, #F7C873, #e9b14a); color: var(--primary, #2A3F54);
+    border: 1.5px solid rgba(255,255,255,.35); border-radius: 22px;
+    font-family: 'Cairo', sans-serif; font-weight: 800;
+    box-shadow: 0 3px 14px rgba(247,200,115,.45); transition: transform .2s, box-shadow .2s;
+}
+.mob-wallet:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(247,200,115,.6); }
+.mob-wallet i { font-size: .82rem; opacity: .85; }
+@media (max-width: 768px) { .mob-wallet { display: inline-flex; } }
+
+/* ══ تنسيق اللابتوب: الشعار + المحفظة يميناً، القوائم في المنتصف، الإشعارات + الحساب يساراً ══ */
+@media (min-width: 769px) {
+    .nav-content { display: flex; align-items: center; gap: 1.1rem; }
+    .navbar .logo { order: 1; margin: 0 !important; flex-shrink: 0; }
+    .mob-wallet { order: 2; display: inline-flex; padding: .42rem 1rem; font-size: .92rem; }
+    .nav-links { order: 3; flex: 1; justify-content: center; }
+    .nav-actions { order: 4; gap: 1.1rem; flex-shrink: 0; }
+    /* أزرار الحساب القديمة داخل القائمة — حلّ محلها زرا المحفظة والحساب */
+    #__authNavBtn, #__walletNavWrap, #__userDropDown { display: none !important; }
+    .nav-actions #notifBell { order: 1; }
+    .nav-actions #mobUserBtn { order: 3; }
+    .mob-user-btn {
+        display: inline-flex; align-items: center; gap: .5rem; height: 40px; padding: 0 1rem 0 .9rem;
+        border-radius: 22px; border: 1.5px solid var(--secondary); background: rgba(247,200,115,.08);
+        color: var(--secondary); font-family: 'Cairo', sans-serif; font-weight: 700; font-size: .9rem;
+        cursor: pointer; white-space: nowrap; transition: background .2s;
+    }
+    .mob-user-btn:hover { background: rgba(247,200,115,.18); }
+    .mob-user-btn.in { padding: 0 1rem 0 .3rem; }
+    .mob-user-btn .mob-user-av {
+        width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg, var(--secondary), #f9d99a); color: var(--primary); font-weight: 900; font-size: .95rem; flex-shrink: 0;
+    }
+    .mob-user-name { display: inline; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (min-width: 769px) and (max-width: 1100px) {
+    .nav-links { gap: 1.3rem !important; }
+    .nav-links a { font-size: .95rem; }
+    .mob-user-name { max-width: 80px; }
+}

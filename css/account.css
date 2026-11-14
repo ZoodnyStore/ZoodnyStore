@@ -1438,3 +1438,26 @@
 .ws-wa i{font-size:1.2rem}
 .ws-later{display:block;width:100%;margin-top:.5rem;padding:.6rem;border:none;border-radius:12px;background:#f2f4f7;color:#555;font-weight:700;font-family:inherit;cursor:pointer}
 .ws-never{display:block;margin:.8rem auto 0;background:none;border:none;color:#aaa;font-size:.75rem;text-decoration:underline;cursor:pointer;font-family:inherit}
+
+/* ══ متطلبات المنتج: نافذة طلب معلومة من الزبون ══ */
+.req-ov{position:fixed;inset:0;z-index:6000;background:rgba(15,25,35,.55);display:flex;align-items:center;justify-content:center;padding:1rem;animation:notifIn .2s ease-out}
+.req-box{background:#fff;border-radius:18px;width:min(430px,100%);padding:1.2rem 1.2rem 1rem;box-shadow:0 20px 60px rgba(0,0,0,.3);direction:rtl;font-family:'Cairo',sans-serif}
+.req-head{display:flex;align-items:center;gap:.75rem;margin-bottom:.9rem}
+.req-ic{flex-shrink:0;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--secondary),#f9d99a);color:var(--primary);font-size:1.15rem}
+.req-kicker{font-size:.75rem;color:#8a96a3}
+.req-prod{font-weight:800;color:var(--primary);font-size:1rem;line-height:1.5}
+.req-note{background:#fff8e6;border:1px dashed #f0b429;border-radius:10px;padding:.5rem .7rem;font-size:.8rem;color:#7a5a00;margin-bottom:.8rem;line-height:1.6}
+.req-label{display:block;font-weight:700;font-size:.88rem;color:#333;margin-bottom:.4rem}
+.req-star{color:#e74c3c}
+.req-input{width:100%;padding:.75rem .9rem;border:2px solid #dde3ea;border-radius:12px;font-size:.95rem;font-family:'Cairo',sans-serif;transition:border-color .2s}
+.req-input:focus{outline:none;border-color:var(--secondary)}
+.req-input.has-error{border-color:#e74c3c;background:#fff6f6}
+.req-help{margin-top:.4rem;font-size:.78rem;color:#777;line-height:1.6}
+.req-err{min-height:1.1em;margin-top:.35rem;font-size:.8rem;color:#e74c3c;font-weight:700}
+.req-btns{display:flex;gap:.5rem;margin-top:.6rem}
+.req-ok{flex:1;padding:.75rem;border:none;border-radius:12px;background:var(--primary);color:#fff;font-weight:800;font-family:inherit;font-size:.92rem;cursor:pointer}
+.req-cancel{padding:.75rem 1.1rem;border:none;border-radius:12px;background:#f2f4f7;color:#555;font-weight:700;font-family:inherit;cursor:pointer}
+.cart-req{margin-top:.2rem;font-size:.78rem;color:#555;background:#fff8e6;border-radius:8px;padding:.2rem .5rem;word-break:break-all;line-height:1.6}
+.cart-req i{color:#d4a800}
+.cart-req.missing{background:#fdecec;color:#c0392b;cursor:pointer;font-weight:700}
+.cart-req.missing i{color:#e74c3c}

@@ -526,6 +526,7 @@ function restoreBottomNav() {
                 if (i.category === 'rased')             { obj.phoneNumber = i.phoneNumber||''; obj.creditValue = i.creditValue||''; }
                 if (i.category === 'social-media')      { obj.customQuantity = i.customQuantity||300; obj.socialLink = i.socialLink||''; }
                 if (i.category === 'تفعيلات بريميوم') { obj.premiumInput = i.premiumInput||''; }
+                if (i.reqValue) { obj.reqType = i.reqType || 'text'; obj.reqLabel = i.reqLabel || 'المعلومة المطلوبة'; obj.reqValue = i.reqValue; }
                 items[key] = obj;
             });
             var uid    = (typeof auth !== 'undefined' && auth.currentUser) ? auth.currentUser.uid : '';

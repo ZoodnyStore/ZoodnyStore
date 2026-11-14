@@ -344,6 +344,10 @@
         var link = it.socialLink || it.accountUrl;
         if (link)            keys.push(keyField('fa-link', 'رابط الحساب', link));
         if (it.premiumInput) keys.push(keyField('fa-key', 'البريد / بيانات الاشتراك', it.premiumInput));
+        if (it.reqValue) {
+            var reqIcons = { link: 'fa-link', text: 'fa-font', email: 'fa-envelope', phone: 'fa-phone', number: 'fa-hashtag' };
+            keys.push(keyField(reqIcons[it.reqType] || 'fa-info-circle', esc(it.reqLabel || 'المعلومة المطلوبة'), it.reqValue));
+        }
 
         var info = [];
         if (it.gameValue)      info.push('<span><i class="fas fa-coins"></i> الفئة: <b>' + esc(it.gameValue) + '</b></span>');
@@ -368,7 +372,7 @@
         var c = orderClient(o);
         var parts = [o._key, o.orderId, o.uid, c.name, c.email, c.phone, o.accountUrl, o.city];
         orderItems(o).forEach(function(it) {
-            parts.push(it.productName, it.name, it.playerId, it.phoneNumber, it.socialLink, it.accountUrl, it.premiumInput, it.gameValue, it.appValue);
+            parts.push(it.productName, it.name, it.playerId, it.phoneNumber, it.socialLink, it.accountUrl, it.premiumInput, it.gameValue, it.appValue, it.reqValue);
         });
         return parts.join(' ').toLowerCase().indexOf(q) !== -1;
     }

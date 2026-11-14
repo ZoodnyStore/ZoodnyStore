@@ -13,6 +13,24 @@
             .replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
+    // ── "متطلبات المنتج": معلومة يجب أن يرسلها الزبون عند الطلب (رابط، إيميل، رقم...) ──
+    var PMG_REQ_OPTIONS = [
+        ['', 'لا — لا يحتاج شيئاً من الزبون'],
+        ['link', 'نعم — رابط (مثل رابط حساب أو منشور)'],
+        ['text', 'نعم — نص (مثل اسم مستخدم)'],
+        ['email', 'نعم — بريد إلكتروني'],
+        ['phone', 'نعم — رقم هاتف'],
+        ['number', 'نعم — رقم / معرّف (أرقام فقط)']
+    ];
+    function pmgReqFields(scopeNote) {
+        return [
+            { key: 'reqType', label: 'هل يحتاج المنتج معلومة من الزبون عند الطلب؟' + (scopeNote || ''), type: 'select', options: function () { return PMG_REQ_OPTIONS; } },
+            { key: 'reqLabel', label: 'ماذا تطلب من الزبون؟ (مثال: رابط حساب الإنستغرام)', type: 'text', showIfField: 'reqType' },
+            { key: 'reqPlaceholder', label: 'مثال يظهر داخل الحقل — اختياري (مثال: https://instagram.com/username)', type: 'text', showIfField: 'reqType' },
+            { key: 'reqHelp', label: 'ملاحظة توضيحية للزبون — اختياري', type: 'text', showIfField: 'reqType' }
+        ];
+    }
+
     var PMG_SOURCES = [
         {
             key: 'products', label: 'منتجات عامة (إكسسوارات، أرقام، اشتراكات فردية...)',
@@ -33,7 +51,7 @@
                 { key: 'inputLabel', label: 'نص حقل الإدخال (مثل: الإيميل)', type: 'text', showFor: ['برامج التصميم'] },
                 { key: 'description', label: 'الوصف', type: 'textarea' },
                 { key: 'image', label: 'اسم ملف الصورة', type: 'text' }
-            ]
+            ].concat(pmgReqFields(''))
         },
         {
             key: 'appsData', label: 'شحن التطبيقات (عملات داخل التطبيق)',
@@ -49,7 +67,7 @@
                 { key: 'wholesaleUnitPrice', label: 'سعر الوحدة بالجملة ($) — اختياري', type: 'number', wholesaleOf: 'unitPrice' },
                 { key: 'minQuantity', label: 'الحد الأدنى للكمية', type: 'number' },
                 { key: 'maxQuantity', label: 'الحد الأقصى للكمية', type: 'number' }
-            ]
+            ].concat(pmgReqFields(''))
         },
         {
             key: 'gamesData', label: 'شحن الألعاب',
@@ -60,7 +78,7 @@
                 { key: 'description', label: 'الوصف', type: 'textarea' },
                 { key: 'image', label: 'اسم ملف الصورة', type: 'text' },
                 { key: 'inputLabel', label: 'نص حقل الإدخال', type: 'text' }
-            ],
+            ].concat(pmgReqFields('')),
             subList: {
                 key: 'amounts', label: 'فئات الشحن (الكمية / السعر / النص المعروض)',
                 fields: [
@@ -82,7 +100,7 @@
                 { key: 'inputLabel', label: 'نص حقل الإدخال', type: 'text' },
                 { key: 'inputPlaceholder', label: 'نص توضيحي لحقل الإدخال', type: 'text' },
                 { key: 'inputHelp', label: 'شرح مساعد لحقل الإدخال', type: 'text' }
-            ],
+            ].concat(pmgReqFields(' (لكل باقات هذه المجموعة)')),
             subList: {
                 key: 'products', label: 'الباقات والأسعار',
                 fields: [
@@ -101,7 +119,7 @@
                 { key: 'category', label: 'التصنيف (Category)', type: 'category', required: true, default: 'اشتراكات VPN' },
                 { key: 'description', label: 'الوصف', type: 'textarea' },
                 { key: 'image', label: 'اسم ملف الصورة', type: 'text' }
-            ],
+            ].concat(pmgReqFields(' (لكل باقات هذه المجموعة)')),
             subList: {
                 key: 'products', label: 'الباقات والأسعار',
                 fields: [
@@ -120,7 +138,7 @@
                 { key: 'category', label: 'التصنيف (Category)', type: 'category', required: true, default: 'الدفع الالكتروني' },
                 { key: 'description', label: 'الوصف', type: 'textarea' },
                 { key: 'image', label: 'اسم ملف الصورة', type: 'text' }
-            ],
+            ].concat(pmgReqFields(' (لكل باقات هذه المجموعة)')),
             subList: {
                 key: 'products', label: 'الباقات والأسعار',
                 fields: [
@@ -352,10 +370,15 @@
         var wrap = $('pmgFieldsWrap');
         var catEl = wrap.querySelector('[data-field="category"]');
         var cat = catEl ? catEl.value.trim() : '';
-        Array.prototype.forEach.call(wrap.querySelectorAll('.pmg-field[data-show-for], .pmg-field[data-hide-for]'), function (box) {
+        Array.prototype.forEach.call(wrap.querySelectorAll('.pmg-field[data-show-for], .pmg-field[data-hide-for], .pmg-field[data-show-if-field]'), function (box) {
             var show = true;
             if (box.dataset.showFor) show = box.dataset.showFor.split('|').indexOf(cat) !== -1;
             if (box.dataset.hideFor && box.dataset.hideFor.split('|').indexOf(cat) !== -1) show = false;
+            // حقول تظهر فقط عند اختيار قيمة في حقل آخر (مثل: تفاصيل "متطلبات المنتج")
+            if (box.dataset.showIfField) {
+                var dep = wrap.querySelector('[data-field="' + box.dataset.showIfField + '"]');
+                if (!dep || !String(dep.value || '').trim()) show = false;
+            }
             box.style.display = show ? '' : 'none';
         });
     }
@@ -381,7 +404,8 @@
             var val = item ? (item[f.key] !== undefined && item[f.key] !== null ? item[f.key] : '')
                            : (preset[f.key] !== undefined && preset[f.key] !== null ? preset[f.key] : (f.default !== undefined ? f.default : ''));
             var cond = (f.showFor ? ' data-show-for="' + pmgEsc(f.showFor.join('|')) + '"' : '') +
-                       (f.hideFor ? ' data-hide-for="' + pmgEsc(f.hideFor.join('|')) + '"' : '');
+                       (f.hideFor ? ' data-hide-for="' + pmgEsc(f.hideFor.join('|')) + '"' : '') +
+                       (f.showIfField ? ' data-show-if-field="' + pmgEsc(f.showIfField) + '"' : '');
             var open = '<div class="pmg-field"' + cond + '><label>' + f.label + '</label>';
             if (f.type === 'textarea') {
                 return open + '<textarea data-field="' + f.key + '">' + pmgEsc(val) + '</textarea></div>';
@@ -408,6 +432,12 @@
         pmgWireImageField();
         var catInput = $('pmgFieldsWrap').querySelector('[data-field="category"]');
         if (catInput) catInput.addEventListener('input', pmgApplyFieldVisibility);
+        var reqSel = $('pmgFieldsWrap').querySelector('[data-field="reqType"]');
+        if (reqSel) reqSel.addEventListener('change', function () {
+            pmgApplyFieldVisibility();
+            var lbl = $('pmgFieldsWrap').querySelector('[data-field="reqLabel"]');
+            if (reqSel.value && lbl && !lbl.value.trim()) lbl.focus();
+        });
         pmgApplyFieldVisibility();
 
         var subWrap = $('pmgSubListWrap');
@@ -999,6 +1029,11 @@
                 values[f.key] = v;
             });
             if (badField) { alert('قيمة غير صحيحة في حقل: ' + badField + '\nاكتب رقماً صحيحاً (مثال: 2.5)'); return; }
+            if (values.reqType && !values.reqLabel) {
+                alert('اخترت أن المنتج يحتاج معلومة من الزبون — اكتب ماذا تطلب منه (مثال: رابط حساب الإنستغرام)');
+                var rl = $('pmgFieldsWrap').querySelector('[data-field="reqLabel"]'); if (rl) rl.focus();
+                return;
+            }
 
             var subArr = null;
             if (src.subList) {

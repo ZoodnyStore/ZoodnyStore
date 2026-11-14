@@ -792,6 +792,12 @@ function submitShamCashOrder(customerData) {
         } else if (item.category === 'تفعيلات بريميوم') {
             base.premiumInput = item.premiumInput || '';
         }
+        // معلومة يطلبها المنتج من الزبون (رابط/إيميل/رقم...) — من requirements.js
+        if (item.reqValue) {
+            base.reqType  = item.reqType  || 'text';
+            base.reqLabel = item.reqLabel || 'المعلومة المطلوبة';
+            base.reqValue = item.reqValue;
+        }
         return base;
     });
 

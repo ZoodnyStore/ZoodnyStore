@@ -662,6 +662,7 @@
                 if (it.accountUrl)     extras.push('<span style="direction:ltr;display:inline-block"><i class="fas fa-link"></i> ' + it.accountUrl + '</span>');
                 if (it.socialLink)     extras.push('<span style="direction:ltr;display:inline-block"><i class="fas fa-link"></i> ' + it.socialLink + '</span>');
                 if (it.premiumInput)   extras.push('<span><i class="fas fa-envelope"></i> البريد/البيانات المُدخلة: <b>' + it.premiumInput + '</b></span>');
+                if (it.reqValue)       extras.push('<span style="direction:rtl"><i class="fas fa-info-circle"></i> ' + esc(it.reqLabel || 'المعلومة') + ': <b dir="auto">' + esc(it.reqValue) + '</b></span>');
                 return extras;
             }
 

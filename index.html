@@ -979,7 +979,10 @@
     <div class="adm-dashboard" id="adminDashboard">
         <div class="adm-topbar">
             <div class="adm-topbar-title"><i class="fas fa-tachometer-alt"></i> لوحة تحكم المدير — زودني</div>
-            <button class="adm-close-btn" id="adminDashClose"><i class="fas fa-times"></i> خروج</button>
+            <div class="adm-topbar-btns">
+                <button class="adm-close-btn" id="admPwBtn" title="تغيير كلمة السر"><i class="fas fa-key"></i> <span class="adm-btn-txt">كلمة السر</span></button>
+                <button class="adm-close-btn" id="adminDashClose"><i class="fas fa-times"></i> خروج</button>
+            </div>
         </div>
         <div class="adm-tabs">
             <div class="adm-tab active" data-panel="topups"><i class="fas fa-wallet"></i> شحن الرصيد</div>
@@ -1042,6 +1045,30 @@
                     <thead><tr><th>الاسم</th><th>الإيميل</th><th>الهاتف</th><th>الرصيد</th><th>الطلبات</th><th>المشتريات</th><th>تاريخ التسجيل</th><th>إجراء</th></tr></thead>
                     <tbody id="usersBody"><tr><td colspan="8" class="adm-no-data"><i class="fas fa-spinner fa-spin"></i></td></tr></tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- ══ نافذة تغيير كلمة سر المدير ══ -->
+        <div class="adm-user-ov" id="admPwOv">
+            <div class="adm-pw-modal" role="dialog" aria-modal="true" aria-labelledby="admPwTitle">
+                <div class="adm-user-head">
+                    <div class="adm-user-title" id="admPwTitle"><i class="fas fa-key"></i> تغيير كلمة سر المدير</div>
+                    <button class="adm-user-close" id="admPwClose" aria-label="إغلاق"><i class="fas fa-times"></i></button>
+                </div>
+                <form class="adm-pw-body" id="admPwForm" autocomplete="off">
+                    <input type="text" name="username" value="admin@zoodny.com" autocomplete="username" hidden>
+                    <div class="pmg-field"><label for="admPwCur">كلمة السر الحالية</label>
+                        <div class="adm-pw-wrap"><input type="password" id="admPwCur" autocomplete="current-password"><button type="button" class="adm-pw-eye" data-for="admPwCur" aria-label="إظهار"><i class="fas fa-eye"></i></button></div></div>
+                    <div class="pmg-field"><label for="admPwNew">كلمة السر الجديدة</label>
+                        <div class="adm-pw-wrap"><input type="password" id="admPwNew" autocomplete="new-password"><button type="button" class="adm-pw-eye" data-for="admPwNew" aria-label="إظهار"><i class="fas fa-eye"></i></button></div>
+                        <div class="adm-pw-meter"><span id="admPwBar"></span></div>
+                        <div class="adm-pw-hint" id="admPwHint">8 أحرف على الأقل — يُفضّل خلط حروف وأرقام ورموز</div></div>
+                    <div class="pmg-field"><label for="admPwNew2">تأكيد كلمة السر الجديدة</label>
+                        <div class="adm-pw-wrap"><input type="password" id="admPwNew2" autocomplete="new-password"><button type="button" class="adm-pw-eye" data-for="admPwNew2" aria-label="إظهار"><i class="fas fa-eye"></i></button></div></div>
+                    <div class="adm-pw-msg" id="admPwMsg"></div>
+                    <button type="submit" class="pmg-save-btn" id="admPwSave"><i class="fas fa-check"></i> تغيير كلمة السر</button>
+                    <div class="adm-pw-note"><i class="fas fa-info-circle"></i> بعد التغيير ستحتاج كلمة السر الجديدة لدخول لوحة المدير من أي جهاز.</div>
+                </form>
             </div>
         </div>
 

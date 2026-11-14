@@ -873,6 +873,91 @@
         if (openUserKey === uid) closeUserModal();
     };
 
+    // ── تغيير كلمة سر المدير ─────────────────────────────────────────────
+    // نفس حساب Firebase (لا يتغير المعرّف UID ولا القواعد). Firebase يطلب التحقق بكلمة السر الحالية أولاً.
+    function pwScore(p) {
+        var s = 0;
+        if (p.length >= 8) s++;
+        if (p.length >= 12) s++;
+        if (/[a-z؀-ۿ]/i.test(p) && /[0-9]/.test(p)) s++;
+        if (/[^A-Za-z0-9؀-ۿ]/.test(p) || (/[a-z]/.test(p) && /[A-Z]/.test(p))) s++;
+        return s;   // 0..4
+    }
+    function pwMsg(text, ok) {
+        var el = $('admPwMsg');
+        el.className = 'adm-pw-msg ' + (ok ? 'ok' : 'err');
+        el.textContent = text;
+    }
+    function openPwModal() {
+        ['admPwCur', 'admPwNew', 'admPwNew2'].forEach(function(id) { $(id).value = ''; $(id).type = 'password'; });
+        document.querySelectorAll('.adm-pw-eye i').forEach(function(i) { i.className = 'fas fa-eye'; });
+        $('admPwMsg').textContent = ''; $('admPwMsg').className = 'adm-pw-msg';
+        $('admPwBar').style.width = '0'; $('admPwBar').className = '';
+        $('admPwOv').classList.add('on');
+        setTimeout(function() { $('admPwCur').focus(); }, 100);
+    }
+    function closePwModal() { $('admPwOv').classList.remove('on'); }
+
+    if ($('admPwBtn')) {
+        $('admPwBtn').addEventListener('click', openPwModal);
+        $('admPwClose').addEventListener('click', closePwModal);
+        $('admPwOv').addEventListener('click', function(e) { if (e.target === this) closePwModal(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && $('admPwOv').classList.contains('on')) closePwModal(); });
+        document.querySelectorAll('.adm-pw-eye').forEach(function(b) {
+            b.addEventListener('click', function() {
+                var inp = $(b.getAttribute('data-for'));
+                var show = inp.type === 'password';
+                inp.type = show ? 'text' : 'password';
+                b.querySelector('i').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+            });
+        });
+        $('admPwNew').addEventListener('input', function() {
+            var sc = pwScore(this.value);
+            var labels = ['ضعيفة جداً', 'ضعيفة', 'متوسطة', 'جيدة', 'قوية'];
+            $('admPwBar').style.width = (this.value ? Math.max(1, sc) * 25 : 0) + '%';
+            $('admPwBar').className = 's' + sc;
+            $('admPwHint').textContent = this.value ? ('قوة كلمة السر: ' + labels[sc] + (this.value.length < 8 ? ' — يجب 8 أحرف على الأقل' : '')) : '8 أحرف على الأقل — يُفضّل خلط حروف وأرقام ورموز';
+        });
+
+        $('admPwForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var cur = $('admPwCur').value, nw = $('admPwNew').value, nw2 = $('admPwNew2').value;
+            if (!cur) { pwMsg('اكتب كلمة السر الحالية'); $('admPwCur').focus(); return; }
+            if (nw.length < 8) { pwMsg('كلمة السر الجديدة يجب أن تكون 8 أحرف على الأقل'); $('admPwNew').focus(); return; }
+            if (nw !== nw2) { pwMsg('تأكيد كلمة السر غير مطابق'); $('admPwNew2').focus(); return; }
+            if (nw === cur) { pwMsg('كلمة السر الجديدة مطابقة للحالية — اختر كلمة مختلفة'); $('admPwNew').focus(); return; }
+            var user = auth.currentUser;
+            if (!isAdminSignedIn()) { pwMsg('انتهت جلسة المدير — سجّل الدخول مجدداً'); return; }
+            var btn = $('admPwSave');
+            btn.disabled = true;
+            pwMsg('جاري التغيير...', true);
+            var cred = firebase.auth.EmailAuthProvider.credential(user.email, cur);
+            user.reauthenticateWithCredential(cred)
+                .then(function() { return user.updatePassword(nw); })
+                .then(function() {
+                    pwMsg('✓ تم تغيير كلمة السر بنجاح. استخدم الجديدة في المرة القادمة.', true);
+                    ['admPwCur', 'admPwNew', 'admPwNew2'].forEach(function(id) { $(id).value = ''; });
+                    balToast('✓ تم تغيير كلمة سر المدير', true);
+                    setTimeout(closePwModal, 2200);
+                })
+                .catch(function(err) {
+                    var code = (err && err.code) || '';
+                    var map = {
+                        'auth/wrong-password': 'كلمة السر الحالية غير صحيحة',
+                        'auth/invalid-credential': 'كلمة السر الحالية غير صحيحة',
+                        'auth/invalid-login-credentials': 'كلمة السر الحالية غير صحيحة',
+                        'auth/weak-password': 'كلمة السر الجديدة ضعيفة — اختر كلمة أطول وأقوى',
+                        'auth/too-many-requests': 'محاولات كثيرة — انتظر قليلاً ثم حاول مجدداً',
+                        'auth/requires-recent-login': 'انتهت صلاحية الجلسة — اخرج وادخل مجدداً ثم حاول',
+                        'auth/network-request-failed': 'تعذّر الاتصال — تأكد من الإنترنت'
+                    };
+                    pwMsg(map[code] || ('فشل التغيير: ' + (err && err.message ? err.message : err)));
+                    if (/wrong-password|invalid-credential|invalid-login/.test(code)) { $('admPwCur').value = ''; $('admPwCur').focus(); }
+                })
+                .then(function() { btn.disabled = false; });
+        });
+    }
+
     // ── إرسال إشعار لكل العملاء (إعلانات) ───────────────────────────────
     var adminBroadcasts = [];
     var bcTemplates = {

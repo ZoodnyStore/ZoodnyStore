@@ -146,7 +146,7 @@ menuOverlay.className = 'menu-overlay';
 document.body.appendChild(menuOverlay);
 
 function checkMobileScreen() {
-    if (window.innerWidth <= 480) {
+    if (window.innerWidth <= 768) {   // نفس حدّ تصميم الهاتف في CSS
         mobileCartIcon.style.display = 'block';
         document.querySelectorAll('.nav-links .cart-icon-container').forEach(el => {
             el.style.display = 'none';

@@ -98,7 +98,31 @@
     }
 
     // ── inject navbar buttons ────────────────────────────────────────────
+    // ── رأس الهاتف: المحفظة بجانب الشعار + أيقونة الحساب ────────────────
+    function updateMobileHeader(user, uData) {
+        var w = $('mobWallet'), amt = $('mobWalletAmt'), ub = $('mobUserBtn');
+        if (w) w.style.display = user ? '' : 'none';
+        if (amt) amt.textContent = ((uData && parseFloat(uData.balance)) || 0).toFixed(2) + '$';
+        if (ub) {
+            var name = (uData && uData.name) || (user && user.email) || '';
+            if (user && name) {
+                ub.classList.add('in');
+                ub.innerHTML = '<span class="mob-user-av">' + esc(name.trim().charAt(0).toUpperCase()) + '</span>';
+                ub.setAttribute('aria-label', 'حسابي: ' + name);
+            } else {
+                ub.classList.remove('in');
+                ub.innerHTML = '<i class="fas fa-user"></i>';
+                ub.setAttribute('aria-label', 'تسجيل الدخول');
+            }
+        }
+    }
+    if ($('mobWallet')) $('mobWallet').onclick = function() { openWallet(); };
+    if ($('mobUserBtn')) $('mobUserBtn').onclick = function() {
+        if (currentUser) openAccountModal(); else openAuth('login');
+    };
+
     function buildNavButtons(user, uData) {
+        updateMobileHeader(user, uData);
         // remove old injected elements
         ['__authNavBtn','__walletNavWrap','__userDropDown'].forEach(function(id){
             var el = $(id); if (el) el.remove();
@@ -409,9 +433,9 @@
         var bal = getBalance();
         var el = $('walletNavBal');
         if (el) el.textContent = bal.toFixed(2) + '$';
-        // Update floating badge
-        var fbalAmt = $('floatingBalAmt');
-        if (fbalAmt) fbalAmt.textContent = bal.toFixed(2) + '$';
+        // رأس الهاتف
+        var mob = $('mobWalletAmt');
+        if (mob) mob.textContent = bal.toFixed(2) + '$';
         // Update user menu balance
         var um = $('__userMenu');
         if (um) {

@@ -490,109 +490,131 @@ function restoreBottomNav() {
         paymentModal.classList.add('active');
     }
 
+    // ── إتمام الطلب (من محتوى cart الحالي): فحص الرصيد ← حفظ الطلب ← خصم الرصيد ← نافذة النجاح ──
+    // يُرجع Promise بالنتيجة: { ok:true, orderId, total } أو { ok:false, reason:'empty'|'login'|'balance'|'error', bal, total }
+    // تستخدمه نافذة التأكيد، ونظام الطلب المباشر (direct-order.js).
+    function finishOrder(total) {
+        var orderId    = 'ORD-' + Date.now();
+        var totalPrice = total;
+        var orderDate  = new Date().toLocaleString('ar-SY');
+        var items = {};
+        cart.forEach(function(i, idx) {
+            var key = 'item_' + (idx + 1);
+            var obj = {
+                productName: i.name,
+                price:       i.price,
+                quantity:    i.quantity || 1,
+                totalItem:   parseFloat((i.price * (i.quantity || 1)).toFixed(2)),
+                category:    i.category
+            };
+            if (i.category === 'games')             { obj.playerId = i.playerId||''; obj.gameValue = i.gameDisplay||i.gameValue||''; }
+            if (i.category === 'app')               { obj.playerId = i.playerId||''; obj.appValue  = i.appValue||''; }
+            if (i.category === 'rased')             { obj.phoneNumber = i.phoneNumber||''; obj.creditValue = i.creditValue||''; }
+            if (i.category === 'social-media')      { obj.customQuantity = i.customQuantity||300; obj.socialLink = i.socialLink||''; }
+            if (i.category === 'تفعيلات بريميوم') { obj.premiumInput = i.premiumInput||''; }
+            if (i.reqValue) { obj.reqType = i.reqType || 'text'; obj.reqLabel = i.reqLabel || 'المعلومة المطلوبة'; obj.reqValue = i.reqValue; }
+            items[key] = obj;
+        });
+        var uid    = (typeof auth !== 'undefined' && auth.currentUser) ? auth.currentUser.uid : '';
+        var uname  = (typeof userData !== 'undefined' && userData) ? (userData.name  || '') : '';
+        var uphone = (typeof userData !== 'undefined' && userData) ? (userData.phone || '') : '';
+        var uemail = (typeof userData !== 'undefined' && userData) ? (userData.email || '') : '';
+        if (typeof auth !== 'undefined' && auth.currentUser) {
+            if (!uemail) uemail = auth.currentUser.email || '';
+            if (!uname)  uname  = auth.currentUser.displayName || '';
+        }
+
+        // ── 1. إغلاق نافذة التأكيد إن كانت مفتوحة ──
+        var pm = document.getElementById('paymentModal');
+        if (pm) { pm.style.cssText = 'display:none !important'; pm.classList.remove('active'); }
+
+        // ── 2. عرض نافذة النجاح ──
+        document.getElementById('orderSuccessId').textContent    = orderId;
+        document.getElementById('orderSuccessTotal').textContent = totalPrice.toFixed(2) + '$';
+        var ov = document.getElementById('orderSuccessOv');
+        var mo = document.getElementById('orderSuccessModal');
+        if (ov) { ov.style.display = 'block'; ov.classList.add('on'); }
+        if (mo) { mo.style.opacity = '1'; mo.style.pointerEvents = 'all'; mo.style.transform = 'translate(-50%,-50%) scale(1)'; mo.classList.add('on'); }
+
+        // ── 3. تفريغ السلة الداخلية ──
+        cart = [];
+        hasSocialMediaProduct = false;
+        hasCreditProduct = false;
+        hasGameProduct = false;
+        hasAppProduct = false;
+        hasPremiumProduct = false;
+        localStorage.removeItem('zoodnyCart');
+        updateCartUI();
+        try { cartSidebar.classList.remove('active'); cartOverlay.classList.remove('active'); restoreBottomNav(); } catch(e){}
+        try { customerForm.reset(); } catch(e){}
+        try { socialMediaFields.classList.remove('active'); } catch(e){}
+
+        // ── 4. حفظ في Firebase ──
+        if (typeof db !== 'undefined' && uid) {
+            db.ref('store_orders/' + orderId).set({
+                orderId:orderId, uid:uid, name:uname, phone:uphone, email:uemail,
+                city:'غير محدد', items:items, total:totalPrice,
+                paymentMethod:'wallet', date:orderDate, status:'pending', ts:Date.now()
+            });
+            if (typeof notifyAdminNewOrder === 'function') {
+                notifyAdminNewOrder(orderId, uname, Object.keys(items).map(function(k){ return items[k]; }), totalPrice);
+            }
+            db.ref('users/'+uid+'/orders/'+orderId).set({ orderId:orderId, date:orderDate, total:totalPrice, status:'pending' });
+            db.ref('users/'+uid+'/ordersCount').transaction(function(c){ return (c||0)+1; });
+            db.ref('users/'+uid+'/balance').transaction(function(cur){ var n=(parseFloat(cur)||0)-totalPrice; return n<0?0:Math.round(n*100)/100; });
+            db.ref('users/'+uid+'/transactions/TX-'+Date.now()).set({
+                desc:'دفع طلب '+orderId, date:orderDate,
+                amount:totalPrice, type:'debit', orderId:orderId, txCategory:'order', ts:Date.now()
+            });
+        }
+        return { ok: true, orderId: orderId, total: totalPrice };
+    }
+
+    var _placing = false;
+    window.zoodnyPlaceOrder = function() {
+        return new Promise(function(resolve) {
+            var total = cart.reduce(function(s, i) { return s + (i.price * (i.quantity || 1)); }, 0);
+            total = Math.round(total * 100) / 100;
+            if (!cart.length) { resolve({ ok: false, reason: 'empty' }); return; }
+            // لا طلب بدون المعلومة التي يطلبها المنتج (رابط/إيميل/...) — حماية مهما كان مصدر الضغط
+            var getReq = window.zoodnyGetProductReq;
+            if (typeof getReq === 'function' && cart.some(function(l) { return getReq(l) && !l.reqValue; })) {
+                resolve({ ok: false, reason: 'missing' }); return;
+            }
+            if (typeof auth === 'undefined' || !auth.currentUser) { resolve({ ok: false, reason: 'login', total: total }); return; }
+            if (_placing) { resolve({ ok: false, reason: 'busy' }); return; }
+            _placing = true;
+            db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
+                var bal = parseFloat(snap.val() || 0);
+                if (typeof userData !== 'undefined' && userData) userData.balance = bal;
+                _placing = false;
+                if (bal < total) { resolve({ ok: false, reason: 'balance', bal: bal, total: total }); return; }
+                try { resolve(finishOrder(total)); }
+                catch (e) { console.error('finishOrder', e); resolve({ ok: false, reason: 'error', error: e }); }
+            }, function(err) {
+                _placing = false;
+                resolve({ ok: false, reason: 'error', error: err });
+            });
+        });
+    };
+    window.zoodnyOpenConfirm = function() { openConfirmModal(); };
+
     submitPayment.addEventListener('click', function() {
-        var total  = cart.reduce((s,i) => s+(i.price*(i.quantity||1)), 0);
         var errEl  = document.getElementById('submitPaymentErr');
         var btn    = document.getElementById('submitPayment');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التأكيد...';
-
-        function doFinish(bal) {
-            // فحص الرصيد
-            if (bal < total) {
-                errEl.textContent = 'رصيدك غير كافٍ! رصيدك: ' + bal.toFixed(2) + '$ والمطلوب: ' + total.toFixed(2) + '$';
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد وإتمام الطلب';
-                return;
-            }
-
-            // بناء بيانات الطلب
-            var orderId    = 'ORD-' + Date.now();
-            var totalPrice = total;
-            var orderDate  = new Date().toLocaleString('ar-SY');
-            // بناء المنتجات بشكل واضح لـ Firebase
-            var items = {};
-            cart.forEach(function(i, idx) {
-                var key = 'item_' + (idx + 1);
-                var obj = {
-                    productName: i.name,
-                    price:       i.price,
-                    quantity:    i.quantity || 1,
-                    totalItem:   parseFloat((i.price * (i.quantity || 1)).toFixed(2)),
-                    category:    i.category
-                };
-                if (i.category === 'games')             { obj.playerId = i.playerId||''; obj.gameValue = i.gameDisplay||i.gameValue||''; }
-                if (i.category === 'app')               { obj.playerId = i.playerId||''; obj.appValue  = i.appValue||''; }
-                if (i.category === 'rased')             { obj.phoneNumber = i.phoneNumber||''; obj.creditValue = i.creditValue||''; }
-                if (i.category === 'social-media')      { obj.customQuantity = i.customQuantity||300; obj.socialLink = i.socialLink||''; }
-                if (i.category === 'تفعيلات بريميوم') { obj.premiumInput = i.premiumInput||''; }
-                if (i.reqValue) { obj.reqType = i.reqType || 'text'; obj.reqLabel = i.reqLabel || 'المعلومة المطلوبة'; obj.reqValue = i.reqValue; }
-                items[key] = obj;
-            });
-            var uid    = (typeof auth !== 'undefined' && auth.currentUser) ? auth.currentUser.uid : '';
-            var uname  = (typeof userData !== 'undefined' && userData) ? (userData.name  || '') : '';
-            var uphone = (typeof userData !== 'undefined' && userData) ? (userData.phone || '') : '';
-            var uemail = (typeof userData !== 'undefined' && userData) ? (userData.email || '') : '';
-            if (typeof auth !== 'undefined' && auth.currentUser) {
-                if (!uemail) uemail = auth.currentUser.email || '';
-                if (!uname)  uname  = auth.currentUser.displayName || '';
-            }
-
-            // ── 1. إغلاق paymentModal تماماً ──
-            var pm = document.getElementById('paymentModal');
-            if (pm) { pm.style.cssText = 'display:none !important'; pm.classList.remove('active'); }
-
-            // ── 2. عرض نافذة النجاح ──
-            document.getElementById('orderSuccessId').textContent    = orderId;
-            document.getElementById('orderSuccessTotal').textContent = totalPrice.toFixed(2) + '$';
-            var ov = document.getElementById('orderSuccessOv');
-            var mo = document.getElementById('orderSuccessModal');
-            if (ov) { ov.style.display = 'block'; ov.classList.add('on'); }
-            if (mo) { mo.style.opacity = '1'; mo.style.pointerEvents = 'all'; mo.style.transform = 'translate(-50%,-50%) scale(1)'; mo.classList.add('on'); }
-
-            // ── 3. تفريغ السلة ──
-            cart = [];
-            hasSocialMediaProduct = false;
-            hasCreditProduct = false;
-            hasGameProduct = false;
-            hasAppProduct = false;
-            hasPremiumProduct = false;
-            localStorage.removeItem('zoodnyCart');
-            updateCartUI();
-            try { cartSidebar.classList.remove('active'); cartOverlay.classList.remove('active'); restoreBottomNav(); } catch(e){}
-            try { customerForm.reset(); } catch(e){}
-            try { socialMediaFields.classList.remove('active'); } catch(e){}
-
-            // ── 4. حفظ في Firebase في الخلفية ──
-            if (typeof db !== 'undefined' && uid) {
-                db.ref('store_orders/' + orderId).set({
-                    orderId:orderId, uid:uid, name:uname, phone:uphone, email:uemail,
-                    city:'غير محدد', items:items, total:totalPrice,
-                    paymentMethod:'wallet', date:orderDate, status:'pending', ts:Date.now()
-                });
-                if (typeof notifyAdminNewOrder === 'function') {
-                    notifyAdminNewOrder(orderId, uname, Object.keys(items).map(function(k){ return items[k]; }), totalPrice);
-                }
-                db.ref('users/'+uid+'/orders/'+orderId).set({ orderId:orderId, date:orderDate, total:totalPrice, status:'pending' });
-                db.ref('users/'+uid+'/ordersCount').transaction(function(c){ return (c||0)+1; });
-                db.ref('users/'+uid+'/balance').transaction(function(cur){ var n=(cur||0)-totalPrice; return n<0?0:n; });
-                db.ref('users/'+uid+'/transactions/TX-'+Date.now()).set({
-                    desc:'دفع طلب '+orderId, date:orderDate,
-                    amount:totalPrice, type:'debit', orderId:orderId, txCategory:'order', ts:Date.now()
-                });
-            }
-        }
-
-        // جلب الرصيد من Firebase
-        if (typeof db !== 'undefined' && typeof auth !== 'undefined' && auth.currentUser) {
-            db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
-                doFinish(parseFloat(snap.val() || 0));
-            });
-        } else {
-            doFinish((typeof getBalance === 'function') ? getBalance() : 0);
-        }
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الطلب...';
+        window.zoodnyPlaceOrder().then(function(r) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-bolt"></i> طلب';
+            if (r.ok) return;
+            if (r.reason === 'balance') errEl.textContent = 'رصيدك غير كافٍ! رصيدك: ' + r.bal.toFixed(2) + '$ والمطلوب: ' + r.total.toFixed(2) + '$';
+            else if (r.reason === 'login') { errEl.textContent = 'سجّل دخولك أولاً'; if (window.openAuth) window.openAuth('login'); }
+            else if (r.reason === 'missing') errEl.textContent = 'أدخل المعلومة المطلوبة للمنتج أولاً';
+            else if (r.reason !== 'busy') errEl.textContent = 'تعذّر إتمام الطلب، حاول مجدداً';
+        });
     });
-    
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             const targetId = this.getAttribute('href');

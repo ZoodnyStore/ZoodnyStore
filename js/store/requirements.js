@@ -2,7 +2,7 @@
  * متطلبات المنتج
  * المدير يحدد لأي منتج (أو مجموعة باقات) معلومة يجب أن يرسلها الزبون:
  *   reqType (link | text | email | phone | number) + reqLabel + reqPlaceholder + reqHelp
- * عند إضافة المنتج للسلة — من أي صفحة — تظهر نافذة تطلب المعلومة. إن ألغى الزبون يُزال المنتج.
+ * عند طلب المنتج — من أي صفحة — تظهر نافذة تطلب المعلومة. إن ألغى الزبون يُلغى الطلب.
  * المعلومة تُحفظ في عنصر السلة (reqLabel / reqValue / reqType) وتصل مع الطلب للمدير.
  *
  * كل طرق الإضافة للسلة تنتهي باستدعاء updateCartUI()، لذلك نراقب السلة من هناك.
@@ -121,7 +121,7 @@
                 + '<input class="req-input" id="reqInput" ' + inputAttrs + ' maxlength="500" placeholder="' + esc(req.placeholder) + '" value="' + esc(prefill || '') + '">'
                 + (req.help ? '<div class="req-help"><i class="fas fa-info-circle"></i> ' + esc(req.help) + '</div>' : '')
                 + '<div class="req-err" id="reqErr"></div>'
-                + '<div class="req-btns"><button type="button" class="req-ok">تأكيد وإضافة للسلة</button>'
+                + '<div class="req-btns"><button type="button" class="req-ok"><i class="fas fa-bolt"></i> طلب</button>'
                 + '<button type="button" class="req-cancel">إلغاء</button></div>'
                 + '</div>';
             document.body.appendChild(ov);
@@ -204,10 +204,10 @@
                         if (typeof showToast === 'function') showToast('"' + line.name + '" يحتاج ' + req.label + ' قبل إتمام الطلب', 'warn');
                     } else if (val === null) {
                         cart.splice(i, 1);
-                        if (typeof showToast === 'function') showToast('لم تتم إضافة "' + line.name + '" — المعلومة المطلوبة لم تُدخل', 'warn');
+                        if (typeof showToast === 'function') showToast('تم إلغاء طلب "' + line.name + '"', 'info');
                     } else {
                         line.reqType = req.type; line.reqLabel = req.label; line.reqValue = val;
-                        if (typeof showToast === 'function') showToast('تمت إضافة "' + line.name + '" مع ' + req.label, 'success');
+                        line.__viaForm = true;   // الزبون ضغط "طلب" في نافذة المعلومة ← طلب مباشر
                     }
                 } else {   // 'more' — قطع إضافية لنفس المنتج
                     if (val === null) {
@@ -228,6 +228,9 @@
             processQueue();
         });
     }
+
+    // لنظام الطلب المباشر: هل ما زالت نافذة معلومة مفتوحة أو بانتظار الظهور؟
+    window.zoodnyReqBusy = function () { return busy || promptOpen || queue.length > 0; };
 
     // يُستدعى قبل الدفع: أي منتج ينقصه معلومة ← نطلبها بدل المتابعة
     function hasMissing() {

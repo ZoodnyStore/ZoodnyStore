@@ -1492,3 +1492,7 @@
     .nav-actions { gap: .75rem; }
     .navbar .logo img { width: 40px !important; height: 40px !important; }
 }
+
+/* ══ إلغاء السلة: الطلب مباشر من زر "طلب" (js/store/direct-order.js) ══ */
+.cart-icon-container, #mobileCartIcon, .nav-links .cart-icon-container,
+#cartSidebar, #cartOverlay { display: none !important; }

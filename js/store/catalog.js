@@ -617,7 +617,7 @@ function showPaymentProducts(group, parentSg) {
                                 <i class="fas fa-info-circle"></i> تفاصيل المنتج
                             </button>
                             <button class="add-to-cart-btn payment-cart">
-                                <i class="fas fa-shopping-cart"></i> أضف للسلة
+                                <i class="fas fa-bolt"></i> طلب
                             </button>
                         </div>
                     </div>
@@ -771,7 +771,7 @@ function showTvProducts(group) {
                         <p class="product-price">${priceDisplay}</p>
                         <div class="product-actions">
                             <button class="product-details-btn tv-details"><i class="fas fa-info-circle"></i> تفاصيل المنتج</button>
-                            <button class="add-to-cart-btn tv-cart"><i class="fas fa-shopping-cart"></i> أضف للسلة</button>
+                            <button class="add-to-cart-btn tv-cart"><i class="fas fa-bolt"></i> طلب</button>
                         </div>
                     </div>
                 `;
@@ -912,7 +912,7 @@ function showDesignProducts(group) {
                         <p class="product-price">${priceDisplay}</p>
                         <div class="product-actions">
                             <button class="product-details-btn design-details"><i class="fas fa-info-circle"></i> تفاصيل المنتج</button>
-                            <button class="add-to-cart-btn design-cart"><i class="fas fa-shopping-cart"></i> أضف للسلة</button>
+                            <button class="add-to-cart-btn design-cart"><i class="fas fa-bolt"></i> طلب</button>
                         </div>
                     </div>
                 `;
@@ -1185,7 +1185,7 @@ function showAppProducts(group) {
                                 <i class="fas fa-info-circle"></i> تفاصيل المنتج
                             </button>
                             <button class="add-to-cart-btn ap-cart">
-                                <i class="fas fa-shopping-cart"></i> أضف للسلة
+                                <i class="fas fa-bolt"></i> طلب
                             </button>
                         </div>
                     </div>
@@ -1308,7 +1308,7 @@ function showPremiumProducts(group) {
                                 <i class="fas fa-info-circle"></i> تفاصيل المنتج
                             </button>
                             <button class="add-to-cart-btn premium-cart">
-                                <i class="fas fa-shopping-cart"></i> أضف للسلة
+                                <i class="fas fa-bolt"></i> طلب
                             </button>
                         </div>
                     </div>
@@ -1432,7 +1432,7 @@ function showVpnProducts(group) {
                                 <i class="fas fa-info-circle"></i> تفاصيل المنتج
                             </button>
                             <button class="add-to-cart-btn vpn-cart">
-                                <i class="fas fa-shopping-cart"></i> أضف للسلة
+                                <i class="fas fa-bolt"></i> طلب
                             </button>
                         </div>
                     </div>
@@ -1789,7 +1789,7 @@ function showArqamProducts(group, categoryId, titleText) {
                         <p class="product-price">${priceDisplay}</p>
                         <div class="product-actions">
                             <button class="product-details-btn arqam-details"><i class="fas fa-info-circle"></i> تفاصيل</button>
-                            <button class="add-to-cart-btn arqam-cart"><i class="fas fa-shopping-cart"></i> أضف للسلة</button>
+                            <button class="add-to-cart-btn arqam-cart"><i class="fas fa-bolt"></i> طلب</button>
                         </div>
                     </div>
                 `;
@@ -1901,7 +1901,7 @@ function renderProductsByCategory(categoryId, filter = 'all') {
                                     <i class="fas fa-info-circle"></i> تفاصيل المنتج
                                 </button>
                                 <button class="add-to-cart-btn" data-id="${product.id}">
-                                    <i class="fas fa-cart-plus"></i> أضف للسلة
+                                    <i class="fas fa-bolt"></i> طلب
                                 </button>
                             ` : '<p style="color: var(--gray); text-align: center; width: 100%; padding: 1rem;">قريباً</p>'}
                         </div>
@@ -2080,7 +2080,7 @@ function renderProductsByPlatform(platformId, filter = 'all') {
                         <p class="product-price">${priceDisplay}</p>
                         <div class="product-actions">
                             <button class="product-details-btn" data-id="${product.id}"><i class="fas fa-info-circle"></i> تفاصيل</button>
-                            <button class="add-to-cart-btn" data-id="${product.id}"><i class="fas fa-cart-plus"></i> أضف للسلة</button>
+                            <button class="add-to-cart-btn" data-id="${product.id}"><i class="fas fa-bolt"></i> طلب</button>
 
                         </div>
                     </div>

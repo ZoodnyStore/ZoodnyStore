@@ -91,7 +91,7 @@ function showProductDetails(productId) {
                     
                     <div class="product-details-actions">
                         <button class="product-details-add-to-cart" data-id="${product.id}">
-                            <i class="fas fa-cart-plus"></i> أضف للسلة
+                            <i class="fas fa-bolt"></i> طلب
                         </button>
                     </div>
                 </div>
@@ -201,7 +201,7 @@ function showPaymentProductDetails(paymentProduct) {
 
                     <div class="product-details-actions">
                         <button class="product-details-add-to-cart" id="payDetAddCart">
-                            <i class="fas fa-cart-plus"></i> أضف للسلة
+                            <i class="fas fa-bolt"></i> طلب
                         </button>
                     </div>
                 </div>

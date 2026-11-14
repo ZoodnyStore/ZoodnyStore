@@ -91,6 +91,12 @@
         } catch (e) { console.warn('notify admin failed:', e); }
     }
 
+    // يُبلغ باقي الملفات (مثل wholesale.js) بأي تغيير في بيانات المستخدم
+    function announceUserData(user, data) {
+        try { document.dispatchEvent(new CustomEvent('zoodny:userdata', { detail: { user: user, data: data } })); }
+        catch (e) { console.warn('userdata event failed:', e); }
+    }
+
     // ── inject navbar buttons ────────────────────────────────────────────
     function buildNavButtons(user, uData) {
         // remove old injected elements
@@ -148,6 +154,7 @@
                 + '<div class="um-name">' + ((uData && uData.name) ? uData.name : '') + '</div>'
                 + '<div class="um-email">' + (user.email || '') + '</div>'
                 + '<div class="um-bal"><i class="fas fa-wallet"></i> ' + bal.toFixed(2) + '$</div>'
+                + (uData && uData.wholesale === true ? '<div class="um-wholesale"><i class="fas fa-store"></i> حساب جملة</div>' : '')
                 + '</div>'
                 + '<button class="user-menu-item account-item" id="__menuAccount"><i class="fas fa-id-card"></i> حسابي</button>'
                 + '<button class="user-menu-item wallet-item" id="__menuWallet"><i class="fas fa-wallet"></i> محفظتي</button>'
@@ -213,6 +220,7 @@
                 buildNavButtons(user, userData);
                 refreshWalletModal();
                 checkProfileComplete();
+                announceUserData(user, userData);
                 // Show login success notification once
                 if (!_authNotifyDone) {
                     _authNotifyDone = true;
@@ -226,6 +234,7 @@
             var wasLoggedIn = !!currentUser;
             userData = null;
             closeProfileModal();
+            announceUserData(null, null);
             buildNavButtons(null, null);
             _authNotifyDone = false;
             if (wasLoggedIn) {

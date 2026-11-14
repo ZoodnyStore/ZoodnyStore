@@ -416,6 +416,7 @@
 
             var nameHtml = c.user
                 ? '<button type="button" class="adm-user-link" onclick="admOpenUser(\'' + escJs(c.user._key) + '\')">' + esc(c.name || 'غير محدد') + '</button>'
+                  + (c.user.wholesale === true ? ' <span class="ws-badge"><i class="fas fa-store"></i> جملة</span>' : '')
                 : '<strong>' + esc(c.name || (o.uid === 'guest' ? 'زائر' : 'غير محدد')) + '</strong>';
 
             var btns = '';
@@ -492,7 +493,8 @@
             var key = u._key;
             var s = stats[key];
             return '<tr>'
-                + '<td><button type="button" class="adm-user-link" onclick="admOpenUser(\'' + escJs(key) + '\')">' + esc(u.name || '-') + '</button></td>'
+                + '<td><button type="button" class="adm-user-link" onclick="admOpenUser(\'' + escJs(key) + '\')">' + esc(u.name || '-') + '</button>'
+                + (u.wholesale === true ? ' <span class="ws-badge"><i class="fas fa-store"></i> جملة</span>' : '') + '</td>'
                 + '<td>' + copyVal(u.email) + '</td>'
                 + '<td>' + copyVal(u.phone) + '</td>'
                 + '<td><strong style="color:var(--success)">' + money(u.balance) + '</strong>'
@@ -505,6 +507,7 @@
                 + '<td><small>' + esc(u.createdAt || '-') + '</small></td>'
                 + '<td style="white-space:nowrap">'
                 + '<button class="adm-act-btn view" onclick="admOpenUser(\'' + escJs(key) + '\')"><i class="fas fa-id-card"></i> التفاصيل</button>'
+                + wholesaleBtn(u)
                 + '<button class="adm-act-btn del" title="حذف العميل" onclick="admDelUser(\'' + escJs(key) + '\')"><i class="fas fa-trash"></i></button>'
                 + '</td>'
                 + '</tr>';
@@ -613,6 +616,11 @@
         body.innerHTML =
               '<div class="adm-sec"><h4><i class="fas fa-user"></i> بيانات الحساب</h4><div class="adm-kv">' + kv + '</div></div>'
             + '<div class="adm-sec"><h4><i class="fas fa-chart-pie"></i> ملخص</h4><div class="adm-kv">' + summary + '</div></div>'
+            + '<div class="adm-sec"><h4><i class="fas fa-store"></i> بيع الجملة</h4><div class="adm-user-actions">'
+            + (u.wholesale === true
+                ? '<span class="ws-badge big"><i class="fas fa-check-circle"></i> أسعار الجملة مفعّلة لهذا العميل</span>'
+                : '<span style="color:#888;font-size:.85rem">هذا العميل يرى أسعار المفرق</span>')
+            + wholesaleBtn(u) + '</div></div>'
             + '<div class="adm-sec"><h4><i class="fas fa-wallet"></i> تعديل الرصيد</h4><div class="adm-user-actions">'
             + '<input type="number" id="admUdAmt" placeholder="$ مبلغ" min="0.01" step="0.01">'
             + '<button class="adm-act-btn topup" onclick="admAdjustBalance(\'' + k + '\',1)"><i class="fas fa-plus"></i> إضافة</button>'
@@ -834,6 +842,27 @@
         notifyUser(uid, 'balance', 'تمت إضافة رصيد 💰', 'أضاف المدير ' + amt.toFixed(2) + '$ إلى رصيدك');
         balToast('✓ تم إضافة ' + amt.toFixed(2) + '$ للعميل', true);
     };
+    // ── بيع الجملة: تفعيل/إيقاف لعميل + إشعار له ──
+    function wholesaleBtn(u) {
+        var on = u.wholesale === true;
+        return '<button class="adm-act-btn ' + (on ? 'ws-off' : 'ws-on') + '" onclick="admToggleWholesale(\'' + escJs(u._key) + '\')">'
+            + '<i class="fas fa-store"></i> ' + (on ? 'إيقاف الجملة' : 'تفعيل الجملة') + '</button>';
+    }
+    window.admToggleWholesale = function(uid) {
+        var u = findUser(uid);
+        if (!u) return;
+        var on = u.wholesale === true;
+        var name = u.name || u.email || 'العميل';
+        if (!confirm(on ? ('إيقاف أسعار الجملة عن ' + name + '؟') : ('تفعيل أسعار الجملة لـ ' + name + '؟\n\nسيرى أسعار الجملة للمنتجات التي لها سعر جملة، وسيصله إشعار بذلك.'))) return;
+        dbRef('users/' + uid).update({ wholesale: !on, wholesaleSince: on ? null : Date.now() })
+            .then(function() {
+                notifyUser(uid, 'wholesale', on ? 'تم إيقاف أسعار الجملة' : 'تم تفعيل بيع الجملة 🏪',
+                    on ? 'أصبحت ترى أسعار المفرق العادية في المتجر' : 'مبروك! أصبحت أسعار الجملة متاحة لك الآن في متجر زودني');
+                balToast(on ? '✓ تم إيقاف الجملة' : '✓ تم تفعيل الجملة لـ ' + name, true);
+            })
+            .catch(function(err) { alert('فشل: ' + (err && err.message ? err.message : err) + ' — تأكد من تحديث قواعد Firebase'); });
+    };
+
     window.admDelUser = function(uid) {
         if (!confirm('حذف هذا المستخدم نهائياً؟')) return;
         dbRef('users/' + uid).remove();
@@ -961,7 +990,9 @@
 
     // يُستدعى من إدارة المنتجات بعد إضافة منتج جديد
     window.admPrefillBroadcast = function(title, body) {
-        switchAdmTab('notify');
+        // قد يُستدعى من صفحة المتجر (زر "+") ولوحة المدير مغلقة ← نفتحها على التبويب
+        if (!$('adminDashboard').classList.contains('on') && typeof window.openAdminPanel === 'function') window.openAdminPanel('notify');
+        else switchAdmTab('notify');
         if ($('bcTitle')) $('bcTitle').value = title || '';
         if ($('bcBody'))  $('bcBody').value  = body  || '';
         if ($('bcUrl'))   $('bcUrl').value   = '';

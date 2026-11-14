@@ -14,7 +14,7 @@ self.addEventListener('push', function (e) {
     var id = d.id || ('push-' + Date.now());
     var title = d.title || 'زودني';
     var opts = {
-        body: d.body || '', icon: 'images/logo.jpg', badge: 'images/logo.jpg',
+        body: d.body || '', icon: 'images/icons/icon-192.png', badge: 'images/icons/badge-96.png',
         tag: 'zoodny-' + id, dir: 'rtl', lang: 'ar',
         data: { id: id, url: d.url || self.registration.scope }
     };

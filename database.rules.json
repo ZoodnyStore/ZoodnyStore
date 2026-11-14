@@ -5,6 +5,12 @@
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')",
         ".write": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')",
+        "wholesale": {
+          ".validate": "auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || newData.val() === data.val()"
+        },
+        "wholesaleSince": {
+          ".validate": "auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || newData.val() === data.val()"
+        },
         "balance": {
           ".validate": "newData.isNumber() && newData.val() >= 0 && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || (!data.exists() && newData.val() === 0) || (data.exists() && data.isNumber() && newData.val() <= data.val()))"
         },

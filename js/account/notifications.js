@@ -78,7 +78,7 @@
         if (permission() !== 'granted') return;
         var title = it.title || 'زودني';
         var opts = {
-            body: it.body || '', icon: 'images/logo.jpg', badge: 'images/logo.jpg',
+            body: it.body || '', icon: 'images/icons/icon-192.png', badge: 'images/icons/badge-96.png',
             tag: 'zoodny-' + it.id, dir: 'rtl', lang: 'ar',
             data: { id: it.id, url: siteUrl() + '#notif=' + encodeURIComponent(it.id) }
         };
@@ -216,6 +216,10 @@
         if (it.kind === 'p') {
             if (it.type === 'order' && typeof ZA.openOrdersHistory === 'function') ZA.openOrdersHistory();
             else if ((it.type === 'topup' || it.type === 'balance') && typeof window.openWallet === 'function') window.openWallet();
+            else if (it.type === 'wholesale') {
+                var cats = document.getElementById('categories');
+                if (cats) window.scrollTo({ top: cats.offsetTop - 80, behavior: 'smooth' });
+            }
             return;
         }
         // إعلان عام
@@ -257,7 +261,7 @@
     document.body.appendChild(panelEl);
 
     var typeIcon = {
-        order: 'fa-box', topup: 'fa-wallet', balance: 'fa-coins', user: 'fa-user-plus',
+        order: 'fa-box', topup: 'fa-wallet', balance: 'fa-coins', user: 'fa-user-plus', wholesale: 'fa-store',
         broadcast: 'fa-bullhorn', info: 'fa-bell'
     };
 

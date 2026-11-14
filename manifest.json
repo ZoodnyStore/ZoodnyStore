@@ -1,0 +1,17 @@
+{
+  "name": "زودني Zoodny Store",
+  "short_name": "زودني",
+  "description": "متجر إلكتروني لشحن الألعاب والتطبيقات والاشتراكات والخدمات الرقمية",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#2A3F54",
+  "theme_color": "#2A3F54",
+  "icons": [
+    { "src": "images/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "images/icons/logo-round.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "images/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

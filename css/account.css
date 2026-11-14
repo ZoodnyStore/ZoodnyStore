@@ -1389,3 +1389,52 @@
 .push-result{margin-top:.6rem;font-size:.8rem;line-height:1.6;min-height:1em}
 .push-result.ok{color:#1e8449}
 .push-result.err{color:#c0392b}
+
+/* ══ بطاقة "+ إضافة منتج جديد" داخل صفحات المتجر (للمدير فقط) ══ */
+.pmg-add-card{
+    display:flex !important;flex-direction:column;align-items:center;justify-content:center;gap:.55rem;
+    min-height:220px;padding:1.2rem;text-align:center;text-decoration:none;cursor:pointer;
+    background:repeating-linear-gradient(45deg,#fbfcfe,#fbfcfe 10px,#f5f8fc 10px,#f5f8fc 20px) !important;
+    border:2.5px dashed #c5d0de !important;box-shadow:none !important;color:var(--primary) !important;
+    transition:border-color .2s,transform .2s,background .2s;
+}
+.pmg-add-card:hover{border-color:var(--secondary) !important;transform:translateY(-4px);background:#fffaf0 !important}
+.pmg-add-plus{
+    width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--secondary),#f9d99a);color:var(--primary);font-size:1.6rem;
+    box-shadow:0 8px 20px rgba(247,200,115,.45);
+}
+.pmg-add-title{font-weight:800;font-size:1rem;color:var(--primary);font-family:'Cairo',sans-serif}
+.pmg-add-sub{font-size:.78rem;color:#8a96a3;font-family:'Cairo',sans-serif}
+@media(max-width:768px){ .pmg-add-card{min-height:170px} .pmg-add-plus{width:52px;height:52px;font-size:1.3rem} .pmg-add-title{font-size:.88rem} }
+.pmg-sub-row input{min-width:0}
+
+/* ══ بيع الجملة ══ */
+.wholesale-bar{
+    display:flex;align-items:center;justify-content:center;gap:8px;margin:.2rem auto 1rem;max-width:520px;
+    background:linear-gradient(135deg,#1e8449,#27ae60);color:#fff;border-radius:30px;padding:.5rem 1.1rem;
+    font-weight:800;font-size:.9rem;box-shadow:0 6px 18px rgba(39,174,96,.3);font-family:'Cairo',sans-serif;
+}
+.um-wholesale{margin-top:.35rem;display:inline-flex;align-items:center;gap:6px;background:#eafaf1;color:#1e8449;border-radius:20px;padding:.15rem .7rem;font-size:.75rem;font-weight:800}
+.ws-badge{display:inline-flex;align-items:center;gap:4px;background:#eafaf1;color:#1e8449;border:1px solid #bfe9cf;border-radius:20px;padding:.05rem .5rem;font-size:.7rem;font-weight:800;vertical-align:middle;white-space:nowrap}
+.ws-badge.big{font-size:.82rem;padding:.3rem .8rem}
+.adm-act-btn.ws-on{background:#eafaf1;color:#1e8449}
+.adm-act-btn.ws-on:hover{background:#27ae60;color:#fff}
+.adm-act-btn.ws-off{background:#fff4e5;color:#b9770e}
+.adm-act-btn.ws-off:hover{background:#e67e22;color:#fff}
+
+.ws-prompt-ov{position:fixed;inset:0;z-index:1290;background:rgba(15,25,35,.55);display:flex;align-items:center;justify-content:center;padding:1rem;animation:notifIn .2s ease-out}
+.ws-prompt{
+    position:relative;background:#fff;border-radius:20px;width:min(400px,100%);padding:1.6rem 1.4rem 1.2rem;text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);direction:rtl;font-family:'Cairo',sans-serif;
+}
+.ws-x{position:absolute;top:10px;left:10px;width:32px;height:32px;border-radius:50%;border:none;background:#f2f4f7;color:#777;cursor:pointer}
+.ws-ic{width:68px;height:68px;margin:0 auto .7rem;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--secondary),#f9d99a);color:var(--primary);font-size:1.7rem;box-shadow:0 8px 20px rgba(247,200,115,.45)}
+.ws-prompt h3{margin:0 0 .5rem;color:var(--primary);font-size:1.15rem}
+.ws-prompt p{margin:0 0 1.1rem;color:#666;font-size:.9rem;line-height:1.8}
+.ws-wa{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff !important;text-decoration:none;
+    border-radius:12px;padding:.75rem;font-weight:800;font-size:.95rem;box-shadow:0 6px 16px rgba(37,211,102,.35)}
+.ws-wa i{font-size:1.2rem}
+.ws-later{display:block;width:100%;margin-top:.5rem;padding:.6rem;border:none;border-radius:12px;background:#f2f4f7;color:#555;font-weight:700;font-family:inherit;cursor:pointer}
+.ws-never{display:block;margin:.8rem auto 0;background:none;border:none;color:#aaa;font-size:.75rem;text-decoration:underline;cursor:pointer;font-family:inherit}

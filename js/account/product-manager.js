@@ -20,11 +20,13 @@
             fields: [
                 { key: 'name', label: 'اسم المنتج', type: 'text', required: true },
                 { key: 'category', label: 'التصنيف (Category)', type: 'category', required: true },
-                { key: 'price', label: 'السعر ($)', type: 'number', hideFor: ['social-media'] },
+                { key: 'price', label: 'سعر المفرق ($)', type: 'number', hideFor: ['social-media'] },
+                { key: 'wholesalePrice', label: 'سعر الجملة ($) — اختياري', type: 'number', hideFor: ['social-media'], wholesaleOf: 'price' },
                 // ── حقول خاصة بخدمات السوشال ميديا (السعر الفعلي = سعر الألف) ──
                 { key: 'platform', label: 'المنصة', type: 'select', showFor: ['social-media'],
                   options: function () { return platforms.map(function (p) { return [p.id, p.name]; }); } },
-                { key: 'basePrice', label: 'سعر الألف ($)', type: 'number', showFor: ['social-media'] },
+                { key: 'basePrice', label: 'سعر الألف بالمفرق ($)', type: 'number', showFor: ['social-media'] },
+                { key: 'wholesaleBasePrice', label: 'سعر الألف بالجملة ($) — اختياري', type: 'number', showFor: ['social-media'], wholesaleOf: 'basePrice' },
                 { key: 'minQuantity', label: 'الحد الأدنى للكمية', type: 'number', showFor: ['social-media'] },
                 { key: 'maxQuantity', label: 'الحد الأقصى للكمية', type: 'number', showFor: ['social-media'] },
                 // ── حقل خاص ببرامج التصميم ──
@@ -43,7 +45,8 @@
                 { key: 'image', label: 'اسم ملف الصورة', type: 'text' },
                 { key: 'inputLabel', label: 'نص حقل الإدخال', type: 'text' },
                 { key: 'inputPlaceholder', label: 'نص توضيحي لحقل الإدخال', type: 'text' },
-                { key: 'unitPrice', label: 'سعر الوحدة الواحدة ($)', type: 'number' },
+                { key: 'unitPrice', label: 'سعر الوحدة بالمفرق ($)', type: 'number' },
+                { key: 'wholesaleUnitPrice', label: 'سعر الوحدة بالجملة ($) — اختياري', type: 'number', wholesaleOf: 'unitPrice' },
                 { key: 'minQuantity', label: 'الحد الأدنى للكمية', type: 'number' },
                 { key: 'maxQuantity', label: 'الحد الأقصى للكمية', type: 'number' }
             ]
@@ -62,7 +65,8 @@
                 key: 'amounts', label: 'فئات الشحن (الكمية / السعر / النص المعروض)',
                 fields: [
                     { key: 'value', label: 'القيمة', type: 'number' },
-                    { key: 'price', label: 'السعر ($)', type: 'number' },
+                    { key: 'price', label: 'سعر المفرق ($)', type: 'number' },
+                    { key: 'wholesalePrice', label: 'سعر الجملة ($)', type: 'number', wholesaleOf: 'price' },
                     { key: 'display', label: 'النص المعروض', type: 'text' }
                 ]
             }
@@ -84,7 +88,8 @@
                 fields: [
                     { key: 'id', label: 'رقم', type: 'number' },
                     { key: 'name', label: 'اسم الباقة', type: 'text' },
-                    { key: 'price', label: 'السعر ($)', type: 'number' }
+                    { key: 'price', label: 'سعر المفرق ($)', type: 'number' },
+                    { key: 'wholesalePrice', label: 'سعر الجملة ($)', type: 'number', wholesaleOf: 'price' }
                 ]
             }
         },
@@ -102,7 +107,8 @@
                 fields: [
                     { key: 'id', label: 'رقم', type: 'number' },
                     { key: 'name', label: 'اسم الباقة', type: 'text' },
-                    { key: 'price', label: 'السعر ($)', type: 'number' }
+                    { key: 'price', label: 'سعر المفرق ($)', type: 'number' },
+                    { key: 'wholesalePrice', label: 'سعر الجملة ($)', type: 'number', wholesaleOf: 'price' }
                 ]
             }
         },
@@ -120,7 +126,8 @@
                 fields: [
                     { key: 'id', label: 'رقم', type: 'number' },
                     { key: 'name', label: 'اسم الباقة', type: 'text' },
-                    { key: 'price', label: 'السعر ($)', type: 'number' }
+                    { key: 'price', label: 'سعر المفرق ($)', type: 'number' },
+                    { key: 'wholesalePrice', label: 'سعر الجملة ($)', type: 'number', wholesaleOf: 'price' }
                 ]
             }
         },
@@ -190,6 +197,37 @@
         });
     }
 
+    // ── أسعار الجملة: لحساب الجملة نضع سعر الجملة مكان سعر المفرق داخل البيانات نفسها،
+    //    فتتحدث البطاقات والتفاصيل والسلة تلقائياً. (المنتج بلا سعر جملة يبقى بسعره العادي)
+    function pmgIsWholesale() { return window.__zoodnyWholesale === true; }
+    function pmgApplyWholesale() {
+        PMG_SOURCES.forEach(function (src) {
+            var wf = src.fields.filter(function (f) { return f.wholesaleOf; });
+            var swf = src.subList ? src.subList.fields.filter(function (f) { return f.wholesaleOf; }) : [];
+            if (!wf.length && !swf.length) return;
+            src.getArr().forEach(function (it) {
+                if (!it) return;
+                var changed = false;
+                wf.forEach(function (f) {
+                    var w = pmgToNumber(it[f.key]);
+                    if (typeof w === 'number' && w > 0) { it[f.wholesaleOf] = w; changed = true; }
+                });
+                // نص "سعر الألف" داخل وصف خدمات السوشال ميديا
+                if (changed && it.category === 'social-media' && typeof it.basePrice === 'number' && typeof it.description === 'string') {
+                    it.description = it.description.replace(/سعر الألف:\s*[\d.]+\s*\$/, 'سعر الألف: ' + it.basePrice + '$');
+                }
+                var rows = swf.length ? it[src.subList.key] : null;
+                if (Array.isArray(rows)) rows.forEach(function (row) {
+                    if (!row) return;
+                    swf.forEach(function (f) {
+                        var w = pmgToNumber(row[f.key]);
+                        if (typeof w === 'number' && w > 0) row[f.wholesaleOf] = w;
+                    });
+                });
+            });
+        });
+    }
+
     function pmgFindItem(sourceKey, id) {
         var src = pmgGetSource(sourceKey);
         return src.getArr().filter(function (it) { return String(it.id) === String(id); })[0];
@@ -235,8 +273,11 @@
         }
         grid.innerHTML = filtered.map(function (it) {
             var priceLine = '';
-            if (src.key === 'products') priceLine = (it.price !== undefined && it.price !== null) ? (it.price + ' $') : '';
-            else if (src.key === 'appsData') priceLine = 'سعر الوحدة: ' + (it.unitPrice !== undefined ? it.unitPrice : '-') + ' $';
+            if (src.key === 'products') {
+                if (it.category === 'social-media') priceLine = 'الألف: ' + (it.basePrice !== undefined ? it.basePrice : '-') + ' $' + (it.wholesaleBasePrice > 0 ? ' · جملة: ' + it.wholesaleBasePrice + ' $' : '');
+                else priceLine = (it.price !== undefined && it.price !== null) ? (it.price + ' $' + (it.wholesalePrice > 0 ? ' · جملة: ' + it.wholesalePrice + ' $' : '')) : '';
+            }
+            else if (src.key === 'appsData') priceLine = 'سعر الوحدة: ' + (it.unitPrice !== undefined ? it.unitPrice : '-') + ' $' + (it.wholesaleUnitPrice > 0 ? ' · جملة: ' + it.wholesaleUnitPrice + ' $' : '');
             else if (src.subList) priceLine = ((it[src.subList.key] || []).length) + ' باقة/فئة';
             var imgHtml = it.image
                 ? '<img src="' + pmgEsc(it.image) + '" onerror="this.parentElement.innerHTML=\'<i class=\\\'fas fa-image\\\'></i>\'">'
@@ -324,8 +365,9 @@
         return !box || box.style.display !== 'none';
     }
 
-    function pmgOpenForm(sourceKey, id) {
+    function pmgOpenForm(sourceKey, id, preset) {
         var src = pmgGetSource(sourceKey);
+        preset = preset || {};
         var item = id !== null && id !== undefined ? pmgFindItem(sourceKey, id) : null;
         pmgEditingCtx = { sourceKey: sourceKey, id: item ? item.id : null };
         $('pmgFormTitle').textContent = item ? ('تعديل: ' + item.name) : ('إضافة منتج جديد — ' + src.label);
@@ -336,7 +378,8 @@
             '<input type="text" id="pmgFieldId" value="' + pmgEsc(idVal) + '"' + (item ? ' readonly style="background:#f4f6f9;color:#888"' : '') + '></div>';
 
         var fieldsHtml = src.fields.map(function (f) {
-            var val = item ? (item[f.key] !== undefined && item[f.key] !== null ? item[f.key] : '') : (f.default !== undefined ? f.default : '');
+            var val = item ? (item[f.key] !== undefined && item[f.key] !== null ? item[f.key] : '')
+                           : (preset[f.key] !== undefined && preset[f.key] !== null ? preset[f.key] : (f.default !== undefined ? f.default : ''));
             var cond = (f.showFor ? ' data-show-for="' + pmgEsc(f.showFor.join('|')) + '"' : '') +
                        (f.hideFor ? ' data-hide-for="' + pmgEsc(f.hideFor.join('|')) + '"' : '');
             var open = '<div class="pmg-field"' + cond + '><label>' + f.label + '</label>';
@@ -522,6 +565,7 @@
             pmgSnapshotBase();
             pmgResetToBase();
             pmgApplyOverridesToArrays(pmgLast.overrides, pmgLast.deletions);
+            if (pmgIsWholesale()) pmgApplyWholesale();
             pmgSyncDerived();
             pmgPopulateCategoryFilter();
             pmgRenderGrid();
@@ -555,6 +599,8 @@
         }
         listen('product_overrides', 'overrides', 'o');
         listen('product_deletions', 'deletions', 'd');
+        // تفعيل/إيقاف الجملة لهذا الزبون (يأتي من wholesale.js) ← نعيد حساب الأسعار فوراً
+        document.addEventListener('zoodny:wholesale', function () { pmgSchedule(); });
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -688,12 +734,223 @@
         });
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    //  بطاقة "+ إضافة منتج جديد" في آخر كل قائمة بالمتجر (للمدير فقط)
+    //  كل صفحة عرض تعرف: ماذا تضيف (المصدر + القيم المعبّأة مسبقاً) وكيف تُحدَّث بعد الحفظ.
+    // ═══════════════════════════════════════════════════════════════
+    var pmgAddView = null;   // آخر صفحة عرض { name, args }
+
+    function pmgIsAdminUser() {
+        var u = auth.currentUser;
+        return !!u && String(u.email || '').toLowerCase() === String(ADMIN_EMAIL).toLowerCase();
+    }
+    function pmgFind(arr, fn) { for (var i = 0; i < arr.length; i++) if (fn(arr[i])) return arr[i]; return null; }
+    function pmgNamePrefix(n) { return n ? String(n).trim() + ' ' : ''; }
+
+    // لكل دالة عرض: ماذا يضيف زر "+" ، وكيف نعيد بناء الصفحة بعد الحفظ (المجموعات تُبنى من جديد)
+    var PMG_ADD_VIEWS = {
+        renderProductsByCategory: {
+            add: function (a) {
+                if (a[0] === 'rased') return null;   // أسعار الرصيد ثابتة في الكود
+                if (a[0] === 'app') return { src: 'appsData', preset: { category: 'app' } };
+                return { src: 'products', preset: { category: a[0] } };
+            },
+            refresh: function (a) { renderProductsByCategory(a[0], a[1]); }
+        },
+        renderProductsByPlatform: {
+            add: function (a) { return { src: 'products', preset: { category: 'social-media', platform: a[0] } }; },
+            refresh: function (a) { renderProductsByPlatform(a[0], a[1]); }
+        },
+        renderPlatforms: {
+            add: function () { return { src: 'products', preset: { category: 'social-media' } }; },
+            refresh: function () { renderPlatforms(); }
+        },
+        renderGameGroups: {
+            add: function () { return { src: 'gamesData', preset: { category: 'games' } }; },
+            refresh: function () { renderGameGroups(); }
+        },
+        showGameTypes: {
+            add: function (a) {
+                var g = a[0] || {};
+                return { src: 'gamesData', preset: { category: 'games', name: g.baseName ? g.baseName + ' - ' : '', image: g.image, inputLabel: g.inputLabel, description: g.description } };
+            },
+            refresh: function (a) {
+                var g = pmgFind(buildGameGroups(), function (x) { return a[0] && x.baseName === a[0].baseName; });
+                if (g) showGameTypes(g); else renderGameGroups();
+            }
+        },
+        renderAppGroups: {
+            add: function () { return { src: 'products', preset: { category: 'ارقام للتطبيقات' } }; },
+            refresh: function () { renderAppGroups(); }
+        },
+        showAppProducts: {
+            add: function (a) { var g = a[0] || {}; return { src: 'products', preset: { category: 'ارقام للتطبيقات', name: pmgNamePrefix(g.baseName), image: g.image } }; },
+            refresh: function (a) {
+                var g = pmgFind(buildAppGroups(), function (x) { return a[0] && x.baseName === a[0].baseName; });
+                if (g) showAppProducts(g); else renderAppGroups();
+            }
+        },
+        renderPremiumGroups: {
+            add: function () { return { src: 'premiumActivationsData', preset: { category: 'تفعيلات بريميوم' } }; },
+            refresh: function () { renderPremiumGroups(); }
+        },
+        showPremiumProducts: {
+            add: function (a) { return a[0] && a[0].id !== undefined ? { src: 'premiumActivationsData', editId: a[0].id } : null; },
+            refresh: function (a) {
+                var g = pmgFind(premiumActivationsData, function (x) { return a[0] && String(x.id) === String(a[0].id); });
+                if (g) showPremiumProducts(g); else renderPremiumGroups();
+            }
+        },
+        renderVpnGroups: {
+            add: function () { return { src: 'vpnData', preset: { category: 'اشتراكات VPN' } }; },
+            refresh: function () { renderVpnGroups(); }
+        },
+        showVpnProducts: {
+            add: function (a) { return a[0] && a[0].id !== undefined ? { src: 'vpnData', editId: a[0].id } : null; },
+            refresh: function (a) {
+                var g = pmgFind(vpnData, function (x) { return a[0] && String(x.id) === String(a[0].id); });
+                if (g) showVpnProducts(g); else renderVpnGroups();
+            }
+        },
+        renderPaymentGroups: {
+            add: function () { return { src: 'electronicPaymentData', preset: { category: 'الدفع electronique' } }; },
+            refresh: function () { renderPaymentGroups(); }
+        },
+        showPaymentSuperGroup: {
+            add: function () { return { src: 'electronicPaymentData', preset: { category: 'الدفع electronique' } }; },
+            refresh: function (a) {
+                var sg = pmgFind(buildPaymentSuperGroups(), function (x) { return a[0] && x.key === a[0].key; });
+                if (sg) showPaymentSuperGroup(sg); else renderPaymentGroups();
+            }
+        },
+        showPaymentProducts: {
+            add: function (a) { return a[0] && a[0].id !== undefined ? { src: 'electronicPaymentData', editId: a[0].id } : null; },
+            refresh: function (a) {
+                var g = pmgFind(electronicPaymentData, function (x) { return a[0] && String(x.id) === String(a[0].id); });
+                if (g) showPaymentProducts(g, a[1]); else renderPaymentGroups();
+            }
+        },
+        renderTvGroups: {
+            add: function () { return { src: 'products', preset: { category: 'اشتراكات التلفاز' } }; },
+            refresh: function () { renderTvGroups(); }
+        },
+        showTvProducts: {
+            add: function (a) { var g = a[0] || {}; return { src: 'products', preset: { category: 'اشتراكات التلفاز', name: pmgNamePrefix(g.name), image: g.image } }; },
+            refresh: function (a) {
+                var g = pmgFind(buildTvGroups(), function (x) { return a[0] && x.name === a[0].name; });
+                if (g) showTvProducts(g); else renderTvGroups();
+            }
+        },
+        renderDesignGroups: {
+            add: function () { return { src: 'products', preset: { category: 'برامج التصميم' } }; },
+            refresh: function () { renderDesignGroups(); }
+        },
+        showDesignProducts: {
+            add: function (a) { var g = a[0] || {}; return { src: 'products', preset: { category: 'برامج التصميم', name: pmgNamePrefix(g.name), image: g.image } }; },
+            refresh: function (a) {
+                var g = pmgFind(buildDesignGroups(), function (x) { return a[0] && x.name === a[0].name; });
+                if (g) showDesignProducts(g); else renderDesignGroups();
+            }
+        },
+        renderArqamGroups: {
+            add: function (a) { return { src: 'products', preset: { category: a[0] } }; },
+            refresh: function (a) { renderArqamGroups(a[0], a[1]); }
+        },
+        showArqamProducts: {
+            add: function (a) { var g = a[0] || {}; return { src: 'products', preset: { category: a[1], name: pmgNamePrefix(g.name), image: g.image } }; },
+            refresh: function (a) {
+                var g = pmgFind(buildArqamGroups(a[1]), function (x) { return a[0] && x.name === a[0].name; });
+                if (g) showArqamProducts(g, a[1], a[2]); else renderArqamGroups(a[1], a[2]);
+            }
+        }
+    };
+
+    function pmgRemoveAddCard() {
+        var old = document.querySelectorAll('#productsGrid .pmg-add-card');
+        Array.prototype.forEach.call(old, function (el) { el.parentNode.removeChild(el); });
+    }
+
+    function pmgAppendAddCard() {
+        pmgRemoveAddCard();
+        if (!pmgAddView || !pmgIsAdminUser() || typeof productsGrid === 'undefined' || !productsGrid) return;
+        var spec = PMG_ADD_VIEWS[pmgAddView.name];
+        var action = spec && spec.add(pmgAddView.args || []);
+        if (!action || !pmgGetSource(action.src)) return;
+        // نفس شكل باقي البطاقات في الصفحة (بطاقة منتج أو بطاقة مجموعة)
+        var cls = productsGrid.querySelector('.product-card') ? 'product-card'
+                : productsGrid.querySelector('.platform-card') ? 'platform-card' : 'category-card';
+        var isEditGroup = action.editId !== undefined;
+        var card = document.createElement('a');
+        card.href = '#';
+        card.className = cls + ' pmg-add-card';
+        card.setAttribute('role', 'button');
+        card.innerHTML = '<span class="pmg-add-plus"><i class="fas fa-plus"></i></span>' +
+            '<span class="pmg-add-title">' + (isEditGroup ? 'إضافة باقة جديدة' : 'إضافة منتج جديد') + '</span>' +
+            '<span class="pmg-add-sub">' + (isEditGroup ? 'في هذه المجموعة' : 'في هذا القسم') + '</span>';
+        card.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            pmgOpenFromStore(action);
+        });
+        productsGrid.appendChild(card);
+    }
+
+    function pmgOpenFromStore(action) {
+        if (action.editId !== undefined) {
+            pmgOpenForm(action.src, action.editId);
+            var spec = pmgGetSource(action.src).subList;
+            if (spec && $('pmgSubRows')) {
+                pmgAddSubRow(spec, null);
+                var rows = $('pmgSubRows').querySelectorAll('.pmg-sub-row');
+                var last = rows[rows.length - 1];
+                setTimeout(function () {
+                    if (!last) return;
+                    try { last.scrollIntoView({ block: 'center' }); } catch (e) {}
+                    var first = last.querySelector('input[data-subfield="name"]') || last.querySelector('input');
+                    if (first) first.focus();
+                }, 350);
+            }
+        } else {
+            pmgOpenForm(action.src, null, action.preset);
+            setTimeout(function () { var n = $('pmgFieldsWrap').querySelector('[data-field="name"]'); if (n) n.focus(); }, 350);
+        }
+        if (pmgEditingCtx) pmgEditingCtx.fromStore = true;
+    }
+
+    // بعد الحفظ من المتجر: نعيد بناء الصفحة المفتوحة لتظهر الإضافة فوراً
+    function pmgRefreshAddView() {
+        if (!pmgAddView) return;
+        var spec = PMG_ADD_VIEWS[pmgAddView.name];
+        var visible = typeof productsSection !== 'undefined' && productsSection && getComputedStyle(productsSection).display !== 'none';
+        if (!spec || !visible) return;
+        var y = window.pageYOffset;
+        try { spec.refresh(pmgAddView.args || []); } catch (e) { console.error('refresh view', e); }
+        try { window.scrollTo({ top: y, behavior: 'instant' }); } catch (e2) { window.scrollTo(0, y); }
+    }
+
+    function pmgWrapAddViews() {
+        Object.keys(PMG_ADD_VIEWS).forEach(function (name) {
+            var orig = window[name];
+            if (typeof orig !== 'function') return;
+            window[name] = function () {
+                var args = Array.prototype.slice.call(arguments);
+                var res = orig.apply(this, arguments);
+                pmgAddView = { name: name, args: args };
+                try { pmgAppendAddCard(); } catch (e) { console.error('add card', e); }
+                return res;
+            };
+        });
+        // دخول/خروج المدير وهو داخل صفحة منتجات: نُظهر أو نُخفي البطاقة فوراً
+        auth.onAuthStateChanged(function () { try { pmgAppendAddCard(); } catch (e) {} });
+    }
+
     function pmgInit() {
         pmgInitSourceSelect();
         pmgPopulateCategoryFilter();
         pmgRenderGrid();
 
         pmgStartLive();
+        pmgWrapAddViews();
 
         $('pmgAddBtn').addEventListener('click', function () { pmgOpenForm($('pmgSourceSelect').value, null); });
         $('pmgCategorySelect').addEventListener('change', pmgRenderGrid);
@@ -712,6 +969,7 @@
 
             var arr = src.getArr();
             var existing = pmgEditingCtx.id !== null ? pmgFindItem(pmgEditingCtx.sourceKey, pmgEditingCtx.id) : null;
+            var fromStore = !!pmgEditingCtx.fromStore;
 
             var dup = null;
             for (var i = 0; i < arr.length; i++) { if (String(arr[i].id) === String(newId)) { dup = arr[i]; break; } }
@@ -789,6 +1047,7 @@
                 })
                 .then(function () {
                     showToast(isNew ? 'تمت إضافة المنتج وحفظه بشكل دائم على المتجر' : 'تم حفظ التعديلات بشكل دائم على المتجر', 'success');
+                    if (fromStore) pmgRefreshAddView();
                     // منتج جديد: نعرض على المدير إرسال إشعار للعملاء عنه (جاهز للتعديل قبل الإرسال)
                     if (isNew && typeof window.admPrefillBroadcast === 'function'
                         && confirm('تمت إضافة "' + (obj.name || 'المنتج') + '".\n\nهل تريد إرسال إشعار للعملاء بالمنتج الجديد؟')) {

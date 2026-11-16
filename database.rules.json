@@ -1,10 +1,10 @@
 {
   "rules": {
     "users": {
-      ".read": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      ".read": "auth != null && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || root.child('staff').child(auth.uid).child('active').val() === true)",
       "$uid": {
-        ".read": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')",
-        ".write": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')",
+        ".read": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || root.child('staff').child(auth.uid).child('active').val() === true)",
+        ".write": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || root.child('staff').child(auth.uid).child('active').val() === true)",
         "wholesale": {
           ".validate": "auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || newData.val() === data.val()"
         },
@@ -12,10 +12,12 @@
           ".validate": "auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || newData.val() === data.val()"
         },
         "balance": {
-          ".validate": "newData.isNumber() && newData.val() >= 0 && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || (!data.exists() && newData.val() === 0) || (data.exists() && data.isNumber() && newData.val() <= data.val()))"
+          ".validate": "newData.isNumber() && newData.val() >= 0 && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || root.child('staff').child(auth.uid).child('active').val() === true || (!data.exists() && newData.val() === 0) || (data.exists() && data.isNumber() && newData.val() <= data.val()))"
         },
         "transactions": {
-          ".indexOn": ["ts"]
+          ".indexOn": [
+            "ts"
+          ]
         }
       }
     },
@@ -26,19 +28,49 @@
       }
     },
     "topup_orders": {
-      ".read": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
-      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      ".read": "auth != null && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || (root.child('staff').child(auth.uid).child('active').val() === true && root.child('staff').child(auth.uid).child('topups').val() === true))",
+      ".write": "auth != null && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || (root.child('staff').child(auth.uid).child('active').val() === true && root.child('staff').child(auth.uid).child('topups').val() === true))",
       "$id": {
-        ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid && newData.child('status').val() === 'pending'"
+        ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid && newData.child('status').val() === 'pending' && !root.child('blocked_users').child(auth.uid).exists()"
       }
     },
     "store_orders": {
-      ".read": "auth != null && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || (query.orderByChild === 'uid' && query.equalTo === auth.uid))",
-      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
-      ".indexOn": ["uid"],
+      ".read": "auth != null && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || (root.child('staff').child(auth.uid).child('active').val() === true && root.child('staff').child(auth.uid).child('orders').val() === true) || (query.orderByChild === 'uid' && query.equalTo === auth.uid))",
+      ".write": "auth != null && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || (root.child('staff').child(auth.uid).child('active').val() === true && root.child('staff').child(auth.uid).child('orders').val() === true))",
+      ".indexOn": [
+        "uid"
+      ],
       "$id": {
         ".read": "auth != null && data.child('uid').val() === auth.uid",
-        ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid && newData.child('status').val() === 'pending'"
+        ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid && newData.child('status').val() === 'pending' && !root.child('blocked_users').child(auth.uid).exists()"
+      }
+    },
+    "order_notes": {
+      ".read": "auth != null && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || (root.child('staff').child(auth.uid).child('active').val() === true && root.child('staff').child(auth.uid).child('orders').val() === true))",
+      ".write": "auth != null && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || (root.child('staff').child(auth.uid).child('active').val() === true && root.child('staff').child(auth.uid).child('orders').val() === true))"
+    },
+    "staff": {
+      ".read": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')"
+      }
+    },
+    "blocked_users": {
+      ".read": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')"
+      }
+    },
+    "admin_log": {
+      ".read": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      ".indexOn": [
+        "ts"
+      ],
+      "$id": {
+        ".write": "auth != null && (auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || root.child('staff').child(auth.uid).child('active').val() === true) && !data.exists() && newData.child('uid').val() === auth.uid"
       }
     },
     "products": {
@@ -64,7 +96,7 @@
     "notifications": {
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')",
-        ".write": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2')"
+        ".write": "auth != null && (auth.uid === $uid || auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2' || root.child('staff').child(auth.uid).child('active').val() === true)"
       }
     },
     "admin_notifications": {

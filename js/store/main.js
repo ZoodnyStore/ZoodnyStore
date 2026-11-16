@@ -583,8 +583,21 @@ function restoreBottomNav() {
                 resolve({ ok: false, reason: 'missing' }); return;
             }
             if (typeof auth === 'undefined' || !auth.currentUser) { resolve({ ok: false, reason: 'login', total: total }); return; }
+            // منتج نفد من المخزون أو أخفاه المدير
+            var unavail = typeof window.zoodnyLineUnavailable === 'function' ? cart.filter(window.zoodnyLineUnavailable) : [];
+            if (unavail.length) {
+                if (typeof showToast === 'function') showToast('عذراً، "' + (unavail[0].name || 'المنتج') + '" غير متوفر حالياً', 'error');
+                resolve({ ok: false, reason: 'unavailable' }); return;
+            }
             if (_placing) { resolve({ ok: false, reason: 'busy' }); return; }
             _placing = true;
+            // الحساب المحظور لا يستطيع الطلب (والقاعدة في Firebase تمنعه أيضاً)
+            db.ref('blocked_users/' + auth.currentUser.uid).once('value').then(function(b) { return b.exists(); }, function() { return false; }).then(function(blocked) {
+            if (blocked) {
+                _placing = false;
+                if (typeof showToast === 'function') showToast('حسابك موقوف عن الطلب — تواصل مع خدمة العملاء', 'error');
+                resolve({ ok: false, reason: 'blocked' }); return;
+            }
             db.ref('users/' + auth.currentUser.uid + '/balance').once('value', function(snap) {
                 var bal = parseFloat(snap.val() || 0);
                 if (typeof userData !== 'undefined' && userData) userData.balance = bal;
@@ -595,6 +608,7 @@ function restoreBottomNav() {
             }, function(err) {
                 _placing = false;
                 resolve({ ok: false, reason: 'error', error: err });
+            });
             });
         });
     };

@@ -225,7 +225,14 @@
 
     // ── Auth observer ────────────────────────────────────────────────────
     var _authNotifyDone = false;
+    var _blockRef = null;
     auth.onAuthStateChanged(function(user) {
+        if (_blockRef) { _blockRef.off(); _blockRef = null; }
+        window.__zoodnyBlocked = false;
+        if (user) {
+            _blockRef = dbRef('blocked_users/' + user.uid);
+            _blockRef.on('value', function(s) { window.__zoodnyBlocked = s.exists(); }, function() {});
+        }
         currentUser = user;
         if (user) {
             modalOff('authOv','authModal');
@@ -624,6 +631,7 @@
 
         errEl.className = 'topup-err';
         errEl.textContent = '';
+        if (window.__zoodnyBlocked) { showErr('حسابك موقوف — تواصل مع خدمة العملاء'); return; }
         var btn = $('tuSubmitBtn');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';

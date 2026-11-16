@@ -203,7 +203,22 @@
         }
     ];
 
+    // ── حقول عامة لكل الأقسام: حالة المنتج (متاح / نفد / مخفي) وترتيب الظهور ──
+    var PMG_AVAIL_OPTIONS = [
+        ['', 'متاح للطلب'],
+        ['soldout', 'نفد المخزون — يظهر للزبائن بدون إمكانية الطلب'],
+        ['hidden', 'مخفي — لا يظهر للزبائن (يبقى محفوظاً)']
+    ];
+    PMG_SOURCES.forEach(function (src) {
+        src.fields = src.fields.concat([
+            { key: 'availability', label: '<i class="fas fa-eye"></i> حالة المنتج', type: 'select', options: function () { return PMG_AVAIL_OPTIONS; } },
+            { key: 'sortOrder', label: '<i class="fas fa-sort-numeric-down"></i> ترتيب الظهور — اختياري (الرقم الأصغر يظهر أولاً، والفارغ بعدها بترتيبه الحالي)', type: 'number', optional: true }
+        ]);
+    });
+
     function pmgGetSource(key) { return PMG_SOURCES.filter(function (s) { return s.key === key; })[0]; }
+    function pmgUnavailable(it) { return !!it && (it.availability === 'soldout' || it.availability === 'hidden'); }
+    var PMG_AVAIL_TXT = { soldout: 'نفد المخزون', hidden: 'مخفي عن الزبائن' };
 
     // الحقول الرقمية قد تكون محفوظة كنص (من نسخ سابقة) — نحولها لأرقام حتى لا تتعطل السلة والحسابات
     function pmgToNumber(v) {
@@ -357,10 +372,12 @@
                         '<span class="pmg-card-cat">' + pmgEsc(it.category || '—') + '</span>' +
                         (priceLine ? '<div class="pmg-card-price">' + pmgEsc(priceLine) + '</div>' : '') +
                         (costLine ? '<div class="pmg-card-cost' + (ce ? '' : ' none') + '"><i class="fas fa-lock"></i> ' + pmgEsc(costLine) + '</div>' : '') +
+                        (PMG_AVAIL_TXT[it.availability] ? '<div class="pmg-card-avail ' + pmgEsc(it.availability) + '">' + PMG_AVAIL_TXT[it.availability] + '</div>' : '') +
                         '<div class="pmg-card-sub">ID: ' + pmgEsc(it.id) + '</div>' +
                     '</div>' +
                     '<div class="pmg-card-foot">' +
                         '<button type="button" class="pmg-edit-btn" data-id="' + pmgEsc(it.id) + '"><i class="fas fa-edit"></i> تعديل</button>' +
+                        '<button type="button" class="pmg-dup-btn" data-id="' + pmgEsc(it.id) + '" title="إنشاء منتج جديد نسخة من هذا"><i class="fas fa-copy"></i> نسخ</button>' +
                         '<button type="button" class="pmg-del-btn" data-id="' + pmgEsc(it.id) + '"><i class="fas fa-trash"></i> حذف</button>' +
                     '</div>' +
                 '</div>';
@@ -368,6 +385,9 @@
 
         Array.prototype.forEach.call(grid.querySelectorAll('.pmg-edit-btn'), function (b) {
             b.addEventListener('click', function () { pmgOpenForm(src.key, b.dataset.id); });
+        });
+        Array.prototype.forEach.call(grid.querySelectorAll('.pmg-dup-btn'), function (b) {
+            b.addEventListener('click', function () { pmgDuplicate(src.key, b.dataset.id); });
         });
         Array.prototype.forEach.call(grid.querySelectorAll('.pmg-del-btn'), function (b) {
             b.addEventListener('click', function () { pmgDeleteItem(src.key, b.dataset.id); });
@@ -395,6 +415,7 @@
             dbRef('product_overrides/' + sourceKey + '/' + safeId).remove()
         ]).then(function () {
             showToast('تم حذف المنتج نهائياً من المتجر', 'success');
+            pmgLog('حذف المنتج "' + (item.name || '') + '" (' + src.label.split(' (')[0] + ')', sourceKey + '/' + safeId);
         }).catch(function (err) {
             showToast('تعذر حفظ الحذف في قاعدة البيانات: ' + (err && err.message ? err.message : err), 'error');
         });
@@ -450,7 +471,8 @@
             (src.idType === 'string' ? ' — نص فريد، مثال: my-new-item' : ' — رقم فريد غير مستخدم') + '</label>' +
             '<input type="text" id="pmgFieldId" value="' + pmgEsc(idVal) + '"' + (item ? ' readonly style="background:#f4f6f9;color:#888"' : '') + '></div>';
 
-        var costEntry = item ? (pmgCostEntry(sourceKey, item.id) || {}) : {};
+        var costEntry = item ? (pmgCostEntry(sourceKey, item.id) || {})
+                             : (preset.__costFrom !== undefined ? (pmgCostEntry(sourceKey, preset.__costFrom) || {}) : {});
         var fieldsHtml = src.fields.map(function (f) {
             var val = item ? (item[f.key] !== undefined && item[f.key] !== null ? item[f.key] : '')
                            : (preset[f.key] !== undefined && preset[f.key] !== null ? preset[f.key] : (f.default !== undefined ? f.default : ''));
@@ -494,7 +516,8 @@
 
         var subWrap = $('pmgSubListWrap');
         if (src.subList) {
-            var rows = item && Object.prototype.toString.call(item[src.subList.key]) === '[object Array]' ? item[src.subList.key] : [];
+            var rowsSrc = item || preset;
+            var rows = rowsSrc && Object.prototype.toString.call(rowsSrc[src.subList.key]) === '[object Array]' ? rowsSrc[src.subList.key] : [];
             subWrap.innerHTML = '<div class="pmg-sub-title"><span>' + src.subList.label + '</span> <button type="button" class="pmg-sub-add" id="pmgSubAddRow"><i class="fas fa-plus"></i> إضافة سطر</button></div>' +
                 '<div id="pmgSubRows"></div>';
             var costRows = costEntry.rows || {};
@@ -506,6 +529,16 @@
         } else {
             subWrap.innerHTML = '';
         }
+
+        // تحذير البيع بخسارة (سعر البيع أقل من رأس المال)
+        var warn = document.createElement('div');
+        warn.id = 'pmgLossWarn';
+        warn.className = 'pmg-loss-warn';
+        subWrap.appendChild(warn);
+        $('pmgFieldsWrap').oninput = pmgCheckLoss;
+        subWrap.oninput = pmgCheckLoss;
+        subWrap.onclick = function () { setTimeout(pmgCheckLoss, 0); };
+        pmgCheckLoss();
 
         modalOn('prodModalOv', 'prodEditModal');
     }
@@ -655,6 +688,7 @@
             pmgResetToBase();
             pmgApplyOverridesToArrays(pmgLast.overrides, pmgLast.deletions);
             if (pmgIsWholesale()) pmgApplyWholesale();
+            pmgApplyVisibilityAndOrder();
             pmgSyncDerived();
             pmgPopulateCategoryFilter();
             pmgRenderGrid();
@@ -688,6 +722,8 @@
         }
         listen('product_overrides', 'overrides', 'o');
         listen('product_deletions', 'deletions', 'd');
+        // المدير يرى المنتجات المخفية، والزائر لا ← نعيد التطبيق عند تغيّر الحساب
+        auth.onAuthStateChanged(function () { pmgSchedule(); });
         // تفعيل/إيقاف الجملة لهذا الزبون (يأتي من wholesale.js) ← نعيد حساب الأسعار فوراً
         document.addEventListener('zoodny:wholesale', function () { pmgSchedule(); });
     }
@@ -1040,6 +1076,18 @@
     function pmgDecorateEditPencils() {
         var admin = pmgIsAdminUser();
         Array.prototype.forEach.call(document.querySelectorAll('[data-pmg-src]'), function (card) {
+            // شارة الحالة (نفد المخزون للجميع، مخفي للمدير فقط)
+            var it = pmgGetSource(card.dataset.pmgSrc) ? pmgFindItem(card.dataset.pmgSrc, card.dataset.pmgId) : null;
+            var st = it ? it.availability : '';
+            var rib = card.querySelector(':scope > .pmg-status-ribbon');
+            card.classList.toggle('pmg-soldout', st === 'soldout');
+            card.classList.toggle('pmg-hidden-item', st === 'hidden');
+            if (PMG_AVAIL_TXT[st]) {
+                if (!rib) { rib = document.createElement('span'); card.appendChild(rib); }
+                rib.className = 'pmg-status-ribbon ' + st;
+                rib.textContent = PMG_AVAIL_TXT[st];
+            } else if (rib) rib.parentNode.removeChild(rib);
+
             var btn = card.querySelector(':scope > .pmg-edit-pencil');
             if (!admin) { if (btn) btn.parentNode.removeChild(btn); return; }
             if (btn || !pmgGetSource(card.dataset.pmgSrc)) return;
@@ -1079,7 +1127,12 @@
         // ضغطة القلم تُلتقط قبل وصولها للبطاقة حتى لا تفتح تفاصيل المنتج أو تنتقل لصفحة أخرى
         document.addEventListener('click', function (e) {
             var btn = e.target.closest && e.target.closest('.pmg-edit-pencil');
-            if (!btn) return;
+            if (!btn) {
+                // منتج نفد من المخزون: لا تفاصيل ولا طلب
+                var so = e.target.closest && e.target.closest('.pmg-soldout');
+                if (so) { e.preventDefault(); e.stopPropagation(); showToast('عذراً، هذا المنتج نفد من المخزون حالياً', 'warn'); }
+                return;
+            }
             e.preventDefault(); e.stopPropagation();
             if (!pmgIsAdminUser()) return;
             var card = btn.closest('[data-pmg-src]');
@@ -1100,6 +1153,245 @@
         schedule();
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    //  أدوات المدير: السجل، الحالة والترتيب، النسخ، تحذير الخسارة، تعديل الأسعار دفعة واحدة
+    // ═══════════════════════════════════════════════════════════════
+    function pmgLog(text, ref) { if (typeof window.zoodnyLog === 'function') window.zoodnyLog('product', text, ref); }
+
+    function pmgApplyVisibilityAndOrder() {
+        var admin = pmgIsAdminUser();
+        PMG_SOURCES.forEach(function (src) {
+            var arr = src.getArr();
+            if (!admin) for (var i = arr.length - 1; i >= 0; i--) if (arr[i] && arr[i].availability === 'hidden') arr.splice(i, 1);
+            if (!arr.some(function (it) { return it && typeof it.sortOrder === 'number'; })) return;
+            var tmp = arr.map(function (it, i) { return { it: it, i: i }; });
+            tmp.sort(function (a, b) {
+                var x = a.it && typeof a.it.sortOrder === 'number' ? a.it.sortOrder : Infinity;
+                var y = b.it && typeof b.it.sortOrder === 'number' ? b.it.sortOrder : Infinity;
+                return (x - y) || (a.i - b.i);
+            });
+            arr.length = 0;
+            tmp.forEach(function (t) { arr.push(t.it); });
+        });
+    }
+
+    // هل بند الطلب (من السلة) لمنتج نفد أو أُخفي؟ — يُستخدم في main.js قبل إتمام الطلب
+    window.zoodnyLineUnavailable = function (line) {
+        if (!line) return false;
+        try {
+            var cat = line.category || '', id = String(line.id), nm = String(line.name || '').split(' | ')[0];
+            if (cat === 'games') return gamesData.some(function (g) { return pmgUnavailable(g) && (g.name === nm || String(g.id) === id); });
+            if (cat === 'app') return appsData.some(function (a) { return pmgUnavailable(a) && (a.name === nm || String(a.id) === id); });
+            if (/بريميوم|VPN|الدفع/.test(cat)) {
+                return [premiumActivationsData, vpnData, electronicPaymentData].some(function (arr) {
+                    return arr.some(function (g) {
+                        return pmgUnavailable(g) && (g.products || []).some(function (r) { return r && String(r.id) === id && r.name === nm; });
+                    });
+                });
+            }
+            return products.some(function (p) { return pmgUnavailable(p) && String(p.id) === id && (!p.category || p.category === cat); });
+        } catch (e) { return false; }
+    };
+
+    function pmgDuplicate(sourceKey, id) {
+        var item = pmgFindItem(sourceKey, id);
+        if (!item) return;
+        var copy = JSON.parse(JSON.stringify(item));
+        delete copy.id;
+        copy.name = (copy.name || '') + ' (نسخة)';
+        copy.__costFrom = item.id;
+        pmgOpenForm(sourceKey, null, copy);
+        $('pmgFormTitle').textContent = 'نسخة جديدة من: ' + item.name;
+        setTimeout(function () { var n = $('pmgFieldsWrap').querySelector('[data-field="name"]'); if (n) { n.focus(); n.select(); } }, 350);
+    }
+
+    // ── تحذير الخسارة: يقارن سعر البيع (مفرق وجملة) برأس المال في النموذج المفتوح ──
+    var PMG_PRICE_TRIPLES = [['price', 'wholesalePrice', 'cost'], ['basePrice', 'wholesaleBasePrice', 'costBase'], ['unitPrice', 'wholesaleUnitPrice', 'unitCost']];
+    function pmgNumIn(el) { if (!el || !pmgFieldIsVisible(el)) return null; var v = pmgToNumber(String(el.value).trim()); return typeof v === 'number' ? v : null; }
+    function pmgLossList() {
+        var out = [], wrap = $('pmgFieldsWrap');
+        if (!wrap) return out;
+        PMG_PRICE_TRIPLES.forEach(function (t) {
+            var cost = pmgNumIn(wrap.querySelector('[data-field="' + t[2] + '"]'));
+            if (cost === null || cost <= 0) return;
+            var r = pmgNumIn(wrap.querySelector('[data-field="' + t[0] + '"]'));
+            var w = pmgNumIn(wrap.querySelector('[data-field="' + t[1] + '"]'));
+            if (r !== null && r > 0 && r < cost) out.push('سعر المفرق ' + r + '$ أقل من رأس المال ' + cost + '$ (خسارة ' + +(cost - r).toFixed(2) + '$)');
+            if (w !== null && w > 0 && w < cost) out.push('سعر الجملة ' + w + '$ أقل من رأس المال ' + cost + '$ (خسارة ' + +(cost - w).toFixed(2) + '$)');
+        });
+        Array.prototype.forEach.call(document.querySelectorAll('#pmgSubRows .pmg-sub-row'), function (row, i) {
+            var g = function (k) { var el = row.querySelector('[data-subfield="' + k + '"]'); if (!el) return null; var v = pmgToNumber(String(el.value).trim()); return typeof v === 'number' ? v : null; };
+            var cost = g('cost'); if (cost === null || cost <= 0) return;
+            var label = (row.querySelector('[data-subfield="name"]') || row.querySelector('[data-subfield="display"]') || {}).value || ('السطر ' + (i + 1));
+            var r = g('price'), w = g('wholesalePrice');
+            if (r !== null && r > 0 && r < cost) out.push(label + ': المفرق ' + r + '$ أقل من رأس المال ' + cost + '$');
+            if (w !== null && w > 0 && w < cost) out.push(label + ': الجملة ' + w + '$ أقل من رأس المال ' + cost + '$');
+        });
+        return out;
+    }
+    function pmgCheckLoss() {
+        var box = $('pmgLossWarn');
+        if (!box) return;
+        var l = pmgLossList();
+        box.style.display = l.length ? '' : 'none';
+        box.innerHTML = l.length ? '<i class="fas fa-exclamation-triangle"></i> <b>تحذير: بيع بخسارة</b><ul>' + l.map(function (x) { return '<li>' + pmgEsc(x) + '</li>'; }).join('') + '</ul>' : '';
+    }
+
+    // ── تعديل الأسعار دفعة واحدة (للقسم والتصنيف والبحث المعروض حالياً) ──
+    var PMG_BULK_SKIP_CATS = ['games', 'app', 'rased'];   // نسخ داخل products لها نماذجها الخاصة
+    function pmgBulkTargets() {
+        var src = pmgGetSource($('pmgSourceSelect').value);
+        var catFilter = $('pmgCategorySelect').value;
+        var q = ($('pmgSearchInput').value || '').trim().toLowerCase();
+        var list = src.getArr().filter(function (it) {
+            if (!it) return false;
+            if (src.key === 'products' && PMG_BULK_SKIP_CATS.indexOf(it.category) !== -1) return false;
+            if (catFilter && it.category !== catFilter) return false;
+            if (q && String(it.name || '').toLowerCase().indexOf(q) === -1) return false;
+            return true;
+        });
+        return { src: src, list: list, cat: catFilter, q: q };
+    }
+    function pmgBulkCalc(v, op, val, step) {
+        if (typeof v !== 'number' || !(v > 0)) return v;
+        var n = op === 'inc%' ? v * (1 + val / 100) : op === 'dec%' ? v * (1 - val / 100) : op === 'add' ? v + val : v - val;
+        n = Math.round(n / step) * step;
+        n = Math.round(n * 100) / 100;
+        return n < 0 ? 0 : n;
+    }
+    // يطبّق التعديل على نسخة من المنتج + رأس ماله ← يُرجع { item, cost, changed, sample }
+    function pmgBulkApplyOne(src, it, o) {
+        var item = JSON.parse(JSON.stringify(it)), changed = false, sample = null;
+        var cost = JSON.parse(JSON.stringify(pmgCostEntry(src.key, it.id) || null));
+        var mainKeys = PMG_PRICE_TRIPLES;
+        mainKeys.forEach(function (t) {
+            if (o.retail && typeof item[t[0]] === 'number' && item[t[0]] > 0) {
+                var nv = pmgBulkCalc(item[t[0]], o.op, o.val, o.step);
+                if (nv !== item[t[0]]) { if (!sample) sample = [item[t[0]], nv]; item[t[0]] = nv; changed = true; }
+            }
+            if (o.wholesale && typeof item[t[1]] === 'number' && item[t[1]] > 0) {
+                var nw = pmgBulkCalc(item[t[1]], o.op, o.val, o.step);
+                if (nw !== item[t[1]]) { item[t[1]] = nw; changed = true; }
+            }
+            if (o.cost && cost && typeof cost[t[2]] === 'number' && cost[t[2]] > 0) {
+                cost[t[2]] = pmgBulkCalc(cost[t[2]], o.op, o.val, o.step); changed = true;
+            }
+        });
+        if (src.subList && Array.isArray(item[src.subList.key])) {
+            item[src.subList.key].forEach(function (r) {
+                if (!r) return;
+                if (o.retail && typeof r.price === 'number' && r.price > 0) {
+                    var nv = pmgBulkCalc(r.price, o.op, o.val, o.step);
+                    if (nv !== r.price) { if (!sample) sample = [r.price, nv]; r.price = nv; changed = true; }
+                }
+                if (o.wholesale && typeof r.wholesalePrice === 'number' && r.wholesalePrice > 0) {
+                    var nw = pmgBulkCalc(r.wholesalePrice, o.op, o.val, o.step);
+                    if (nw !== r.wholesalePrice) { r.wholesalePrice = nw; changed = true; }
+                }
+            });
+            if (o.cost && cost && cost.rows) Object.keys(cost.rows).forEach(function (k) {
+                var cr = cost.rows[k];
+                if (cr && typeof cr.cost === 'number' && cr.cost > 0) { cr.cost = pmgBulkCalc(cr.cost, o.op, o.val, o.step); changed = true; }
+            });
+        }
+        if (item.category === 'social-media' && typeof item.basePrice === 'number' && typeof item.description === 'string') {
+            item.description = item.description.replace(/سعر الألف:\s*[\d.]+\s*\$/, 'سعر الألف: ' + item.basePrice + '$');
+        }
+        if (cost) cost.updatedAt = Date.now();
+        return { item: item, cost: cost, changed: changed, sample: sample };
+    }
+
+    function pmgOpenBulk() {
+        var T = pmgBulkTargets();
+        var ov = $('pmgBulkOv');
+        if (!ov) {
+            ov = document.createElement('div');
+            ov.id = 'pmgBulkOv';
+            ov.className = 'adm-user-ov';
+            ov.style.zIndex = '4300';
+            ov.innerHTML = '<div class="adm-pw-modal pmg-bulk-modal" role="dialog" aria-modal="true">' +
+                '<div class="adm-user-head"><div class="adm-user-title"><i class="fas fa-percentage"></i> تعديل الأسعار دفعة واحدة</div>' +
+                '<button class="adm-user-close" id="pmgBulkClose" aria-label="إغلاق"><i class="fas fa-times"></i></button></div>' +
+                '<div class="adm-pw-body">' +
+                    '<div class="pmg-bulk-scope" id="pmgBulkScope"></div>' +
+                    '<div class="pmg-field"><label>العملية</label><select id="pmgBulkOp">' +
+                        '<option value="inc%">رفع الأسعار بنسبة %</option><option value="dec%">تخفيض الأسعار بنسبة %</option>' +
+                        '<option value="add">زيادة مبلغ ثابت ($)</option><option value="sub">إنقاص مبلغ ثابت ($)</option></select></div>' +
+                    '<div class="pmg-field"><label>القيمة</label><input type="text" id="pmgBulkVal" inputmode="decimal" dir="ltr" placeholder="مثال: 10"></div>' +
+                    '<div class="pmg-field"><label>تقريب السعر الناتج</label><select id="pmgBulkStep">' +
+                        '<option value="0.01">بدون تقريب (0.01)</option><option value="0.05">لأقرب 0.05</option><option value="0.1">لأقرب 0.10</option>' +
+                        '<option value="0.25">لأقرب 0.25</option><option value="0.5">لأقرب 0.50</option><option value="1">لأقرب 1$</option></select></div>' +
+                    '<div class="pmg-field"><label>تطبيق على</label><div class="pmg-bulk-checks">' +
+                        '<label><input type="checkbox" id="pmgBulkRetail" checked> سعر المفرق</label>' +
+                        '<label><input type="checkbox" id="pmgBulkWholesale" checked> سعر الجملة</label>' +
+                        '<label><input type="checkbox" id="pmgBulkCost"> رأس المال</label></div></div>' +
+                    '<div class="pmg-bulk-preview" id="pmgBulkPreview"></div>' +
+                    '<button type="button" class="pmg-save-btn" id="pmgBulkApply"><i class="fas fa-check"></i> تطبيق التعديل</button>' +
+                '</div></div>';
+            document.body.appendChild(ov);
+            $('pmgBulkClose').onclick = function () { ov.classList.remove('on'); };
+            ov.addEventListener('click', function (e) { if (e.target === ov) ov.classList.remove('on'); });
+            ['pmgBulkOp', 'pmgBulkVal', 'pmgBulkStep', 'pmgBulkRetail', 'pmgBulkWholesale', 'pmgBulkCost'].forEach(function (id) {
+                $(id).addEventListener('input', pmgBulkPreview); $(id).addEventListener('change', pmgBulkPreview);
+            });
+            $('pmgBulkApply').onclick = pmgBulkRun;
+        }
+        $('pmgBulkScope').innerHTML = '<i class="fas fa-filter"></i> سيُطبَّق على <b>' + T.list.length + '</b> منتج من: <b>' + pmgEsc(T.src.label) + '</b>' +
+            (T.cat ? ' — التصنيف: <b>' + pmgEsc(T.cat) + '</b>' : ' — كل التصنيفات') + (T.q ? ' — البحث: <b>' + pmgEsc(T.q) + '</b>' : '') +
+            '<div class="pmg-bulk-hint">لتغيير النطاق: أغلق النافذة واختر القسم/التصنيف أو اكتب في البحث، ثم افتحها مجدداً.</div>';
+        $('pmgBulkVal').value = '';
+        pmgBulkPreview();
+        ov.classList.add('on');
+        setTimeout(function () { $('pmgBulkVal').focus(); }, 150);
+    }
+    function pmgBulkOpts() {
+        var v = pmgToNumber(String($('pmgBulkVal').value).trim());
+        return { op: $('pmgBulkOp').value, val: typeof v === 'number' ? v : NaN, step: Number($('pmgBulkStep').value) || 0.01,
+                 retail: $('pmgBulkRetail').checked, wholesale: $('pmgBulkWholesale').checked, cost: $('pmgBulkCost').checked };
+    }
+    function pmgBulkPreview() {
+        var o = pmgBulkOpts(), T = pmgBulkTargets(), box = $('pmgBulkPreview');
+        if (!(o.val > 0)) { box.innerHTML = '<span class="muted">اكتب قيمة لترى معاينة الأسعار الجديدة</span>'; return; }
+        if (!o.retail && !o.wholesale && !o.cost) { box.innerHTML = '<span class="muted">اختر نوع سعر واحد على الأقل</span>'; return; }
+        var rows = [], n = 0;
+        T.list.forEach(function (it) {
+            var r = pmgBulkApplyOne(T.src, it, o);
+            if (!r.changed) return;
+            n++;
+            if (rows.length < 8) rows.push('<tr><td>' + pmgEsc(it.name) + '</td><td>' + (r.sample ? r.sample[0] + '$' : '—') + '</td><td><b>' + (r.sample ? r.sample[1] + '$' : '—') + '</b></td></tr>');
+        });
+        box.innerHTML = n ? '<div><b>' + n + '</b> منتج ستتغير أسعاره. معاينة:</div><table><thead><tr><th>المنتج</th><th>قبل</th><th>بعد</th></tr></thead><tbody>' + rows.join('') + '</tbody></table>' + (n > 8 ? '<div class="muted">و ' + (n - 8) + ' منتج آخر...</div>' : '')
+                          : '<span class="muted">لا توجد أسعار ستتغير بهذه الإعدادات</span>';
+    }
+    function pmgBulkRun() {
+        var o = pmgBulkOpts(), T = pmgBulkTargets();
+        if (!(o.val > 0)) { alert('اكتب قيمة صحيحة أكبر من صفر'); return; }
+        if (!o.retail && !o.wholesale && !o.cost) { alert('اختر نوع سعر واحد على الأقل'); return; }
+        if ((o.op === 'dec%') && o.val >= 100) { alert('نسبة التخفيض يجب أن تكون أقل من 100%'); return; }
+        var updates = {}, n = 0;
+        T.list.forEach(function (it) {
+            var r = pmgBulkApplyOne(T.src, it, o);
+            if (!r.changed) return;
+            n++;
+            var key = pmgSafeKey(it.id);
+            updates['product_overrides/' + T.src.key + '/' + key] = r.item;
+            updates['product_deletions/' + T.src.key + '/' + key] = null;
+            if (o.cost && r.cost) updates['product_costs/' + T.src.key + '/' + key] = r.cost;
+        });
+        if (!n) { alert('لا توجد أسعار ستتغير'); return; }
+        var opTxt = { 'inc%': 'رفع ' + o.val + '%', 'dec%': 'تخفيض ' + o.val + '%', 'add': 'زيادة ' + o.val + '$', 'sub': 'إنقاص ' + o.val + '$' }[o.op];
+        var what = [o.retail && 'المفرق', o.wholesale && 'الجملة', o.cost && 'رأس المال'].filter(Boolean).join(' و');
+        if (!confirm(opTxt + ' على أسعار ' + what + ' لـ ' + n + ' منتج؟\n\nيظهر التعديل لكل الزوار فوراً.')) return;
+        var btn = $('pmgBulkApply'); btn.disabled = true;
+        db.ref().update(updates).then(function () {
+            showToast('✓ تم تعديل أسعار ' + n + ' منتج', 'success');
+            $('pmgBulkOv').classList.remove('on');
+            pmgLog('تعديل أسعار دفعة واحدة: ' + opTxt + ' على ' + what + ' — ' + n + ' منتج من ' + T.src.label.split(' (')[0] + (T.cat ? ' / ' + T.cat : '') + (T.q ? ' (بحث: ' + T.q + ')' : ''));
+        }).catch(function (err) {
+            alert('فشل التعديل: ' + (err && err.message ? err.message : err));
+        }).then(function () { btn.disabled = false; });
+    }
+
     function pmgInit() {
         pmgInitSourceSelect();
         pmgPopulateCategoryFilter();
@@ -1111,6 +1403,7 @@
         pmgInitEditPencils();
 
         $('pmgAddBtn').addEventListener('click', function () { pmgOpenForm($('pmgSourceSelect').value, null); });
+        if ($('pmgBulkBtn')) $('pmgBulkBtn').addEventListener('click', pmgOpenBulk);
         $('pmgCategorySelect').addEventListener('change', pmgRenderGrid);
         $('pmgSearchInput').addEventListener('input', pmgRenderGrid);
         $('pmgCancelBtn').addEventListener('click', function () { modalOff('prodModalOv', 'prodEditModal'); });
@@ -1153,6 +1446,7 @@
                     costVals[f.key] = v;
                     return;
                 }
+                if (f.optional && v.trim() === '') { values[f.key] = null; return; }   // حقل اختياري فارغ ← يُحذف
                 if (f.type === 'number') {
                     // المتصفح يعيد قيمة فارغة إذا كُتب نص غير رقمي في حقل رقمي — لا نحفظها كصفر
                     if (el.validity && el.validity.badInput) { badField = f.label; return; }
@@ -1199,6 +1493,16 @@
                 });
                 if (badField) { alert('قيمة غير صحيحة في: ' + badField + '\nاكتب رقماً صحيحاً (مثال: 2.5)'); return; }
             }
+
+            var losses = pmgLossList();
+            if (losses.length && !confirm('⚠️ تحذير: البيع بخسارة!\n\n' + losses.join('\n') + '\n\nهل تريد الحفظ رغم ذلك؟')) return;
+
+            // للسجل: القيم قبل التعديل
+            var LOG_KEYS = ['name', 'price', 'wholesalePrice', 'basePrice', 'wholesaleBasePrice', 'unitPrice', 'wholesaleUnitPrice', 'availability'];
+            var LOG_LBL = { name: 'الاسم', price: 'السعر', wholesalePrice: 'سعر الجملة', basePrice: 'سعر الألف', wholesaleBasePrice: 'سعر الألف جملة', unitPrice: 'سعر الوحدة', wholesaleUnitPrice: 'سعر الوحدة جملة', availability: 'الحالة' };
+            var before = {};
+            if (existing) LOG_KEYS.forEach(function (k) { before[k] = existing[k]; });
+            var beforeRows = existing && src.subList ? JSON.stringify(existing[src.subList.key] || []) : null;
 
             var obj = existing || {};
             obj.id = newId;
@@ -1248,6 +1552,24 @@
                 })
                 .then(function () {
                     showToast(isNew ? 'تمت إضافة المنتج وحفظه بشكل دائم على المتجر' : 'تم حفظ التعديلات بشكل دائم على المتجر', 'success');
+                    // سجل النشاط: ماذا تغيّر
+                    var changes = [];
+                    if (!isNew) {
+                        LOG_KEYS.forEach(function (k) {
+                            var a = before[k], b = obj[k];
+                            if ((a === undefined || a === null || a === '') && (b === undefined || b === null || b === '')) return;
+                            if (String(a) === String(b)) return;
+                            var fmt = function (v) { return k === 'availability' ? (PMG_AVAIL_TXT[v] || 'متاح') : (v === undefined || v === null || v === '' ? '—' : v); };
+                            changes.push(LOG_LBL[k] + ': ' + fmt(a) + ' ← ' + fmt(b));
+                        });
+                        if (src.subList && beforeRows !== JSON.stringify(obj[src.subList.key] || [])) changes.push('تعديل الباقات/الفئات');
+                        ['cost', 'costBase', 'unitCost'].forEach(function (k) {
+                            if (prevCost[k] !== costObj[k] && (typeof prevCost[k] === 'number' || typeof costObj[k] === 'number'))
+                                changes.push('رأس المال: ' + (typeof prevCost[k] === 'number' ? prevCost[k] : '—') + ' ← ' + (typeof costObj[k] === 'number' ? costObj[k] : '—'));
+                        });
+                    }
+                    pmgLog((isNew ? 'إضافة منتج "' : 'تعديل المنتج "') + (obj.name || '') + '" (' + src.label.split(' (')[0] + ')' +
+                        (changes.length ? ' — ' + changes.join('، ') : (isNew ? '' : ' — بدون تغيير في الأسعار')), src.key + '/' + safeId);
                     if (fromStore) pmgRefreshAddView();
                     // منتج جديد: نعرض على المدير إرسال إشعار للعملاء عنه (جاهز للتعديل قبل الإرسال)
                     if (isNew && typeof window.admPrefillBroadcast === 'function'

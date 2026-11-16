@@ -13,6 +13,70 @@
     let adminTopups   = [];
     let adminUsers    = [];
     let adminListenerOn = false;
+    let notesMap = {};        // order_notes: ملاحظات داخلية على الطلبات (لا يراها الزبون)
+    let blockedMap = {};      // blocked_users: العملاء المحظورون (المدير فقط)
+
+    // ── الأدوار: المدير (حساب admin) أو موظف (staff/{uid} يضيفه المدير من "أدوات المدير") ──
+    let staffInfo = null, staffRef = null;
+    function isStaff()    { return !isAdminSignedIn() && !!(staffInfo && staffInfo.active === true); }
+    function canOrders()  { return isAdminSignedIn() || (isStaff() && staffInfo.orders === true); }
+    function canTopups()  { return isAdminSignedIn() || (isStaff() && staffInfo.topups === true); }
+    function isPanelUser(){ return isAdminSignedIn() || isStaff(); }
+    var ADMIN_ONLY_TABS = ['products', 'notify', 'reports', 'tools'];
+
+    function applyRoleUI() {
+        var dash = $('adminDashboard');
+        if (!dash) return;
+        var staff = isStaff();
+        dash.classList.toggle('adm-staff', staff);
+        var title = dash.querySelector('.adm-topbar-title');
+        if (title) title.innerHTML = staff
+            ? '<i class="fas fa-user-tie"></i> لوحة الموظف — ' + esc(staffInfo.name || staffInfo.email || '')
+            : '<i class="fas fa-tachometer-alt"></i> لوحة تحكم المدير — زودني';
+        var firstVisible = null, activeHidden = false;
+        document.querySelectorAll('.adm-tab').forEach(function(t) {
+            var p = t.dataset.panel, show = true;
+            if (staff) {
+                if (ADMIN_ONLY_TABS.indexOf(p) !== -1) show = false;
+                if (p === 'orders' && !canOrders()) show = false;
+                if (p === 'topups' && !canTopups()) show = false;
+            }
+            t.style.display = show ? '' : 'none';
+            if (show && !firstVisible) firstVisible = p;
+            if (!show && t.classList.contains('active')) activeHidden = true;
+        });
+        if (activeHidden && firstVisible) switchAdmTab(firstVisible);
+    }
+
+    auth.onAuthStateChanged(function(u) {
+        if (staffRef) { staffRef.off(); staffRef = null; }
+        staffInfo = null;
+        if (u && !isAdminSignedIn()) {
+            staffRef = dbRef('staff/' + u.uid);
+            staffRef.on('value', function(snap) {
+                staffInfo = snap.val();
+                applyRoleUI();
+                document.dispatchEvent(new CustomEvent('zoodny:role'));
+            }, function() { staffInfo = null; });
+        }
+        applyRoleUI();
+        document.dispatchEvent(new CustomEvent('zoodny:role'));
+    });
+
+    // ── سجل النشاط: كل عملية مهمة من المدير أو الموظفين (admin_log — يقرؤه المدير فقط) ──
+    window.zoodnyLog = function(action, text, ref) {
+        try {
+            var u = auth.currentUser;
+            if (!u || !isPanelUser()) return;
+            var admin = isAdminSignedIn();
+            dbRef('admin_log').push({
+                ts: Date.now(), uid: u.uid, role: admin ? 'admin' : 'staff',
+                by: admin ? 'المدير' : ((staffInfo && staffInfo.name) || u.email || 'موظف'),
+                action: String(action || ''), text: String(text || '').slice(0, 600), ref: String(ref || '')
+            }).catch(function(e) { console.warn('log failed', e); });
+        } catch (e) { console.warn('log failed', e); }
+    };
+    function log(a, t, r) { window.zoodnyLog(a, t, r); }
 
     // ── ADMIN PANEL ───────────────────────────────────────────────────────
     // ── الدخول المخفي للوحة المدير: 10 ضغطات سريعة على الشعار، أو ضغط مطوّل 4 ثوانٍ ──
@@ -85,7 +149,7 @@
     // Tab switching
     function switchAdmTab(panel) {
         var tab = document.querySelector('.adm-tab[data-panel="' + panel + '"]');
-        if (!tab || !$('panel-' + panel)) return;
+        if (!tab || !$('panel-' + panel) || tab.style.display === 'none') return;
         document.querySelectorAll('.adm-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.adm-tab-panel').forEach(p => p.classList.remove('active'));
         tab.classList.add('active');
@@ -101,7 +165,8 @@
     }
     // فتح لوحة المدير على تبويب محدد (يُستخدم عند الضغط على إشعار للمدير)
     window.openAdminPanel = function(panel) {
-        if (!isAdminSignedIn()) { openAdminLogin(); return; }
+        if (!isPanelUser()) { openAdminLogin(); return; }
+        applyRoleUI();
         ovOn('adminPanelOv');
         $('adminLoginModal').classList.remove('on');
         $('adminDashboard').classList.add('on');
@@ -131,6 +196,7 @@
     $('clearTopupsBtn').addEventListener('click', function() {
         if (confirm('مسح جميع طلبات الشحن؟')) {
             dbRef('topup_orders').remove().then(function() {
+                log('topup', 'مسح جميع طلبات الشحن (' + adminTopups.length + ' طلب)');
                 adminTopups = [];
                 renderTopupsTable();
                 renderTopupStats();
@@ -164,6 +230,7 @@
             .then(function() {
                 $('adminLoginModal').classList.remove('on');
                 $('adminDashboard').classList.add('on');
+                applyRoleUI();
                 startAdminListeners();
                 // إشعارات المدير (طلب جديد / شحن / مستخدم جديد) تُدار في notifications.js
                 if (window.ZoodnyNotify && typeof Notification !== 'undefined' && Notification.permission === 'default') {
@@ -184,11 +251,24 @@
             return;
         }
         adminListenerOn = true;
-        startBroadcastListener();
-        loadPushConfig();
+        var admin = isAdminSignedIn();
+        if (admin) {
+            startBroadcastListener();
+            loadPushConfig();
+            dbRef('blocked_users').on('value', function(snap) {
+                blockedMap = snap.val() || {};
+                renderUsersTable(); refreshUserModal();
+            }, function(err) { console.warn('blocked_users:', err); });
+        }
+        if (canOrders()) {
+            dbRef('order_notes').on('value', function(snap) {
+                notesMap = snap.val() || {};
+                renderOrdersTable();
+            }, function(err) { console.warn('order_notes:', err); });
+        }
 
         // Topup orders
-        dbRef('topup_orders').on('value', function(snap) {
+        if (canTopups()) dbRef('topup_orders').on('value', function(snap) {
             adminTopups = [];
             snap.forEach(function(c) { var v = c.val(); if (v) adminTopups.push(v); });
             renderTopupsTable();
@@ -214,7 +294,7 @@
             if (tbody) tbody.innerHTML = '<tr><td colspan="8" class="adm-no-data" style="color:#e74c3c">خطأ صلاحيات: ' + esc(err && err.message ? err.message : err) + '</td></tr>';
         });
         // Store orders
-        dbRef('store_orders').on('value', function(snap) {
+        if (canOrders()) dbRef('store_orders').on('value', function(snap) {
             adminOrders = [];
             snap.forEach(function(c) {
                 var v = c.val();
@@ -480,7 +560,13 @@
             if (st === 'pending')    btns += '<button class="adm-act-btn accept" onclick="admUpdateOrderStatus(\'' + key + '\',\'processing\')"><i class="fas fa-cog"></i> بدء التنفيذ</button>';
             if (st === 'processing') btns += '<button class="adm-act-btn view"   onclick="admUpdateOrderStatus(\'' + key + '\',\'done\')"><i class="fas fa-check"></i> تم</button>';
             if (st !== 'done' && st !== 'rejected') btns += '<button class="adm-act-btn reject" onclick="admUpdateOrderStatus(\'' + key + '\',\'rejected\')"><i class="fas fa-times"></i> رفض وإرجاع المبلغ</button>';
+            var note = notesMap[o._key];
+            btns += '<button class="adm-act-btn note" title="ملاحظة داخلية لا يراها الزبون" onclick="admEditNote(\'' + key + '\')"><i class="fas fa-sticky-note"></i> ' + (note ? 'تعديل الملاحظة' : 'ملاحظة') + '</button>';
             btns += '<button class="adm-act-btn del" title="حذف نهائي" onclick="admDeleteOrder(\'' + key + '\')"><i class="fas fa-trash"></i> حذف</button>';
+            var noteHtml = (note && note.text)
+                ? '<div class="adm-order-note"><i class="fas fa-sticky-note"></i> <b>ملاحظة داخلية:</b> ' + esc(note.text)
+                  + '<span class="by">' + esc(note.by || '') + (note.ts ? ' — ' + esc(new Date(note.ts).toLocaleString('ar-SY')) : '') + '</span></div>'
+                : '';
 
             return '<div class="adm-card ' + st + '">'
                 + '<div class="adm-card-head">'
@@ -499,6 +585,7 @@
                 + (prodsHtml || '<div style="color:#aaa;font-size:.83rem;padding:.4rem">لا توجد تفاصيل</div>')
                 + orderExtra
                 + '  </div>'
+                + noteHtml
                 + '</div>'
                 + '<div class="adm-card-foot">'
                 + '  <div class="adm-total-lbl"><i class="fas fa-dollar-sign"></i> المجموع: ' + money(o.total) + '</div>'
@@ -551,7 +638,8 @@
             var s = stats[key];
             return '<tr>'
                 + '<td><button type="button" class="adm-user-link" onclick="admOpenUser(\'' + escJs(key) + '\')">' + esc(u.name || '-') + '</button>'
-                + (u.wholesale === true ? ' <span class="ws-badge"><i class="fas fa-store"></i> جملة</span>' : '') + '</td>'
+                + (u.wholesale === true ? ' <span class="ws-badge"><i class="fas fa-store"></i> جملة</span>' : '')
+                + (blockedMap[key] ? ' <span class="blk-badge"><i class="fas fa-ban"></i> محظور</span>' : '') + '</td>'
                 + '<td>' + copyVal(u.email) + '</td>'
                 + '<td>' + copyVal(u.phone) + '</td>'
                 + '<td><strong style="color:var(--success)">' + money(u.balance) + '</strong>'
@@ -565,6 +653,7 @@
                 + '<td style="white-space:nowrap">'
                 + '<button class="adm-act-btn view" onclick="admOpenUser(\'' + escJs(key) + '\')"><i class="fas fa-id-card"></i> التفاصيل</button>'
                 + wholesaleBtn(u)
+                + blockBtn(u)
                 + '<button class="adm-act-btn del" title="حذف العميل" onclick="admDelUser(\'' + escJs(key) + '\')"><i class="fas fa-trash"></i></button>'
                 + '</td>'
                 + '</tr>';
@@ -678,7 +767,12 @@
                 ? '<span class="ws-badge big"><i class="fas fa-check-circle"></i> أسعار الجملة مفعّلة لهذا العميل</span>'
                 : '<span style="color:#888;font-size:.85rem">هذا العميل يرى أسعار المفرق</span>')
             + wholesaleBtn(u) + '</div></div>'
-            + '<div class="adm-sec"><h4><i class="fas fa-wallet"></i> تعديل الرصيد</h4><div class="adm-user-actions">'
+            + '<div class="adm-sec adm-admin-only"><h4><i class="fas fa-ban"></i> حظر العميل</h4><div class="adm-user-actions">'
+            + (blockedMap[u._key]
+                ? '<span class="blk-badge big"><i class="fas fa-ban"></i> محظور' + (blockedMap[u._key].reason ? ': ' + esc(blockedMap[u._key].reason) : '') + '</span>'
+                : '<span style="color:#888;font-size:.85rem">يستطيع هذا العميل الطلب وشحن الرصيد</span>')
+            + blockBtn(u) + '</div></div>'
+            + '<div class="adm-sec adm-admin-only"><h4><i class="fas fa-wallet"></i> تعديل الرصيد</h4><div class="adm-user-actions">'
             + '<input type="number" id="admUdAmt" placeholder="$ مبلغ" min="0.01" step="0.01">'
             + '<button class="adm-act-btn topup" onclick="admAdjustBalance(\'' + k + '\',1)"><i class="fas fa-plus"></i> إضافة</button>'
             + '<button class="adm-act-btn reject" onclick="admAdjustBalance(\'' + k + '\',-1)"><i class="fas fa-minus"></i> خصم</button>'
@@ -760,18 +854,23 @@
         addToBalance(uid, amt);
         dbRef('users/' + uid + '/transactions/' + reqId).update({ status: 'completed' });
         notifyUser(uid, 'topup', 'تم شحن رصيدك 💰', 'تمت إضافة ' + amt.toFixed(2) + '$ إلى رصيدك بنجاح', reqId);
+        var tu = findTopup(reqId);
+        log('topup', 'قبول شحن ' + amt.toFixed(2) + '$ لـ ' + ((tu && (tu.name || tu.email)) || uid) + (tu && tu.txId ? ' — رقم العملية ' + tu.txId : ''), reqId);
         balToast('✓ تم قبول الطلب وإضافة ' + amt.toFixed(2) + '$', true);
     };
     window.admRejectTopup = function(reqId, uid) {
         if (!confirm('رفض هذا الطلب؟')) return;
         var t = findTopup(reqId);
         dbRef('topup_orders/' + reqId).update({ status: 'rejected' });
+        log('topup', 'رفض طلب شحن ' + (t ? num(t.amount).toFixed(2) + '$ لـ ' + (t.name || t.email || uid) : reqId), reqId);
         dbRef('users/' + uid + '/transactions/' + reqId).remove();
         notifyUser(uid, 'topup', 'تم رفض طلب شحن الرصيد',
             'تم رفض طلب شحن ' + (t ? num(t.amount).toFixed(2) + '$ ' : '') + '— تأكد من رقم العملية أو تواصل معنا', reqId);
     };
     window.admDelTopup = function(reqId) {
+        var t = findTopup(reqId);
         dbRef('topup_orders/' + reqId).remove();
+        log('topup', 'حذف طلب شحن ' + (t ? num(t.amount).toFixed(2) + '$ لـ ' + (t.name || t.email || '') : reqId), reqId);
     };
     window.admUpdateOrderStatus = function(orderKey, status) {
         if (status === 'rejected' && !confirm('رفض الطلب وإرجاع المبلغ لرصيد الزبون؟')) return;
@@ -782,6 +881,8 @@
             if (!o || !o.uid || o.uid === 'guest') return;
             var orderId = o.orderId || orderKey;
             var label = orderLabel(o, orderId);
+            var stTxt = { processing: 'بدء تنفيذ', done: 'إنجاز', rejected: 'رفض وإرجاع مبلغ' }[status] || status;
+            log('order', stTxt + ' الطلب ' + orderId + ' (' + label + ') — ' + (o.name || '') + ' — ' + money(o.total), orderId);
             // تحديث حالة الطلب في سجل الزبون أيضاً
             dbRef('users/' + o.uid + '/orders/' + orderId).once('value', function(s) {
                 if (s.exists()) dbRef('users/' + o.uid + '/orders/' + orderId).update({ status: status });
@@ -861,6 +962,7 @@
                 dbRef('users/' + r.uid + '/ordersCount').transaction(function(c) { c = num(c); return c > 0 ? c - 1 : 0; });
             }
             balToast('✓ تم حذف الطلب نهائياً', true);
+            log('order', 'حذف الطلب ' + ((cached && cached.orderId) || orderKey) + ' نهائياً' + (cached ? ' — ' + (cached.name || '') + ' — ' + money(cached.total) : ''), orderKey);
         }).catch(function(err) {
             console.error('delete order failed:', err);
             alert('فشل حذف الطلب: ' + (err && err.message ? err.message : err));
@@ -883,6 +985,7 @@
             notifyUser(uid, 'balance', sign > 0 ? 'تمت إضافة رصيد 💰' : 'تم خصم من رصيدك',
                 (sign > 0 ? 'أضاف المدير ' : 'خصم المدير ') + amt.toFixed(2) + '$ ' + (sign > 0 ? 'إلى' : 'من') + ' رصيدك');
             balToast('✓ تم ' + (sign > 0 ? 'إضافة ' : 'خصم ') + amt.toFixed(2) + '$', true);
+            log('balance', (sign > 0 ? 'إضافة ' : 'خصم ') + amt.toFixed(2) + '$ ' + (sign > 0 ? 'إلى' : 'من') + ' رصيد ' + ((u && (u.name || u.email)) || uid), uid);
         }).catch(function(err) { alert('فشل تعديل الرصيد: ' + (err && err.message ? err.message : err)); });
     };
 
@@ -898,6 +1001,8 @@
         if (inp) inp.value = '';
         notifyUser(uid, 'balance', 'تمت إضافة رصيد 💰', 'أضاف المدير ' + amt.toFixed(2) + '$ إلى رصيدك');
         balToast('✓ تم إضافة ' + amt.toFixed(2) + '$ للعميل', true);
+        var uu = findUser(uid);
+        log('balance', 'إضافة ' + amt.toFixed(2) + '$ إلى رصيد ' + ((uu && (uu.name || uu.email)) || uid), uid);
     };
     // ── بيع الجملة: تفعيل/إيقاف لعميل + إشعار له ──
     function wholesaleBtn(u) {
@@ -916,14 +1021,68 @@
                 notifyUser(uid, 'wholesale', on ? 'تم إيقاف أسعار الجملة' : 'تم تفعيل بيع الجملة 🏪',
                     on ? 'أصبحت ترى أسعار المفرق العادية في المتجر' : 'مبروك! أصبحت أسعار الجملة متاحة لك الآن في متجر زودني');
                 balToast(on ? '✓ تم إيقاف الجملة' : '✓ تم تفعيل الجملة لـ ' + name, true);
+                log('customer', (on ? 'إيقاف' : 'تفعيل') + ' أسعار الجملة لـ ' + name, uid);
             })
             .catch(function(err) { alert('فشل: ' + (err && err.message ? err.message : err) + ' — تأكد من تحديث قواعد Firebase'); });
     };
 
     window.admDelUser = function(uid) {
         if (!confirm('حذف هذا المستخدم نهائياً؟')) return;
+        var du = findUser(uid);
         dbRef('users/' + uid).remove();
+        log('customer', 'حذف العميل ' + ((du && (du.name || du.email)) || uid) + (du ? ' — رصيده كان ' + money(du.balance) : ''), uid);
         if (openUserKey === uid) closeUserModal();
+    };
+
+    // ── حظر عميل: لا يستطيع الطلب ولا شحن الرصيد (القاعدة في database.rules.json تمنعه فعلياً) ──
+    function blockBtn(u) {
+        if (!isAdminSignedIn()) return '';
+        var on = !!blockedMap[u._key];
+        return '<button class="adm-act-btn ' + (on ? 'blk-off' : 'blk-on') + '" onclick="admToggleBlock(\'' + escJs(u._key) + '\')">'
+            + '<i class="fas ' + (on ? 'fa-unlock' : 'fa-ban') + '"></i> ' + (on ? 'إلغاء الحظر' : 'حظر') + '</button>';
+    }
+    window.admToggleBlock = function(uid) {
+        var u = findUser(uid);
+        if (!u || !isAdminSignedIn()) return;
+        var name = u.name || u.email || 'العميل';
+        var ref = dbRef('blocked_users/' + uid);
+        if (blockedMap[uid]) {
+            if (!confirm('إلغاء حظر ' + name + '؟')) return;
+            ref.remove().then(function() {
+                balToast('✓ تم إلغاء حظر ' + name, true);
+                log('customer', 'إلغاء حظر العميل ' + name, uid);
+            }).catch(function(err) { alert('فشل: ' + (err && err.message ? err.message : err) + ' — تأكد من نشر قواعد Firebase الجديدة'); });
+            return;
+        }
+        var reason = prompt('حظر ' + name + '؟\n\nلن يستطيع الطلب ولا شحن الرصيد (يبقى رصيده كما هو).\nاكتب سبب الحظر (اختياري):', '');
+        if (reason === null) return;
+        ref.set({ ts: Date.now(), reason: reason.trim(), name: u.name || '', email: u.email || '' }).then(function() {
+            balToast('✓ تم حظر ' + name, true);
+            log('customer', 'حظر العميل ' + name + (reason.trim() ? ' — السبب: ' + reason.trim() : ''), uid);
+        }).catch(function(err) { alert('فشل: ' + (err && err.message ? err.message : err) + ' — تأكد من نشر قواعد Firebase الجديدة'); });
+    };
+
+    // ── ملاحظة داخلية على الطلب (order_notes — لا يراها الزبون) ──
+    window.admEditNote = function(orderKey) {
+        var cur = notesMap[orderKey];
+        var v = prompt('ملاحظة داخلية على هذا الطلب (لا يراها الزبون).\nاترك الحقل فارغاً لحذف الملاحظة:', cur && cur.text ? cur.text : '');
+        if (v === null) return;
+        v = v.trim();
+        var ref = dbRef('order_notes/' + orderKey);
+        var by = isAdminSignedIn() ? 'المدير' : ((staffInfo && staffInfo.name) || (auth.currentUser && auth.currentUser.email) || 'موظف');
+        (v ? ref.set({ text: v.slice(0, 1000), by: by, ts: Date.now() }) : ref.remove()).then(function() {
+            log('order', (v ? 'ملاحظة على الطلب ' : 'حذف ملاحظة الطلب ') + orderKey + (v ? ': ' + v : ''), orderKey);
+        }).catch(function(err) { alert('فشل حفظ الملاحظة: ' + (err && err.message ? err.message : err) + ' — تأكد من نشر قواعد Firebase الجديدة'); });
+    };
+
+    // لملفات الأدوات الأخرى (admin-tools.js)
+    window.ZoodnyAdmin = {
+        users: function() { return adminUsers; },
+        orders: function() { return adminOrders; },
+        topups: function() { return adminTopups; },
+        isAdmin: isAdminSignedIn, isStaff: isStaff, isPanelUser: isPanelUser,
+        staffInfo: function() { return staffInfo; },
+        switchTab: switchAdmTab, money: money, num: num
     };
 
     // ── تغيير كلمة سر المدير ─────────────────────────────────────────────

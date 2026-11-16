@@ -45,6 +45,8 @@
             clearCart();
             toast('رصيدك غير كافٍ! رصيدك: ' + r.bal.toFixed(2) + '$ والمطلوب: ' + r.total.toFixed(2) + '$', 'error');
             if (typeof window.openTopup === 'function') setTimeout(window.openTopup, 1400);
+        } else if (r.reason === 'blocked' || r.reason === 'unavailable') {
+            clearCart();   // الرسالة ظهرت من zoodnyPlaceOrder
         } else if (r.reason === 'error') {
             clearCart();
             toast('تعذّر إتمام الطلب، حاول مجدداً', 'error');

@@ -998,6 +998,7 @@
             <div class="adm-tab" data-panel="products"><i class="fas fa-box-open"></i> إدارة المنتجات</div>
             <div class="adm-tab" data-panel="notify"><i class="fas fa-bullhorn"></i> إرسال إشعار</div>
             <div class="adm-tab" data-panel="reports"><i class="fas fa-chart-line"></i> المبيعات والأرباح</div>
+            <div class="adm-tab" data-panel="tools"><i class="fas fa-toolbox"></i> أدوات المدير</div>
         </div>
 
         <!-- ══ تبويب طلبات الشحن ══ -->
@@ -1098,6 +1099,7 @@
                 <select class="pmg-select" id="pmgCategorySelect"></select>
                 <input type="text" class="pmg-search" id="pmgSearchInput" placeholder="بحث بالاسم...">
                 <button class="pmg-add-btn" id="pmgAddBtn"><i class="fas fa-plus"></i> إضافة منتج جديد</button>
+                <button class="pmg-add-btn pmg-bulk-btn" id="pmgBulkBtn" title="رفع أو تخفيض أسعار المنتجات المعروضة حالياً دفعة واحدة"><i class="fas fa-percentage"></i> تعديل الأسعار دفعة واحدة</button>
             </div>
             <div class="pmg-count" id="pmgCount"></div>
             <div class="pmg-sync-note" id="pmgSyncNote"><i class="fas fa-cloud"></i> أي تعديل أو إضافة أو حذف أو رفع صورة هنا يُحفظ مباشرة ويظهر لكل الزوار فوراً وعلى كل الأجهزة، دون الحاجة لتعديل الكود أو رفع ملفات.</div>
@@ -1129,6 +1131,72 @@
             </div>
             <div class="pmg-sync-note"><i class="fas fa-lock"></i> هذه الصفحة وأسعار رأس المال تظهر للمدير فقط. الأرباح تُحسب من الطلبات <b>المنجزة</b>، ورأس المال يُحدَّد من نموذج كل منتج في "إدارة المنتجات" (حقل "سعر رأس المال").</div>
             <div id="rptBody"><div class="adm-no-data"><i class="fas fa-spinner fa-spin"></i> جارٍ تحميل البيانات...</div></div>
+        </div>
+
+        <!-- ══ تبويب أدوات المدير (js/account/admin-tools.js) ══ -->
+        <div class="adm-tab-panel" id="panel-tools">
+            <div class="tl-nav">
+                <button type="button" class="adm-filter-btn active" data-tl="staff"><i class="fas fa-user-tie"></i> الموظفون</button>
+                <button type="button" class="adm-filter-btn" data-tl="log"><i class="fas fa-history"></i> سجل النشاط</button>
+                <button type="button" class="adm-filter-btn" data-tl="backup"><i class="fas fa-file-export"></i> التصدير والنسخ الاحتياطي</button>
+            </div>
+
+            <div class="tl-sec" id="tl-staff">
+                <div class="adm-sec">
+                    <h4><i class="fas fa-user-plus"></i> إضافة موظف</h4>
+                    <div class="pmg-sync-note"><i class="fas fa-info-circle"></i> الموظف يسجّل حساباً عادياً في المتجر أولاً، ثم تضيفه هنا بإيميله وتختار صلاحياته. يدخل لوحته من زر "لوحة الموظف" في حسابه (أو الضغط على الشعار). لا يرى الموظف إدارة المنتجات ولا الأرباح ولا الأدوات، ولا يستطيع تعديل الأرصدة يدوياً أو حذف أي شيء، وكل ما يفعله يُسجَّل في سجل النشاط.</div>
+                    <div class="tl-row">
+                        <input type="email" class="adm-search" id="stfEmail" placeholder="إيميل حساب الموظف" dir="ltr">
+                        <label class="rpt-check"><input type="checkbox" id="stfOrders" checked> تنفيذ طلبات المتجر</label>
+                        <label class="rpt-check"><input type="checkbox" id="stfTopups" checked> قبول/رفض شحن الرصيد</label>
+                        <button type="button" class="pmg-add-btn" id="stfAddBtn"><i class="fas fa-plus"></i> إضافة</button>
+                    </div>
+                </div>
+                <div class="adm-sec">
+                    <h4><i class="fas fa-users-cog"></i> الموظفون الحاليون</h4>
+                    <div id="stfList"><div class="adm-no-data"><i class="fas fa-spinner fa-spin"></i></div></div>
+                </div>
+            </div>
+
+            <div class="tl-sec" id="tl-log" style="display:none">
+                <div class="tl-row">
+                    <input type="search" class="adm-search" id="logSearch" placeholder="بحث في السجل: منتج، عميل، رقم طلب...">
+                    <select class="pmg-select" id="logType">
+                        <option value="">كل العمليات</option>
+                        <option value="product">المنتجات والأسعار</option>
+                        <option value="order">الطلبات</option>
+                        <option value="topup">شحن الرصيد</option>
+                        <option value="balance">تعديل الأرصدة</option>
+                        <option value="customer">العملاء (جملة/حظر/حذف)</option>
+                        <option value="staff">الموظفون</option>
+                        <option value="backup">النسخ الاحتياطي</option>
+                    </select>
+                    <select class="pmg-select" id="logWho"><option value="">الكل</option><option value="admin">المدير فقط</option><option value="staff">الموظفون فقط</option></select>
+                </div>
+                <div id="logList"><div class="adm-no-data"><i class="fas fa-spinner fa-spin"></i></div></div>
+            </div>
+
+            <div class="tl-sec" id="tl-backup" style="display:none">
+                <div class="adm-sec">
+                    <h4><i class="fas fa-file-excel"></i> تصدير إلى Excel</h4>
+                    <div class="pmg-sync-note"><i class="fas fa-info-circle"></i> ملف CSV يفتح مباشرة في Excel أو Google Sheets (بالعربية).</div>
+                    <div class="tl-row">
+                        <button type="button" class="adm-act-btn view" id="expOrdersBtn"><i class="fas fa-shopping-bag"></i> تصدير كل الطلبات</button>
+                        <button type="button" class="adm-act-btn view" id="expItemsBtn"><i class="fas fa-list"></i> تصدير بنود الطلبات (منتج بمنتج)</button>
+                        <button type="button" class="adm-act-btn view" id="expUsersBtn"><i class="fas fa-users"></i> تصدير العملاء</button>
+                        <button type="button" class="adm-act-btn view" id="expTopupsBtn"><i class="fas fa-wallet"></i> تصدير طلبات الشحن</button>
+                    </div>
+                </div>
+                <div class="adm-sec">
+                    <h4><i class="fas fa-database"></i> نسخة احتياطية للمنتجات والأسعار</h4>
+                    <div class="pmg-sync-note"><i class="fas fa-info-circle"></i> تحفظ كل تعديلاتك على المنتجات (الأسعار، الصور، الباقات، المحذوفات، رأس المال) في ملف على جهازك. يمكنك استرجاعها لاحقاً إذا حدث خطأ.</div>
+                    <div class="tl-row">
+                        <button type="button" class="pmg-add-btn" id="bkDownloadBtn"><i class="fas fa-download"></i> تنزيل نسخة احتياطية</button>
+                        <label class="adm-act-btn reject tl-file"><i class="fas fa-upload"></i> استرجاع من ملف<input type="file" id="bkRestoreFile" accept=".json,application/json" style="display:none"></label>
+                    </div>
+                    <div class="tl-result" id="bkResult"></div>
+                </div>
+            </div>
         </div>
 
         <!-- ══ تبويب إرسال إشعار لكل العملاء ══ -->
@@ -1189,6 +1257,7 @@
     <script src="js/account/mobile-nav.js"></script>
     <script src="js/account/product-manager.js"></script>
     <script src="js/account/reports.js"></script>
+    <script src="js/account/admin-tools.js"></script>
 
     <!-- ══ شريط التنقل السفلي للموبايل ══ -->
     <nav class="mobile-bottom-nav" id="mobileBottomNav">

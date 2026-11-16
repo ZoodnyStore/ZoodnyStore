@@ -1603,3 +1603,81 @@
 .pmg-edit-pencil:hover,.pmg-edit-pencil:focus-visible{transform:scale(1.12);background:#fff;outline:none}
 .pmg-sub-row.pmg-sub-row-hl{background:#fff6e0;border-radius:9px;padding:.3rem;box-shadow:0 0 0 2px var(--secondary)}
 @media(max-width:768px){ .pmg-edit-pencil{width:32px;height:32px;font-size:.8rem;top:6px;left:6px} }
+
+/* ══ أدوات المدير: الموظفون، الحظر، الملاحظات، حالة المنتج، تعديل الأسعار، السجل ══ */
+/* الموظف: لا أزرار حذف ولا تعديل أرصدة ولا جملة/حظر */
+.adm-staff .adm-admin-only,.adm-staff .adm-topup-inline,.adm-staff .adm-act-btn.del,.adm-staff #clearTopupsBtn,
+.adm-staff #admPwBtn,.adm-staff .adm-act-btn.ws-on,.adm-staff .adm-act-btn.ws-off,.adm-staff .adm-act-btn.blk-on,.adm-staff .adm-act-btn.blk-off{display:none !important}
+.adm-staff .adm-topbar{background:linear-gradient(135deg,#5b2c6f,#8e44ad)}
+
+.adm-act-btn.note{background:#fff8e6;color:#9a6700}
+.adm-act-btn.note:hover{background:#f39c12;color:#fff}
+.adm-order-note{margin-top:.6rem;background:#fffbea;border:1.5px dashed #f0c674;border-radius:10px;padding:.55rem .8rem;font-size:.84rem;color:#5c4400;line-height:1.7}
+.adm-order-note .by{display:block;font-size:.72rem;color:#9a8650}
+.blk-badge{display:inline-flex;align-items:center;gap:4px;background:#fdecea;color:#c0392b;border:1px solid #f5c6cb;border-radius:20px;padding:.05rem .5rem;font-size:.7rem;font-weight:800;vertical-align:middle;white-space:nowrap}
+.blk-badge.big{font-size:.82rem;padding:.3rem .8rem}
+.adm-act-btn.blk-on{background:#fdecea;color:#c0392b}
+.adm-act-btn.blk-on:hover{background:#e74c3c;color:#fff}
+.adm-act-btn.blk-off{background:#eafaf1;color:#1e8449}
+.adm-act-btn.blk-off:hover{background:#27ae60;color:#fff}
+
+/* حالة المنتج في بطاقات الإدارة وفي المتجر */
+.pmg-card-avail{display:inline-block;margin-top:.25rem;font-size:.72rem;font-weight:800;border-radius:6px;padding:.1rem .45rem}
+.pmg-card-avail.soldout{background:#fdecea;color:#c0392b}
+.pmg-card-avail.hidden{background:#eceff3;color:#556}
+.pmg-dup-btn{background:#eef4fb;color:#2e86c1}
+.pmg-dup-btn:hover{background:#3498db;color:#fff}
+.pmg-status-ribbon{
+    position:absolute;top:50px;left:50%;transform:translateX(-50%);z-index:5;pointer-events:none;
+    padding:.3rem 1rem;border-radius:20px;font-size:.8rem;font-weight:800;white-space:nowrap;
+    box-shadow:0 4px 12px rgba(0,0,0,.2);font-family:'Cairo',sans-serif;
+}
+.pmg-status-ribbon.soldout{background:#c0392b;color:#fff}
+.pmg-status-ribbon.hidden{background:#556;color:#fff}
+.pmg-soldout img{filter:grayscale(.85);opacity:.7}
+.pmg-soldout{cursor:not-allowed}
+.pmg-soldout .add-to-cart-btn,.pmg-soldout button:not(.pmg-edit-pencil){opacity:.45}
+.pmg-hidden-item{outline:2.5px dashed #8892a0;outline-offset:-2.5px;opacity:.75}
+
+/* تحذير البيع بخسارة */
+.pmg-loss-warn{background:#fdecea;border:1.5px solid #f5c6cb;color:#922b21;border-radius:10px;padding:.6rem .9rem;margin:.6rem 0;font-size:.84rem}
+.pmg-loss-warn ul{margin:.3rem 0 0;padding-right:1.2rem}
+
+/* تعديل الأسعار دفعة واحدة */
+.pmg-bulk-btn{background:linear-gradient(135deg,#8e44ad,#6c3483) !important;color:#fff !important}
+.pmg-bulk-modal{max-width:520px}
+.pmg-bulk-scope{background:#f4f6f9;border-radius:10px;padding:.65rem .85rem;font-size:.85rem;margin-bottom:.8rem;line-height:1.7}
+.pmg-bulk-hint{font-size:.74rem;color:#888}
+.pmg-bulk-checks{display:flex;gap:1rem;flex-wrap:wrap}
+.pmg-bulk-checks label{display:inline-flex;align-items:center;gap:.35rem;font-weight:600;font-size:.86rem;cursor:pointer}
+.pmg-bulk-preview{background:#fbfcfe;border:1px solid #e3e7ec;border-radius:10px;padding:.6rem .8rem;margin:.6rem 0 .9rem;font-size:.83rem;max-height:240px;overflow:auto}
+.pmg-bulk-preview table{width:100%;border-collapse:collapse;margin-top:.4rem}
+.pmg-bulk-preview th,.pmg-bulk-preview td{padding:.25rem .4rem;border-bottom:1px solid #eef1f5;text-align:right}
+.pmg-bulk-preview .muted{color:#999}
+
+/* تبويب أدوات المدير */
+.tl-nav{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem}
+.tl-row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin:.5rem 0}
+.tl-row .adm-search{flex:1;min-width:200px;margin:0}
+.tl-file{cursor:pointer}
+.tl-result{margin-top:.6rem;font-size:.85rem;font-weight:600}
+.tl-result.ok{color:#1e8449}.tl-result.err{color:#c0392b}
+.stf-card{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;background:#fff;border:1.5px solid #e3e7ec;border-radius:12px;padding:.75rem 1rem;margin-bottom:.6rem}
+.stf-card.off{opacity:.65;background:#f8f9fb}
+.stf-info{flex:1;min-width:180px}
+.stf-name{font-weight:800;color:var(--primary)}
+.stf-mail{font-size:.8rem;color:#667;direction:ltr;text-align:right}
+.stf-date{font-size:.72rem;color:#999}
+.stf-perms{display:flex;gap:.8rem;flex-wrap:wrap}
+.stf-btns{display:flex;gap:.4rem}
+.log-count{font-size:.78rem;color:#888;margin:.3rem 0 .5rem}
+.log-row{display:flex;gap:.7rem;align-items:flex-start;background:#fff;border-radius:10px;padding:.6rem .8rem;margin-bottom:.4rem;border-right:4px solid #cfd8e3;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.log-row>i{width:30px;height:30px;border-radius:8px;background:#f1f4f8;color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem}
+.log-row.product{border-color:#3498db}.log-row.order{border-color:#27ae60}.log-row.topup{border-color:#8e44ad}
+.log-row.balance{border-color:#e67e22}.log-row.customer{border-color:#c0392b}.log-row.staff{border-color:#16a085}.log-row.backup{border-color:#7f8c8d}
+.log-body{flex:1;min-width:0}
+.log-text{font-size:.86rem;color:#2c3e50;line-height:1.6;word-break:break-word}
+.log-meta{font-size:.72rem;color:#999;margin-top:.15rem}
+.log-meta .who-admin{color:var(--primary);font-weight:800}
+.log-meta .who-staff{color:#8e44ad;font-weight:800}
+@media(max-width:768px){ .stf-btns{width:100%} .stf-btns .adm-act-btn{flex:1} .tl-row .adm-search{min-width:100%} }

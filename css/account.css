@@ -1591,3 +1591,15 @@
     .rpt-spacer{display:none}
     .rpt-print-btn{width:100%}
 }
+
+/* ══ زر القلم للمدير فوق كل منتج ══ */
+[data-pmg-src]{position:relative}
+.pmg-edit-pencil{
+    position:absolute;top:8px;left:8px;z-index:6;width:36px;height:36px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    background:var(--secondary);color:var(--primary);font-size:.9rem;
+    border:2px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.25);transition:transform .15s,background .15s;
+}
+.pmg-edit-pencil:hover,.pmg-edit-pencil:focus-visible{transform:scale(1.12);background:#fff;outline:none}
+.pmg-sub-row.pmg-sub-row-hl{background:#fff6e0;border-radius:9px;padding:.3rem;box-shadow:0 0 0 2px var(--secondary)}
+@media(max-width:768px){ .pmg-edit-pencil{width:32px;height:32px;font-size:.8rem;top:6px;left:6px} }

@@ -4,6 +4,14 @@
  * ══════════════════════════════════════════════════════════════════════ */
 
 // -------------------- دالة حساب سعر خدمات السوشال ميديا --------------------
+// ربط بطاقة المنتج بمصدره (يستخدمه زر القلم للمدير في product-manager.js)
+function pmgTagCard(card, src, id, row) {
+    if (!card || !src || id === undefined || id === null) return;
+    card.dataset.pmgSrc = src;
+    card.dataset.pmgId = String(id);
+    if (row !== undefined && row !== null) card.dataset.pmgRow = String(row);
+}
+
 function calculateSocialMediaPrice(productId, quantity) {
     const product = products.find(p => p.id === productId);
     if (!product || product.category !== 'social-media') return 0;
@@ -157,6 +165,7 @@ function renderCategories() {
         categoryCard.setAttribute('data-aos', 'fade-up');
         categoryCard.href = '#';
         categoryCard.dataset.category = category.id;
+        pmgTagCard(categoryCard, 'categories', category.id);
         
         categoryCard.innerHTML = `
                     <div class="category-img-container">
@@ -293,6 +302,7 @@ function renderGameGroups() {
         card.setAttribute('data-aos', 'fade-up');
         card.setAttribute('data-aos-delay', String((idx % 4) * 80));
 
+        if (group.games.length === 1) pmgTagCard(card, 'gamesData', group.games[0].id);
         let productCount = 0;
         group.games.forEach(g => {
             if (g.amounts) productCount += g.amounts.length;
@@ -353,6 +363,7 @@ function showGameTypes(group) {
         card.setAttribute('data-aos', 'fade-up');
         card.setAttribute('data-aos-delay', String((idx % 4) * 80));
 
+        pmgTagCard(card, 'gamesData', game.id);
         const typeName = game.name.includes(' - ')
             ? game.name.split(' - ').slice(1).join(' - ')
             : game.name;
@@ -524,6 +535,7 @@ function showPaymentSuperGroup(sg) {
         subCard.className = 'category-card';
         subCard.href = '#';
         subCard.setAttribute('data-subgroup', group.id);
+        pmgTagCard(subCard, 'electronicPaymentData', group.id);
         subCard.setAttribute('data-aos', 'fade-up');
         subCard.setAttribute('data-aos-delay', String((idx % 4) * 80));
 
@@ -597,6 +609,7 @@ function showPaymentProducts(group, parentSg) {
         card.setAttribute('data-aos', 'fade-up');
         card.setAttribute('data-aos-delay', String((idx % 4) * 80));
         card.setAttribute('data-payment-id', String(product.id));
+        pmgTagCard(card, 'electronicPaymentData', group.id, product.id);
 
         const avgRaw = 3.5 + (product.id % 10) * 0.15;
         const avg = Math.min(5, avgRaw);
@@ -753,6 +766,7 @@ function showTvProducts(group) {
         card.setAttribute('data-aos', 'fade-up');
         card.setAttribute('data-aos-delay', String((idx % 4) * 80));
         card.setAttribute('data-tv-id', String(product.id));
+        pmgTagCard(card, 'products', product.id);
 
         const avgRaw = 3.5 + (product.id % 10) * 0.15;
         const avg = Math.min(5, avgRaw);
@@ -895,6 +909,7 @@ function showDesignProducts(group) {
         card.setAttribute('data-aos', 'fade-up');
         card.setAttribute('data-aos-delay', String((idx % 4) * 80));
         card.setAttribute('data-design-id', String(product.id));
+        pmgTagCard(card, 'products', product.id);
 
         const avgRaw = 3.5 + (product.id % 10) * 0.15;
         const avg = Math.min(5, avgRaw);
@@ -1159,6 +1174,7 @@ function showAppProducts(group) {
         card.setAttribute('data-aos', 'fade-up');
         card.setAttribute('data-aos-delay', String((idx % 4) * 80));
         card.setAttribute('data-app-id', String(product.id));
+        pmgTagCard(card, 'products', product.id);
 
         // اسم العرض: احذف اسم التطبيق وأبقِ نوع الرقم فقط
         const displayName = product.name.replace(group.baseName, '').trim() || product.name;
@@ -1222,6 +1238,7 @@ function renderPremiumGroups() {
         card.setAttribute('data-aos', 'fade-up');
         card.setAttribute('data-aos-delay', String((idx % 4) * 80));
 
+        pmgTagCard(card, 'premiumActivationsData', group.id);
         const subtitleText = group.description || 'تفعيل على حسابك';
         const productCount = group.products ? group.products.length : 0;
 
@@ -1290,6 +1307,7 @@ function showPremiumProducts(group) {
         card.setAttribute('data-aos', 'fade-up');
         card.setAttribute('data-aos-delay', String((idx % 4) * 80));
         card.setAttribute('data-premium-id', String(product.id));
+        pmgTagCard(card, 'premiumActivationsData', group.id, product.id);
 
         const avgRaw = 3.5 + (product.id % 10) * 0.15;
         const avg = Math.min(5, avgRaw);
@@ -1347,6 +1365,7 @@ function renderVpnGroups() {
         card.setAttribute('data-aos', 'fade-up');
         card.setAttribute('data-aos-delay', String((idx % 4) * 80));
 
+        pmgTagCard(card, 'vpnData', group.id);
         const subtitleText = group.description || 'اشتراك VPN';
         const productCount = group.products ? group.products.length : 0;
 
@@ -1412,6 +1431,7 @@ function showVpnProducts(group) {
         card.setAttribute('data-aos', 'fade-up');
         card.setAttribute('data-aos-delay', String((idx % 4) * 80));
         card.setAttribute('data-vpn-id', String(product.id));
+        pmgTagCard(card, 'vpnData', group.id, product.id);
 
         const avgRaw = 3.5 + (product.id % 10) * 0.15;
         const avg = Math.min(5, avgRaw);
@@ -1773,6 +1793,7 @@ function showArqamProducts(group, categoryId, titleText) {
         card.setAttribute('data-aos', 'fade-up');
         card.setAttribute('data-aos-delay', String((idx % 4) * 80));
         card.setAttribute('data-arqam-id', String(product.id));
+        pmgTagCard(card, 'products', product.id);
 
         const avgRaw = 3.5 + (product.id % 10) * 0.15;
         const avg = Math.min(5, avgRaw);
@@ -1863,6 +1884,8 @@ function renderProductsByCategory(categoryId, filter = 'all') {
     filteredProducts.forEach(product => {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
+        // التطبيقات نسخة من appsData، والألعاب والرصيد لها نماذج أخرى
+        pmgTagCard(productCard, product.category === 'app' ? 'appsData' : (product.category === 'games' || product.category === 'rased') ? null : 'products', product.id);
         productCard.setAttribute('data-aos', 'fade-up');
         
         const imageUrl = product.image || "images/placeholder.svg";
@@ -2065,6 +2088,7 @@ function renderProductsByPlatform(platformId, filter = 'all') {
     filteredProducts.forEach(product => {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
+        pmgTagCard(productCard, 'products', product.id);
         productCard.setAttribute('data-aos', 'fade-up');
 
         const imageUrl = product.image || "images/placeholder.svg";

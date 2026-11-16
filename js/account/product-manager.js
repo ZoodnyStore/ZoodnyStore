@@ -1033,6 +1033,73 @@
         auth.onAuthStateChanged(function () { try { pmgAppendAddCard(); } catch (e) {} });
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    //  زر القلم ✎ فوق كل منتج في المتجر (للمدير فقط) ← يفتح نموذج التعديل الكامل مباشرة
+    //  البطاقات تُعلَّم في catalog.js عبر pmgTagCard (data-pmg-src / data-pmg-id / data-pmg-row)
+    // ═══════════════════════════════════════════════════════════════
+    function pmgDecorateEditPencils() {
+        var admin = pmgIsAdminUser();
+        Array.prototype.forEach.call(document.querySelectorAll('[data-pmg-src]'), function (card) {
+            var btn = card.querySelector(':scope > .pmg-edit-pencil');
+            if (!admin) { if (btn) btn.parentNode.removeChild(btn); return; }
+            if (btn || !pmgGetSource(card.dataset.pmgSrc)) return;
+            btn = document.createElement('span');
+            btn.className = 'pmg-edit-pencil';
+            btn.setAttribute('role', 'button');
+            btn.setAttribute('tabindex', '0');
+            btn.title = card.dataset.pmgRow !== undefined ? 'تعديل هذه الباقة' : 'تعديل المنتج';
+            btn.innerHTML = '<i class="fas fa-pen"></i>';
+            card.appendChild(btn);
+        });
+    }
+
+    function pmgOpenFromPencil(card) {
+        var src = card.dataset.pmgSrc, id = card.dataset.pmgId, row = card.dataset.pmgRow;
+        if (!pmgFindItem(src, id)) { showToast('تعذر العثور على هذا المنتج في قائمة الإدارة', 'error'); return; }
+        pmgOpenForm(src, id);
+        if (pmgEditingCtx) pmgEditingCtx.fromStore = true;
+        // منتج داخل مجموعة باقات: نُبرز سطر هذه الباقة في النموذج
+        if (row !== undefined && $('pmgSubRows')) {
+            var target = null;
+            Array.prototype.forEach.call($('pmgSubRows').querySelectorAll('.pmg-sub-row'), function (r) {
+                var idIn = r.querySelector('[data-subfield="id"]');
+                if (!target && idIn && String(idIn.value).trim() === String(row)) target = r;
+            });
+            if (target) {
+                target.classList.add('pmg-sub-row-hl');
+                setTimeout(function () {
+                    try { target.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {}
+                    var f = target.querySelector('[data-subfield="price"]'); if (f) f.focus();
+                }, 350);
+            }
+        }
+    }
+
+    function pmgInitEditPencils() {
+        // ضغطة القلم تُلتقط قبل وصولها للبطاقة حتى لا تفتح تفاصيل المنتج أو تنتقل لصفحة أخرى
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest && e.target.closest('.pmg-edit-pencil');
+            if (!btn) return;
+            e.preventDefault(); e.stopPropagation();
+            if (!pmgIsAdminUser()) return;
+            var card = btn.closest('[data-pmg-src]');
+            if (card) pmgOpenFromPencil(card);
+        }, true);
+        document.addEventListener('keydown', function (e) {
+            if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('pmg-edit-pencil')) {
+                e.preventDefault(); e.target.click();
+            }
+        });
+        var timer = null;
+        function schedule() { clearTimeout(timer); timer = setTimeout(pmgDecorateEditPencils, 60); }
+        ['productsGrid', 'categoriesGrid'].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el && window.MutationObserver) new MutationObserver(schedule).observe(el, { childList: true });
+        });
+        auth.onAuthStateChanged(schedule);
+        schedule();
+    }
+
     function pmgInit() {
         pmgInitSourceSelect();
         pmgPopulateCategoryFilter();
@@ -1041,6 +1108,7 @@
         pmgStartLive();
         pmgWrapAddViews();
         pmgWatchCosts();
+        pmgInitEditPencils();
 
         $('pmgAddBtn').addEventListener('click', function () { pmgOpenForm($('pmgSourceSelect').value, null); });
         $('pmgCategorySelect').addEventListener('change', pmgRenderGrid);

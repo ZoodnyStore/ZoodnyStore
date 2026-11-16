@@ -49,6 +49,14 @@
       ".read": true,
       ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'"
     },
+    "product_costs": {
+      ".read": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'"
+    },
+    "order_costs": {
+      ".read": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'",
+      ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'"
+    },
     "product_deletions": {
       ".read": true,
       ".write": "auth != null && auth.uid === 'GEO8okziO7cpgoKS39XBQxgrjVL2'"

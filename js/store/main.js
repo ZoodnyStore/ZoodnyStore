@@ -507,6 +507,7 @@ function restoreBottomNav() {
                 totalItem:   parseFloat((i.price * (i.quantity || 1)).toFixed(2)),
                 category:    i.category
             };
+            if (i.id !== undefined && i.id !== null) obj.pid = String(i.id);   // لربط الطلب بسعر رأس المال في تقرير الأرباح
             if (i.category === 'games')             { obj.playerId = i.playerId||''; obj.gameValue = i.gameDisplay||i.gameValue||''; }
             if (i.category === 'app')               { obj.playerId = i.playerId||''; obj.appValue  = i.appValue||''; }
             if (i.category === 'rased')             { obj.phoneNumber = i.phoneNumber||''; obj.creditValue = i.creditValue||''; }

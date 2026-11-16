@@ -31,6 +31,41 @@
         ];
     }
 
+    // ── سعر رأس المال: للمدير فقط — يُحفظ في product_costs (قراءة المدير فقط) وليس في product_overrides (عام) ──
+    function PMG_COST_LBL(t) { return '<i class="fas fa-lock" style="color:#b7791f"></i> ' + t + ' — يظهر للمدير فقط لحساب الأرباح'; }
+    var PMG_COSTS = {};          // product_costs/{sourceKey}/{safeId} = { name, category, cost|costBase|unitCost, rows:{rowKey:{name,value,cost}} }
+    var pmgCostsReady = false, pmgCostsRef = null;
+    function pmgCostEntry(sourceKey, id) { return (PMG_COSTS[sourceKey] || {})[pmgSafeKey(id)] || null; }
+    // مفتاح ثابت لكل سطر باقة/فئة: الألعاب بالقيمة، وباقي المجموعات بالرقم (أو الاسم إن لم يوجد رقم)
+    function pmgRowKey(sourceKey, row) {
+        if (!row) return '';
+        if (sourceKey === 'gamesData') return pmgSafeKey('v_' + String(row.value));
+        var id = row.id;
+        return pmgSafeKey((id !== undefined && id !== null && id !== '' && id !== 0) ? 'id_' + id : 'n_' + String(row.name || ''));
+    }
+    function pmgWatchCosts() {
+        auth.onAuthStateChanged(function () {
+            if (pmgCostsRef) { pmgCostsRef.off(); pmgCostsRef = null; }
+            PMG_COSTS = {}; pmgCostsReady = false;
+            if (!pmgIsAdminUser()) return;
+            pmgCostsRef = dbRef('product_costs');
+            pmgCostsRef.on('value', function (snap) {
+                PMG_COSTS = snap.val() || {};
+                pmgCostsReady = true;
+                try { pmgRenderGrid(); } catch (e) {}
+                document.dispatchEvent(new CustomEvent('zoodny:costs'));
+            }, function (err) {
+                console.error('تعذر قراءة product_costs — أضف قاعدتها في Firebase (database.rules.json)', err);
+            });
+        });
+    }
+    window.ZoodnyCosts = {
+        all: function () { return PMG_COSTS; },
+        ready: function () { return pmgCostsReady; },
+        rowKey: pmgRowKey,
+        safeKey: function (id) { return pmgSafeKey(id); }
+    };
+
     var PMG_SOURCES = [
         {
             key: 'products', label: 'منتجات عامة (إكسسوارات، أرقام، اشتراكات فردية...)',
@@ -40,11 +75,13 @@
                 { key: 'category', label: 'التصنيف (Category)', type: 'category', required: true },
                 { key: 'price', label: 'سعر المفرق ($)', type: 'number', hideFor: ['social-media'] },
                 { key: 'wholesalePrice', label: 'سعر الجملة ($) — اختياري', type: 'number', hideFor: ['social-media'], wholesaleOf: 'price' },
+                { key: 'cost', label: PMG_COST_LBL('سعر رأس المال ($)'), type: 'number', hideFor: ['social-media'], cost: true },
                 // ── حقول خاصة بخدمات السوشال ميديا (السعر الفعلي = سعر الألف) ──
                 { key: 'platform', label: 'المنصة', type: 'select', showFor: ['social-media'],
                   options: function () { return platforms.map(function (p) { return [p.id, p.name]; }); } },
                 { key: 'basePrice', label: 'سعر الألف بالمفرق ($)', type: 'number', showFor: ['social-media'] },
                 { key: 'wholesaleBasePrice', label: 'سعر الألف بالجملة ($) — اختياري', type: 'number', showFor: ['social-media'], wholesaleOf: 'basePrice' },
+                { key: 'costBase', label: PMG_COST_LBL('رأس مال الألف ($)'), type: 'number', showFor: ['social-media'], cost: true },
                 { key: 'minQuantity', label: 'الحد الأدنى للكمية', type: 'number', showFor: ['social-media'] },
                 { key: 'maxQuantity', label: 'الحد الأقصى للكمية', type: 'number', showFor: ['social-media'] },
                 // ── حقل خاص ببرامج التصميم ──
@@ -65,6 +102,7 @@
                 { key: 'inputPlaceholder', label: 'نص توضيحي لحقل الإدخال', type: 'text' },
                 { key: 'unitPrice', label: 'سعر الوحدة بالمفرق ($)', type: 'number' },
                 { key: 'wholesaleUnitPrice', label: 'سعر الوحدة بالجملة ($) — اختياري', type: 'number', wholesaleOf: 'unitPrice' },
+                { key: 'unitCost', label: PMG_COST_LBL('رأس مال الوحدة ($)'), type: 'number', cost: true },
                 { key: 'minQuantity', label: 'الحد الأدنى للكمية', type: 'number' },
                 { key: 'maxQuantity', label: 'الحد الأقصى للكمية', type: 'number' }
             ].concat(pmgReqFields(''))
@@ -85,6 +123,7 @@
                     { key: 'value', label: 'القيمة', type: 'number' },
                     { key: 'price', label: 'سعر المفرق ($)', type: 'number' },
                     { key: 'wholesalePrice', label: 'سعر الجملة ($)', type: 'number', wholesaleOf: 'price' },
+                    { key: 'cost', label: 'رأس المال ($)', type: 'number', cost: true },
                     { key: 'display', label: 'النص المعروض', type: 'text' }
                 ]
             }
@@ -107,7 +146,8 @@
                     { key: 'id', label: 'رقم', type: 'number' },
                     { key: 'name', label: 'اسم الباقة', type: 'text' },
                     { key: 'price', label: 'سعر المفرق ($)', type: 'number' },
-                    { key: 'wholesalePrice', label: 'سعر الجملة ($)', type: 'number', wholesaleOf: 'price' }
+                    { key: 'wholesalePrice', label: 'سعر الجملة ($)', type: 'number', wholesaleOf: 'price' },
+                    { key: 'cost', label: 'رأس المال ($)', type: 'number', cost: true }
                 ]
             }
         },
@@ -126,7 +166,8 @@
                     { key: 'id', label: 'رقم', type: 'number' },
                     { key: 'name', label: 'اسم الباقة', type: 'text' },
                     { key: 'price', label: 'سعر المفرق ($)', type: 'number' },
-                    { key: 'wholesalePrice', label: 'سعر الجملة ($)', type: 'number', wholesaleOf: 'price' }
+                    { key: 'wholesalePrice', label: 'سعر الجملة ($)', type: 'number', wholesaleOf: 'price' },
+                    { key: 'cost', label: 'رأس المال ($)', type: 'number', cost: true }
                 ]
             }
         },
@@ -145,7 +186,8 @@
                     { key: 'id', label: 'رقم', type: 'number' },
                     { key: 'name', label: 'اسم الباقة', type: 'text' },
                     { key: 'price', label: 'سعر المفرق ($)', type: 'number' },
-                    { key: 'wholesalePrice', label: 'سعر الجملة ($)', type: 'number', wholesaleOf: 'price' }
+                    { key: 'wholesalePrice', label: 'سعر الجملة ($)', type: 'number', wholesaleOf: 'price' },
+                    { key: 'cost', label: 'رأس المال ($)', type: 'number', cost: true }
                 ]
             }
         },
@@ -297,6 +339,13 @@
             }
             else if (src.key === 'appsData') priceLine = 'سعر الوحدة: ' + (it.unitPrice !== undefined ? it.unitPrice : '-') + ' $' + (it.wholesaleUnitPrice > 0 ? ' · جملة: ' + it.wholesaleUnitPrice + ' $' : '');
             else if (src.subList) priceLine = ((it[src.subList.key] || []).length) + ' باقة/فئة';
+            // رأس المال (للمدير فقط)
+            var ce = pmgCostEntry(src.key, it.id), costLine = '';
+            if (ce) {
+                var cv = typeof ce.cost === 'number' ? ce.cost : typeof ce.costBase === 'number' ? ce.costBase : typeof ce.unitCost === 'number' ? ce.unitCost : null;
+                if (cv !== null) costLine = 'رأس المال: ' + cv + ' $' + (ce.costBase !== undefined ? ' / ألف' : ce.unitCost !== undefined ? ' / وحدة' : '');
+                else if (ce.rows) costLine = 'رأس المال محدد لـ ' + Object.keys(ce.rows).length + ' باقة/فئة';
+            } else if (src.key !== 'categories') costLine = 'رأس المال: غير محدد';
             var imgHtml = it.image
                 ? '<img src="' + pmgEsc(it.image) + '" onerror="this.parentElement.innerHTML=\'<i class=\\\'fas fa-image\\\'></i>\'">'
                 : '<i class="fas fa-image"></i>';
@@ -307,6 +356,7 @@
                         '<div class="pmg-card-name">' + pmgEsc(it.name) + '</div>' +
                         '<span class="pmg-card-cat">' + pmgEsc(it.category || '—') + '</span>' +
                         (priceLine ? '<div class="pmg-card-price">' + pmgEsc(priceLine) + '</div>' : '') +
+                        (costLine ? '<div class="pmg-card-cost' + (ce ? '' : ' none') + '"><i class="fas fa-lock"></i> ' + pmgEsc(costLine) + '</div>' : '') +
                         '<div class="pmg-card-sub">ID: ' + pmgEsc(it.id) + '</div>' +
                     '</div>' +
                     '<div class="pmg-card-foot">' +
@@ -400,13 +450,15 @@
             (src.idType === 'string' ? ' — نص فريد، مثال: my-new-item' : ' — رقم فريد غير مستخدم') + '</label>' +
             '<input type="text" id="pmgFieldId" value="' + pmgEsc(idVal) + '"' + (item ? ' readonly style="background:#f4f6f9;color:#888"' : '') + '></div>';
 
+        var costEntry = item ? (pmgCostEntry(sourceKey, item.id) || {}) : {};
         var fieldsHtml = src.fields.map(function (f) {
             var val = item ? (item[f.key] !== undefined && item[f.key] !== null ? item[f.key] : '')
                            : (preset[f.key] !== undefined && preset[f.key] !== null ? preset[f.key] : (f.default !== undefined ? f.default : ''));
+            if (f.cost) val = typeof costEntry[f.key] === 'number' ? costEntry[f.key] : '';
             var cond = (f.showFor ? ' data-show-for="' + pmgEsc(f.showFor.join('|')) + '"' : '') +
                        (f.hideFor ? ' data-hide-for="' + pmgEsc(f.hideFor.join('|')) + '"' : '') +
                        (f.showIfField ? ' data-show-if-field="' + pmgEsc(f.showIfField) + '"' : '');
-            var open = '<div class="pmg-field"' + cond + '><label>' + f.label + '</label>';
+            var open = '<div class="pmg-field' + (f.cost ? ' pmg-cost-field' : '') + '"' + cond + '><label>' + f.label + '</label>';
             if (f.type === 'textarea') {
                 return open + '<textarea data-field="' + f.key + '">' + pmgEsc(val) + '</textarea></div>';
             }
@@ -445,7 +497,11 @@
             var rows = item && Object.prototype.toString.call(item[src.subList.key]) === '[object Array]' ? item[src.subList.key] : [];
             subWrap.innerHTML = '<div class="pmg-sub-title"><span>' + src.subList.label + '</span> <button type="button" class="pmg-sub-add" id="pmgSubAddRow"><i class="fas fa-plus"></i> إضافة سطر</button></div>' +
                 '<div id="pmgSubRows"></div>';
-            rows.forEach(function (r) { pmgAddSubRow(src.subList, r); });
+            var costRows = costEntry.rows || {};
+            rows.forEach(function (r) {
+                var cr = costRows[pmgRowKey(sourceKey, r)];
+                pmgAddSubRow(src.subList, r, cr && typeof cr.cost === 'number' ? cr.cost : '');
+            });
             $('pmgSubAddRow').addEventListener('click', function () { pmgAddSubRow(src.subList, null); });
         } else {
             subWrap.innerHTML = '';
@@ -454,13 +510,16 @@
         modalOn('prodModalOv', 'prodEditModal');
     }
 
-    function pmgAddSubRow(subListSpec, data) {
+    function pmgAddSubRow(subListSpec, data, costVal) {
         var rowsWrap = $('pmgSubRows');
         var row = document.createElement('div');
         row.className = 'pmg-sub-row';
         row.innerHTML = subListSpec.fields.map(function (f) {
-            var v = data && data[f.key] !== undefined && data[f.key] !== null ? data[f.key] : '';
-            return '<input type="text" placeholder="' + f.label + '" data-subfield="' + f.key + '" value="' + pmgEsc(v) + '">';
+            var v = f.cost ? (costVal !== undefined && costVal !== null ? costVal : '')
+                  : (data && data[f.key] !== undefined && data[f.key] !== null ? data[f.key] : '');
+            return '<input type="text" placeholder="' + f.label + '" title="' + f.label + (f.cost ? ' — للمدير فقط' : '') + '"' +
+                (f.cost ? ' class="pmg-sub-cost" inputmode="decimal" dir="ltr"' : '') +
+                ' data-subfield="' + f.key + '" value="' + pmgEsc(v) + '">';
         }).join('') + '<button type="button" title="حذف السطر"><i class="fas fa-times"></i></button>';
         row.querySelector('button').addEventListener('click', function () { row.parentNode.removeChild(row); });
         rowsWrap.appendChild(row);
@@ -981,6 +1040,7 @@
 
         pmgStartLive();
         pmgWrapAddViews();
+        pmgWatchCosts();
 
         $('pmgAddBtn').addEventListener('click', function () { pmgOpenForm($('pmgSourceSelect').value, null); });
         $('pmgCategorySelect').addEventListener('change', pmgRenderGrid);
@@ -1012,12 +1072,19 @@
             if (!nameEl || !nameEl.value.trim()) { alert('الرجاء إدخال اسم المنتج'); return; }
 
             // ── قراءة الحقول والتحقق من الأرقام قبل أي تعديل ──
-            var values = {}, badField = null;
+            var values = {}, costVals = {}, badField = null;
             src.fields.forEach(function (f) {
                 if (badField) return;
                 var el = $('pmgFieldsWrap').querySelector('[data-field="' + f.key + '"]');
                 if (!el || !pmgFieldIsVisible(el)) return;   // الحقول المخفية تبقى كما هي
                 var v = el.value;
+                if (f.cost) {   // رأس المال: فارغ = غير محدد (لا نحفظه صفراً)، ولا يُحفظ مع بيانات المنتج العامة
+                    if (v.trim() === '') { costVals[f.key] = null; return; }
+                    v = pmgToNumber(v.trim());
+                    if (typeof v !== 'number' || v < 0) { badField = f.label; return; }
+                    costVals[f.key] = v;
+                    return;
+                }
                 if (f.type === 'number') {
                     // المتصفح يعيد قيمة فارغة إذا كُتب نص غير رقمي في حقل رقمي — لا نحفظها كصفر
                     if (el.validity && el.validity.badInput) { badField = f.label; return; }
@@ -1028,24 +1095,31 @@
                 }
                 values[f.key] = v;
             });
-            if (badField) { alert('قيمة غير صحيحة في حقل: ' + badField + '\nاكتب رقماً صحيحاً (مثال: 2.5)'); return; }
+            if (badField) { alert('قيمة غير صحيحة في حقل: ' + String(badField).replace(/<[^>]*>/g, '').trim() + '\nاكتب رقماً صحيحاً (مثال: 2.5)'); return; }
             if (values.reqType && !values.reqLabel) {
                 alert('اخترت أن المنتج يحتاج معلومة من الزبون — اكتب ماذا تطلب منه (مثال: رابط حساب الإنستغرام)');
                 var rl = $('pmgFieldsWrap').querySelector('[data-field="reqLabel"]'); if (rl) rl.focus();
                 return;
             }
 
-            var subArr = null;
+            var subArr = null, subCosts = [];
             if (src.subList) {
                 subArr = [];
                 var subRows = document.querySelectorAll('#pmgSubRows .pmg-sub-row');
                 Array.prototype.forEach.call(subRows, function (row, idx) {
                     if (badField) return;
-                    var subObj = {};
+                    var subObj = {}, rowCost = null;
                     var hasAny = false;
                     src.subList.fields.forEach(function (f) {
                         var input = row.querySelector('[data-subfield="' + f.key + '"]');
                         var v = input ? input.value.trim() : '';
+                        if (f.cost) {
+                            if (v === '') return;
+                            v = pmgToNumber(v);
+                            if (typeof v !== 'number' || v < 0) badField = f.label + ' (السطر ' + (idx + 1) + ')';
+                            else rowCost = v;
+                            return;
+                        }
                         if (v !== '') hasAny = true;
                         if (f.type === 'number') {
                             v = v === '' ? 0 : pmgToNumber(v);
@@ -1053,7 +1127,7 @@
                         }
                         subObj[f.key] = v;
                     });
-                    if (hasAny) subArr.push(subObj);
+                    if (hasAny) { subArr.push(subObj); subCosts.push(rowCost); }
                 });
                 if (badField) { alert('قيمة غير صحيحة في: ' + badField + '\nاكتب رقماً صحيحاً (مثال: 2.5)'); return; }
             }
@@ -1076,9 +1150,33 @@
             modalOff('prodModalOv', 'prodEditModal');
 
             var safeId = pmgSafeKey(newId);
+
+            // ── رأس المال: مسار منفصل للمدير فقط (يُحفظ معه الاسم ليبقى حساب الأرباح صحيحاً حتى لو حُذف المنتج) ──
+            var prevCost = pmgCostEntry(src.key, newId) || {};
+            var costObj = { name: obj.name || '', category: obj.category || '', updatedAt: Date.now() };
+            var hasCost = false;
+            src.fields.forEach(function (f) {
+                if (!f.cost) return;
+                var v = Object.prototype.hasOwnProperty.call(costVals, f.key) ? costVals[f.key] : prevCost[f.key];
+                if (typeof v === 'number') { costObj[f.key] = v; hasCost = true; }
+            });
+            if (subArr) {
+                var rowsMap = {};
+                subArr.forEach(function (r, i) {
+                    if (typeof subCosts[i] !== 'number') return;
+                    rowsMap[pmgRowKey(src.key, r)] = { id: (r.id !== undefined && r.id !== '') ? r.id : null, name: r.name || r.display || '', value: r.value !== undefined ? r.value : null, cost: subCosts[i] };
+                    hasCost = true;
+                });
+                if (Object.keys(rowsMap).length) costObj.rows = rowsMap;
+            }
+            var costRef = dbRef('product_costs/' + src.key + '/' + safeId);
+            var costSave = (hasCost ? costRef.set(costObj) : costRef.remove()).catch(function (err) {
+                showToast('تم حفظ المنتج لكن تعذر حفظ سعر رأس المال — تأكد من نشر قواعد Firebase الجديدة: ' + (err && err.message ? err.message : err), 'error');
+            });
+
             dbRef('product_overrides/' + src.key + '/' + safeId).set(obj)
                 .then(function () {
-                    return dbRef('product_deletions/' + src.key + '/' + safeId).remove();
+                    return Promise.all([dbRef('product_deletions/' + src.key + '/' + safeId).remove(), costSave]);
                 })
                 .then(function () {
                     showToast(isNew ? 'تمت إضافة المنتج وحفظه بشكل دائم على المتجر' : 'تم حفظ التعديلات بشكل دائم على المتجر', 'success');

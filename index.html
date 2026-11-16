@@ -895,7 +895,7 @@
                 <div class="topup-acc-info">
                     <div class="topup-acc-label">معرّف حساب شام كاش</div>
                     <div class="topup-acc-num" style="font-size:.72rem;letter-spacing:.5px;word-break:break-all;line-height:1.5">3d2c0f53a34f0d29c2bc7ccdc506c3f5</div>
-                    <div class="topup-acc-name">زودني — Zoodny Store</div>
+                    <div class="topup-acc-name">محمد بهاء الدين الحسن</div>
                     <button class="topup-copy-btn" id="topupCopyBtn" onclick="
                         var btn=this;
                         var id='3d2c0f53a34f0d29c2bc7ccdc506c3f5';
@@ -997,6 +997,7 @@
             <div class="adm-tab" data-panel="users"><i class="fas fa-users"></i> العملاء</div>
             <div class="adm-tab" data-panel="products"><i class="fas fa-box-open"></i> إدارة المنتجات</div>
             <div class="adm-tab" data-panel="notify"><i class="fas fa-bullhorn"></i> إرسال إشعار</div>
+            <div class="adm-tab" data-panel="reports"><i class="fas fa-chart-line"></i> المبيعات والأرباح</div>
         </div>
 
         <!-- ══ تبويب طلبات الشحن ══ -->
@@ -1103,6 +1104,33 @@
             <div class="pmg-grid" id="pmgGrid"></div>
         </div>
 
+        <!-- ══ تبويب المبيعات والأرباح (js/account/reports.js) ══ -->
+        <div class="adm-tab-panel" id="panel-reports">
+            <div class="rpt-toolbar">
+                <select class="pmg-select" id="rptPeriod">
+                    <option value="today">اليوم</option>
+                    <option value="yesterday">أمس</option>
+                    <option value="7d">آخر 7 أيام</option>
+                    <option value="30d">آخر 30 يوماً</option>
+                    <option value="month" selected>هذا الشهر</option>
+                    <option value="lastMonth">الشهر الماضي</option>
+                    <option value="year">هذه السنة</option>
+                    <option value="all">كل الفترات</option>
+                    <option value="custom">فترة مخصصة...</option>
+                </select>
+                <span class="rpt-custom" id="rptCustom" style="display:none">
+                    <label>من <input type="date" id="rptFrom"></label>
+                    <label>إلى <input type="date" id="rptTo"></label>
+                </span>
+                <label class="rpt-check"><input type="checkbox" id="rptInclProcessing"> احتساب الطلبات قيد التنفيذ</label>
+                <span class="rpt-spacer"></span>
+                <label class="rpt-check"><input type="checkbox" id="rptPrintDetails" checked> طباعة تفاصيل كل عملية بيع</label>
+                <button type="button" class="pmg-add-btn rpt-print-btn" id="rptPrintBtn"><i class="fas fa-print"></i> طباعة التقرير (A4)</button>
+            </div>
+            <div class="pmg-sync-note"><i class="fas fa-lock"></i> هذه الصفحة وأسعار رأس المال تظهر للمدير فقط. الأرباح تُحسب من الطلبات <b>المنجزة</b>، ورأس المال يُحدَّد من نموذج كل منتج في "إدارة المنتجات" (حقل "سعر رأس المال").</div>
+            <div id="rptBody"><div class="adm-no-data"><i class="fas fa-spinner fa-spin"></i> جارٍ تحميل البيانات...</div></div>
+        </div>
+
         <!-- ══ تبويب إرسال إشعار لكل العملاء ══ -->
         <div class="adm-tab-panel" id="panel-notify">
             <div class="adm-sec">
@@ -1160,6 +1188,7 @@
     <script src="js/account/service-modal.js"></script>
     <script src="js/account/mobile-nav.js"></script>
     <script src="js/account/product-manager.js"></script>
+    <script src="js/account/reports.js"></script>
 
     <!-- ══ شريط التنقل السفلي للموبايل ══ -->
     <nav class="mobile-bottom-nav" id="mobileBottomNav">

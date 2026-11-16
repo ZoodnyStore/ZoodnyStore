@@ -75,7 +75,7 @@
 
     // زر اتصل بنا — يفتح واتساب مباشرة
     window.mobileNavWhatsapp = function() {
-        window.open('https://wa.me/963982199738', '_blank');
+        window.open('https://wa.me/963939083098', '_blank');
     };
 
     // تحديث الزر النشط عند التمرير

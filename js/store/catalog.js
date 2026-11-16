@@ -17,7 +17,7 @@ function calculateSocialMediaPrice(productId, quantity) {
 // دالة مساعدة لفتح واتساب بشكل متوافق مع iPhone
 function openWhatsApp(message) {
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/963982199738?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/963939083098?text=${encodedMessage}`;
     
     // محاولة فتح واتساب
     window.location.href = whatsappUrl;
@@ -29,7 +29,7 @@ function openWhatsApp(message) {
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(message).then(() => {
                         showToast('تم نسخ الرسالة! ألصقها في واتساب');
-                        window.open('https://wa.me/963982199738', '_blank');
+                        window.open('https://wa.me/963939083098', '_blank');
                     }).catch(() => {
                         prompt('انسخ هذه الرسالة وأرسلها في واتساب:', message);
                     });

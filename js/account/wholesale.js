@@ -9,7 +9,7 @@
     'use strict';
     var ZA = window.ZoodnyAccount;
     var $ = ZA.$, esc = ZA.esc, ADMIN_EMAIL = ZA.ADMIN_EMAIL;
-    var WHATSAPP = '963982199738';
+    var WHATSAPP = '963939083098';
     var PROMPT_EVERY = 3 * 24 * 3600 * 1000;   // للزيارات العادية: مرة كل 3 أيام كحد أقصى
 
     var state = { flag: false, uid: null, sawLoggedOut: false, promptShownFor: null };

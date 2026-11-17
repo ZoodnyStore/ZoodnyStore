@@ -666,20 +666,40 @@
         try {
             var visible = typeof productsSection !== 'undefined' && productsSection && getComputedStyle(productsSection).display !== 'none';
             if (!visible || !pmgView) return;
-            var adminEmail = (typeof ADMIN_EMAIL !== 'undefined') ? ADMIN_EMAIL : 'admin@zoodny.com';
-            var isAdmin = !!(auth.currentUser && auth.currentUser.email === adminEmail);
-            if (pmgView.safe && pmgView.sig === pmgSig()) {
-                var y = window.pageYOffset;
-                var fn = window[pmgView.name];
-                pmgReplaying = true;
-                try { fn.apply(null, pmgView.args); } finally { pmgReplaying = false; }
-                try { window.scrollTo({ top: y, behavior: 'instant' }); } catch (e2) { window.scrollTo(0, y); }
-                pmgView.sig = pmgSig();
-            } else if (!isAdmin) {
-                pmgShowUpdateBanner();   // الزائر داخل صفحة فرعية: نعرض زر تحديث بدل قطع تصفحه
-            }
+            pmgSoftRefreshCurrentView();
         } catch (e) { console.error(e); }
     }
+
+    // ── تحديث القسم المفتوح تلقائياً عند أي إضافة/تعديل من المدير ──
+    // لا نقاطع الزبون: إن كانت نافذة مفتوحة أو يكتب في حقل أو يبحث، نؤجل التحديث حتى ينتهي.
+    var pmgPendingView = false;
+    function pmgStoreBusy() {
+        if (document.querySelector('.active[id$="Modal"], .on[id$="Modal"], #adminDashboard.on, .adm-user-ov.on')) return true;
+        var ae = document.activeElement;
+        if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return true;
+        var sb = document.querySelector('#productsGrid .card-search-wrapper input');
+        if (sb && sb.value.trim()) return true;
+        return false;
+    }
+    window.zoodnyStoreBusy = pmgStoreBusy;
+    function pmgSoftRefreshCurrentView() {
+        var visible = typeof productsSection !== 'undefined' && productsSection && getComputedStyle(productsSection).display !== 'none';
+        if (!visible) { pmgPendingView = false; return; }   // الصفحة الرئيسية تتحدث وحدها
+        if (pmgStoreBusy()) { pmgPendingView = true; return; }
+        pmgPendingView = false;
+        var y = window.pageYOffset;
+        try {
+            if (pmgAddView && PMG_ADD_VIEWS[pmgAddView.name]) {
+                PMG_ADD_VIEWS[pmgAddView.name].refresh(pmgAddView.args || []);   // يعيد بناء المجموعات من البيانات الجديدة
+            } else if (pmgView && typeof window[pmgView.name] === 'function') {
+                pmgReplaying = true;
+                try { window[pmgView.name].apply(null, pmgView.args); } finally { pmgReplaying = false; }
+            }
+            if (pmgView) pmgView.sig = pmgSig();
+        } catch (e) { console.error('soft refresh', e); }
+        try { window.scrollTo({ top: y, behavior: 'instant' }); } catch (e2) { window.scrollTo(0, y); }
+    }
+    setInterval(function () { if (pmgPendingView && !pmgStoreBusy()) pmgSoftRefreshCurrentView(); }, 1500);
 
     function pmgReapply() {
         if (!pmgHave.o || !pmgHave.d) return;

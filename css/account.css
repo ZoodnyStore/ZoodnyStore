@@ -1708,3 +1708,11 @@
 .pmg-det-full{background:#2A3F54;color:#fff;border:none;border-radius:10px;padding:.7rem 1rem;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;margin-inline-start:.5rem}
 .pmg-det-full:hover{background:#1E2B38}
 @media(max-width:480px){ .pmg-det-full{margin:.5rem 0 0;width:100%} .product-details-actions{flex-wrap:wrap} }
+
+/* ══ نسيت كلمة السر ══ */
+.auth-forgot-btn{display:block;margin:.7rem auto 0;background:none;border:none;color:var(--primary);font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.auth-forgot-btn:hover{color:#b7791f}
+.auth-forgot-btn:disabled{opacity:.6;cursor:wait}
+.auth-reset-msg{font-size:.82rem;line-height:1.7;margin-top:.5rem;text-align:center}
+.auth-reset-msg.ok{background:#eafaf1;color:#1e8449;border-radius:10px;padding:.6rem .8rem}
+.auth-reset-msg.err{color:#c0392b}

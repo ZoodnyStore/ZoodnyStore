@@ -772,6 +772,12 @@
                 ? '<span class="blk-badge big"><i class="fas fa-ban"></i> محظور' + (blockedMap[u._key].reason ? ': ' + esc(blockedMap[u._key].reason) : '') + '</span>'
                 : '<span style="color:#888;font-size:.85rem">يستطيع هذا العميل الطلب وشحن الرصيد</span>')
             + blockBtn(u) + '</div></div>'
+            + '<div class="adm-sec adm-admin-only"><h4><i class="fas fa-key"></i> استعادة الحساب</h4><div class="adm-user-actions">'
+            + (u.email
+                ? '<span style="color:#666;font-size:.83rem">يصل للعميل رابط على <b dir="ltr">' + esc(u.email) + '</b> لتعيين كلمة سر جديدة</span>'
+                  + '<button class="adm-act-btn view" onclick="admSendReset(\'' + k + '\')"><i class="fas fa-paper-plane"></i> إرسال رابط استعادة كلمة السر</button>'
+                : '<span style="color:#999;font-size:.83rem">لا يوجد بريد مسجّل لهذا العميل</span>')
+            + '</div></div>'
             + '<div class="adm-sec adm-admin-only"><h4><i class="fas fa-wallet"></i> تعديل الرصيد</h4><div class="adm-user-actions">'
             + '<input type="number" id="admUdAmt" placeholder="$ مبلغ" min="0.01" step="0.01">'
             + '<button class="adm-act-btn topup" onclick="admAdjustBalance(\'' + k + '\',1)"><i class="fas fa-plus"></i> إضافة</button>'
@@ -1060,6 +1066,17 @@
             balToast('✓ تم حظر ' + name, true);
             log('customer', 'حظر العميل ' + name + (reason.trim() ? ' — السبب: ' + reason.trim() : ''), uid);
         }).catch(function(err) { alert('فشل: ' + (err && err.message ? err.message : err) + ' — تأكد من نشر قواعد Firebase الجديدة'); });
+    };
+
+    // ── استعادة كلمة السر لعميل: Firebase يرسل له رابطاً على بريده ──
+    window.admSendReset = function(uid) {
+        var u = findUser(uid);
+        if (!u || !u.email) return;
+        if (!confirm('إرسال رابط تعيين كلمة سر جديدة إلى ' + u.email + '؟\n\nملاحظة: إن كان العميل يدخل عبر Google فلا يحتاج كلمة سر — يكفي أن يضغط "المتابعة مع Google".')) return;
+        window.zoodnySendPasswordReset(u.email).then(function() {
+            balToast('✓ تم إرسال رابط الاستعادة إلى ' + u.email, true);
+            log('customer', 'إرسال رابط استعادة كلمة السر إلى ' + (u.name || '') + ' <' + u.email + '>', uid);
+        }).catch(function(err) { alert(window.zoodnyResetErrText(err)); });
     };
 
     // ── ملاحظة داخلية على الطلب (order_notes — لا يراها الزبون) ──

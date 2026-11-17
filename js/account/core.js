@@ -327,10 +327,53 @@
         $('loginBtn').disabled = true;
         auth.signInWithEmailAndPassword(email, pass)
             .catch(function(err) {
-                var msgs = { 'auth/user-not-found':'البريد غير مسجل', 'auth/wrong-password':'كلمة السر خاطئة', 'auth/invalid-email':'بريد إلكتروني غير صالح' };
+                var msgs = {
+                    'auth/user-not-found': 'البريد غير مسجل',
+                    'auth/wrong-password': 'كلمة السر خاطئة — إن نسيتها اضغط "نسيت كلمة السر؟"',
+                    'auth/invalid-credential': 'البريد أو كلمة السر خاطئة — إن نسيتها اضغط "نسيت كلمة السر؟"',
+                    'auth/invalid-login-credentials': 'البريد أو كلمة السر خاطئة — إن نسيتها اضغط "نسيت كلمة السر؟"',
+                    'auth/invalid-email': 'بريد إلكتروني غير صالح',
+                    'auth/too-many-requests': 'محاولات كثيرة — انتظر قليلاً أو استعد كلمة السر'
+                };
                 $('loginErr').textContent = msgs[err.code] || err.message;
             })
             .finally(() => $('loginBtn').disabled = false);
+    };
+
+    // ── نسيت كلمة السر: Firebase يرسل رابطاً للبريد لتعيين كلمة سر جديدة ──
+    window.zoodnySendPasswordReset = function(email) {
+        try { auth.languageCode = 'ar'; } catch (e) {}
+        return auth.sendPasswordResetEmail(String(email || '').trim());
+    };
+    function resetErrText(err) {
+        var m = {
+            'auth/invalid-email': 'البريد الإلكتروني غير صالح',
+            'auth/user-not-found': 'لا يوجد حساب بهذا البريد — تأكد منه أو أنشئ حساباً جديداً',
+            'auth/too-many-requests': 'طلبات كثيرة — انتظر قليلاً ثم حاول مجدداً',
+            'auth/network-request-failed': 'تعذّر الاتصال — تأكد من الإنترنت'
+        };
+        return m[err && err.code] || ('تعذّر الإرسال: ' + (err && err.message ? err.message : err));
+    }
+    window.zoodnyResetErrText = resetErrText;
+    if ($('forgotPassBtn')) $('forgotPassBtn').onclick = function() {
+        var msg = $('forgotPassMsg'), btn = this;
+        var email = $('loginEmail').value.trim();
+        msg.className = 'auth-reset-msg';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            msg.classList.add('err');
+            msg.textContent = 'اكتب بريدك الإلكتروني في الحقل بالأعلى أولاً، ثم اضغط "نسيت كلمة السر؟"';
+            $('loginEmail').focus();
+            return;
+        }
+        btn.disabled = true;
+        msg.textContent = 'جاري الإرسال...';
+        window.zoodnySendPasswordReset(email).then(function() {
+            msg.classList.add('ok');
+            msg.innerHTML = '✓ أرسلنا رابط تعيين كلمة سر جديدة إلى <b dir="ltr">' + esc(email) + '</b>.<br>افتح بريدك (وتحقق من مجلد الرسائل غير المرغوب Spam)، اضغط الرابط واكتب كلمة السر الجديدة، ثم سجّل الدخول بها.';
+        }).catch(function(err) {
+            msg.classList.add('err');
+            msg.textContent = resetErrText(err);
+        }).then(function() { btn.disabled = false; });
     };
 
     // Register

@@ -3193,3 +3193,121 @@ body { padding-bottom: 80px; }
     .feature-box:hover, .value-item:hover { transform: none; box-shadow: none; }
     .feature-box:hover { border-color: #eef1f5; border-right-color: var(--secondary); box-shadow: 0 4px 14px rgba(42, 63, 84, 0.06); }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+ * نافذة تفاصيل المنتج — التصميم الجديد (يتجاوز القواعد القديمة أعلاه)
+ * صورة كاملة بالأعلى، بطاقة سعر مختصرة، مميزات بعمودين، وشريط طلب ثابت بالأسفل.
+ * ══════════════════════════════════════════════════════════════════════ */
+#productDetailsModal{padding:12px;background:rgba(15,25,35,.62);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+#productDetailsModal .product-details-container{
+    position:relative;max-width:480px;max-height:92vh;border-radius:22px;overflow-y:auto;overscroll-behavior:contain;
+    box-shadow:0 30px 70px rgba(0,0,0,.35);scrollbar-width:thin;
+}
+/* الهيدر يصبح زر إغلاق عائم فوق الصورة */
+#productDetailsModal .product-details-header{
+    position:sticky;top:0;z-index:8;height:0;padding:0;border:none;background:none;display:block;overflow:visible;
+}
+#productDetailsModal .product-details-header h3{display:none}
+#productDetailsModal .product-details-close{
+    position:absolute;top:12px;left:12px;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.92);color:var(--primary);font-size:1.05rem;box-shadow:0 4px 14px rgba(0,0,0,.25);
+}
+#productDetailsModal .product-details-close:hover{transform:rotate(90deg);background:#fff}
+#productDetailsModal .product-details-body{padding:0}
+
+#productDetailsModal .product-details-image{
+    position:relative;height:auto;aspect-ratio:1200/630;margin:0;border-radius:0;background:linear-gradient(135deg,#eef2f6,#f8fafc);
+}
+#productDetailsModal .product-details-image img{width:100%;height:100%;object-fit:contain}
+
+#productDetailsModal .product-details-info{margin:0;padding:18px 20px 0}
+#productDetailsModal .product-details-category{
+    display:inline-flex;align-items:center;gap:6px;margin:0 0 6px;padding:.22rem .75rem;font-size:.76rem;font-weight:700;
+    background:#fff6e0;color:#8a5a00;border:1px solid #f3dca8;border-radius:20px;
+}
+#productDetailsModal .product-details-category i{font-size:.7rem}
+#productDetailsModal .product-details-title{font-size:1.32rem;line-height:1.45;margin:0 0 14px;font-weight:800;color:var(--primary)}
+
+.pd-price-card{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;
+    background:linear-gradient(135deg,var(--primary),#1E2B38);color:#fff;border-radius:16px;padding:14px 16px;margin-bottom:16px;
+    box-shadow:0 10px 24px rgba(42,63,84,.22);
+}
+.pd-price-lbl{font-size:.72rem;opacity:.75}
+#productDetailsModal .product-details-price{font-size:1.75rem;font-weight:800;color:var(--secondary);margin:0;line-height:1.2}
+#productDetailsModal .product-details-price.pd-price-text{font-size:1.1rem}
+#productDetailsModal .product-details-price-box{display:none}
+.pd-trust{display:flex;flex-direction:column;gap:4px;font-size:.72rem}
+.pd-trust span{display:flex;align-items:center;gap:6px;opacity:.9}
+.pd-trust i{color:var(--secondary);width:14px;text-align:center}
+
+.pd-sec{margin-bottom:16px}
+.pd-sec-t{display:flex;align-items:center;gap:7px;font-size:.86rem;font-weight:800;color:var(--primary);margin-bottom:8px}
+.pd-sec-t i{width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:#fff6e0;color:#c8902c;font-size:.75rem}
+#productDetailsModal .product-details-description{
+    margin:0;padding:12px 14px;background:#f7f9fb;border:1px solid #eef1f5;border-radius:12px;
+    color:#4a5562;font-size:.9rem;line-height:1.9;
+}
+#productDetailsModal .product-details-description strong:first-child{display:none}
+#productDetailsModal .product-details-description strong:first-child+br{display:none}
+
+#productDetailsModal .product-details-features{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:0}
+#productDetailsModal .product-details-features li{
+    display:flex;align-items:flex-start;gap:7px;padding:9px 10px;border:1px solid #e8f3ec;border-bottom:1px solid #e8f3ec;
+    background:#f5fbf7;border-radius:11px;font-size:.8rem;line-height:1.5;color:#2c3e50;
+}
+#productDetailsModal .product-details-features li i{color:#27ae60;width:auto;margin-top:3px;font-size:.8rem;flex-shrink:0}
+#productDetailsModal .product-details-features>.pmg-det-pencil{grid-column:1/-1}
+
+/* شريط الطلب الثابت أسفل النافذة */
+#productDetailsModal .product-details-actions{
+    position:sticky;bottom:0;z-index:7;display:flex;align-items:center;gap:10px;margin:4px -20px 0;padding:12px 20px calc(12px + env(safe-area-inset-bottom));
+    background:rgba(255,255,255,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    border-top:1px solid #eef1f5;box-shadow:0 -8px 20px rgba(42,63,84,.08);
+}
+.pd-bar-price{display:flex;flex-direction:column;line-height:1.2;min-width:64px}
+.pd-bar-price small{font-size:.68rem;color:#8a96a3}
+.pd-bar-price b{font-size:1.05rem;color:var(--primary);white-space:nowrap}
+#productDetailsModal .product-details-add-to-cart{
+    flex:1;padding:.85rem 1rem;border-radius:14px;font-size:1rem;font-weight:800;font-family:inherit;
+    background:linear-gradient(135deg,var(--secondary),#f3b54a);color:#1E2B38;box-shadow:0 8px 20px rgba(247,200,115,.45);
+}
+#productDetailsModal .product-details-add-to-cart:hover{transform:translateY(-2px);background:linear-gradient(135deg,#f9d48a,#f3b54a)}
+.pd-wa{width:50px;height:50px;flex-shrink:0;border-radius:14px;display:flex;align-items:center;justify-content:center;background:#25D366;color:#fff;font-size:1.45rem;text-decoration:none;box-shadow:0 6px 16px rgba(37,211,102,.3);transition:transform .15s}
+.pd-wa:hover{transform:translateY(-2px)}
+#productDetailsModal .pmg-det-full{margin:0}
+
+/* الهاتف */
+@media (max-width:480px){
+    #productDetailsModal{padding:0;align-items:flex-end}
+    #productDetailsModal .product-details-container{max-width:100%;max-height:94vh;border-radius:22px 22px 0 0;animation:pdSheet .3s ease}
+    #productDetailsModal .product-details-info{padding:16px 16px 0}
+    #productDetailsModal .product-details-title{font-size:1.18rem}
+    #productDetailsModal .product-details-actions{margin:4px -16px 0;padding-left:16px;padding-right:16px}
+    #productDetailsModal .product-details-actions{flex-wrap:nowrap}
+    #productDetailsModal .pmg-det-full{order:9;flex-basis:100%}
+    #productDetailsModal .product-details-actions:has(.pmg-det-full){flex-wrap:wrap}
+    .pd-trust{flex-direction:row;flex-wrap:wrap;gap:4px 10px;width:100%}
+}
+@keyframes pdSheet{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@media (max-width:360px){ #productDetailsModal .product-details-features{grid-template-columns:1fr} }
+
+/* اللابتوب: الصورة بجانب التفاصيل */
+@media (min-width:820px){
+    #productDetailsModal .product-details-container{max-width:880px}
+    #productDetailsModal .product-details-body{display:grid;grid-template-columns:1fr 1fr;align-items:start}
+    #productDetailsModal .product-details-image{position:sticky;top:0;aspect-ratio:auto;height:100%;min-height:420px;max-height:92vh}
+    #productDetailsModal .product-details-info{padding:26px 26px 0}
+    #productDetailsModal .product-details-actions{margin:4px -26px 0;padding-left:26px;padding-right:26px}
+    #productDetailsModal .product-details-close{left:auto;right:12px}
+}
+/* تثبيت شريط الطلب أفقياً على كل المقاسات (يتجاوز قواعد الموبايل القديمة) */
+#productDetailsModal .product-details-actions{flex-direction:row !important}
+#productDetailsModal .product-details-actions .product-details-add-to-cart{width:auto !important;flex:1 1 auto}
+@media (min-width:820px){
+    #productDetailsModal .product-details-image{
+        display:flex;align-items:center;justify-content:center;padding:28px;
+        background:radial-gradient(circle at 30% 20%,rgba(247,200,115,.18),transparent 55%),linear-gradient(160deg,#2A3F54,#1E2B38);
+    }
+    #productDetailsModal .product-details-image img{height:auto;max-height:100%;border-radius:16px;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+}

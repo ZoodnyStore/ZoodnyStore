@@ -3,6 +3,50 @@
  * تفاصيل المنتج، منتجات الدفع/VPN/التلفاز/التصميم، نافذة إيميل التصميم.
  * ══════════════════════════════════════════════════════════════════════ */
 
+// ── قالب موحّد لنافذة التفاصيل (يُستخدم لكل أنواع المنتجات) ──
+// الأسماء .product-details-* ثابتة: يعتمد عليها التعديل المباشر للمدير وحالة "نفذ المخزون" (product-manager.js)
+function pdEsc(s) { return String(s === null || s === undefined ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function pdMarkup(o) {
+    var isNum = /^\s*[\d.]+\s*\$/.test(String(o.price || ''));
+    var wa = 'https://wa.me/963939083098?text=' + encodeURIComponent('مرحباً، أريد الاستفسار عن: ' + (o.name || ''));
+    return `
+        <div class="product-details-image">
+            <img src="${o.image}" alt="${pdEsc(o.name)}" onerror="this.onerror=null;this.src='images/placeholder.svg'">
+        </div>
+        <div class="product-details-info">
+            <span class="product-details-category"><i class="fas fa-tag"></i> ${o.category}</span>
+            <h2 class="product-details-title">${o.name}</h2>
+
+            <div class="pd-price-card">
+                <div class="pd-price-main">
+                    <div class="pd-price-lbl">${o.priceLabel || 'السعر'}</div>
+                    <div class="product-details-price${isNum ? '' : ' pd-price-text'}">${o.price}</div>
+                </div>
+                <div class="pd-trust">
+                    <span><i class="fas fa-bolt"></i> تنفيذ سريع</span>
+                    <span><i class="fas fa-wallet"></i> الدفع من رصيدك</span>
+                    <span><i class="fas fa-headset"></i> دعم 24/7</span>
+                </div>
+            </div>
+
+            <div class="pd-sec">
+                <div class="pd-sec-t"><i class="fas fa-align-right"></i> وصف المنتج</div>
+                <div class="product-details-description">${o.description || o.name}</div>
+            </div>
+
+            <div class="pd-sec">
+                <div class="pd-sec-t"><i class="fas fa-star"></i> المميزات</div>
+                <ul class="product-details-features">${o.features}</ul>
+            </div>
+
+            <div class="product-details-actions">
+                <div class="pd-bar-price"><small>الإجمالي</small><b>${o.price}</b></div>
+                <button class="product-details-add-to-cart" ${o.orderAttrs}><i class="fas fa-bolt"></i> اطلب الآن</button>
+                <a class="pd-wa" href="${wa}" target="_blank" rel="noopener" title="استفسار عبر واتساب"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>`;
+}
+
 // -------------------- عرض تفاصيل المنتج --------------------
 function showProductDetails(productId) {
     const product = products.find(p => p.id === productId);
@@ -67,35 +111,13 @@ function showProductDetails(productId) {
                 `;
     }
     
-    productDetailsBody.innerHTML = `
-                <div class="product-details-image">
-                    <img src="${imageUrl}" alt="${product.name}" onerror="this.onerror=null;this.src='images/placeholder.svg'">
-                </div>
-                <div class="product-details-info">
-                    <h2 class="product-details-title">${product.name}</h2>
-                    <span class="product-details-category">${categoryName} ${badgeText ? `- ${badgeText}` : ''}</span>
-                    
-                    <div class="product-details-price-box">
-                        <div class="product-details-price">${priceDisplay}</div>
-                        <div class="product-details-price-label"></div>
-                    </div>
-                    
-                    <div class="product-details-description">
-                        <strong>وصف المنتج:</strong><br>
-                        ${product.description}
-                    </div>
-                    
-                    <ul class="product-details-features">
-                        ${featuresHtml}
-                    </ul>
-                    
-                    <div class="product-details-actions">
-                        <button class="product-details-add-to-cart" data-id="${product.id}">
-                            <i class="fas fa-bolt"></i> طلب
-                        </button>
-                    </div>
-                </div>
-            `;
+    productDetailsBody.innerHTML = pdMarkup({
+        image: imageUrl, name: product.name,
+        category: categoryName + (badgeText ? ' · ' + badgeText : ''),
+        price: priceDisplay, priceLabel: product.category === 'social-media' ? 'السعر لكل 1000' : 'السعر',
+        description: product.description, features: featuresHtml,
+        orderAttrs: 'data-id="' + product.id + '"'
+    });
     
     setTimeout(() => {
         const detailsAddToCart = document.querySelector('.product-details-add-to-cart');
@@ -177,35 +199,12 @@ function showPaymentProductDetails(paymentProduct) {
                 `;
     }
 
-    productDetailsBody.innerHTML = `
-                <div class="product-details-image">
-                    <img src="${imageUrl}" alt="${paymentProduct.name}" onerror="this.onerror=null;this.src='images/placeholder.svg'">
-                </div>
-                <div class="product-details-info">
-                    <h2 class="product-details-title">${paymentProduct.name}</h2>
-                    <span class="product-details-category">${catName}</span>
-
-                    <div class="product-details-price-box">
-                        <div class="product-details-price">${priceDisplay}</div>
-                        <div class="product-details-price-label">السعر بالدولار</div>
-                    </div>
-
-                    <div class="product-details-description">
-                        <strong>وصف المنتج:</strong><br>
-                        ${desc}
-                    </div>
-
-                    <ul class="product-details-features">
-                        ${featuresHtml}
-                    </ul>
-
-                    <div class="product-details-actions">
-                        <button class="product-details-add-to-cart" id="payDetAddCart">
-                            <i class="fas fa-bolt"></i> طلب
-                        </button>
-                    </div>
-                </div>
-            `;
+    productDetailsBody.innerHTML = pdMarkup({
+        image: imageUrl, name: paymentProduct.name, category: catName,
+        price: priceDisplay, priceLabel: 'السعر بالدولار',
+        description: desc, features: featuresHtml,
+        orderAttrs: 'id="payDetAddCart"'
+    });
 
     productDetailsModal.classList.add('active');
 

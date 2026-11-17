@@ -348,11 +348,12 @@
     window.zoodnySendPasswordReset = function(email) {
         try { auth.languageCode = 'ar'; } catch (e) {}
         email = String(email || '').trim();
-        // نمرّر رابط المتجر حتى تعيد صفحة reset.html العميل إليه بعد تغيير كلمة المرور
-        var storeUrl = location.origin + location.pathname.replace(/[^\/]*$/, '');
-        return auth.sendPasswordResetEmail(email, { url: storeUrl }).catch(function(err) {
-            // نطاق المتجر غير مضاف في Firebase (Authorized domains) ← نرسل بدون رابط العودة
-            if (err && /unauthorized-continue-uri|invalid-continue-uri|missing-continue-uri/.test(err.code || '')) return auth.sendPasswordResetEmail(email);
+        // handleCodeInApp: الرابط في البريد يفتح صفحتنا reset.html مباشرة (بتصميم المتجر)
+        // دون الحاجة لإعداد "Customize action URL" في Firebase Console
+        var resetPage = location.origin + location.pathname.replace(/[^\/]*$/, '') + 'reset.html';
+        return auth.sendPasswordResetEmail(email, { url: resetPage, handleCodeInApp: true }).catch(function(err) {
+            // نطاق المتجر غير مضاف في Firebase (Authorized domains) ← نرسل بالطريقة العادية (صفحة Firebase)
+            if (err && /unauthorized-continue-uri|invalid-continue-uri|missing-continue-uri|unauthorized-domain/.test(err.code || '')) return auth.sendPasswordResetEmail(email);
             throw err;
         });
     };

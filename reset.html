@@ -145,6 +145,15 @@
                 <a class="btn" id="goStore" href="./"><i class="fas fa-store"></i> الدخول إلى المتجر</a>
             </section>
 
+            <!-- فُتحت الصفحة مباشرة (بدون رابط من البريد) -->
+            <section id="vInfo" class="hidden">
+                <div class="state-icon key"><i class="fas fa-envelope-open-text"></i></div>
+                <h1>صفحة تعيين كلمة المرور</h1>
+                <p class="sub">هذه الصفحة تعمل ✓<br>تُفتح تلقائياً عندما يضغط العميل على رابط <b style="direction:rtl">استعادة كلمة المرور</b> الذي يصله على بريده الإلكتروني.</p>
+                <a class="btn" href="./?forgot=1"><i class="fas fa-key"></i> نسيت كلمة المرور؟ اطلب رابطاً</a>
+                <a class="btn dark" href="./"><i class="fas fa-store"></i> العودة إلى المتجر</a>
+            </section>
+
             <!-- خطأ -->
             <section id="vError" class="hidden">
                 <div class="state-icon err"><i class="fas fa-exclamation"></i></div>
@@ -173,7 +182,7 @@
         auth.languageCode = 'ar';
 
         function $(id) { return document.getElementById(id); }
-        function show(id) { ['vLoading', 'vForm', 'vDone', 'vError'].forEach(function (v) { $(v).classList.toggle('hidden', v !== id); }); }
+        function show(id) { ['vLoading', 'vForm', 'vDone', 'vError', 'vInfo'].forEach(function (v) { $(v).classList.toggle('hidden', v !== id); }); }
         function fail(title, text) { $('errTitle').textContent = title; $('errText').textContent = text; show('vError'); }
         function codeMsg(err) {
             var c = (err && err.code) || '';
@@ -189,10 +198,13 @@
         var mode = p.get('mode'), code = p.get('oobCode'), cont = p.get('continueUrl');
         // رابط العودة: صفحة المتجر (نفس المجلد) أو continueUrl إن كان من نفس الموقع
         var storeUrl = './';
-        try { if (cont && new URL(cont).origin === location.origin) storeUrl = cont; } catch (e) {}
+        try {
+            var cu = cont && new URL(cont);
+            if (cu && cu.origin === location.origin && !/reset\.html$/.test(cu.pathname)) storeUrl = cont;
+        } catch (e) {}
         $('goStore').href = storeUrl;
 
-        if (!code) { fail('الرابط غير مكتمل', 'افتح الرابط كاملاً من رسالة البريد، أو اطلب رابطاً جديداً.'); return; }
+        if (!code) { show('vInfo'); return; }   // فُتحت مباشرة — ليست خطأ
 
         // ── استعادة كلمة المرور ──
         if (mode === 'resetPassword') {

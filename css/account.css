@@ -1875,3 +1875,41 @@ html.zm-has-bar body{padding-top:38px}
 .ord-extras{font-size:.72rem;color:#666;display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed #eee}
 .ord-info{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem;margin-top:.5rem;padding-top:.45rem;border-top:1px solid #eef1f4;font-size:.74rem;color:#7a8794}
 .ord-info b{color:#2A3F54}
+
+/* ══ الشحن بالليرة السورية ══ */
+.tu-cur{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.tu-cur-btn{
+    display:flex;align-items:center;justify-content:center;gap:.45rem;padding:.7rem .5rem;border-radius:12px;cursor:pointer;
+    border:2px solid #e1e6ec;background:#fff;color:#2A3F54;font-family:'Cairo',sans-serif;font-size:.86rem;font-weight:700;transition:all .2s;
+}
+.tu-cur-btn .sym{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;padding:0 .35rem;border-radius:8px;background:#f1f4f8;font-weight:800;font-size:.8rem}
+.tu-cur-btn.active{border-color:#F7C873;background:#fffaf0;box-shadow:0 0 0 3px rgba(247,200,115,.25)}
+.tu-cur-btn.active .sym{background:#F7C873;color:#1E2B38}
+.tu-cur-btn.disabled{opacity:.45;cursor:not-allowed}
+.tu-rate{display:none;margin-top:.55rem;padding:.55rem .75rem;border-radius:10px;background:linear-gradient(135deg,#2A3F54,#1E2B38);color:#fff;font-size:.82rem;align-items:center;gap:.4rem;flex-wrap:wrap}
+.tu-rate.show{display:flex}
+.tu-rate i{color:#F7C873}
+.tu-rate b{color:#F7C873;font-size:.95rem}
+.tu-rate small{width:100%;opacity:.65;font-size:.7rem}
+.tu-rate.muted{background:#f4f6f9;color:#7a8794}
+.tu-rate.muted i{color:#9aa5b1}
+.tu-conv{display:none;margin-top:.45rem;padding:.5rem .75rem;border-radius:10px;background:#eafaf1;color:#1e8449;font-size:.86rem;font-weight:600;align-items:center;gap:.4rem}
+.tu-conv.show{display:flex}
+.tu-conv b{font-size:1rem}
+
+/* لوحة المدير: سعر الصرف */
+.fx-box{background:#fff;border:1.5px solid #f0d49a;border-radius:14px;padding:.8rem 1rem;margin-bottom:1rem;box-shadow:0 3px 12px rgba(247,200,115,.15)}
+.fx-head{font-weight:800;color:#2A3F54;display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;margin-bottom:.55rem}
+.fx-head i{color:#c8902c}
+.fx-head small{font-weight:600;font-size:.74rem;border-radius:12px;padding:.05rem .55rem}
+.fx-head small.on{background:#eafaf1;color:#1e8449}
+.fx-head small.off{background:#f4f6f9;color:#7a8794}
+.fx-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.fx-eq{font-weight:800;color:#2A3F54}
+.fx-row input{width:150px;padding:.55rem .7rem;border:1.5px solid #dde3ea;border-radius:10px;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:700;text-align:center}
+.fx-row input:focus{outline:none;border-color:#F7C873}
+.fx-row .pmg-save-btn{width:auto;padding:.55rem 1.1rem;margin:0}
+.fx-note{font-size:.74rem;color:#8a96a3;margin-top:.5rem}
+.adm-ti-syp{background:#fff8e8 !important;border-color:#f0d49a !important}
+.adm-ti-sub{font-size:.7rem;color:#9a7b3a;margin-top:2px}
+.adm-syp-tag{display:inline-block;background:#F7C873;color:#1E2B38;border-radius:6px;padding:0 .35rem;font-size:.68rem;font-weight:800;margin-inline-start:.25rem}

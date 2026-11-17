@@ -342,6 +342,11 @@
         wrap.innerHTML = filtered.slice().reverse().map(function(t) {
             var st  = esc(t.status || 'pending');
             var amt = parseFloat(t.amount||0).toFixed(2);
+            var isSyp = t.currency === 'SYP' && num(t.amountSyp) > 0;
+            var sypBox = isSyp
+                ? '    <div class="adm-ti-box adm-ti-syp"><div class="adm-ti-lbl">المُرسل بالليرة السورية</div><div class="adm-ti-val">' + Math.round(num(t.amountSyp)).toLocaleString('en-US') + ' ل.س</div>'
+                  + '<div class="adm-ti-sub">سعر الصرف: 1 دولار = ' + Math.round(num(t.rate)).toLocaleString('en-US') + ' ل.س</div></div>'
+                : '';
 
             var btns = '';
             if (st === 'pending') {
@@ -363,12 +368,13 @@
                 + '    <div class="adm-client-item"><i class="fas fa-envelope"></i><strong>' + esc(t.email||'-') + '</strong></div>'
                 + '  </div>'
                 + '  <div class="adm-topup-info">'
-                + '    <div class="adm-ti-box adm-ti-amount"><div class="adm-ti-lbl">المبلغ المطلوب شحنه</div><div class="adm-ti-val">' + amt + ' $</div></div>'
+                + sypBox
+                + '    <div class="adm-ti-box adm-ti-amount"><div class="adm-ti-lbl">' + (isSyp ? 'يُضاف للرصيد (بعد التحويل)' : 'المبلغ المطلوب شحنه') + '</div><div class="adm-ti-val">' + amt + ' $</div></div>'
                 + '    <div class="adm-ti-box"><div class="adm-ti-lbl">رقم عملية شام كاش</div><div class="adm-ti-val">' + esc(t.txId||t.transferNumber||t.shamCashNumber||'-') + '</div></div>'
                 + '  </div>'
                 + '</div>'
                 + '<div class="adm-card-foot">'
-                + '  <div class="adm-total-lbl"><i class="fas fa-dollar-sign"></i> ' + amt + '$</div>'
+                + '  <div class="adm-total-lbl"><i class="fas fa-dollar-sign"></i> ' + amt + '$' + (isSyp ? ' <span class="adm-syp-tag">ل.س</span>' : '') + '</div>'
                 + '  <div class="adm-card-btns">' + btns + '</div>'
                 + '</div>'
                 + '</div>';
@@ -868,7 +874,7 @@
         dbRef('users/' + uid + '/transactions/' + reqId).update({ status: 'completed' });
         notifyUser(uid, 'topup', 'تم شحن رصيدك 💰', 'تمت إضافة ' + amt.toFixed(2) + '$ إلى رصيدك بنجاح', reqId);
         var tu = findTopup(reqId);
-        log('topup', 'قبول شحن ' + amt.toFixed(2) + '$ لـ ' + ((tu && (tu.name || tu.email)) || uid) + (tu && tu.txId ? ' — رقم العملية ' + tu.txId : ''), reqId);
+        log('topup', 'قبول شحن ' + amt.toFixed(2) + '$' + (tu && tu.currency === 'SYP' ? ' (' + Math.round(num(tu.amountSyp)).toLocaleString('en-US') + ' ل.س بسعر ' + num(tu.rate) + ')' : '') + ' لـ ' + ((tu && (tu.name || tu.email)) || uid) + (tu && tu.txId ? ' — رقم العملية ' + tu.txId : ''), reqId);
         balToast('✓ تم قبول الطلب وإضافة ' + amt.toFixed(2) + '$', true);
     };
     window.admRejectTopup = function(reqId, uid) {
@@ -1049,6 +1055,46 @@
         log('customer', 'حذف العميل ' + ((du && (du.name || du.email)) || uid) + (du ? ' — رصيده كان ' + money(du.balance) : ''), uid);
         if (openUserKey === uid) closeUserModal();
     };
+
+    // ── سعر صرف الدولار بالليرة (config/exchange) — يظهر للعملاء في صفحة الشحن ──
+    (function setupFx() {
+        if (!$('fxRateInput')) return;
+        var cur = null, watching = false;
+        function render() {
+            var r = cur && num(cur.rate) > 0 ? num(cur.rate) : 0;
+            if (document.activeElement !== $('fxRateInput')) $('fxRateInput').value = r || '';
+            $('fxUpdated').textContent = r
+                ? 'مفعّل — آخر تحديث: ' + new Date(cur.updatedAt || Date.now()).toLocaleString('ar-SY')
+                : 'الشحن بالليرة متوقف حالياً';
+            $('fxUpdated').className = r ? 'on' : 'off';
+            $('fxOffBtn').style.display = r ? '' : 'none';
+        }
+        function watch() {
+            if (watching || !isAdminSignedIn()) return;
+            watching = true;
+            dbRef('config/exchange').on('value', function(s) { cur = s.val(); render(); });
+        }
+        auth.onAuthStateChanged(watch);
+        $('fxSaveBtn').onclick = function() {
+            var v = parseFloat(String($('fxRateInput').value).replace(/[,٬\s]/g, ''));
+            if (!(v > 0)) { alert('اكتب سعر صرف صحيح (كم ليرة سورية تساوي 1 دولار)'); $('fxRateInput').focus(); return; }
+            v = Math.round(v * 100) / 100;
+            var old = cur && num(cur.rate);
+            if (old && Math.abs(v - old) / old > 0.3 && !confirm('السعر الجديد (' + v.toLocaleString('en-US') + ') يختلف كثيراً عن السابق (' + old.toLocaleString('en-US') + ').\nهل أنت متأكد؟')) return;
+            dbRef('config/exchange').set({ rate: v, updatedAt: Date.now() }).then(function() {
+                balToast('✓ تم حفظ سعر الصرف: 1 دولار = ' + v.toLocaleString('en-US') + ' ل.س', true);
+                log('store', 'تحديث سعر الصرف: 1 دولار = ' + v.toLocaleString('en-US') + ' ل.س' + (old ? ' (كان ' + old.toLocaleString('en-US') + ')' : ''));
+            }).catch(function(err) { alert('فشل الحفظ: ' + (err && err.message ? err.message : err)); });
+        };
+        $('fxRateInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('fxSaveBtn').click(); });
+        $('fxOffBtn').onclick = function() {
+            if (!confirm('إيقاف الشحن بالليرة السورية؟\nسيستطيع العملاء الشحن بالدولار فقط.')) return;
+            dbRef('config/exchange').set({ rate: 0, updatedAt: Date.now() }).then(function() {
+                balToast('✓ تم إيقاف الشحن بالليرة', true);
+                log('store', 'إيقاف الشحن بالليرة السورية');
+            }).catch(function(err) { alert('فشل: ' + (err && err.message ? err.message : err)); });
+        };
+    })();
 
     // ── حظر عميل: لا يستطيع الطلب ولا شحن الرصيد (القاعدة في database.rules.json تمنعه فعلياً) ──
     function blockBtn(u) {

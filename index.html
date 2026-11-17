@@ -952,8 +952,17 @@
                 <input type="tel" id="tuPhone" placeholder="09xxxxxxxx" oninput="this.classList.remove('input-error');document.getElementById('tuErr').className='topup-err'"/>
             </div>
             <div class="topup-form-group">
-                <label><i class="fas fa-dollar-sign"></i> المبلغ المُرسل ($) *</label>
-                <input type="number" id="tuAmount" placeholder="0.00" min="1" step="0.01"/>
+                <label><i class="fas fa-coins"></i> عملة التحويل *</label>
+                <div class="tu-cur" role="radiogroup" aria-label="عملة التحويل">
+                    <button type="button" class="tu-cur-btn active" data-cur="USD" role="radio" aria-checked="true"><span class="sym">$</span> دولار أمريكي</button>
+                    <button type="button" class="tu-cur-btn" data-cur="SYP" role="radio" aria-checked="false"><span class="sym">ل.س</span> ليرة سورية</button>
+                </div>
+                <div class="tu-rate" id="tuRate"></div>
+            </div>
+            <div class="topup-form-group">
+                <label id="tuAmountLbl"><i class="fas fa-dollar-sign"></i> المبلغ المُرسل ($) *</label>
+                <input type="number" id="tuAmount" placeholder="0.00" min="1" step="0.01" inputmode="decimal"/>
+                <div class="tu-conv" id="tuConv"></div>
             </div>
             <div class="topup-form-group">
                 <label><i class="fas fa-hashtag"></i> رقم عملية شام كاش *</label>
@@ -1035,6 +1044,18 @@
 
         <!-- ══ تبويب طلبات الشحن ══ -->
         <div class="adm-tab-panel active" id="panel-topups">
+            <div class="fx-box adm-admin-only">
+                <div class="fx-head"><i class="fas fa-exchange-alt"></i> سعر صرف الدولار اليوم
+                    <small id="fxUpdated"></small></div>
+                <div class="fx-row">
+                    <span class="fx-eq">1 دولار =</span>
+                    <input type="number" id="fxRateInput" min="1" step="1" inputmode="numeric" placeholder="مثال: 15000">
+                    <span class="fx-eq">ل.س</span>
+                    <button type="button" class="pmg-save-btn" id="fxSaveBtn"><i class="fas fa-save"></i> حفظ</button>
+                    <button type="button" class="adm-act-btn reject" id="fxOffBtn" title="إيقاف الشحن بالليرة"><i class="fas fa-ban"></i> إيقاف الليرة</button>
+                </div>
+                <div class="fx-note"><i class="fas fa-info-circle"></i> يظهر للعملاء في صفحة الشحن. من يرسل بالليرة يُحسب رصيده بالدولار حسب هذا السعر لحظة إرسال الطلب.</div>
+            </div>
             <div class="adm-stats">
                 <div class="adm-stat s1"><i class="fas fa-list"></i><div><div class="adm-stat-lbl">إجمالي</div><div class="adm-stat-val" id="stTotal">0</div></div></div>
                 <div class="adm-stat s2"><i class="fas fa-clock"></i><div><div class="adm-stat-lbl">انتظار</div><div class="adm-stat-val" id="stPending">0</div></div></div>
@@ -1257,7 +1278,7 @@
                         <option value="customer">العملاء (جملة/حظر/حذف)</option>
                         <option value="staff">الموظفون</option>
                         <option value="backup">النسخ الاحتياطي</option>
-                        <option value="store">وضع الصيانة</option>
+                        <option value="store">إعدادات المتجر (الصيانة، سعر الصرف)</option>
                     </select>
                     <select class="pmg-select" id="logWho"><option value="">الكل</option><option value="admin">المدير فقط</option><option value="staff">الموظفون فقط</option></select>
                 </div>

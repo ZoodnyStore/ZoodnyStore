@@ -692,10 +692,70 @@
     $('topupClose').onclick = () => modalOff('topupOv','topupModal');
     $('topupOv').onclick    = () => modalOff('topupOv','topupModal');
 
+    // ── الشحن بالليرة السورية: سعر الصرف يحدده المدير (config/exchange) ──
+    var fx = { rate: 0, updatedAt: 0 }, tuCur = 'USD';
+    function fxFmt(n) { return Math.round(n).toLocaleString('en-US'); }
+    function tuUsdFromInput() {
+        var v = parseFloat($('tuAmount').value);
+        if (isNaN(v) || v <= 0) return NaN;
+        return tuCur === 'SYP' ? (fx.rate > 0 ? Math.round(v / fx.rate * 100) / 100 : NaN) : v;
+    }
+    function tuRenderCurrency() {
+        var hasRate = fx.rate > 0;
+        document.querySelectorAll('.tu-cur-btn').forEach(function(b) {
+            var on = b.dataset.cur === tuCur;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-checked', on ? 'true' : 'false');
+            if (b.dataset.cur === 'SYP') b.classList.toggle('disabled', !hasRate);
+        });
+        var rateEl = $('tuRate');
+        if (hasRate) {
+            var d = fx.updatedAt ? new Date(fx.updatedAt) : null;
+            rateEl.innerHTML = '<i class="fas fa-exchange-alt"></i> سعر الصرف اليوم: <b>1 دولار = ' + fxFmt(fx.rate) + ' ل.س</b>'
+                + (d ? '<small>آخر تحديث: ' + d.toLocaleDateString('ar-SY-u-nu-latn', { day: 'numeric', month: 'long' }) + '</small>' : '');
+            rateEl.className = 'tu-rate show';
+        } else {
+            rateEl.innerHTML = '<i class="fas fa-info-circle"></i> الشحن بالليرة السورية غير متاح حالياً — يمكنك الشحن بالدولار';
+            rateEl.className = 'tu-rate show muted';
+        }
+        var syp = tuCur === 'SYP';
+        $('tuAmountLbl').innerHTML = syp ? '<i class="fas fa-money-bill-wave"></i> المبلغ المُرسل (ليرة سورية) *' : '<i class="fas fa-dollar-sign"></i> المبلغ المُرسل ($) *';
+        $('tuAmount').placeholder = syp ? 'مثال: ' + fxFmt((fx.rate || 150) * 10) : '0.00';
+        $('tuAmount').step = syp ? '1' : '0.01';
+        tuRenderConv();
+    }
+    function tuRenderConv() {
+        var el = $('tuConv'), usd = tuUsdFromInput();
+        if (tuCur !== 'SYP' || isNaN(usd)) { el.className = 'tu-conv'; el.innerHTML = ''; return; }
+        el.className = 'tu-conv show';
+        el.innerHTML = '<i class="fas fa-arrow-left"></i> سيُضاف إلى رصيدك: <b>' + usd.toFixed(2) + '$</b>';
+    }
+    document.querySelectorAll('.tu-cur-btn').forEach(function(b) {
+        b.addEventListener('click', function() {
+            if (b.dataset.cur === 'SYP' && !(fx.rate > 0)) { showToast('الشحن بالليرة غير متاح حالياً', 'warn'); return; }
+            if (tuCur === b.dataset.cur) return;
+            tuCur = b.dataset.cur;
+            $('tuAmount').value = '';
+            tuRenderCurrency();
+            $('tuAmount').focus();
+        });
+    });
+    $('tuAmount').addEventListener('input', tuRenderConv);
+    dbRef('config/exchange').on('value', function(snap) {
+        var v = snap.val() || {};
+        fx.rate = parseFloat(v.rate) || 0;
+        fx.updatedAt = v.updatedAt || 0;
+        if (!(fx.rate > 0) && tuCur === 'SYP') tuCur = 'USD';
+        tuRenderCurrency();
+    }, function() { tuRenderCurrency(); });
+    window.zoodnyFx = function() { return { rate: fx.rate, updatedAt: fx.updatedAt }; };
+
     $('tuSubmitBtn').onclick = function() {
         var name   = $('tuName').value.trim();
         var phone  = $('tuPhone').value.trim();
-        var amount = parseFloat($('tuAmount').value);
+        var entered = parseFloat($('tuAmount').value);
+        var isSyp = tuCur === 'SYP';
+        var amount = tuUsdFromInput();   // يُحفظ دائماً بالدولار
         var txId   = $('tuTxId').value.trim();
         var notes  = $('tuNotes').value.trim();
         var errEl  = $('tuErr');
@@ -719,7 +779,9 @@
         if (!name)             { showErr('يرجى إدخال اسمك الكامل', 'tuName'); return; }
         if (!phone)            { showErr('يرجى إدخال رقم هاتفك', 'tuPhone'); return; }
         if (!/^09[0-9]{8}$/.test(phone)) { showErr('رقم الهاتف غير صحيح — يجب أن يبدأ بـ 09 ويتكون من 10 أرقام: 09XXXXXXXX', 'tuPhone'); return; }
-        if (isNaN(amount)||amount<=0)     { showErr('يرجى إدخال مبلغ صحيح أكبر من صفر', 'tuAmount'); return; }
+        if (isSyp && !(fx.rate > 0))      { showErr('الشحن بالليرة غير متاح حالياً — اختر الدولار', 'tuAmount'); return; }
+        if (isNaN(entered)||entered<=0)   { showErr('يرجى إدخال مبلغ صحيح أكبر من صفر', 'tuAmount'); return; }
+        if (isNaN(amount)||amount<0.01)   { showErr('المبلغ صغير جداً — أقل من 0.01$ بعد التحويل', 'tuAmount'); return; }
         if (!txId)             { showErr('يرجى إدخال رقم عملية شام كاش', 'tuTxId'); return; }
         if (!/^[0-9]{7,10}$/.test(txId)) { showErr('رقم عملية شام كاش غير صحيح — يجب أن يتكون من 7 إلى 10 أرقام فقط', 'tuTxId'); return; }
 
@@ -735,22 +797,29 @@
         var email = currentUser.email || '';
         var order = {
             reqId, uid: currentUser.uid, name, phone, email, amount,
-            txId, notes, date: ts, status: 'pending'
+            txId, notes, date: ts, status: 'pending', currency: isSyp ? 'SYP' : 'USD'
         };
+        var sypTxt = '';
+        if (isSyp) {
+            order.amountSyp = Math.round(entered);
+            order.rate = fx.rate;
+            sypTxt = fxFmt(entered) + ' ل.س';
+        }
 
         // Save topup request
         dbRef('topup_orders/' + reqId).set(order)
             .then(function() {
                 // Save pending transaction in user profile
                 return dbRef('users/' + currentUser.uid + '/transactions/' + reqId).set({
-                    desc: 'شحن رصيد عبر شام كاش', date: ts,
+                    desc: 'شحن رصيد عبر شام كاش' + (sypTxt ? ' (' + sypTxt + ')' : ''), date: ts,
                     amount, type: 'credit', status: 'pending', reqId, txId, txCategory: 'topup', ts: Date.now()
                 });
             })
             .then(function() {
-                notifyAdmin('topup', 'طلب شحن رصيد 💰', (name || email || 'زبون') + ' — ' + amount.toFixed(2) + '$ — رقم العملية: ' + txId, reqId);
+                notifyAdmin('topup', 'طلب شحن رصيد 💰', (name || email || 'زبون') + ' — ' + (sypTxt ? sypTxt + ' (= ' + amount.toFixed(2) + '$)' : amount.toFixed(2) + '$') + ' — رقم العملية: ' + txId, reqId);
                 modalOff('topupOv','topupModal');
-                $('successRef').textContent = 'رقم الطلب: ' + reqId + ' | المبلغ: ' + amount.toFixed(2) + '$';
+                $('successRef').textContent = 'رقم الطلب: ' + reqId + ' | المبلغ: ' + (sypTxt ? sypTxt + ' = ' : '') + amount.toFixed(2) + '$';
+                $('tuAmount').value = ''; tuRenderConv();
                 modalOn('successOv','successModal');
             })
             .catch(function(err) {

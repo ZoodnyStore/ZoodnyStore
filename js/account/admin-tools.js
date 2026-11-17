@@ -196,9 +196,11 @@
             }));
     });
     $('expTopupsBtn').addEventListener('click', function () {
-        exportCsv('zoodny-topups', ['رقم الطلب', 'التاريخ', 'الحالة', 'العميل', 'الهاتف', 'الإيميل', 'المبلغ $', 'رقم عملية شام كاش', 'ملاحظات'],
+        exportCsv('zoodny-topups', ['رقم الطلب', 'التاريخ', 'الحالة', 'العميل', 'الهاتف', 'الإيميل', 'المبلغ $', 'العملة', 'المبلغ بالليرة', 'سعر الصرف', 'رقم عملية شام كاش', 'ملاحظات'],
             (ZA.topups() || []).map(function (t) {
-                return [t.reqId, t.date, ST[t.status] || t.status, t.name, t.phone, t.email, num(t.amount).toFixed(2), t.txId || t.transferNumber || '', t.notes || ''];
+                var syp = t.currency === 'SYP';
+                return [t.reqId, t.date, ST[t.status] || t.status, t.name, t.phone, t.email, num(t.amount).toFixed(2), syp ? 'ليرة سورية' : 'دولار',
+                    syp ? Math.round(num(t.amountSyp)) : '', syp ? num(t.rate) : '', t.txId || t.transferNumber || '', t.notes || ''];
             }));
     });
 

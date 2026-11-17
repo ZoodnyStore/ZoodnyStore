@@ -203,10 +203,10 @@
         }
     ];
 
-    // ── حقول عامة لكل الأقسام: حالة المنتج (متاح / نفد / مخفي) وترتيب الظهور ──
+    // ── حقول عامة لكل الأقسام: حالة المنتج (متاح / نفذ المخزون / مخفي) وترتيب الظهور ──
     var PMG_AVAIL_OPTIONS = [
         ['', 'متاح للطلب'],
-        ['soldout', 'نفد المخزون — يظهر للزبائن بدون إمكانية الطلب'],
+        ['soldout', 'نفذ المخزون — يظهر للزبائن ويمكنهم رؤية التفاصيل بدون إمكانية الطلب'],
         ['hidden', 'مخفي — لا يظهر للزبائن (يبقى محفوظاً)']
     ];
     PMG_SOURCES.forEach(function (src) {
@@ -218,7 +218,7 @@
 
     function pmgGetSource(key) { return PMG_SOURCES.filter(function (s) { return s.key === key; })[0]; }
     function pmgUnavailable(it) { return !!it && (it.availability === 'soldout' || it.availability === 'hidden'); }
-    var PMG_AVAIL_TXT = { soldout: 'نفد المخزون', hidden: 'مخفي عن الزبائن' };
+    var PMG_AVAIL_TXT = { soldout: 'نفذ المخزون', hidden: 'مخفي عن الزبائن' };
 
     // الحقول الرقمية قد تكون محفوظة كنص (من نسخ سابقة) — نحولها لأرقام حتى لا تتعطل السلة والحسابات
     function pmgToNumber(v) {
@@ -1076,7 +1076,7 @@
     function pmgDecorateEditPencils() {
         var admin = pmgIsAdminUser();
         Array.prototype.forEach.call(document.querySelectorAll('[data-pmg-src]'), function (card) {
-            // شارة الحالة (نفد المخزون للجميع، مخفي للمدير فقط)
+            // شارة الحالة (نفذ المخزون للجميع، مخفي للمدير فقط) + زر الطلب يصبح معطّلاً
             var it = pmgGetSource(card.dataset.pmgSrc) ? pmgFindItem(card.dataset.pmgSrc, card.dataset.pmgId) : null;
             var st = it ? it.availability : '';
             var rib = card.querySelector(':scope > .pmg-status-ribbon');
@@ -1087,6 +1087,17 @@
                 rib.className = 'pmg-status-ribbon ' + st;
                 rib.textContent = PMG_AVAIL_TXT[st];
             } else if (rib) rib.parentNode.removeChild(rib);
+            Array.prototype.forEach.call(card.querySelectorAll('.add-to-cart-btn'), function (b) {
+                if (st === 'soldout') {
+                    if (b.dataset.pmgOrig === undefined) b.dataset.pmgOrig = b.innerHTML;
+                    b.innerHTML = '<i class="fas fa-ban"></i> نفذ المخزون';
+                    b.classList.add('pmg-btn-soldout');
+                } else if (b.dataset.pmgOrig !== undefined) {
+                    b.innerHTML = b.dataset.pmgOrig;
+                    delete b.dataset.pmgOrig;
+                    b.classList.remove('pmg-btn-soldout');
+                }
+            });
 
             var btn = card.querySelector(':scope > .pmg-edit-pencil');
             if (!admin) { if (btn) btn.parentNode.removeChild(btn); return; }
@@ -1101,8 +1112,8 @@
         });
     }
 
-    function pmgOpenFromPencil(card) {
-        var src = card.dataset.pmgSrc, id = card.dataset.pmgId, row = card.dataset.pmgRow;
+    function pmgOpenFromPencil(card) { pmgOpenEdit(card.dataset.pmgSrc, card.dataset.pmgId, card.dataset.pmgRow); }
+    function pmgOpenEdit(src, id, row) {
         if (!pmgFindItem(src, id)) { showToast('تعذر العثور على هذا المنتج في قائمة الإدارة', 'error'); return; }
         pmgOpenForm(src, id);
         if (pmgEditingCtx) pmgEditingCtx.fromStore = true;
@@ -1128,9 +1139,9 @@
         document.addEventListener('click', function (e) {
             var btn = e.target.closest && e.target.closest('.pmg-edit-pencil');
             if (!btn) {
-                // منتج نفد من المخزون: لا تفاصيل ولا طلب
-                var so = e.target.closest && e.target.closest('.pmg-soldout');
-                if (so) { e.preventDefault(); e.stopPropagation(); showToast('عذراً، هذا المنتج نفد من المخزون حالياً', 'warn'); }
+                // منتج نفذ من المخزون: يمكن رؤية التفاصيل والدخول للمجموعة، لكن زر الطلب ممنوع
+                var orderBtn = e.target.closest && e.target.closest('.pmg-soldout .add-to-cart-btn, .product-details-add-to-cart.pmg-det-soldout');
+                if (orderBtn) { e.preventDefault(); e.stopPropagation(); showToast('عذراً، هذا المنتج نفذ من المخزون حالياً', 'warn'); }
                 return;
             }
             e.preventDefault(); e.stopPropagation();
@@ -1175,7 +1186,7 @@
         });
     }
 
-    // هل بند الطلب (من السلة) لمنتج نفد أو أُخفي؟ — يُستخدم في main.js قبل إتمام الطلب
+    // هل بند الطلب (من السلة) لمنتج نفذ من المخزون أو أُخفي؟ — يُستخدم في main.js قبل إتمام الطلب
     window.zoodnyLineUnavailable = function (line) {
         if (!line) return false;
         try {
@@ -1392,6 +1403,241 @@
         }).then(function () { btn.disabled = false; });
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    //  نافذة "تفاصيل المنتج": تعديل مباشر للمدير (قلم بجانب كل نص) + منع طلب المنتج النافد
+    //  نغلّف showProductDetails و showPaymentProductDetails (product-details.js) ونزيّن الناتج.
+    // ═══════════════════════════════════════════════════════════════
+    var pmgDetLast = null;   // { kind:'id'|'obj', arg } لإعادة رسم النافذة بعد الحفظ
+
+    function pmgFindBy(arr, fn) { for (var i = 0; i < arr.length; i++) if (arr[i] && fn(arr[i])) return arr[i]; return null; }
+
+    function pmgDetCtxFromId(pid) {
+        var p = pmgFindBy(products, function (x) { return String(x.id) === String(pid); });
+        if (!p) return null;
+        if (p.category === 'app') {
+            var a = pmgFindBy(appsData, function (x) { return String(x.id) === String(pid); }) || pmgFindBy(appsData, function (x) { return x.name === p.name; });
+            return a ? { src: 'appsData', item: a } : null;
+        }
+        if (p.category === 'games') {
+            var g = pmgFindBy(gamesData, function (x) { return String(x.id) === String(pid); }) || pmgFindBy(gamesData, function (x) { return x.name === p.name; });
+            return g ? { src: 'gamesData', item: g } : null;
+        }
+        return { src: 'products', item: p };
+    }
+    function pmgDetCtxFromObj(o) {
+        if (!o) return null;
+        var cat = String(o.category || '');
+        var groups = [['premiumActivationsData', premiumActivationsData], ['vpnData', vpnData], ['electronicPaymentData', electronicPaymentData]];
+        if (/بريميوم|VPN|الدفع/.test(cat)) {
+            for (var i = 0; i < groups.length; i++) {
+                var arr = groups[i][1];
+                for (var j = 0; j < arr.length; j++) {
+                    var r = pmgFindBy(arr[j].products || [], function (x) { return String(x.id) === String(o.id) && x.name === o.name; });
+                    if (r) return { src: groups[i][0], item: arr[j], row: r };
+                }
+            }
+        }
+        var p = pmgFindBy(products, function (x) { return String(x.id) === String(o.id) && (!o.name || x.name === o.name); })
+             || pmgFindBy(products, function (x) { return String(x.id) === String(o.id); });
+        return p ? { src: 'products', item: p } : null;
+    }
+
+    // أي سعر يُعرض في النافذة لهذا المنتج (وأي حقل يُعدَّل)
+    function pmgDetPriceSpec(ctx) {
+        if (ctx.row) return { obj: ctx.row, key: 'price', fmt: function (v) { return v ? v + '$' : 'تواصل معنا'; } };
+        var it = ctx.item;
+        if (ctx.src === 'products') {
+            if (it.category === 'social-media') return { obj: it, key: 'basePrice', fmt: function (v) { return v + '$ لـ 1k'; } };
+            if (it.category === 'rased') return null;   // أسعار الرصيد ثابتة في الكود
+            return { obj: it, key: 'price', fmt: function (v) { return v > 0 ? v + '$' : 'قريباً'; } };
+        }
+        return null;   // الألعاب/التطبيقات: السعر حسب الفئة/الكمية ← من النموذج الكامل
+    }
+
+    function pmgDescToText(d) {
+        return String(d || '').replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    }
+    function pmgTextToDesc(t) { return pmgEsc(String(t || '').trim()).replace(/&quot;/g, '"').replace(/\r?\n/g, '<br>'); }
+
+    function pmgDetRerender() {
+        if (!pmgDetLast) return;
+        if (pmgDetLast.kind === 'id') { window.showProductDetails(pmgDetLast.arg); return; }
+        var o = pmgDetLast.arg, ctx = pmgDetLast.ctx;
+        if (ctx) {
+            var src = ctx.row || ctx.item;
+            o = Object.assign({}, o, { name: src.name, price: src.price, description: ctx.item.description, image: ctx.item.image });
+        }
+        window.showPaymentProductDetails(o);
+    }
+
+    // حفظ المنتج كاملاً في product_overrides (نفس طريقة نموذج التعديل)
+    function pmgSaveItemNow(ctx, logText) {
+        var safe = pmgSafeKey(ctx.item.id);
+        var clean = JSON.parse(JSON.stringify(ctx.item));
+        return dbRef('product_overrides/' + ctx.src + '/' + safe).set(clean)
+            .then(function () { return dbRef('product_deletions/' + ctx.src + '/' + safe).remove(); })
+            .then(function () {
+                showToast('تم الحفظ — التعديل ظاهر الآن لكل الزبائن', 'success');
+                pmgLog(logText + ' (من نافذة التفاصيل)', ctx.src + '/' + safe);
+            })
+            .catch(function (err) { showToast('تعذر الحفظ: ' + (err && err.message ? err.message : err), 'error'); throw err; });
+    }
+
+    // محرر صغير في مكان النص: حقل + حفظ/إلغاء
+    function pmgInlineEditor(el, opts) {
+        if (el.parentNode.querySelector('.pmg-inline-ed')) return;
+        var ed = document.createElement('div');
+        ed.className = 'pmg-inline-ed';
+        var field = opts.multiline ? '<textarea rows="' + (opts.rows || 4) + '"></textarea>'
+                                   : '<input type="text"' + (opts.number ? ' inputmode="decimal" dir="ltr"' : '') + '>';
+        ed.innerHTML = '<div class="pmg-inline-lbl"><i class="fas fa-pen"></i> ' + pmgEsc(opts.label) + '</div>' + field +
+            (opts.hint ? '<div class="pmg-inline-hint">' + pmgEsc(opts.hint) + '</div>' : '') +
+            '<div class="pmg-inline-btns"><button type="button" class="pmg-inline-save"><i class="fas fa-check"></i> حفظ لكل الزبائن</button>' +
+            '<button type="button" class="pmg-inline-cancel">إلغاء</button></div>';
+        var inp = ed.querySelector(opts.multiline ? 'textarea' : 'input');
+        inp.value = opts.value === undefined || opts.value === null ? '' : opts.value;
+        el.style.display = 'none';
+        el.parentNode.insertBefore(ed, el.nextSibling);
+        function close() { if (ed.parentNode) ed.parentNode.removeChild(ed); el.style.display = ''; }
+        ed.querySelector('.pmg-inline-cancel').onclick = close;
+        ed.querySelector('.pmg-inline-save').onclick = function () {
+            var btn = this, v = inp.value;
+            if (opts.number) {
+                v = pmgToNumber(String(v).trim());
+                if (typeof v !== 'number' || v < 0) { alert('اكتب رقماً صحيحاً (مثال: 2.5)'); inp.focus(); return; }
+            } else if (opts.required && !String(v).trim()) { alert('لا يمكن ترك هذا الحقل فارغاً'); inp.focus(); return; }
+            btn.disabled = true;
+            Promise.resolve(opts.save(v)).then(function () { close(); pmgDetRerender(); }, function () { btn.disabled = false; });
+        };
+        inp.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') close();
+            if (e.key === 'Enter' && !opts.multiline) ed.querySelector('.pmg-inline-save').click();
+        });
+        setTimeout(function () { inp.focus(); try { inp.select(); } catch (e) {} }, 30);
+    }
+
+    function pmgDetPencil(el, title, onClick) {
+        if (!el) return;
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'pmg-det-pencil';
+        b.title = title;
+        b.innerHTML = '<i class="fas fa-pen"></i>';
+        b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); onClick(); });
+        el.appendChild(b);
+    }
+
+    function pmgDecorateDetails(ctx) {
+        var body = typeof productDetailsBody !== 'undefined' ? productDetailsBody : document.getElementById('productDetailsBody');
+        if (!body || !ctx || !ctx.item) return;
+        var it = ctx.item, row = ctx.row;
+
+        // المميزات المعدّلة من المدير تحلّ محل المميزات الافتراضية
+        var ul = body.querySelector('.product-details-features');
+        if (ul && Array.isArray(it.features) && it.features.length) {
+            ul.innerHTML = it.features.map(function (f) { return '<li><i class="fas fa-check-circle"></i> ' + pmgEsc(f) + '</li>'; }).join('');
+        }
+
+        // نفذ المخزون: التفاصيل ظاهرة، لكن زر الطلب معطّل
+        var orderBtn = body.querySelector('.product-details-add-to-cart');
+        if (orderBtn && pmgUnavailable(it)) {
+            orderBtn.disabled = true;
+            orderBtn.classList.add('pmg-det-soldout');
+            orderBtn.innerHTML = '<i class="fas fa-ban"></i> نفذ المخزون';
+            var img = body.querySelector('.product-details-image');
+            if (img && it.availability === 'soldout' && !img.querySelector('.pmg-status-ribbon')) {
+                img.classList.add('pmg-soldout');
+                img.style.position = 'relative';
+                img.insertAdjacentHTML('beforeend', '<span class="pmg-status-ribbon soldout">نفذ المخزون</span>');
+            }
+        }
+
+        if (!pmgIsAdminUser()) return;
+        body.classList.add('pmg-det-admin');
+        var label = row ? 'الباقة' : 'المنتج';
+
+        // الاسم
+        var title = body.querySelector('.product-details-title');
+        pmgDetPencil(title, 'تعديل الاسم', function () {
+            var obj = row || it;
+            pmgInlineEditor(title, { label: 'اسم ' + label, value: obj.name, required: true, save: function (v) {
+                var old = obj.name;
+                obj.name = String(v).replace(/[<>]/g, '').trim();
+                pmgSyncDerived();
+                return pmgSaveItemNow(ctx, 'تعديل اسم ' + label + ': ' + old + ' ← ' + obj.name);
+            } });
+        });
+
+        // السعر
+        var ps = pmgDetPriceSpec(ctx), priceEl = body.querySelector('.product-details-price');
+        if (ps && priceEl) pmgDetPencil(priceEl, 'تعديل السعر', function () {
+            pmgInlineEditor(priceEl, { label: 'سعر ' + label + ' بالمفرق ($)' + (ps.key === 'basePrice' ? ' — لكل 1000' : ''), number: true, value: ps.obj[ps.key],
+                hint: 'سعر الجملة ورأس المال من "تعديل كامل".', save: function (v) {
+                    var old = ps.obj[ps.key];
+                    ps.obj[ps.key] = v;
+                    if (ps.key === 'basePrice' && typeof it.description === 'string') it.description = it.description.replace(/سعر الألف:\s*[\d.]+\s*\$/, 'سعر الألف: ' + v + '$');
+                    return pmgSaveItemNow(ctx, 'تعديل سعر "' + (row || it).name + '": ' + old + ' ← ' + v);
+                } });
+        });
+
+        // الوصف (لباقة داخل مجموعة: وصف المجموعة كلها)
+        var descEl = body.querySelector('.product-details-description');
+        pmgDetPencil(descEl, 'تعديل الوصف', function () {
+            pmgInlineEditor(descEl, { label: row ? 'وصف المجموعة (يظهر لكل باقاتها)' : 'وصف المنتج', multiline: true, rows: 5, value: pmgDescToText(it.description),
+                hint: 'كل سطر جديد يظهر في سطر مستقل.', save: function (v) {
+                    it.description = pmgTextToDesc(v);
+                    pmgSyncDerived();
+                    return pmgSaveItemNow(ctx, 'تعديل وصف "' + it.name + '"');
+                } });
+        });
+
+        // المميزات (سطر لكل ميزة)
+        if (ul) pmgDetPencil(ul, 'تعديل المميزات', function () {
+            var cur = Array.isArray(it.features) && it.features.length ? it.features
+                    : Array.prototype.map.call(ul.querySelectorAll('li'), function (li) { return li.textContent.trim(); });
+            pmgInlineEditor(ul, { label: 'المميزات' + (row ? ' (لكل باقات المجموعة)' : ''), multiline: true, rows: Math.max(4, cur.length + 1), value: cur.join('\n'),
+                hint: 'ميزة في كل سطر. امسح كل الأسطر للعودة للمميزات الافتراضية.', save: function (v) {
+                    var list = String(v).split(/\r?\n/).map(function (x) { return x.replace(/[<>]/g, '').trim(); }).filter(Boolean);
+                    if (list.length) it.features = list; else delete it.features;
+                    return pmgSaveItemNow(ctx, (list.length ? 'تعديل مميزات "' : 'إرجاع المميزات الافتراضية لـ "') + it.name + '"');
+                } });
+        });
+
+        // الصورة ← النموذج الكامل (فيه رفع الصور)
+        var imgBox = body.querySelector('.product-details-image');
+        function openFull() {
+            if (typeof productDetailsModal !== 'undefined') productDetailsModal.classList.remove('active');
+            pmgOpenEdit(ctx.src, it.id, row ? row.id : undefined);
+        }
+        if (imgBox) { imgBox.style.position = 'relative'; pmgDetPencil(imgBox, 'تغيير الصورة', openFull); }
+
+        // تعديل كامل (كل الحقول: الجملة، رأس المال، الحالة، الباقات...)
+        var actions = body.querySelector('.product-details-actions');
+        if (actions && !actions.querySelector('.pmg-det-full')) {
+            var full = document.createElement('button');
+            full.type = 'button';
+            full.className = 'pmg-det-full';
+            full.innerHTML = '<i class="fas fa-sliders-h"></i> تعديل كامل';
+            full.addEventListener('click', openFull);
+            actions.appendChild(full);
+        }
+    }
+
+    function pmgInitDetailsEditing() {
+        var origId = window.showProductDetails, origObj = window.showPaymentProductDetails;
+        if (typeof origId === 'function') window.showProductDetails = function (pid) {
+            var r = origId.apply(this, arguments);
+            try { var ctx = pmgDetCtxFromId(pid); pmgDetLast = { kind: 'id', arg: pid, ctx: ctx }; pmgDecorateDetails(ctx); } catch (e) { console.error('details edit', e); }
+            return r;
+        };
+        if (typeof origObj === 'function') window.showPaymentProductDetails = function (o) {
+            var r = origObj.apply(this, arguments);
+            try { var ctx = pmgDetCtxFromObj(o); pmgDetLast = { kind: 'obj', arg: o, ctx: ctx }; pmgDecorateDetails(ctx); } catch (e) { console.error('details edit', e); }
+            return r;
+        };
+    }
+
     function pmgInit() {
         pmgInitSourceSelect();
         pmgPopulateCategoryFilter();
@@ -1401,6 +1647,7 @@
         pmgWrapAddViews();
         pmgWatchCosts();
         pmgInitEditPencils();
+        pmgInitDetailsEditing();
 
         $('pmgAddBtn').addEventListener('click', function () { pmgOpenForm($('pmgSourceSelect').value, null); });
         if ($('pmgBulkBtn')) $('pmgBulkBtn').addEventListener('click', pmgOpenBulk);

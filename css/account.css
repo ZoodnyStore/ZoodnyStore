@@ -1627,16 +1627,20 @@
 .pmg-card-avail.hidden{background:#eceff3;color:#556}
 .pmg-dup-btn{background:#eef4fb;color:#2e86c1}
 .pmg-dup-btn:hover{background:#3498db;color:#fff}
+/* شريط مائل بعرض البطاقة كاملة (يتكيف مع الهاتف واللابتوب) */
+.pmg-soldout,.pmg-hidden-item{overflow:hidden}
 .pmg-status-ribbon{
-    position:absolute;top:50px;left:50%;transform:translateX(-50%);z-index:5;pointer-events:none;
-    padding:.3rem 1rem;border-radius:20px;font-size:.8rem;font-weight:800;white-space:nowrap;
-    box-shadow:0 4px 12px rgba(0,0,0,.2);font-family:'Cairo',sans-serif;
+    position:absolute;left:-15%;right:-15%;top:clamp(46px,22%,120px);z-index:5;pointer-events:none;
+    transform:rotate(-14deg);text-align:center;white-space:nowrap;
+    padding:clamp(.3rem,1.2vw,.55rem) 0;font-family:'Cairo',sans-serif;font-weight:900;
+    font-size:clamp(.85rem,3.2vw,1.25rem);letter-spacing:.5px;
+    box-shadow:0 6px 18px rgba(0,0,0,.28);border-top:2px solid rgba(255,255,255,.55);border-bottom:2px solid rgba(255,255,255,.55);
 }
-.pmg-status-ribbon.soldout{background:#c0392b;color:#fff}
-.pmg-status-ribbon.hidden{background:#556;color:#fff}
-.pmg-soldout img{filter:grayscale(.85);opacity:.7}
-.pmg-soldout{cursor:not-allowed}
-.pmg-soldout .add-to-cart-btn,.pmg-soldout button:not(.pmg-edit-pencil){opacity:.45}
+.pmg-status-ribbon.soldout{background:linear-gradient(90deg,#a93226,#e74c3c,#a93226);color:#fff}
+.pmg-status-ribbon.hidden{background:linear-gradient(90deg,#3d4450,#5d6675,#3d4450);color:#fff;font-size:clamp(.75rem,2.6vw,1.05rem)}
+.pmg-soldout img{filter:grayscale(.75);opacity:.75}
+.add-to-cart-btn.pmg-btn-soldout,.product-details-add-to-cart.pmg-det-soldout{background:#bdc3c7 !important;color:#fff !important;cursor:not-allowed !important;box-shadow:none !important}
+@media(max-width:480px){ .pmg-status-ribbon{transform:rotate(-12deg)} }
 .pmg-hidden-item{outline:2.5px dashed #8892a0;outline-offset:-2.5px;opacity:.75}
 
 /* تحذير البيع بخسارة */
@@ -1681,3 +1685,26 @@
 .log-meta .who-admin{color:var(--primary);font-weight:800}
 .log-meta .who-staff{color:#8e44ad;font-weight:800}
 @media(max-width:768px){ .stf-btns{width:100%} .stf-btns .adm-act-btn{flex:1} .tl-row .adm-search{min-width:100%} }
+
+/* ══ تعديل التفاصيل مباشرة من نافذة المنتج (للمدير) ══ */
+.pmg-det-pencil{
+    display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+    margin-inline-start:.45rem;vertical-align:middle;cursor:pointer;flex-shrink:0;
+    background:var(--secondary);color:var(--primary);border:2px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.18);
+    font-size:.75rem;transition:transform .15s;font-family:inherit;padding:0;line-height:1;
+}
+.pmg-det-pencil:hover{transform:scale(1.12)}
+.product-details-image>.pmg-det-pencil{position:absolute;top:10px;left:10px;margin:0;width:38px;height:38px;font-size:.9rem;z-index:6}
+.product-details-features>.pmg-det-pencil{display:flex;margin:.4rem 0 0}
+.pmg-det-admin .product-details-title,.pmg-det-admin .product-details-price,.pmg-det-admin .product-details-description{outline:1.5px dashed rgba(247,200,115,.7);outline-offset:4px;border-radius:6px}
+.pmg-inline-ed{background:#fffaf0;border:1.5px solid var(--secondary);border-radius:12px;padding:.7rem .8rem;margin:.5rem 0;font-family:'Cairo',sans-serif}
+.pmg-inline-lbl{font-size:.8rem;font-weight:800;color:#8a5a00;margin-bottom:.35rem}
+.pmg-inline-ed input,.pmg-inline-ed textarea{width:100%;box-sizing:border-box;padding:.55rem .7rem;border:1.5px solid #e2c98f;border-radius:9px;font-family:'Cairo',sans-serif;font-size:.92rem;background:#fff;resize:vertical}
+.pmg-inline-hint{font-size:.72rem;color:#9a8650;margin-top:.25rem}
+.pmg-inline-btns{display:flex;gap:.4rem;margin-top:.55rem;flex-wrap:wrap}
+.pmg-inline-save{background:#27ae60;color:#fff;border:none;border-radius:8px;padding:.45rem .9rem;font-weight:700;cursor:pointer;font-family:inherit}
+.pmg-inline-save:disabled{opacity:.6}
+.pmg-inline-cancel{background:#eef1f5;color:#556;border:none;border-radius:8px;padding:.45rem .9rem;cursor:pointer;font-family:inherit}
+.pmg-det-full{background:#2A3F54;color:#fff;border:none;border-radius:10px;padding:.7rem 1rem;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;margin-inline-start:.5rem}
+.pmg-det-full:hover{background:#1E2B38}
+@media(max-width:480px){ .pmg-det-full{margin:.5rem 0 0;width:100%} .product-details-actions{flex-wrap:wrap} }

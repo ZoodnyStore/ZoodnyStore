@@ -583,10 +583,10 @@ function restoreBottomNav() {
                 resolve({ ok: false, reason: 'missing' }); return;
             }
             if (typeof auth === 'undefined' || !auth.currentUser) { resolve({ ok: false, reason: 'login', total: total }); return; }
-            // منتج نفد من المخزون أو أخفاه المدير
+            // منتج نفذ من المخزون أو أخفاه المدير
             var unavail = typeof window.zoodnyLineUnavailable === 'function' ? cart.filter(window.zoodnyLineUnavailable) : [];
             if (unavail.length) {
-                if (typeof showToast === 'function') showToast('عذراً، "' + (unavail[0].name || 'المنتج') + '" غير متوفر حالياً', 'error');
+                if (typeof showToast === 'function') showToast('عذراً، "' + (unavail[0].name || 'المنتج') + '" نفذ من المخزون حالياً', 'error');
                 resolve({ ok: false, reason: 'unavailable' }); return;
             }
             if (_placing) { resolve({ ok: false, reason: 'busy' }); return; }

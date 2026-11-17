@@ -288,13 +288,17 @@
         $('registerErr').textContent = '';
     }
     function switchTab(t) {
-        var isLogin = t === 'login';
+        var isLogin = t === 'login', isForgot = t === 'forgot';
         $('tabLogin').classList.toggle('active', isLogin);
-        $('tabRegister').classList.toggle('active', !isLogin);
+        $('tabRegister').classList.toggle('active', t === 'register');
         $('loginFormWrap').style.display    = isLogin ? 'block' : 'none';
-        $('registerFormWrap').style.display = isLogin ? 'none'  : 'block';
-        $('authModalTitle').innerHTML = isLogin
-            ? '<i class="fas fa-sign-in-alt"></i> تسجيل الدخول'
+        $('registerFormWrap').style.display = t === 'register' ? 'block' : 'none';
+        if ($('forgotFormWrap')) $('forgotFormWrap').style.display = isForgot ? 'block' : 'none';
+        // صفحة الاستعادة: نخفي التبويبات وزر Google
+        var tabs = document.querySelector('#authModal .auth-tabs'), g = $('googleSignInBtn'), div = document.querySelector('#authModal .auth-divider');
+        [tabs, g, div].forEach(function(el) { if (el) el.style.display = isForgot ? 'none' : ''; });
+        $('authModalTitle').innerHTML = isForgot ? '<i class="fas fa-unlock-alt"></i> استعادة كلمة المرور'
+            : isLogin ? '<i class="fas fa-sign-in-alt"></i> تسجيل الدخول'
             : '<i class="fas fa-user-plus"></i> إنشاء حساب جديد';
     }
     $('tabLogin').onclick    = () => switchTab('login');
@@ -343,7 +347,14 @@
     // ── نسيت كلمة السر: Firebase يرسل رابطاً للبريد لتعيين كلمة سر جديدة ──
     window.zoodnySendPasswordReset = function(email) {
         try { auth.languageCode = 'ar'; } catch (e) {}
-        return auth.sendPasswordResetEmail(String(email || '').trim());
+        email = String(email || '').trim();
+        // نمرّر رابط المتجر حتى تعيد صفحة reset.html العميل إليه بعد تغيير كلمة المرور
+        var storeUrl = location.origin + location.pathname.replace(/[^\/]*$/, '');
+        return auth.sendPasswordResetEmail(email, { url: storeUrl }).catch(function(err) {
+            // نطاق المتجر غير مضاف في Firebase (Authorized domains) ← نرسل بدون رابط العودة
+            if (err && /unauthorized-continue-uri|invalid-continue-uri|missing-continue-uri/.test(err.code || '')) return auth.sendPasswordResetEmail(email);
+            throw err;
+        });
     };
     function resetErrText(err) {
         var m = {
@@ -355,25 +366,64 @@
         return m[err && err.code] || ('تعذّر الإرسال: ' + (err && err.message ? err.message : err));
     }
     window.zoodnyResetErrText = resetErrText;
-    if ($('forgotPassBtn')) $('forgotPassBtn').onclick = function() {
-        var msg = $('forgotPassMsg'), btn = this;
-        var email = $('loginEmail').value.trim();
-        msg.className = 'auth-reset-msg';
+    // ── صفحة "نسيت كلمة المرور" داخل نافذة الدخول ──
+    var fpCooldown = 0, fpTimer = null;
+    function fpShowStep(n) {
+        $('forgotStep1').style.display = n === 1 ? '' : 'none';
+        $('forgotStep2').style.display = n === 2 ? '' : 'none';
+    }
+    function fpTick() {
+        var b = $('forgotResendBtn');
+        clearInterval(fpTimer);
+        fpTimer = setInterval(function() {
+            var left = Math.ceil((fpCooldown - Date.now()) / 1000);
+            if (left <= 0) { clearInterval(fpTimer); b.disabled = false; b.textContent = 'لم تصلك الرسالة؟ إعادة الإرسال'; return; }
+            b.disabled = true; b.textContent = 'يمكنك إعادة الإرسال بعد ' + left + ' ثانية';
+        }, 500);
+    }
+    function fpSend(email, btn) {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            msg.classList.add('err');
-            msg.textContent = 'اكتب بريدك الإلكتروني في الحقل بالأعلى أولاً، ثم اضغط "نسيت كلمة السر؟"';
-            $('loginEmail').focus();
+            $('forgotErr').textContent = 'اكتب بريداً إلكترونياً صحيحاً';
+            $('forgotEmail').focus();
             return;
         }
+        $('forgotErr').textContent = '';
+        var html = btn.innerHTML;
         btn.disabled = true;
-        msg.textContent = 'جاري الإرسال...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
         window.zoodnySendPasswordReset(email).then(function() {
-            msg.classList.add('ok');
-            msg.innerHTML = '✓ أرسلنا رابط تعيين كلمة سر جديدة إلى <b dir="ltr">' + esc(email) + '</b>.<br>افتح بريدك (وتحقق من مجلد الرسائل غير المرغوب Spam)، اضغط الرابط واكتب كلمة السر الجديدة، ثم سجّل الدخول بها.';
+            $('forgotSentTo').textContent = email;
+            fpShowStep(2);
+            fpCooldown = Date.now() + 60000;
+            fpTick();
+            if (typeof showToast === 'function') showToast('تم إرسال رابط الاستعادة إلى بريدك', 'success');
         }).catch(function(err) {
-            msg.classList.add('err');
-            msg.textContent = resetErrText(err);
-        }).then(function() { btn.disabled = false; });
+            fpShowStep(1);
+            $('forgotErr').textContent = resetErrText(err);
+        }).then(function() { btn.disabled = false; btn.innerHTML = html; if (fpCooldown > Date.now()) fpTick(); });
+    }
+    $('forgotPassBtn').onclick = function() {
+        switchTab('forgot');
+        $('forgotEmail').value = $('loginEmail').value.trim();
+        $('forgotErr').textContent = '';
+        fpShowStep(1);
+        setTimeout(function() { $('forgotEmail').focus(); }, 150);
+    };
+    $('forgotSendBtn').onclick = function() { fpSend($('forgotEmail').value.trim(), this); };
+    // قادم من صفحة reset.html ("طلب رابط جديد") ← نفتح صفحة الاستعادة مباشرة
+    if (/[?&]forgot=1/.test(location.search)) {
+        setTimeout(function() {
+            if (typeof window.openAuth === 'function') window.openAuth('login');
+            $('forgotPassBtn').click();
+            try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
+        }, 600);
+    }
+    $('forgotEmail').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('forgotSendBtn').click(); });
+    $('forgotResendBtn').onclick = function() { fpSend($('forgotSentTo').textContent, this); };
+    $('forgotBackBtn').onclick = $('forgotDoneBtn').onclick = function() {
+        $('loginEmail').value = $('forgotEmail').value.trim() || $('loginEmail').value;
+        switchTab('login');
+        setTimeout(function() { $('loginPass').focus(); }, 150);
     };
 
     // Register

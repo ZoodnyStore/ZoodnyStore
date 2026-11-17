@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تعيين كلمة مرور جديدة — زودني</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#2A3F54" />
+    <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32.png" />
+    <link rel="apple-touch-icon" href="images/icons/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!--
+      صفحة إجراءات حساب Firebase (استعادة كلمة المرور / تأكيد البريد) بتصميم المتجر.
+      لتعمل: Firebase Console ← Authentication ← Templates ← Password reset ← ✏️ ← Customize action URL
+      ← ضع رابط هذه الصفحة: https://<موقع-المتجر>/reset.html
+    -->
+    <style>
+        :root { --primary:#2A3F54; --primary-dark:#1E2B38; --secondary:#F7C873; --ok:#27ae60; --err:#e74c3c; }
+        * { box-sizing:border-box; }
+        html, body { margin:0; min-height:100%; }
+        body {
+            font-family:'Cairo',Tahoma,sans-serif; color:#1a252f; min-height:100vh;
+            display:flex; align-items:center; justify-content:center; padding:24px 16px;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(247,200,115,.22), transparent 40%),
+                radial-gradient(circle at 85% 90%, rgba(247,200,115,.15), transparent 45%),
+                linear-gradient(160deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+        .card {
+            width:100%; max-width:430px; background:#fff; border-radius:24px; overflow:hidden;
+            box-shadow:0 25px 60px rgba(0,0,0,.35); animation:up .45s ease-out;
+        }
+        @keyframes up { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
+        .head {
+            background:linear-gradient(135deg, var(--primary), var(--primary-dark)); color:#fff; text-align:center;
+            padding:28px 20px 46px; position:relative;
+        }
+        .head::after {
+            content:''; position:absolute; left:0; right:0; bottom:-1px; height:30px; background:#fff;
+            border-radius:30px 30px 0 0;
+        }
+        .logo {
+            width:84px; height:84px; border-radius:50%; object-fit:cover; display:block; margin:0 auto 10px;
+            border:3px solid var(--secondary); box-shadow:0 8px 24px rgba(0,0,0,.3); background:#fff;
+        }
+        .brand { font-size:1.35rem; font-weight:800; letter-spacing:.3px; }
+        .brand span { color:var(--secondary); }
+        .tag { font-size:.8rem; opacity:.75; margin-top:2px; }
+        .body { padding:6px 26px 28px; }
+        h1 { font-size:1.2rem; color:var(--primary); margin:0 0 6px; text-align:center; }
+        .sub { text-align:center; color:#6b7785; font-size:.88rem; line-height:1.8; margin:0 0 20px; }
+        .sub b { color:var(--primary); direction:ltr; unicode-bidi:embed; word-break:break-all; }
+        .state-icon {
+            width:76px; height:76px; border-radius:50%; margin:4px auto 14px; display:flex; align-items:center; justify-content:center;
+            font-size:2rem; color:#fff; box-shadow:0 10px 24px rgba(0,0,0,.15);
+        }
+        .state-icon.ok { background:linear-gradient(135deg,#1e8449,var(--ok)); }
+        .state-icon.err { background:linear-gradient(135deg,#a93226,var(--err)); }
+        .state-icon.key { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:var(--secondary); }
+        label { display:block; font-size:.86rem; font-weight:700; color:var(--primary); margin:0 0 6px; }
+        .field { margin-bottom:16px; }
+        .pw { position:relative; }
+        .pw input {
+            width:100%; padding:13px 14px 13px 46px; border:2px solid #e1e6ec; border-radius:12px; font-family:inherit;
+            font-size:1rem; direction:ltr; text-align:right; transition:border-color .2s, box-shadow .2s; background:#fbfcfd;
+        }
+        .pw input:focus { outline:none; border-color:var(--secondary); box-shadow:0 0 0 4px rgba(247,200,115,.25); background:#fff; }
+        .eye {
+            position:absolute; left:6px; top:50%; transform:translateY(-50%); width:36px; height:36px; border:none; background:none;
+            color:#8a96a3; cursor:pointer; border-radius:8px; font-size:1rem;
+        }
+        .eye:hover { color:var(--primary); background:#f1f4f8; }
+        .meter { height:6px; background:#eef1f5; border-radius:4px; margin-top:8px; overflow:hidden; }
+        .meter span { display:block; height:100%; width:0; border-radius:4px; transition:width .25s, background .25s; }
+        .hint { font-size:.76rem; color:#8a96a3; margin-top:5px; }
+        .rules { list-style:none; padding:0; margin:6px 0 0; font-size:.78rem; color:#8a96a3; }
+        .rules li { margin:2px 0; }
+        .rules li i { width:16px; }
+        .rules li.ok { color:var(--ok); }
+        .msg { min-height:20px; font-size:.84rem; text-align:center; margin:4px 0 10px; color:var(--err); font-weight:600; }
+        .btn {
+            display:flex; width:100%; align-items:center; justify-content:center; gap:8px; border:none; border-radius:14px; cursor:pointer;
+            padding:14px; font-family:inherit; font-size:1rem; font-weight:800; text-decoration:none; transition:transform .15s, box-shadow .2s, opacity .2s;
+            background:linear-gradient(135deg, var(--secondary), #f3b54a); color:var(--primary-dark); box-shadow:0 8px 20px rgba(247,200,115,.45);
+        }
+        .btn:hover { transform:translateY(-2px); }
+        .btn:disabled { opacity:.6; cursor:wait; transform:none; }
+        .btn.dark { background:linear-gradient(135deg, var(--primary), var(--primary-dark)); color:#fff; box-shadow:0 8px 20px rgba(42,63,84,.3); }
+        .btn + .btn { margin-top:10px; }
+        .foot { text-align:center; font-size:.75rem; color:#a0aab4; padding:0 20px 18px; }
+        .foot a { color:var(--primary); font-weight:700; text-decoration:none; }
+        .spinner { text-align:center; color:var(--primary); padding:26px 0; font-size:.95rem; }
+        .spinner i { font-size:2rem; color:var(--secondary); display:block; margin-bottom:10px; }
+        .hidden { display:none !important; }
+        @media (max-width:420px) { .body { padding:4px 18px 24px; } .logo { width:72px; height:72px; } }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <div class="head">
+            <img class="logo" src="images/icons/logo-round-160.png" alt="زودني" onerror="this.onerror=null;this.src='images/logo.jpg'">
+            <div class="brand">زودني <span>Zoodny</span></div>
+            <div class="tag">متجرك للشحن والاشتراكات الرقمية</div>
+        </div>
+
+        <div class="body">
+            <!-- جاري التحقق -->
+            <section id="vLoading" class="spinner"><i class="fas fa-circle-notch fa-spin"></i> جاري التحقق من الرابط...</section>
+
+            <!-- نموذج كلمة المرور الجديدة -->
+            <section id="vForm" class="hidden">
+                <div class="state-icon key"><i class="fas fa-key"></i></div>
+                <h1>تعيين كلمة مرور جديدة</h1>
+                <p class="sub">للحساب: <b id="acctEmail"></b></p>
+                <form id="pwForm" autocomplete="off" novalidate>
+                    <input type="email" id="userField" autocomplete="username" hidden>
+                    <div class="field">
+                        <label for="pw1">كلمة المرور الجديدة</label>
+                        <div class="pw"><input type="password" id="pw1" autocomplete="new-password" placeholder="••••••••">
+                            <button type="button" class="eye" data-for="pw1" aria-label="إظهار"><i class="fas fa-eye"></i></button></div>
+                        <div class="meter"><span id="bar"></span></div>
+                        <ul class="rules">
+                            <li id="rLen"><i class="far fa-circle"></i> 8 أحرف على الأقل</li>
+                            <li id="rMix"><i class="far fa-circle"></i> حروف وأرقام معاً</li>
+                        </ul>
+                    </div>
+                    <div class="field">
+                        <label for="pw2">تأكيد كلمة المرور</label>
+                        <div class="pw"><input type="password" id="pw2" autocomplete="new-password" placeholder="••••••••">
+                            <button type="button" class="eye" data-for="pw2" aria-label="إظهار"><i class="fas fa-eye"></i></button></div>
+                        <div class="hint" id="matchHint"></div>
+                    </div>
+                    <div class="msg" id="formMsg"></div>
+                    <button type="submit" class="btn" id="saveBtn"><i class="fas fa-check-circle"></i> حفظ كلمة المرور</button>
+                </form>
+            </section>
+
+            <!-- نجاح -->
+            <section id="vDone" class="hidden">
+                <div class="state-icon ok"><i class="fas fa-check"></i></div>
+                <h1 id="doneTitle">تم تغيير كلمة المرور بنجاح</h1>
+                <p class="sub" id="doneText">يمكنك الآن الدخول إلى حسابك بكلمة المرور الجديدة.</p>
+                <a class="btn" id="goStore" href="./"><i class="fas fa-store"></i> الدخول إلى المتجر</a>
+            </section>
+
+            <!-- خطأ -->
+            <section id="vError" class="hidden">
+                <div class="state-icon err"><i class="fas fa-exclamation"></i></div>
+                <h1 id="errTitle">الرابط غير صالح</h1>
+                <p class="sub" id="errText">انتهت صلاحية هذا الرابط أو تم استخدامه من قبل.</p>
+                <a class="btn" href="./?forgot=1"><i class="fas fa-redo"></i> طلب رابط جديد</a>
+                <a class="btn dark" href="./"><i class="fas fa-store"></i> العودة إلى المتجر</a>
+            </section>
+        </div>
+        <div class="foot">© زودني Zoodny Store — <a href="./">العودة للمتجر</a></div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script>
+    (function () {
+        'use strict';
+        // نفس إعدادات js/firebase.js (لا نحمّل قاعدة البيانات هنا — الصفحة للحساب فقط)
+        firebase.initializeApp({
+            apiKey: "AIzaSyCvmyeM02Z0rP5foukXop1lIEQAlfOPr5o",
+            authDomain: "zoodny-store-1f092.firebaseapp.com",
+            projectId: "zoodny-store-1f092",
+            appId: "1:90520011191:web:e6cf561156b7ada9ed2832"
+        });
+        var auth = firebase.auth();
+        auth.languageCode = 'ar';
+
+        function $(id) { return document.getElementById(id); }
+        function show(id) { ['vLoading', 'vForm', 'vDone', 'vError'].forEach(function (v) { $(v).classList.toggle('hidden', v !== id); }); }
+        function fail(title, text) { $('errTitle').textContent = title; $('errText').textContent = text; show('vError'); }
+        function codeMsg(err) {
+            var c = (err && err.code) || '';
+            if (c === 'auth/expired-action-code') return ['انتهت صلاحية الرابط', 'روابط الاستعادة صالحة لفترة محدودة. اطلب رابطاً جديداً من صفحة تسجيل الدخول.'];
+            if (c === 'auth/invalid-action-code') return ['الرابط غير صالح', 'تم استخدام هذا الرابط من قبل، أو أنه غير مكتمل. اطلب رابطاً جديداً.'];
+            if (c === 'auth/user-disabled') return ['الحساب موقوف', 'هذا الحساب موقوف. تواصل مع خدمة العملاء.'];
+            if (c === 'auth/user-not-found') return ['الحساب غير موجود', 'لم نعد نجد هذا الحساب. يمكنك إنشاء حساب جديد.'];
+            if (c === 'auth/network-request-failed') return ['تعذّر الاتصال', 'تأكد من اتصالك بالإنترنت ثم أعد فتح الرابط.'];
+            return ['حدث خطأ', (err && err.message) || 'حاول مجدداً.'];
+        }
+
+        var p = new URLSearchParams(location.search);
+        var mode = p.get('mode'), code = p.get('oobCode'), cont = p.get('continueUrl');
+        // رابط العودة: صفحة المتجر (نفس المجلد) أو continueUrl إن كان من نفس الموقع
+        var storeUrl = './';
+        try { if (cont && new URL(cont).origin === location.origin) storeUrl = cont; } catch (e) {}
+        $('goStore').href = storeUrl;
+
+        if (!code) { fail('الرابط غير مكتمل', 'افتح الرابط كاملاً من رسالة البريد، أو اطلب رابطاً جديداً.'); return; }
+
+        // ── استعادة كلمة المرور ──
+        if (mode === 'resetPassword') {
+            var email = '';
+            auth.verifyPasswordResetCode(code).then(function (em) {
+                email = em;
+                $('acctEmail').textContent = em;
+                $('userField').value = em;
+                show('vForm');
+                setTimeout(function () { $('pw1').focus(); }, 200);
+            }).catch(function (err) { var m = codeMsg(err); fail(m[0], m[1]); });
+
+            document.querySelectorAll('.eye').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    var inp = $(b.dataset.for), showIt = inp.type === 'password';
+                    inp.type = showIt ? 'text' : 'password';
+                    b.innerHTML = '<i class="fas ' + (showIt ? 'fa-eye-slash' : 'fa-eye') + '"></i>';
+                });
+            });
+
+            function score(v) {
+                var s = 0;
+                if (v.length >= 8) s++;
+                if (v.length >= 12) s++;
+                if (/[A-Za-z؀-ۿ]/.test(v) && /\d/.test(v)) s++;
+                if (/[^A-Za-z0-9؀-ۿ]/.test(v)) s++;
+                return s;
+            }
+            function rule(id, ok) {
+                var li = $(id);
+                li.classList.toggle('ok', ok);
+                li.querySelector('i').className = ok ? 'fas fa-check-circle' : 'far fa-circle';
+            }
+            function refresh() {
+                var v = $('pw1').value, v2 = $('pw2').value, s = score(v);
+                var colors = ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#27ae60'];
+                $('bar').style.width = v ? Math.max(1, s) * 25 + '%' : '0';
+                $('bar').style.background = colors[s];
+                rule('rLen', v.length >= 8);
+                rule('rMix', /[A-Za-z؀-ۿ]/.test(v) && /\d/.test(v));
+                var mh = $('matchHint');
+                if (!v2) { mh.textContent = ''; }
+                else if (v === v2) { mh.textContent = '✓ متطابقتان'; mh.style.color = '#27ae60'; }
+                else { mh.textContent = 'كلمتا المرور غير متطابقتين'; mh.style.color = '#e74c3c'; }
+                $('formMsg').textContent = '';
+            }
+            $('pw1').addEventListener('input', refresh);
+            $('pw2').addEventListener('input', refresh);
+
+            $('pwForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                var v = $('pw1').value, v2 = $('pw2').value, msg = $('formMsg');
+                if (v.length < 8) { msg.textContent = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل'; $('pw1').focus(); return; }
+                if (v !== v2) { msg.textContent = 'كلمتا المرور غير متطابقتين'; $('pw2').focus(); return; }
+                var btn = $('saveBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> جاري الحفظ...';
+                auth.confirmPasswordReset(code, v).then(function () {
+                    // دخول تلقائي ← يفتح المتجر والعميل مسجّل دخوله
+                    return auth.signInWithEmailAndPassword(email, v).then(function () {
+                        $('doneText').textContent = 'تم تسجيل دخولك تلقائياً. اضغط للدخول إلى المتجر.';
+                    }, function () {});
+                }).then(function () {
+                    show('vDone');
+                }).catch(function (err) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check-circle"></i> حفظ كلمة المرور';
+                    if (err && err.code === 'auth/weak-password') { msg.textContent = 'كلمة المرور ضعيفة — اختر كلمة أطول وأقوى'; return; }
+                    var m = codeMsg(err); fail(m[0], m[1]);
+                });
+            });
+            return;
+        }
+
+        // ── تأكيد البريد الإلكتروني ──
+        if (mode === 'verifyEmail') {
+            auth.applyActionCode(code).then(function () {
+                $('doneTitle').textContent = 'تم تأكيد بريدك الإلكتروني';
+                $('doneText').textContent = 'شكراً! حسابك الآن مؤكَّد.';
+                show('vDone');
+            }).catch(function (err) { var m = codeMsg(err); fail(m[0], m[1]); });
+            return;
+        }
+
+        // ── التراجع عن تغيير البريد ──
+        if (mode === 'recoverEmail') {
+            auth.checkActionCode(code).then(function (info) {
+                return auth.applyActionCode(code).then(function () {
+                    $('doneTitle').textContent = 'تمت استعادة بريدك الإلكتروني';
+                    $('doneText').textContent = 'عاد بريد حسابك إلى: ' + ((info && info.data && info.data.email) || '') + '. ننصحك بتغيير كلمة المرور الآن.';
+                    show('vDone');
+                });
+            }).catch(function (err) { var m = codeMsg(err); fail(m[0], m[1]); });
+            return;
+        }
+
+        fail('رابط غير معروف', 'هذا الرابط غير مدعوم. افتح الرابط كاملاً من رسالة البريد.');
+    })();
+    </script>
+</body>
+</html>

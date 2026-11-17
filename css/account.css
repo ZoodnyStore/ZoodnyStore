@@ -1709,10 +1709,26 @@
 .pmg-det-full:hover{background:#1E2B38}
 @media(max-width:480px){ .pmg-det-full{margin:.5rem 0 0;width:100%} .product-details-actions{flex-wrap:wrap} }
 
-/* ══ نسيت كلمة السر ══ */
-.auth-forgot-btn{display:block;margin:.7rem auto 0;background:none;border:none;color:var(--primary);font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
-.auth-forgot-btn:hover{color:#b7791f}
-.auth-forgot-btn:disabled{opacity:.6;cursor:wait}
-.auth-reset-msg{font-size:.82rem;line-height:1.7;margin-top:.5rem;text-align:center}
-.auth-reset-msg.ok{background:#eafaf1;color:#1e8449;border-radius:10px;padding:.6rem .8rem}
-.auth-reset-msg.err{color:#c0392b}
+/* ══ نسيت كلمة المرور ══ */
+.auth-forgot-row{display:flex;justify-content:flex-start;margin-top:.45rem}
+.auth-forgot-link{
+    display:inline-flex;align-items:center;gap:6px;background:#fff8e8;border:1.5px solid var(--secondary);color:var(--primary);
+    font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;border-radius:20px;padding:.28rem .85rem;
+    transition:background .2s,transform .15s;
+}
+.auth-forgot-link i{color:#c8902c}
+.auth-forgot-link:hover{background:var(--secondary);transform:translateY(-1px)}
+.fp-hero{text-align:center;margin:.2rem 0 1.1rem}
+.fp-icon{
+    width:70px;height:70px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;
+    background:linear-gradient(135deg,var(--primary),#1E2B38);color:var(--secondary);box-shadow:0 8px 22px rgba(42,63,84,.3);margin-bottom:.7rem;
+}
+.fp-icon.ok{background:linear-gradient(135deg,#1e8449,#27ae60);color:#fff}
+.fp-hero h4{margin:.2rem 0 .35rem;color:var(--primary);font-size:1.1rem}
+.fp-hero p{margin:0;color:#6b7785;font-size:.86rem;line-height:1.8}
+.fp-hero b{color:var(--primary);word-break:break-all}
+.fp-steps{background:#f6f8fb;border-radius:12px;padding:.8rem 2rem .8rem .8rem;margin:0 0 1rem;font-size:.84rem;color:#4a5562;line-height:1.9}
+.fp-resend{display:block;margin:.7rem auto 0;background:none;border:none;color:#7a8794;font-family:'Cairo',sans-serif;font-size:.8rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.fp-resend:disabled{text-decoration:none;cursor:default;opacity:.8}
+.fp-back{display:flex;align-items:center;gap:6px;margin:1rem auto 0;background:none;border:none;color:var(--primary);font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer}
+.fp-back:hover{color:#c8902c}

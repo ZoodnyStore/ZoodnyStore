@@ -120,7 +120,7 @@
 
     // ═══════════════ سجل النشاط ═══════════════
     var logs = [];
-    var LOG_ICON = { product: 'fa-box-open', order: 'fa-shopping-bag', topup: 'fa-wallet', balance: 'fa-coins', customer: 'fa-user', staff: 'fa-user-tie', backup: 'fa-database' };
+    var LOG_ICON = { product: 'fa-box-open', order: 'fa-shopping-bag', topup: 'fa-wallet', balance: 'fa-coins', customer: 'fa-user', staff: 'fa-user-tie', backup: 'fa-database', store: 'fa-tools' };
     function renderLog() {
         var q = ($('logSearch').value || '').trim().toLowerCase(), type = $('logType').value, who = $('logWho').value;
         var list = logs.filter(function (l) {
@@ -257,6 +257,71 @@
         };
         reader.readAsText(f);
     });
+
+    // ═══════════════ وضع الصيانة (config/maintenance) ═══════════════
+    var maint = null, mtRef = null;
+    var D = window.ZOODNY_MAINT_DEFAULTS || { title: 'المتجر في صيانة مؤقتة', message: '', eta: '' };
+    function mtFill(force) {
+        var m = maint || {};
+        if (force || !$('mtTitle').value) $('mtTitle').value = m.title || D.title;
+        if (force || !$('mtMsg').value) $('mtMsg').value = m.message || D.message;
+        if (force) $('mtEta').value = m.eta || '';
+    }
+    function mtRender() {
+        var on = !!(maint && maint.on);
+        $('admMaintDot').classList.toggle('on', on);
+        $('admMaintBtn').classList.toggle('on', on);
+        $('mtStatus').className = 'mt-status ' + (on ? 'on' : 'off');
+        $('mtStatus').innerHTML = on
+            ? '<i class="fas fa-circle"></i> الصيانة <b>مفعّلة</b> — الزبائن يرون صفحة الصيانة' + (maint.ts ? '<small>منذ ' + esc(fmtTs(maint.ts)) + '</small>' : '')
+            : '<i class="fas fa-circle"></i> المتجر <b>يعمل</b> بشكل طبيعي للزبائن';
+        $('mtToggleBtn').innerHTML = on ? '<i class="fas fa-power-off"></i> إيقاف الصيانة وفتح المتجر' : '<i class="fas fa-tools"></i> تفعيل الصيانة الآن';
+        $('mtToggleBtn').classList.toggle('off', on);
+    }
+    function mtData() {
+        return { title: $('mtTitle').value.trim() || D.title, message: $('mtMsg').value.trim() || D.message, eta: $('mtEta').value.trim() };
+    }
+    window.zoodnySetMaintenance = function (on, data) {
+        if (!ZA.isAdmin()) return Promise.resolve();
+        var d = data || (maint ? { title: maint.title, message: maint.message, eta: maint.eta || '' } : { title: D.title, message: D.message, eta: '' });
+        var val = Object.assign({}, d, { on: !!on, ts: Date.now() });
+        return dbRef('config/maintenance').set(val).then(function () {
+            balToast(on ? '✓ تم تفعيل وضع الصيانة' : '✓ تم إيقاف الصيانة — المتجر مفتوح للزبائن', true);
+            log('store', (on ? 'تفعيل وضع الصيانة' + (d.eta ? ' (العودة: ' + d.eta + ')' : '') : 'إيقاف وضع الصيانة وفتح المتجر'));
+        }).catch(function (err) { alert('فشل: ' + errMsg(err)); });
+    };
+    function mtWatch() {
+        if (mtRef) return;
+        mtRef = dbRef('config/maintenance');
+        mtRef.on('value', function (snap) { maint = snap.val(); mtRender(); });
+    }
+    auth.onAuthStateChanged(function () { if (ZA.isAdmin()) mtWatch(); });
+    $('admMaintBtn').addEventListener('click', function () {
+        mtWatch(); mtFill(true); mtRender();
+        $('admMaintOv').classList.add('on');
+    });
+    $('admMaintClose').onclick = function () { $('admMaintOv').classList.remove('on'); };
+    $('admMaintOv').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('on'); });
+    document.querySelectorAll('[data-eta]').forEach(function (b) { b.addEventListener('click', function () { $('mtEta').value = b.dataset.eta; }); });
+    $('mtResetBtn').onclick = function () { $('mtTitle').value = D.title; $('mtMsg').value = D.message; $('mtEta').value = ''; };
+    $('mtToggleBtn').onclick = function () {
+        var on = !(maint && maint.on);
+        if (on && !confirm('تفعيل وضع الصيانة؟\n\nسيرى كل الزبائن صفحة الصيانة بدل المتجر حتى توقفه.')) return;
+        window.zoodnySetMaintenance(on, mtData());
+    };
+    $('mtSaveTextBtn').onclick = function () {
+        var on = !!(maint && maint.on);
+        dbRef('config/maintenance').set(Object.assign(mtData(), { on: on, ts: (maint && maint.ts) || Date.now() }))
+            .then(function () { balToast('✓ تم حفظ نص الصيانة', true); })
+            .catch(function (err) { alert('فشل: ' + errMsg(err)); });
+    };
+    $('mtPreviewBtn').onclick = function () {
+        $('admMaintOv').classList.remove('on');
+        var dash = $('adminDashboard'), ov = $('adminPanelOv');
+        if (dash) dash.classList.remove('on');
+        if (ov) { ov.classList.remove('on'); ov.style.display = ''; }
+        if (typeof window.zoodnyPreviewMaintenance === 'function') window.zoodnyPreviewMaintenance(mtData());
+    };
 
     // ═══════════════ زر "لوحة الموظف" في حساب الموظف ═══════════════
     function syncStaffButton() {

@@ -1732,3 +1732,81 @@
 .fp-resend:disabled{text-decoration:none;cursor:default;opacity:.8}
 .fp-back{display:flex;align-items:center;gap:6px;margin:1rem auto 0;background:none;border:none;color:var(--primary);font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer}
 .fp-back:hover{color:#c8902c}
+
+/* ══ وضع الصيانة: صفحة الزبون ══ */
+html.zm-lock,html.zm-lock body{overflow:hidden !important}
+#zMaint{
+    position:fixed;inset:0;z-index:3900;display:flex;align-items:center;justify-content:center;padding:20px 16px;overflow-y:auto;
+    background:linear-gradient(160deg,#2A3F54 0%,#1E2B38 60%,#16212c 100%);font-family:'Cairo',sans-serif;direction:rtl;
+    animation:zmIn .45s ease-out;
+}
+#zMaint.zm-out{animation:zmOut .45s ease-in forwards}
+@keyframes zmIn{from{opacity:0}to{opacity:1}}
+@keyframes zmOut{to{opacity:0;transform:scale(1.03)}}
+.zm-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.zm-orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.35;animation:zmFloat 9s ease-in-out infinite}
+.zm-orb.o1{width:320px;height:320px;background:#F7C873;top:-80px;right:-60px}
+.zm-orb.o2{width:260px;height:260px;background:#3d6a96;bottom:-70px;left:-50px;animation-delay:-3s}
+.zm-orb.o3{width:180px;height:180px;background:#F7C873;bottom:20%;right:15%;opacity:.15;animation-delay:-6s}
+@keyframes zmFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-25px)}}
+.zm-card{
+    position:relative;width:100%;max-width:470px;text-align:center;color:#fff;margin:auto;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:28px;
+    padding:clamp(26px,5vw,40px) clamp(20px,5vw,36px);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:0 30px 70px rgba(0,0,0,.4);
+}
+.zm-preview{background:#F7C873;color:#1E2B38;border-radius:12px;padding:.45rem .7rem;font-size:.8rem;font-weight:700;margin:-8px 0 18px;display:flex;gap:.5rem;align-items:center;justify-content:center;flex-wrap:wrap}
+.zm-preview button{background:#1E2B38;color:#fff;border:none;border-radius:8px;padding:.25rem .7rem;font-family:inherit;font-weight:700;cursor:pointer}
+.zm-logo-wrap{position:relative;width:110px;height:110px;margin:0 auto 12px}
+.zm-logo{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid #F7C873;box-shadow:0 0 0 8px rgba(247,200,115,.12),0 12px 30px rgba(0,0,0,.35);background:#fff;cursor:default;user-select:none;-webkit-user-select:none}
+.zm-gear{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#1E2B38;color:#F7C873;border:2px solid #F7C873;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.zm-gear.g1{width:40px;height:40px;font-size:1.15rem;bottom:-4px;left:-10px}
+.zm-gear.g2{width:30px;height:30px;font-size:.85rem;top:2px;right:-8px}
+.zm-gear i{animation:zmSpin 4s linear infinite}
+.zm-gear.g2 i{animation-direction:reverse;animation-duration:3s}
+@keyframes zmSpin{to{transform:rotate(360deg)}}
+.zm-brand{font-size:1.2rem;font-weight:800;letter-spacing:.3px}
+.zm-brand span{color:#F7C873}
+.zm-badge{display:inline-flex;align-items:center;gap:6px;margin:12px 0 4px;padding:.3rem .9rem;border-radius:20px;background:rgba(247,200,115,.15);color:#F7C873;border:1px solid rgba(247,200,115,.35);font-size:.8rem;font-weight:700}
+.zm-title{font-size:clamp(1.35rem,4.6vw,1.75rem);font-weight:800;margin:10px 0 10px;line-height:1.4;color:#fff}
+.zm-msg{font-size:clamp(.9rem,2.8vw,1rem);line-height:1.95;color:rgba(255,255,255,.82);margin:0 0 18px}
+.zm-eta{display:inline-flex;align-items:center;gap:8px;background:#F7C873;color:#1E2B38;border-radius:14px;padding:.55rem 1.1rem;font-size:.92rem;margin-bottom:18px;box-shadow:0 8px 20px rgba(247,200,115,.3)}
+.zm-progress{height:6px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden;margin:4px auto 14px;max-width:300px}
+.zm-progress span{display:block;height:100%;width:40%;border-radius:6px;background:linear-gradient(90deg,transparent,#F7C873,transparent);animation:zmBar 1.8s ease-in-out infinite}
+@keyframes zmBar{from{transform:translateX(160%)}to{transform:translateX(-260%)}}
+.zm-live{display:flex;align-items:center;justify-content:center;gap:8px;font-size:.78rem;color:rgba(255,255,255,.65);margin-bottom:20px}
+.zm-dot{width:9px;height:9px;border-radius:50%;background:#2ecc71;box-shadow:0 0 0 0 rgba(46,204,113,.6);animation:zmPulse 1.8s infinite}
+@keyframes zmPulse{70%{box-shadow:0 0 0 9px rgba(46,204,113,0)}100%{box-shadow:0 0 0 0 rgba(46,204,113,0)}}
+.zm-wa{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:300px;padding:.8rem 1rem;border-radius:14px;background:#25D366;color:#fff;text-decoration:none;font-weight:800;font-size:.95rem;box-shadow:0 10px 24px rgba(37,211,102,.3);transition:transform .15s}
+.zm-wa:hover{transform:translateY(-2px)}
+.zm-wa i{font-size:1.25rem}
+.zm-foot{margin-top:18px;font-size:.75rem;color:rgba(255,255,255,.45)}
+@media(max-width:420px){.zm-logo-wrap,.zm-logo{width:92px;height:92px}}
+
+/* شريط المدير أثناء الصيانة */
+#zMaintBar{
+    position:fixed;top:0;left:0;right:0;z-index:3800;display:flex;align-items:center;justify-content:center;gap:.8rem;flex-wrap:wrap;
+    background:repeating-linear-gradient(45deg,#F7C873,#F7C873 14px,#f3b54a 14px,#f3b54a 28px);color:#1E2B38;
+    padding:.45rem .8rem;font-family:'Cairo',sans-serif;font-size:.84rem;font-weight:800;box-shadow:0 3px 12px rgba(0,0,0,.2);
+}
+#zMaintBar button{background:#1E2B38;color:#fff;border:none;border-radius:8px;padding:.3rem .8rem;font-family:inherit;font-weight:700;cursor:pointer}
+html.zm-has-bar body{padding-top:38px}
+
+/* زر ونافذة الصيانة في لوحة المدير */
+.adm-maint-btn{position:relative}
+.adm-maint-btn.on{background:#F7C873 !important;color:#1E2B38 !important}
+.adm-maint-dot{position:absolute;top:4px;left:4px;width:8px;height:8px;border-radius:50%;background:transparent}
+.adm-maint-dot.on{background:#e74c3c;box-shadow:0 0 0 0 rgba(231,76,60,.6);animation:zmPulse 1.6s infinite}
+.adm-staff #admMaintBtn{display:none !important}
+.mt-modal{max-width:520px}
+.mt-status{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;border-radius:12px;padding:.7rem .9rem;margin-bottom:.8rem;font-size:.9rem}
+.mt-status small{display:block;width:100%;font-size:.74rem;opacity:.75}
+.mt-status.on{background:#fff4e0;color:#8a5a00}.mt-status.on i{color:#e67e22}
+.mt-status.off{background:#eafaf1;color:#1e8449}.mt-status.off i{color:#27ae60}
+.mt-status i{font-size:.6rem}
+.mt-quick{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.4rem}
+.mt-quick button{background:#f1f4f8;border:1px solid #e1e6ec;border-radius:16px;padding:.2rem .7rem;font-family:'Cairo',sans-serif;font-size:.76rem;cursor:pointer;color:#2A3F54}
+.mt-quick button:hover{background:#F7C873;border-color:#F7C873}
+.mt-btns{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-top:.4rem}
+.mt-toggle{flex:1;min-width:200px;background:linear-gradient(135deg,#e67e22,#d35400) !important}
+.mt-toggle.off{background:linear-gradient(135deg,#1e8449,#27ae60) !important}

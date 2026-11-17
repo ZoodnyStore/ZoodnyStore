@@ -583,6 +583,10 @@ function restoreBottomNav() {
                 resolve({ ok: false, reason: 'missing' }); return;
             }
             if (typeof auth === 'undefined' || !auth.currentUser) { resolve({ ok: false, reason: 'login', total: total }); return; }
+            if (typeof window.zoodnyMaintenanceActive === 'function' && window.zoodnyMaintenanceActive()) {
+                if (typeof showToast === 'function') showToast('المتجر في صيانة مؤقتة — حاول بعد قليل', 'warn');
+                resolve({ ok: false, reason: 'unavailable' }); return;
+            }
             // منتج نفذ من المخزون أو أخفاه المدير
             var unavail = typeof window.zoodnyLineUnavailable === 'function' ? cart.filter(window.zoodnyLineUnavailable) : [];
             if (unavail.length) {

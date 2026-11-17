@@ -782,6 +782,7 @@
     <script src="js/store/requirements.js"></script>
     <script src="js/store/direct-order.js"></script>
     <script src="js/store/auto-update.js"></script>
+    <script src="js/store/maintenance.js"></script>
 
     <!-- زر خدمة العملاء الثابت -->
     <a href="https://wa.me/963939083098" class="wa-float-btn" target="_blank" title="تواصل مع خدمة العملاء">
@@ -1016,6 +1017,7 @@
         <div class="adm-topbar">
             <div class="adm-topbar-title"><i class="fas fa-tachometer-alt"></i> لوحة تحكم المدير — زودني</div>
             <div class="adm-topbar-btns">
+                <button class="adm-close-btn adm-maint-btn" id="admMaintBtn" title="إظهار صفحة الصيانة للزبائن أثناء تعديل المتجر"><i class="fas fa-tools"></i> <span class="adm-btn-txt">الصيانة</span><span class="adm-maint-dot" id="admMaintDot"></span></button>
                 <button class="adm-close-btn" id="admPwBtn" title="تغيير كلمة السر"><i class="fas fa-key"></i> <span class="adm-btn-txt">كلمة السر</span></button>
                 <button class="adm-close-btn" id="adminDashClose"><i class="fas fa-times"></i> خروج</button>
             </div>
@@ -1110,6 +1112,32 @@
             </div>
         </div>
 
+        <!-- ══ نافذة وضع الصيانة ══ -->
+        <div class="adm-user-ov" id="admMaintOv">
+            <div class="adm-pw-modal mt-modal" role="dialog" aria-modal="true">
+                <div class="adm-user-head">
+                    <div class="adm-user-title"><i class="fas fa-tools"></i> وضع الصيانة</div>
+                    <button class="adm-user-close" id="admMaintClose" aria-label="إغلاق"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="adm-pw-body">
+                    <div class="mt-status" id="mtStatus"></div>
+                    <div class="pmg-sync-note"><i class="fas fa-info-circle"></i> عند التفعيل يرى كل الزبائن صفحة صيانة بدل المتجر، وتختفي عندهم تلقائياً لحظة الإيقاف. أنت (المدير) ترى المتجر عادياً لتكمل تعديلاتك. للدخول للوحة أثناء الصيانة من جهاز آخر: اضغط 10 مرات على الشعار في صفحة الصيانة.</div>
+                    <div class="pmg-field"><label for="mtTitle">العنوان</label><input type="text" id="mtTitle" maxlength="70"></div>
+                    <div class="pmg-field"><label for="mtMsg">الرسالة للزبائن</label><textarea id="mtMsg" rows="4" maxlength="400"></textarea></div>
+                    <div class="pmg-field"><label for="mtEta">موعد العودة المتوقع (اختياري)</label>
+                        <input type="text" id="mtEta" maxlength="40" placeholder="مثال: خلال ساعة، أو الساعة 9 مساءً">
+                        <div class="mt-quick"><button type="button" data-eta="خلال 15 دقيقة">15 دقيقة</button><button type="button" data-eta="خلال 30 دقيقة">30 دقيقة</button><button type="button" data-eta="خلال ساعة">ساعة</button><button type="button" data-eta="خلال ساعتين">ساعتين</button><button type="button" data-eta="">بدون موعد</button></div>
+                    </div>
+                    <div class="mt-btns">
+                        <button type="button" class="pmg-save-btn mt-toggle" id="mtToggleBtn"></button>
+                        <button type="button" class="adm-act-btn view" id="mtPreviewBtn"><i class="fas fa-eye"></i> معاينة</button>
+                        <button type="button" class="adm-act-btn" id="mtSaveTextBtn"><i class="fas fa-save"></i> حفظ النص فقط</button>
+                        <button type="button" class="adm-act-btn" id="mtResetBtn" title="إرجاع النص الافتراضي"><i class="fas fa-undo"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ══ نافذة تفاصيل العميل ══ -->
         <div class="adm-user-ov" id="admUserOv">
             <div class="adm-user-modal" id="admUserModal" role="dialog" aria-modal="true">
@@ -1199,6 +1227,7 @@
                         <option value="customer">العملاء (جملة/حظر/حذف)</option>
                         <option value="staff">الموظفون</option>
                         <option value="backup">النسخ الاحتياطي</option>
+                        <option value="store">وضع الصيانة</option>
                     </select>
                     <select class="pmg-select" id="logWho"><option value="">الكل</option><option value="admin">المدير فقط</option><option value="staff">الموظفون فقط</option></select>
                 </div>

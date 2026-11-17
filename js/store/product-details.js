@@ -265,3 +265,21 @@ function openDesignEmailModal(product) {
 
     document.getElementById('designEmailModal').classList.add('active');
 }
+
+
+// ==================== إخفاء الشريط السفلي أثناء فتح أي نافذة ====================
+// (تفاصيل المنتج، تأكيد الطلب، نوافذ الإدخال، الدخول...) حتى لا يغطي أزرار الطلب — ويعود عند الإغلاق.
+(function () {
+    var SEL = '.active[id$="Modal"], .on[id$="Modal"]';
+    function sync() {
+        document.documentElement.classList.toggle('zn-modal-open', !!document.querySelector(SEL));
+    }
+    function start() {
+        sync();
+        if (!window.MutationObserver) return;
+        var t = null;
+        new MutationObserver(function () { clearTimeout(t); t = setTimeout(sync, 10); })
+            .observe(document.body, { attributes: true, attributeFilter: ['class'], subtree: true });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+}());

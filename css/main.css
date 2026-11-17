@@ -3311,3 +3311,8 @@ body { padding-bottom: 80px; }
     }
     #productDetailsModal .product-details-image img{height:auto;max-height:100%;border-radius:16px;box-shadow:0 18px 40px rgba(0,0,0,.35)}
 }
+
+/* الشريط السفلي يختفي أثناء فتح أي نافذة (يُضاف الصنف من product-details.js) */
+#mobileBottomNav{transition:transform .3s ease,opacity .25s ease}
+html.zn-modal-open #mobileBottomNav{transform:translateX(-50%) translateY(140%) !important;opacity:0 !important;pointer-events:none !important}
+html.zn-modal-open #floatingBalBadge{display:none !important}

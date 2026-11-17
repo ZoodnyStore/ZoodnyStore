@@ -767,8 +767,28 @@
     $('successOv').onclick    = () => modalOff('successOv','successModal');
 
     // ── Orders history ───────────────────────────────────────────────────
-    function openOrdersHistory() {
+    // نسخ معلومات التسليم من "طلباتي"
+    document.addEventListener('click', function(e) {
+        var b = e.target.closest && e.target.closest('.ord-dlv-copy');
+        if (!b) return;
+        e.preventDefault();
+        var text = b.getAttribute('data-copy') || '';
+        function done() {
+            var html = b.innerHTML;
+            b.classList.add('ok'); b.innerHTML = '<i class="fas fa-check"></i> تم النسخ';
+            setTimeout(function() { b.classList.remove('ok'); b.innerHTML = html; }, 1400);
+        }
+        function fallback() {
+            var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', '');
+            ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0'; document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); } catch (er) {} document.body.removeChild(ta); done();
+        }
+        if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+    });
+
+    function openOrdersHistory(focusOrderId) {
         if (!currentUser) { openAuth('login'); return; }
+        if (typeof focusOrderId !== 'string') focusOrderId = null;
         $('ordersBody').innerHTML = '<div class="wallet-empty-tx"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>';
         modalOn('ordersOv','ordersModal');
 
@@ -838,7 +858,23 @@
                 if (o.city && o.city.trim() && o.city !== 'غير محدد') orderExtras.push('<span><i class="fas fa-map-marker-alt"></i> المدينة: <b>' + o.city + '</b></span>');
                 if (o.accountUrl && o.accountUrl.trim()) orderExtras.push('<span style="direction:ltr;display:inline-block"><i class="fas fa-link"></i> ' + o.accountUrl + '</span>');
 
-                return '<div class="order-card" style="border-right:3px solid ' + color + ';margin-bottom:.7rem;background:#fff;border-radius:10px;padding:.7rem .9rem">'
+                // معلومات التسليم (حساب/كود/اشتراك) — يضعها المدير عند إتمام الطلب
+                var dlv = o.delivery && typeof o.delivery === 'object' ? o.delivery : null;
+                var dlvHtml = '';
+                if (dlv && ((Array.isArray(dlv.items) && dlv.items.length) || dlv.note)) {
+                    dlvHtml = '<div class="ord-dlv"><div class="ord-dlv-h"><i class="fas fa-shield-alt"></i> معلومات التسليم'
+                        + (dlv.ts ? '<small>' + esc(new Date(dlv.ts).toLocaleString('ar-SY')) + '</small>' : '') + '</div>'
+                        + (Array.isArray(dlv.items) ? dlv.items.map(function(r) {
+                            if (!r || !r.value) return '';
+                            return '<div class="ord-dlv-row"><span class="l">' + esc(r.label || 'معلومة') + '</span>'
+                                + '<span class="v" dir="auto">' + esc(r.value) + '</span>'
+                                + '<button type="button" class="ord-dlv-copy" data-copy="' + esc(r.value) + '"><i class="far fa-copy"></i> نسخ</button></div>';
+                        }).join('') : '')
+                        + (dlv.note ? '<div class="ord-dlv-note"><i class="fas fa-info-circle"></i> ' + esc(dlv.note).replace(/\n/g, '<br>') + '</div>' : '')
+                        + '<div class="ord-dlv-tip"><i class="fas fa-lock"></i> احفظ هذه المعلومات في مكان آمن ولا تشاركها مع أحد</div></div>';
+                }
+
+                return '<div class="order-card' + (dlvHtml ? ' has-dlv' : '') + '" data-oid="' + esc(o.orderId || '') + '" style="border-right:3px solid ' + color + ';margin-bottom:.7rem;background:#fff;border-radius:10px;padding:.7rem .9rem">'
                     + '<div class="order-card-header" style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.4rem;gap:.5rem">'
                     + '<div><div class="order-card-title" style="font-weight:700;font-size:.88rem;color:#2A3F54">' + titleText + '</div>'
                     + '<div class="order-card-id" style="font-size:.68rem;color:#bbb">رقم الطلب: ' + (o.orderId||'-') + '</div>'
@@ -849,8 +885,18 @@
                     + (itemsHtml || '<div style="color:#aaa;font-size:.75rem">لا تفاصيل منتجات</div>')
                     + (orderExtras.length ? '<div style="font-size:.72rem;color:#666;display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed #eee">' + orderExtras.join('') + '</div>' : '')
                     + '<div class="order-total-row" style="display:flex;justify-content:space-between;border-top:1px solid #eee;margin-top:.4rem;padding-top:.4rem;font-weight:700"><span>الإجمالي</span><span style="color:#E74C3C">' + parseFloat(o.total||0).toFixed(2) + '$</span></div>'
+                    + dlvHtml
                     + '</div></div>';
             }).join('');
+
+            // قادم من إشعار طلب ← ننتقل للطلب ونبرزه
+            if (focusOrderId) {
+                var card = $('ordersBody').querySelector('.order-card[data-oid="' + focusOrderId.replace(/"/g, '') + '"]');
+                if (card) {
+                    card.classList.add('ord-focus');
+                    setTimeout(function() { try { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {} }, 250);
+                }
+            }
         }
 
         // محاولة أولى: البحث في store_orders بالـ uid

@@ -214,7 +214,7 @@
             return;
         }
         if (it.kind === 'p') {
-            if (it.type === 'order' && typeof ZA.openOrdersHistory === 'function') ZA.openOrdersHistory();
+            if (it.type === 'order' && typeof ZA.openOrdersHistory === 'function') ZA.openOrdersHistory(it.ref ? String(it.ref) : null);
             else if ((it.type === 'topup' || it.type === 'balance') && typeof window.openWallet === 'function') window.openWallet();
             else if (it.type === 'wholesale') {
                 var cats = document.getElementById('categories');

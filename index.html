@@ -1113,6 +1113,35 @@
             </div>
         </div>
 
+        <!-- ══ نافذة تسليم الطلب (معلومات الحساب/الكود للعميل) ══ -->
+        <div class="adm-user-ov" id="admDlvOv">
+            <div class="adm-pw-modal dlv-modal" role="dialog" aria-modal="true">
+                <div class="adm-user-head">
+                    <div class="adm-user-title"><i class="fas fa-box-open"></i> <span id="dlvTitle">تسليم الطلب</span></div>
+                    <button class="adm-user-close" id="admDlvClose" aria-label="إغلاق"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="adm-pw-body">
+                    <div class="dlv-order" id="dlvOrderInfo"></div>
+                    <div class="dlv-tpl"><span>قوالب سريعة:</span>
+                        <button type="button" data-dlv-tpl="account"><i class="fas fa-user-lock"></i> حساب (iCloud / Apple ID...)</button>
+                        <button type="button" data-dlv-tpl="sub"><i class="fas fa-tv"></i> اشتراك</button>
+                        <button type="button" data-dlv-tpl="code"><i class="fas fa-barcode"></i> كود / بطاقة</button>
+                        <button type="button" data-dlv-tpl="number"><i class="fas fa-sim-card"></i> رقم</button>
+                    </div>
+                    <div class="pmg-field"><label>المعلومات التي ستظهر للعميل</label>
+                        <div id="dlvRows"></div>
+                        <button type="button" class="pmg-sub-add" id="dlvAddRow"><i class="fas fa-plus"></i> إضافة سطر</button>
+                    </div>
+                    <div class="pmg-field"><label for="dlvNote">ملاحظة / تعليمات للعميل (اختياري)</label>
+                        <textarea id="dlvNote" rows="3" maxlength="800" placeholder="مثال: سجّل الدخول من الإعدادات ← Apple ID، ولا تغيّر البريد."></textarea></div>
+                    <label class="rpt-check dlv-check"><input type="checkbox" id="dlvComplete" checked> <span id="dlvCompleteTxt">إتمام الطلب (منجز) وإرسال إشعار للعميل</span></label>
+                    <div class="adm-pw-msg" id="dlvMsg"></div>
+                    <button type="button" class="pmg-save-btn" id="dlvSaveBtn"><i class="fas fa-paper-plane"></i> حفظ وتسليم للعميل</button>
+                    <div class="adm-pw-note"><i class="fas fa-lock"></i> تظهر هذه المعلومات للعميل صاحب الطلب فقط في: حسابي ← طلباتي.</div>
+                </div>
+            </div>
+        </div>
+
         <!-- ══ نافذة وضع الصيانة ══ -->
         <div class="adm-user-ov" id="admMaintOv">
             <div class="adm-pw-modal mt-modal" role="dialog" aria-modal="true">

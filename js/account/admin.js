@@ -560,6 +560,12 @@
             if (st === 'pending')    btns += '<button class="adm-act-btn accept" onclick="admUpdateOrderStatus(\'' + key + '\',\'processing\')"><i class="fas fa-cog"></i> بدء التنفيذ</button>';
             if (st === 'processing') btns += '<button class="adm-act-btn view"   onclick="admUpdateOrderStatus(\'' + key + '\',\'done\')"><i class="fas fa-check"></i> تم</button>';
             if (st !== 'done' && st !== 'rejected') btns += '<button class="adm-act-btn reject" onclick="admUpdateOrderStatus(\'' + key + '\',\'rejected\')"><i class="fas fa-times"></i> رفض وإرجاع المبلغ</button>';
+            var dlv = o.delivery && typeof o.delivery === 'object' ? o.delivery : null;
+            btns += '<button class="adm-act-btn dlv' + (dlv ? ' done' : '') + '" title="تسليم معلومات الحساب/الكود للعميل" onclick="admOpenDelivery(\'' + key + '\')"><i class="fas ' + (dlv ? 'fa-check-double' : 'fa-box-open') + '"></i> ' + (dlv ? 'تعديل التسليم' : 'تسليم') + '</button>';
+            var dlvHtml = dlv ? '<div class="adm-dlv-box"><div class="h"><i class="fas fa-check-circle"></i> تم التسليم للعميل'
+                + (dlv.ts ? ' <small>' + esc(new Date(dlv.ts).toLocaleString('ar-SY')) + (dlv.by ? ' — ' + esc(dlv.by) : '') + '</small>' : '') + '</div>'
+                + (Array.isArray(dlv.items) ? dlv.items.map(function(r) { return r && r.value ? keyField('fa-key', esc(r.label || 'معلومة'), r.value) : ''; }).join('') : '')
+                + (dlv.note ? '<div class="n">' + esc(dlv.note) + '</div>' : '') + '</div>' : '';
             var note = notesMap[o._key];
             btns += '<button class="adm-act-btn note" title="ملاحظة داخلية لا يراها الزبون" onclick="admEditNote(\'' + key + '\')"><i class="fas fa-sticky-note"></i> ' + (note ? 'تعديل الملاحظة' : 'ملاحظة') + '</button>';
             btns += '<button class="adm-act-btn del" title="حذف نهائي" onclick="admDeleteOrder(\'' + key + '\')"><i class="fas fa-trash"></i> حذف</button>';
@@ -585,6 +591,7 @@
                 + (prodsHtml || '<div style="color:#aaa;font-size:.83rem;padding:.4rem">لا توجد تفاصيل</div>')
                 + orderExtra
                 + '  </div>'
+                + dlvHtml
                 + noteHtml
                 + '</div>'
                 + '<div class="adm-card-foot">'
@@ -899,7 +906,10 @@
                 return;
             }
             if (status === 'done') {
-                notifyUser(o.uid, 'order', 'تم تنفيذ طلبك ✅', 'تم إتمام طلب ' + label + ' بنجاح. شكراً لثقتك بزودني!', orderId);
+                if (o.delivery && Array.isArray(o.delivery.items) && o.delivery.items.length)
+                    notifyUser(o.uid, 'order', 'تم تنفيذ طلبك وتسليمه ✅', 'تم تسليم ' + label + '. معلومات التسليم موجودة في: حسابي ← طلباتي — اضغط هنا لعرضها', orderId);
+                else
+                    notifyUser(o.uid, 'order', 'تم تنفيذ طلبك ✅', 'تم إتمام طلب ' + label + ' بنجاح. شكراً لثقتك بزودني!', orderId);
                 return;
             }
             if (status !== 'rejected') return;
@@ -1078,6 +1088,96 @@
             log('customer', 'إرسال رابط استعادة كلمة السر إلى ' + (u.name || '') + ' <' + u.email + '>', uid);
         }).catch(function(err) { alert(window.zoodnyResetErrText(err)); });
     };
+
+    // ── تسليم الطلب: معلومات (حساب/كود/اشتراك) تُحفظ داخل الطلب ويراها العميل في "طلباتي" ──
+    var DLV_TPL = {
+        account: [['البريد / Apple ID', ''], ['كلمة المرور', ''], ['أسئلة الأمان / الأجوبة', '']],
+        sub:     [['البريد', ''], ['كلمة المرور', ''], ['تاريخ انتهاء الاشتراك', '']],
+        code:    [['الكود', '']],
+        number:  [['الرقم', ''], ['كود التفعيل', '']]
+    };
+    var dlvKey = null;
+    function dlvAddRow(label, value) {
+        var row = document.createElement('div');
+        row.className = 'dlv-row';
+        row.innerHTML = '<input type="text" class="dlv-l" placeholder="العنوان (مثال: البريد)" maxlength="60">'
+            + '<input type="text" class="dlv-v" placeholder="القيمة" dir="auto" maxlength="500">'
+            + '<button type="button" title="حذف السطر"><i class="fas fa-times"></i></button>';
+        row.querySelector('.dlv-l').value = label || '';
+        row.querySelector('.dlv-v').value = value || '';
+        row.querySelector('button').onclick = function() { row.parentNode.removeChild(row); };
+        $('dlvRows').appendChild(row);
+        return row;
+    }
+    function dlvFindOrder(key) {
+        for (var i = 0; i < adminOrders.length; i++) if (adminOrders[i]._key === key) return adminOrders[i];
+        return null;
+    }
+    window.admOpenDelivery = function(key) {
+        var o = dlvFindOrder(key);
+        if (!o) return;
+        dlvKey = key;
+        var c = orderClient(o), items = orderItems(o);
+        $('dlvTitle').textContent = 'تسليم الطلب ' + (o.orderId || key);
+        $('dlvOrderInfo').innerHTML = '<div><i class="fas fa-user"></i> ' + esc(c.name || '-') + (c.phone ? ' — <span dir="ltr">' + esc(c.phone) + '</span>' : '') + '</div>'
+            + '<div><i class="fas fa-tag"></i> ' + esc(items.map(function(it) { return (it.productName || it.name || '') + (num(it.quantity) > 1 ? ' ×' + it.quantity : ''); }).join('، ') || '-') + '</div>';
+        $('dlvRows').innerHTML = '';
+        var d = o.delivery || {};
+        if (Array.isArray(d.items) && d.items.length) d.items.forEach(function(r) { dlvAddRow(r.label, r.value); });
+        else {
+            // قالب مقترح حسب اسم المنتج
+            var names = items.map(function(it) { return String(it.productName || it.name || ''); }).join(' ').toLowerCase();
+            var tpl = /icloud|apple|ايكلود|آيكلود|ابل|حساب/.test(names) ? 'account' : /نتفلكس|netflix|شاهد|اشتراك|vpn|premium|بريميوم/.test(names) ? 'sub'
+                    : /رقم|واتساب|تليغرام/.test(names) ? 'number' : /كود|بطاقة|ايتونز|itunes|steam|ستيم|psn|جوجل بلاي|google play/.test(names) ? 'code' : 'account';
+            DLV_TPL[tpl].forEach(function(r) { dlvAddRow(r[0], r[1]); });
+        }
+        $('dlvNote').value = d.note || '';
+        var done = o.status === 'done';
+        $('dlvComplete').checked = true;
+        $('dlvCompleteTxt').textContent = done ? 'إرسال إشعار للعميل بتحديث معلومات التسليم' : 'إتمام الطلب (منجز) وإرسال إشعار للعميل';
+        $('dlvMsg').textContent = ''; $('dlvMsg').className = 'adm-pw-msg';
+        $('admDlvOv').classList.add('on');
+        setTimeout(function() { var f = $('dlvRows').querySelector('.dlv-v'); if (f) f.focus(); }, 150);
+    };
+    if ($('admDlvOv')) {
+        $('admDlvClose').onclick = function() { $('admDlvOv').classList.remove('on'); };
+        $('admDlvOv').addEventListener('click', function(e) { if (e.target === this) this.classList.remove('on'); });
+        $('dlvAddRow').onclick = function() { dlvAddRow('', '').querySelector('.dlv-l').focus(); };
+        document.querySelectorAll('[data-dlv-tpl]').forEach(function(b) {
+            b.addEventListener('click', function() {
+                // نحتفظ بالقيم المكتوبة، ونستبدل الأسطر الفارغة بالقالب
+                Array.prototype.forEach.call($('dlvRows').querySelectorAll('.dlv-row'), function(r) { if (!r.querySelector('.dlv-v').value.trim()) r.parentNode.removeChild(r); });
+                DLV_TPL[b.dataset.dlvTpl].forEach(function(r) { dlvAddRow(r[0], r[1]); });
+            });
+        });
+        $('dlvSaveBtn').onclick = function() {
+            var o = dlvFindOrder(dlvKey);
+            if (!o) return;
+            var rows = [];
+            Array.prototype.forEach.call($('dlvRows').querySelectorAll('.dlv-row'), function(r) {
+                var l = r.querySelector('.dlv-l').value.trim(), v = r.querySelector('.dlv-v').value.trim();
+                if (v) rows.push({ label: l || 'معلومة', value: v });
+            });
+            var note = $('dlvNote').value.trim();
+            var msg = $('dlvMsg');
+            if (!rows.length && !note) { msg.className = 'adm-pw-msg err'; msg.textContent = 'اكتب معلومة واحدة على الأقل للتسليم'; return; }
+            var by = isAdminSignedIn() ? 'المدير' : ((staffInfo && staffInfo.name) || (auth.currentUser && auth.currentUser.email) || 'موظف');
+            var btn = this, notify = $('dlvComplete').checked, wasDone = o.status === 'done', hadDelivery = !!o.delivery;
+            btn.disabled = true;
+            dbRef('store_orders/' + dlvKey + '/delivery').set({ items: rows, note: note, ts: Date.now(), by: by }).then(function() {
+                var orderId = o.orderId || dlvKey;
+                log('order', (hadDelivery ? 'تعديل تسليم الطلب ' : 'تسليم الطلب ') + orderId + ' — ' + (o.name || '') + ' (' + rows.map(function(r) { return r.label; }).join('، ') + ')', orderId);
+                if (notify && !wasDone) window.admUpdateOrderStatus(dlvKey, 'done');   // يرسل إشعار "تم تنفيذ طلبك وتسليمه"
+                else if (notify && o.uid && o.uid !== 'guest')
+                    notifyUser(o.uid, 'order', 'تم تحديث معلومات التسليم 🔐', 'تم تحديث معلومات تسليم ' + orderLabel(o, orderId) + ' — تجدها في: حسابي ← طلباتي', orderId);
+                $('admDlvOv').classList.remove('on');
+                balToast(notify ? '✓ تم التسليم وإرسال إشعار للعميل' : '✓ تم حفظ معلومات التسليم', true);
+            }).catch(function(err) {
+                msg.className = 'adm-pw-msg err';
+                msg.textContent = 'فشل الحفظ: ' + (err && err.message ? err.message : err);
+            }).then(function() { btn.disabled = false; });
+        };
+    }
 
     // ── ملاحظة داخلية على الطلب (order_notes — لا يراها الزبون) ──
     window.admEditNote = function(orderKey) {

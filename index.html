@@ -953,9 +953,18 @@
             </div>
             <div class="topup-form-group">
                 <label><i class="fas fa-coins"></i> عملة التحويل *</label>
-                <div class="tu-cur" role="radiogroup" aria-label="عملة التحويل">
-                    <button type="button" class="tu-cur-btn active" data-cur="USD" role="radio" aria-checked="true"><span class="sym">$</span> دولار أمريكي</button>
-                    <button type="button" class="tu-cur-btn" data-cur="SYP" role="radio" aria-checked="false"><span class="sym">ل.س</span> ليرة سورية</button>
+                <div class="tu-cur" role="radiogroup" aria-label="عملة التحويل" data-cur="USD">
+                    <span class="tu-cur-glider" aria-hidden="true"></span>
+                    <button type="button" class="tu-cur-btn active" data-cur="USD" role="radio" aria-checked="true">
+                        <span class="sym"><i class="fas fa-dollar-sign"></i></span>
+                        <span class="txt"><b>دولار</b><small>USD</small></span>
+                        <i class="fas fa-check-circle tick"></i>
+                    </button>
+                    <button type="button" class="tu-cur-btn" data-cur="SYP" role="radio" aria-checked="false">
+                        <span class="sym">ل.س</span>
+                        <span class="txt"><b>ليرة سورية</b><small>SYP</small></span>
+                        <i class="fas fa-check-circle tick"></i>
+                    </button>
                 </div>
                 <div class="tu-rate" id="tuRate"></div>
             </div>

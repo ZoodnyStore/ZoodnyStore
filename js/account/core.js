@@ -693,61 +693,88 @@
     $('topupOv').onclick    = () => modalOff('topupOv','topupModal');
 
     // ── الشحن بالليرة السورية: سعر الصرف يحدده المدير (config/exchange) ──
-    var fx = { rate: 0, updatedAt: 0 }, tuCur = 'USD';
+    // نقرأ السعر بطريقتين: الاتصال المباشر بـ Firebase + طلب REST سريع (احتياطي عند ضعف الاتصال)
+    var fx = { rate: 0, updatedAt: 0, loaded: false }, tuCur = 'USD';
     function fxFmt(n) { return Math.round(n).toLocaleString('en-US'); }
     function tuUsdFromInput() {
         var v = parseFloat($('tuAmount').value);
         if (isNaN(v) || v <= 0) return NaN;
         return tuCur === 'SYP' ? (fx.rate > 0 ? Math.round(v / fx.rate * 100) / 100 : NaN) : v;
     }
+    function fxSet(v) {
+        v = v || {};
+        fx.rate = parseFloat(v.rate) || 0;
+        fx.updatedAt = v.updatedAt || 0;
+        fx.loaded = true;
+        tuRenderCurrency();
+    }
+    function fxFetch() {
+        try {
+            var url = firebase.app().options.databaseURL.replace(/\/$/, '') + '/config/exchange.json';
+            return fetch(url, { cache: 'no-store' }).then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(v) { if (v !== undefined) fxSet(v); }).catch(function() {});
+        } catch (e) { return Promise.resolve(); }
+    }
     function tuRenderCurrency() {
-        var hasRate = fx.rate > 0;
+        var hasRate = fx.rate > 0, syp = tuCur === 'SYP';
+        var box = document.querySelector('.tu-cur');
+        if (box) box.setAttribute('data-cur', tuCur);
         document.querySelectorAll('.tu-cur-btn').forEach(function(b) {
             var on = b.dataset.cur === tuCur;
             b.classList.toggle('active', on);
             b.setAttribute('aria-checked', on ? 'true' : 'false');
-            if (b.dataset.cur === 'SYP') b.classList.toggle('disabled', !hasRate);
         });
         var rateEl = $('tuRate');
-        if (hasRate) {
-            var d = fx.updatedAt ? new Date(fx.updatedAt) : null;
-            rateEl.innerHTML = '<i class="fas fa-exchange-alt"></i> سعر الصرف اليوم: <b>1 دولار = ' + fxFmt(fx.rate) + ' ل.س</b>'
-                + (d ? '<small>آخر تحديث: ' + d.toLocaleDateString('ar-SY-u-nu-latn', { day: 'numeric', month: 'long' }) + '</small>' : '');
-            rateEl.className = 'tu-rate show';
-        } else {
-            rateEl.innerHTML = '<i class="fas fa-info-circle"></i> الشحن بالليرة السورية غير متاح حالياً — يمكنك الشحن بالدولار';
+        if (!syp) {
+            rateEl.className = 'tu-rate';
+            rateEl.innerHTML = '';
+        } else if (!fx.loaded) {
             rateEl.className = 'tu-rate show muted';
+            rateEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري تحميل سعر الصرف...';
+        } else if (hasRate) {
+            var d = fx.updatedAt ? new Date(fx.updatedAt) : null;
+            rateEl.className = 'tu-rate show';
+            rateEl.innerHTML = '<span class="tu-rate-ic"><i class="fas fa-exchange-alt"></i></span>'
+                + '<span class="tu-rate-txt">سعر الصرف اليوم<b>1 دولار = ' + fxFmt(fx.rate) + ' ل.س</b></span>'
+                + (d ? '<small>تحديث ' + d.toLocaleDateString('ar-SY-u-nu-latn', { day: 'numeric', month: 'long' }) + '</small>' : '');
+        } else {
+            rateEl.className = 'tu-rate show warn';
+            rateEl.innerHTML = '<i class="fas fa-info-circle"></i> الشحن بالليرة السورية متوقف حالياً — يرجى الشحن بالدولار';
         }
-        var syp = tuCur === 'SYP';
         $('tuAmountLbl').innerHTML = syp ? '<i class="fas fa-money-bill-wave"></i> المبلغ المُرسل (ليرة سورية) *' : '<i class="fas fa-dollar-sign"></i> المبلغ المُرسل ($) *';
         $('tuAmount').placeholder = syp ? 'مثال: ' + fxFmt((fx.rate || 150) * 10) : '0.00';
         $('tuAmount').step = syp ? '1' : '0.01';
+        $('tuAmount').disabled = syp && fx.loaded && !hasRate;
         tuRenderConv();
     }
     function tuRenderConv() {
         var el = $('tuConv'), usd = tuUsdFromInput();
         if (tuCur !== 'SYP' || isNaN(usd)) { el.className = 'tu-conv'; el.innerHTML = ''; return; }
         el.className = 'tu-conv show';
-        el.innerHTML = '<i class="fas fa-arrow-left"></i> سيُضاف إلى رصيدك: <b>' + usd.toFixed(2) + '$</b>';
+        el.innerHTML = '<i class="fas fa-wallet"></i> سيُضاف إلى رصيدك: <b>' + usd.toFixed(2) + '$</b>';
     }
     document.querySelectorAll('.tu-cur-btn').forEach(function(b) {
-        b.addEventListener('click', function() {
-            if (b.dataset.cur === 'SYP' && !(fx.rate > 0)) { showToast('الشحن بالليرة غير متاح حالياً', 'warn'); return; }
+        b.addEventListener('click', function(e) {
+            e.preventDefault();
             if (tuCur === b.dataset.cur) return;
             tuCur = b.dataset.cur;
             $('tuAmount').value = '';
             tuRenderCurrency();
-            $('tuAmount').focus();
+            if (tuCur === 'SYP') fxFetch();   // نتأكد من آخر سعر
+            if (!$('tuAmount').disabled) $('tuAmount').focus();
         });
     });
     $('tuAmount').addEventListener('input', tuRenderConv);
-    dbRef('config/exchange').on('value', function(snap) {
-        var v = snap.val() || {};
-        fx.rate = parseFloat(v.rate) || 0;
-        fx.updatedAt = v.updatedAt || 0;
-        if (!(fx.rate > 0) && tuCur === 'SYP') tuCur = 'USD';
+    dbRef('config/exchange').on('value', function(snap) { fxSet(snap.val()); }, function() { fxFetch(); });
+    fxFetch();
+    // عند فتح نافذة الشحن: نعيد للدولار ونحدّث السعر
+    var _openTopup = window.openTopup;
+    window.openTopup = function() {
+        tuCur = 'USD';
         tuRenderCurrency();
-    }, function() { tuRenderCurrency(); });
+        fxFetch();
+        return _openTopup.apply(this, arguments);
+    };
     window.zoodnyFx = function() { return { rate: fx.rate, updatedAt: fx.updatedAt }; };
 
     $('tuSubmitBtn').onclick = function() {
@@ -779,6 +806,7 @@
         if (!name)             { showErr('يرجى إدخال اسمك الكامل', 'tuName'); return; }
         if (!phone)            { showErr('يرجى إدخال رقم هاتفك', 'tuPhone'); return; }
         if (!/^09[0-9]{8}$/.test(phone)) { showErr('رقم الهاتف غير صحيح — يجب أن يبدأ بـ 09 ويتكون من 10 أرقام: 09XXXXXXXX', 'tuPhone'); return; }
+        if (isSyp && !fx.loaded)          { showErr('انتظر لحظة حتى يتم تحميل سعر الصرف', 'tuAmount'); fxFetch(); return; }
         if (isSyp && !(fx.rate > 0))      { showErr('الشحن بالليرة غير متاح حالياً — اختر الدولار', 'tuAmount'); return; }
         if (isNaN(entered)||entered<=0)   { showErr('يرجى إدخال مبلغ صحيح أكبر من صفر', 'tuAmount'); return; }
         if (isNaN(amount)||amount<0.01)   { showErr('المبلغ صغير جداً — أقل من 0.01$ بعد التحويل', 'tuAmount'); return; }

@@ -1513,6 +1513,7 @@
                                    : '<input type="text"' + (opts.number ? ' inputmode="decimal" dir="ltr"' : '') + '>';
         ed.innerHTML = '<div class="pmg-inline-lbl"><i class="fas fa-pen"></i> ' + pmgEsc(opts.label) + '</div>' + field +
             (opts.hint ? '<div class="pmg-inline-hint">' + pmgEsc(opts.hint) + '</div>' : '') +
+            (opts.check ? '<label class="pmg-inline-check"><input type="checkbox"' + (opts.check.checked ? ' checked' : '') + '> ' + pmgEsc(opts.check.label) + '</label>' : '') +
             '<div class="pmg-inline-btns"><button type="button" class="pmg-inline-save"><i class="fas fa-check"></i> حفظ لكل الزبائن</button>' +
             '<button type="button" class="pmg-inline-cancel">إلغاء</button></div>';
         var inp = ed.querySelector(opts.multiline ? 'textarea' : 'input');
@@ -1528,7 +1529,8 @@
                 if (typeof v !== 'number' || v < 0) { alert('اكتب رقماً صحيحاً (مثال: 2.5)'); inp.focus(); return; }
             } else if (opts.required && !String(v).trim()) { alert('لا يمكن ترك هذا الحقل فارغاً'); inp.focus(); return; }
             btn.disabled = true;
-            Promise.resolve(opts.save(v)).then(function () { close(); pmgDetRerender(); }, function () { btn.disabled = false; });
+            var chk = ed.querySelector('.pmg-inline-check input');
+            Promise.resolve(opts.save(v, chk ? chk.checked : undefined)).then(function () { close(); pmgDetRerender(); }, function () { btn.disabled = false; });
         };
         inp.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') close();
@@ -1557,6 +1559,13 @@
         var ul = body.querySelector('.product-details-features');
         if (ul && Array.isArray(it.features) && it.features.length) {
             ul.innerHTML = it.features.map(function (f) { return '<li><i class="fas fa-check-circle"></i> ' + pmgEsc(f) + '</li>'; }).join('');
+        }
+
+        // شارات الثقة الخاصة بهذا المنتج (إن وُجدت) بدل شارات المتجر العامة
+        var trustEl = body.querySelector('.pd-trust');
+        if (trustEl && Array.isArray(it.trust) && it.trust.length && typeof window.zoodnyTrustHtml === 'function') {
+            trustEl.innerHTML = window.zoodnyTrustHtml(it.trust);
+            trustEl.setAttribute('data-own', '1');
         }
 
         // نفذ المخزون: التفاصيل ظاهرة، لكن زر الطلب معطّل
@@ -1621,6 +1630,29 @@
                     var list = String(v).split(/\r?\n/).map(function (x) { return x.replace(/[<>]/g, '').trim(); }).filter(Boolean);
                     if (list.length) it.features = list; else delete it.features;
                     return pmgSaveItemNow(ctx, (list.length ? 'تعديل مميزات "' : 'إرجاع المميزات الافتراضية لـ "') + it.name + '"');
+                } });
+        });
+
+        // شارات الثقة تحت السعر (تنفيذ سريع، الدفع من رصيدك، دعم 24/7...)
+        if (trustEl) pmgDetPencil(trustEl, 'تعديل الشارات', function () {
+            var own = Array.isArray(it.trust) && it.trust.length;
+            var cur = own ? it.trust : (window.zoodnyTrust || []);
+            pmgInlineEditor(trustEl, { label: 'الشارات تحت السعر', multiline: true, rows: Math.max(3, cur.length + 1), value: cur.join('\n'),
+                hint: 'شارة في كل سطر (حتى 5). امسح كل الأسطر للعودة للشارات الافتراضية.',
+                check: { label: 'لهذا المنتج فقط (بدون تفعيل: تتغير لكل المنتجات)', checked: !!own },
+                save: function (v, onlyThis) {
+                    var list = String(v).split(/\r?\n/).map(function (x) { return x.replace(/[<>]/g, '').trim(); }).filter(Boolean).slice(0, 5);
+                    if (onlyThis) {
+                        if (list.length) it.trust = list; else delete it.trust;
+                        return pmgSaveItemNow(ctx, (list.length ? 'تعديل شارات "' : 'إرجاع الشارات العامة لـ "') + it.name + '"' + (list.length ? ': ' + list.join('، ') : ''));
+                    }
+                    // لكل المنتجات (وإن كان للمنتج شارات خاصة نزيلها ليتبع العامة)
+                    var p = (list.length ? dbRef('config/trust').set(list) : dbRef('config/trust').remove()).then(function () {
+                        showToast('تم تحديث الشارات لكل المنتجات', 'success');
+                        pmgLog(list.length ? 'تعديل شارات تفاصيل المنتج لكل المتجر: ' + list.join('، ') : 'إرجاع شارات تفاصيل المنتج الافتراضية لكل المتجر');
+                    });
+                    if (own) { delete it.trust; p = p.then(function () { return pmgSaveItemNow(ctx, 'إزالة الشارات الخاصة من "' + it.name + '"'); }); }
+                    return p.catch(function (err) { showToast('تعذر الحفظ: ' + (err && err.message ? err.message : err), 'error'); throw err; });
                 } });
         });
 

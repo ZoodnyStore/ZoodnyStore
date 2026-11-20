@@ -1938,3 +1938,8 @@ html.zm-has-bar body{padding-top:38px}
 .adm-ti-syp{background:#fff8e8 !important;border-color:#f0d49a !important}
 .adm-ti-sub{font-size:.7rem;color:#9a7b3a;margin-top:2px}
 .adm-syp-tag{display:inline-block;background:#F7C873;color:#1E2B38;border-radius:6px;padding:0 .35rem;font-size:.68rem;font-weight:800;margin-inline-start:.25rem}
+/* تعديل شارات الثقة في تفاصيل المنتج */
+.pd-trust>.pmg-det-pencil{width:26px;height:26px;font-size:.65rem;margin:2px 0 0;align-self:flex-start}
+.pmg-det-admin .pd-trust{outline:1.5px dashed rgba(247,200,115,.7);outline-offset:4px;border-radius:6px}
+.pmg-inline-check{display:flex;align-items:center;gap:.4rem;margin-top:.5rem;font-size:.8rem;font-weight:700;color:#5c4400;cursor:pointer}
+.pd-price-card .pmg-inline-ed{width:100%;color:#2A3F54}

@@ -6,6 +6,32 @@
 // ── قالب موحّد لنافذة التفاصيل (يُستخدم لكل أنواع المنتجات) ──
 // الأسماء .product-details-* ثابتة: يعتمد عليها التعديل المباشر للمدير وحالة "نفذ المخزون" (product-manager.js)
 function pdEsc(s) { return String(s === null || s === undefined ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+// شارات الثقة تحت السعر — يعدّلها المدير (لكل المنتجات: config/trust، أو لمنتج واحد: الحقل trust)
+var PD_TRUST_DEFAULT = ['تنفيذ سريع', 'الدفع من رصيدك', 'دعم 24/7'];
+var PD_TRUST_ICONS = ['fa-bolt', 'fa-wallet', 'fa-headset', 'fa-shield-alt', 'fa-star'];
+window.zoodnyTrust = PD_TRUST_DEFAULT.slice();
+function pdTrustHtml(list) {
+    list = (Array.isArray(list) && list.length ? list : window.zoodnyTrust) || PD_TRUST_DEFAULT;
+    return list.slice(0, 5).map(function (t, i) {
+        return '<span><i class="fas ' + PD_TRUST_ICONS[i % PD_TRUST_ICONS.length] + '"></i> ' + pdEsc(t) + '</span>';
+    }).join('');
+}
+window.zoodnyTrustHtml = pdTrustHtml;
+(function () {
+    if (typeof dbRef !== 'function') return;
+    dbRef('config/trust').on('value', function (snap) {
+        var v = snap.val();
+        if (v && !Array.isArray(v) && typeof v === 'object') v = Object.keys(v).map(function (k) { return v[k]; });
+        window.zoodnyTrust = Array.isArray(v) && v.length ? v.filter(Boolean) : PD_TRUST_DEFAULT.slice();
+        // نافذة مفتوحة الآن ← نحدّث الشارات (ما لم يكن للمنتج شارات خاصة)
+        document.querySelectorAll('#productDetailsBody .pd-trust:not([data-own])').forEach(function (el) {
+            var pen = el.querySelector('.pmg-det-pencil');
+            el.innerHTML = pdTrustHtml();
+            if (pen) el.appendChild(pen);
+        });
+    }, function () {});
+})();
+
 function pdMarkup(o) {
     var isNum = /^\s*[\d.]+\s*\$/.test(String(o.price || ''));
     var wa = 'https://wa.me/963939083098?text=' + encodeURIComponent('مرحباً، أريد الاستفسار عن: ' + (o.name || ''));
@@ -22,11 +48,7 @@ function pdMarkup(o) {
                     <div class="pd-price-lbl">${o.priceLabel || 'السعر'}</div>
                     <div class="product-details-price${isNum ? '' : ' pd-price-text'}">${o.price}</div>
                 </div>
-                <div class="pd-trust">
-                    <span><i class="fas fa-bolt"></i> تنفيذ سريع</span>
-                    <span><i class="fas fa-wallet"></i> الدفع من رصيدك</span>
-                    <span><i class="fas fa-headset"></i> دعم 24/7</span>
-                </div>
+                <div class="pd-trust">${pdTrustHtml()}</div>
             </div>
 
             <div class="pd-sec">

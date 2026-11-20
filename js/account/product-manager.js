@@ -824,13 +824,13 @@
     }
 
     // تصغير الصورة وضغطها (لا تتجاوز ~90KB تقريباً)
-    function pmgCompressImage(file) {
+    function pmgCompressImage(file, big) {
         return new Promise(function (resolve, reject) {
             var url = URL.createObjectURL(file);
             var img = new Image();
             img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('تعذر قراءة الصورة')); };
             img.onload = function () {
-                var steps = [[640, 0.82], [520, 0.74], [400, 0.66], [320, 0.58]];
+                var steps = big ? [[1280, 0.8], [1040, 0.74], [860, 0.68], [700, 0.6]] : [[640, 0.82], [520, 0.74], [400, 0.66], [320, 0.58]];
                 var out = null, type = 'image/webp';
                 for (var i = 0; i < steps.length; i++) {
                     var max = steps[i][0], q = steps[i][1];
@@ -848,7 +848,7 @@
                         ctx.drawImage(img, 0, 0, w, h);
                         out = cv.toDataURL('image/webp', q);
                     }
-                    if (out.length < 120000) break;
+                    if (out.length < (big ? 260000 : 120000)) break;
                 }
                 URL.revokeObjectURL(url);
                 fetch(out).then(function (r) { return r.blob(); })
@@ -859,8 +859,8 @@
         });
     }
 
-    function pmgUploadImage(file, tag) {
-        return pmgCompressImage(file).then(function (res) {
+    function pmgUploadImage(file, tag, big) {
+        return pmgCompressImage(file, big).then(function (res) {
             var fallback = { url: res.dataUrl, mode: 'database' };
             var task = null;
             try {
@@ -868,7 +868,7 @@
                     var st = firebase.storage();
                     try { st.setMaxUploadRetryTime(8000); } catch (e0) {}
                     var ext = res.type === 'image/webp' ? 'webp' : 'jpg';
-                    var ref = st.ref('product_images/' + pmgSafeKey(tag) + '_' + Date.now() + '.' + ext);
+                    var ref = st.ref((big ? 'promo_images/' : 'product_images/') + pmgSafeKey(tag) + '_' + Date.now() + '.' + ext);
                     task = Promise.race([
                         ref.put(res.blob, { contentType: res.type }).then(function () { return ref.getDownloadURL(); }),
                         new Promise(function (_, rej) { setTimeout(function () { rej(new Error('timeout')); }, 12000); })
@@ -1689,6 +1689,9 @@
             return r;
         };
     }
+
+    // رفع صورة من أدوات المدير الأخرى (بانر العروض) — big: دقة أعلى للصور العريضة
+    window.zoodnyUploadImage = function (file, tag, big) { return pmgUploadImage(file, tag || 'img', !!big); };
 
     function pmgInit() {
         pmgInitSourceSelect();

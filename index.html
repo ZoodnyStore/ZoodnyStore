@@ -540,6 +540,9 @@
         </div>
     </div>
 
+    <!-- شريط الإعلانات (js/store/promos.js) -->
+    <div class="z-ticker" id="zTicker" hidden></div>
+
         <!-- قسم الهيرو -->
     <section class="hero" id="home">
         <!-- خلفية حيّة: إضاءات + أيقونات عائمة لما يبيعه المتجر -->
@@ -582,6 +585,9 @@
             </div>
         </div>
     </section>
+
+    <!-- بانر العروض (js/store/promos.js) -->
+    <section class="z-promos" id="zPromos" hidden aria-label="العروض"></section>
 
     <!-- قسم التصنيفات -->
     <section class="categories" id="categories">
@@ -804,6 +810,7 @@
     <script src="js/store/maintenance.js"></script>
     <script src="js/store/back-nav.js"></script>
     <script src="js/store/hero.js"></script>
+    <script src="js/store/promos.js"></script>
 
     <!-- زر خدمة العملاء الثابت -->
     <a href="https://wa.me/963939083098" class="wa-float-btn" target="_blank" title="تواصل مع خدمة العملاء">
@@ -1275,6 +1282,7 @@
             <div class="tl-nav">
                 <button type="button" class="adm-filter-btn active" data-tl="staff"><i class="fas fa-user-tie"></i> الموظفون</button>
                 <button type="button" class="adm-filter-btn" data-tl="log"><i class="fas fa-history"></i> سجل النشاط</button>
+                <button type="button" class="adm-filter-btn" data-tl="promo"><i class="fas fa-bullhorn"></i> الإعلانات والعروض</button>
                 <button type="button" class="adm-filter-btn" data-tl="backup"><i class="fas fa-file-export"></i> التصدير والنسخ الاحتياطي</button>
             </div>
 
@@ -1312,6 +1320,29 @@
                     <select class="pmg-select" id="logWho"><option value="">الكل</option><option value="admin">المدير فقط</option><option value="staff">الموظفون فقط</option></select>
                 </div>
                 <div id="logList"><div class="adm-no-data"><i class="fas fa-spinner fa-spin"></i></div></div>
+            </div>
+
+            <div class="tl-sec" id="tl-promo" style="display:none">
+                <div class="adm-sec">
+                    <h4><i class="fas fa-bullhorn"></i> شريط الإعلانات (أعلى الصفحة)</h4>
+                    <div class="pmg-sync-note"><i class="fas fa-info-circle"></i> رسائل قصيرة تتبدّل تلقائياً أعلى المتجر. يمكن ربط كل رسالة بقسم أو بحث أو رابط، وتحديد تاريخ تنتهي فيه وتختفي وحدها. استخدم الرموز التعبيرية لجذب الانتباه 🔥⚡🎁</div>
+                    <div id="tkRows" class="pe-list"></div>
+                    <div class="tl-row">
+                        <button type="button" class="pmg-sub-add" id="tkAdd"><i class="fas fa-plus"></i> إضافة رسالة</button>
+                        <span class="rpt-spacer"></span>
+                        <button type="button" class="pmg-add-btn" id="tkSave"><i class="fas fa-save"></i> حفظ الشريط</button>
+                    </div>
+                </div>
+                <div class="adm-sec">
+                    <h4><i class="fas fa-images"></i> بانر العروض (تحت واجهة الدخول)</h4>
+                    <div class="pmg-sync-note"><i class="fas fa-info-circle"></i> بطاقات عروض بالصور تتقلّب تلقائياً. الصورة الأفضل عريضة (مثل 1200×500). فعّل "عدّاد تنازلي" ليظهر للعميل الوقت المتبقي حتى نهاية العرض.</div>
+                    <div id="prRows" class="pe-list"></div>
+                    <div class="tl-row">
+                        <button type="button" class="pmg-sub-add" id="prAdd"><i class="fas fa-plus"></i> إضافة عرض</button>
+                        <span class="rpt-spacer"></span>
+                        <button type="button" class="pmg-add-btn" id="prSave"><i class="fas fa-save"></i> حفظ العروض</button>
+                    </div>
+                </div>
             </div>
 
             <div class="tl-sec" id="tl-backup" style="display:none">

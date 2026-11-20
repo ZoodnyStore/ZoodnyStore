@@ -19,7 +19,8 @@
     var started = false;
     function showSec(name) {
         document.querySelectorAll('[data-tl]').forEach(function (b) { b.classList.toggle('active', b.dataset.tl === name); });
-        ['staff', 'log', 'backup'].forEach(function (n) { $('tl-' + n).style.display = n === name ? '' : 'none'; });
+        ['staff', 'log', 'promo', 'backup'].forEach(function (n) { $('tl-' + n).style.display = n === name ? '' : 'none'; });
+        if (name === 'promo') peLoad();
     }
     document.querySelectorAll('[data-tl]').forEach(function (b) { b.addEventListener('click', function () { showSec(b.dataset.tl); }); });
     var tab = document.querySelector('.adm-tab[data-panel="tools"]');
@@ -259,6 +260,159 @@
         };
         reader.readAsText(f);
     });
+
+    // ═══════════════ الإعلانات والعروض (config/ticker و config/promos) ═══════════════
+    var peLoaded = false;
+    function toLocalInput(ms) {
+        if (!ms) return '';
+        var d = new Date(Number(ms)), p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+        return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + 'T' + p2(d.getHours()) + ':' + p2(d.getMinutes());
+    }
+    function fromLocalInput(v) { if (!v) return 0; var t = new Date(v).getTime(); return isNaN(t) ? 0 : t; }
+    function catOptions(sel) {
+        var list = [];
+        try { list = (typeof categories !== 'undefined' ? categories : []).map(function (c) { return [c.id, c.name]; }); } catch (e) {}
+        return list.map(function (c) { return '<option value="' + esc(c[0]) + '"' + (String(c[0]) === String(sel) ? ' selected' : '') + '>' + esc(c[1]) + '</option>'; }).join('');
+    }
+    function linkEditorHtml(link) {
+        link = String(link || '');
+        var i = link.indexOf(':'), type = i > 0 ? link.slice(0, i) : '', val = i > 0 ? link.slice(i + 1) : '';
+        return '<div class="pe-link">' +
+            '<select class="pe-ltype">' +
+                '<option value=""' + (!type ? ' selected' : '') + '>بدون رابط</option>' +
+                '<option value="cat"' + (type === 'cat' ? ' selected' : '') + '>يفتح قسماً</option>' +
+                '<option value="search"' + (type === 'search' ? ' selected' : '') + '>يبحث عن منتج</option>' +
+                '<option value="url"' + (type === 'url' ? ' selected' : '') + '>رابط خارجي</option>' +
+            '</select>' +
+            '<select class="pe-lcat"' + (type === 'cat' ? '' : ' hidden') + '>' + catOptions(type === 'cat' ? val : '') + '</select>' +
+            '<input type="text" class="pe-lval" dir="auto"' + (type === 'search' || type === 'url' ? '' : ' hidden') +
+                ' placeholder="' + (type === 'url' ? 'https://...' : 'مثال: ببجي') + '" value="' + esc(type === 'search' || type === 'url' ? val : '') + '">' +
+        '</div>';
+    }
+    function wireLink(row) {
+        var t = row.querySelector('.pe-ltype'), c = row.querySelector('.pe-lcat'), v = row.querySelector('.pe-lval');
+        t.addEventListener('change', function () {
+            c.hidden = t.value !== 'cat';
+            v.hidden = !(t.value === 'search' || t.value === 'url');
+            v.placeholder = t.value === 'url' ? 'https://...' : 'مثال: ببجي';
+        });
+    }
+    function readLink(row) {
+        var t = row.querySelector('.pe-ltype').value;
+        if (t === 'cat') return 'cat:' + row.querySelector('.pe-lcat').value;
+        if (t === 'search' || t === 'url') { var v = row.querySelector('.pe-lval').value.trim(); return v ? t + ':' + v : ''; }
+        return '';
+    }
+    function rowTools(row, list) {
+        row.querySelector('.pe-up').onclick = function () { var p = row.previousElementSibling; if (p) list.insertBefore(row, p); };
+        row.querySelector('.pe-down').onclick = function () { var n = row.nextElementSibling; if (n) list.insertBefore(n, row); };
+        row.querySelector('.pe-del').onclick = function () { if (confirm('حذف هذا العنصر؟')) row.parentNode.removeChild(row); };
+    }
+    var TOOLS = '<div class="pe-tools"><button type="button" class="pe-up" title="أعلى"><i class="fas fa-arrow-up"></i></button>' +
+        '<button type="button" class="pe-down" title="أسفل"><i class="fas fa-arrow-down"></i></button>' +
+        '<button type="button" class="pe-del" title="حذف"><i class="fas fa-trash"></i></button></div>';
+    function onSwitch(on) { return '<label class="pe-switch" title="تشغيل/إيقاف"><input type="checkbox" class="pe-on"' + (on !== false ? ' checked' : '') + '><span></span></label>'; }
+
+    // ── شريط الإعلانات ──
+    function tkAddRow(x) {
+        x = x || {};
+        var row = document.createElement('div');
+        row.className = 'pe-row tk-row';
+        row.innerHTML = '<div class="pe-head">' + onSwitch(x.on) + '<input type="text" class="pe-text" maxlength="140" placeholder="مثال: 🔥 خصم 10% على شدات ببجي حتى الجمعة" value="' + esc(x.text || '') + '">' + TOOLS + '</div>' +
+            '<div class="pe-grid">' + linkEditorHtml(x.link) +
+            '<label class="pe-until"><span>ينتهي في (اختياري)</span><input type="datetime-local" class="pe-date" value="' + toLocalInput(x.until) + '"></label></div>';
+        $('tkRows').appendChild(row);
+        wireLink(row); rowTools(row, $('tkRows'));
+        return row;
+    }
+    // ── بانر العروض ──
+    function prAddRow(x) {
+        x = x || {};
+        var row = document.createElement('div');
+        row.className = 'pe-row pr-row';
+        row.innerHTML = '<div class="pe-head">' + onSwitch(x.on) + '<input type="text" class="pe-title" maxlength="60" placeholder="عنوان العرض — مثال: خصم 20% على نتفلكس" value="' + esc(x.title || '') + '">' + TOOLS + '</div>' +
+            '<div class="pe-promo">' +
+                '<div class="pe-img"><div class="pe-prev"' + (x.image ? ' style="background-image:url(\'' + esc(x.image).replace(/'/g, '%27') + '\')"' : '') + '>' + (x.image ? '' : '<i class="fas fa-image"></i>') + '</div>' +
+                    '<label class="pmg-upload-btn"><i class="fas fa-cloud-upload-alt"></i> رفع صورة<input type="file" accept="image/*" class="pe-file" hidden></label>' +
+                    '<input type="text" class="pe-image" dir="ltr" placeholder="أو رابط/اسم الصورة" value="' + esc(x.image || '') + '"><div class="pe-imgst"></div></div>' +
+                '<div class="pe-fields">' +
+                    '<input type="text" class="pe-sub" maxlength="120" placeholder="جملة قصيرة — مثال: اشتراك شهر كامل بأقل سعر في المتجر" value="' + esc(x.sub || '') + '">' +
+                    '<div class="pe-two"><input type="text" class="pe-badge" maxlength="20" placeholder="شارة (اختياري): جديد / -20%" value="' + esc(x.badge || '') + '">' +
+                        '<select class="pe-bcolor">' + [['gold', 'ذهبي'], ['red', 'أحمر'], ['green', 'أخضر'], ['blue', 'أزرق']].map(function (c) {
+                            return '<option value="' + c[0] + '"' + ((x.badgeColor || 'gold') === c[0] ? ' selected' : '') + '>' + c[1] + '</option>'; }).join('') + '</select></div>' +
+                    '<input type="text" class="pe-cta" maxlength="24" placeholder="نص الزر (افتراضي: اطلب الآن)" value="' + esc(x.cta || '') + '">' +
+                    linkEditorHtml(x.link) +
+                    '<div class="pe-two"><label class="pe-until"><span>ينتهي العرض في (اختياري)</span><input type="datetime-local" class="pe-date" value="' + toLocalInput(x.until) + '"></label>' +
+                        '<label class="rpt-check pe-cdl"><input type="checkbox" class="pe-cd"' + (x.countdown ? ' checked' : '') + '> عدّاد تنازلي</label></div>' +
+                '</div>' +
+            '</div>';
+        $('prRows').appendChild(row);
+        wireLink(row); rowTools(row, $('prRows'));
+        var img = row.querySelector('.pe-image'), prev = row.querySelector('.pe-prev'), st = row.querySelector('.pe-imgst');
+        function setPrev(u) { u = (window.zoodnyImagePath ? window.zoodnyImagePath(u) : u) || ''; prev.style.backgroundImage = u ? "url('" + u.replace(/'/g, '%27') + "')" : ''; prev.innerHTML = u ? '' : '<i class="fas fa-image"></i>'; }
+        img.addEventListener('input', function () { setPrev(img.value.trim()); });
+        row.querySelector('.pe-file').addEventListener('change', function () {
+            var f = this.files && this.files[0], inp = this;
+            if (!f || typeof window.zoodnyUploadImage !== 'function') return;
+            st.textContent = 'جاري رفع الصورة...'; st.className = 'pe-imgst';
+            window.zoodnyUploadImage(f, 'promo', true).then(function (r) {
+                img.value = r.url; setPrev(r.url); st.textContent = '✓ تم — اضغط "حفظ العروض"'; st.className = 'pe-imgst ok';
+            }).catch(function (err) { st.textContent = 'تعذر الرفع: ' + (err && err.message ? err.message : err); st.className = 'pe-imgst err'; })
+              .then(function () { inp.value = ''; });
+        });
+        return row;
+    }
+    function peArr(v) { return Array.isArray(v) ? v.filter(Boolean) : (v && typeof v === 'object' ? Object.keys(v).map(function (k) { return v[k]; }).filter(Boolean) : []); }
+    function peLoad() {
+        if (peLoaded || !ZA.isAdmin()) return;
+        peLoaded = true;
+        $('tkRows').innerHTML = $('prRows').innerHTML = '<div class="adm-no-data"><i class="fas fa-spinner fa-spin"></i></div>';
+        Promise.all([dbRef('config/ticker').once('value'), dbRef('config/promos').once('value')]).then(function (r) {
+            $('tkRows').innerHTML = ''; $('prRows').innerHTML = '';
+            var t = peArr(r[0].val()), p = peArr(r[1].val());
+            if (t.length) t.forEach(tkAddRow); else tkAddRow({ text: '' });
+            if (p.length) p.forEach(prAddRow); else prAddRow({});
+        }).catch(function (err) { peLoaded = false; $('tkRows').innerHTML = '<div class="adm-no-data" style="color:#e74c3c">' + esc(errMsg(err)) + '</div>'; });
+    }
+    $('tkAdd').onclick = function () { tkAddRow({}).querySelector('.pe-text').focus(); };
+    $('prAdd').onclick = function () { prAddRow({}).querySelector('.pe-title').focus(); };
+    $('tkSave').onclick = function () {
+        var list = [];
+        $('tkRows').querySelectorAll('.tk-row').forEach(function (row) {
+            var text = row.querySelector('.pe-text').value.trim();
+            if (!text) return;
+            var o = { text: text, on: row.querySelector('.pe-on').checked };
+            var l = readLink(row); if (l) o.link = l;
+            var u = fromLocalInput(row.querySelector('.pe-date').value); if (u) o.until = u;
+            list.push(o);
+        });
+        var btn = this; btn.disabled = true;
+        (list.length ? dbRef('config/ticker').set(list) : dbRef('config/ticker').remove()).then(function () {
+            balToast('✓ تم حفظ شريط الإعلانات (' + list.filter(function (x) { return x.on; }).length + ' رسالة فعّالة)', true);
+            log('store', 'تحديث شريط الإعلانات: ' + (list.length ? list.map(function (x) { return x.text; }).join(' | ') : 'حذف كل الرسائل'));
+        }).catch(function (err) { alert('فشل الحفظ: ' + errMsg(err)); }).then(function () { btn.disabled = false; });
+    };
+    $('prSave').onclick = function () {
+        var list = [], bad = null;
+        $('prRows').querySelectorAll('.pr-row').forEach(function (row, i) {
+            var g = function (c) { var el = row.querySelector(c); return el ? el.value.trim() : ''; };
+            var o = { title: g('.pe-title'), sub: g('.pe-sub'), image: g('.pe-image'), badge: g('.pe-badge'), badgeColor: g('.pe-bcolor') || 'gold',
+                      cta: g('.pe-cta'), on: row.querySelector('.pe-on').checked, countdown: row.querySelector('.pe-cd').checked };
+            if (!o.title && !o.image) return;
+            if (o.image && window.zoodnyImagePath) o.image = window.zoodnyImagePath(o.image);
+            var l = readLink(row); if (l) o.link = l;
+            var u = fromLocalInput(row.querySelector('.pe-date').value); if (u) o.until = u;
+            if (o.countdown && !o.until && !bad) bad = 'العرض رقم ' + (i + 1) + ': العدّاد التنازلي يحتاج تاريخ انتهاء';
+            Object.keys(o).forEach(function (k) { if (o[k] === '') delete o[k]; });
+            list.push(o);
+        });
+        if (bad) { alert(bad); return; }
+        var btn = this; btn.disabled = true;
+        (list.length ? dbRef('config/promos').set(list) : dbRef('config/promos').remove()).then(function () {
+            balToast('✓ تم حفظ العروض (' + list.filter(function (x) { return x.on; }).length + ' عرض فعّال)', true);
+            log('store', 'تحديث بانر العروض: ' + (list.length ? list.map(function (x) { return x.title || 'صورة'; }).join(' | ') : 'حذف كل العروض'));
+        }).catch(function (err) { alert('فشل الحفظ: ' + errMsg(err)); }).then(function () { btn.disabled = false; });
+    };
 
     // ═══════════════ وضع الصيانة (config/maintenance) ═══════════════
     var maint = null, mtRef = null;

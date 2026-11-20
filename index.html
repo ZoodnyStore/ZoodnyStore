@@ -8,7 +8,7 @@
     <meta name="keywords" content="زودني, متجر إلكتروني سوريا, شحن ألعاب, رصيد موبايل, تسوق اونلاين, zoodny" />
     <meta name="robots" content="index, follow" />
     <meta property="og:title" content="زودني zoodny - تسوق إلكتروني" />
-    <meta property="og:description" content="التجربة الأولى من نوعها في سوريا - جودة عالية وتنفيذ سريع مع نظام طلب سهل وآمن" />
+    <meta property="og:description" content="شحن ألعاب وتطبيقات، رصيد موبايل، اشتراكات بريميوم وخدمات سوشال ميديا — بأفضل الأسعار وتنفيذ فوري ودعم على مدار الساعة." />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ar_SY" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -542,9 +542,22 @@
 
         <!-- قسم الهيرو -->
     <section class="hero" id="home">
+        <!-- خلفية حيّة: إضاءات + أيقونات عائمة لما يبيعه المتجر -->
+        <div class="hero-fx" aria-hidden="true">
+            <span class="hx-orb o1"></span><span class="hx-orb o2"></span><span class="hx-orb o3"></span>
+            <span class="hx-grid"></span>
+            <i class="hx-ic i1 fas fa-gamepad"></i><i class="hx-ic i2 fab fa-instagram"></i><i class="hx-ic i3 fab fa-tiktok"></i>
+            <i class="hx-ic i4 fas fa-tv"></i><i class="hx-ic i5 fas fa-mobile-alt"></i><i class="hx-ic i6 fab fa-telegram-plane"></i>
+            <i class="hx-ic i7 fas fa-gem"></i><i class="hx-ic i8 fab fa-apple"></i>
+        </div>
         <div class="hero-content">
-            <h1>التجربة الأولى من نوعها في سوريا <span style="color: var(--secondary)">زودني</span></h1>
-            <p>جودة عالية وتنفيذ سريع مع نظام طلب سهل</p>
+            <div class="hero-badge"><i class="fas fa-bolt"></i> متجر الشحن والاشتراكات الرقمية الأقوى</div>
+            <h1>كل ما تحتاجه رقمياً<br>بضغطة واحدة مع <span class="hero-brand">زودني</span></h1>
+            <p class="hero-sub">شحن ألعاب وتطبيقات، رصيد موبايل، اشتراكات بريميوم وخدمات سوشال ميديا — بأفضل الأسعار، تنفيذ فوري، ودعم حقيقي على مدار الساعة.</p>
+            <div class="hero-cta">
+                <a href="#categories" class="hero-btn primary" id="heroShopBtn"><i class="fas fa-store"></i> تصفّح المتجر</a>
+                <button type="button" class="hero-btn ghost" id="heroTopupBtn"><i class="fas fa-wallet"></i> اشحن رصيدك</button>
+            </div>
             <!-- شريط البحث داخل الهيرو -->
             <div class="hero-search-wrapper">
                 <div class="hero-search-box">
@@ -560,6 +573,12 @@
                     <span class="search-tag" data-query="سوشال ميديا"><i class="fas fa-share-alt"></i> سوشال ميديا</span>
                     <span class="search-tag" data-query="تطبيقات"><i class="fas fa-mobile-alt"></i> تطبيقات</span>
                 </div>
+            </div>
+            <div class="hero-stats">
+                <div class="hs"><b><span id="heroProdCount">+300</span></b><small>منتج وخدمة</small></div>
+                <div class="hs"><b><i class="fas fa-bolt"></i> دقائق</b><small>سرعة التنفيذ</small></div>
+                <div class="hs"><b><i class="fas fa-shield-alt"></i> 100%</b><small>دفع آمن</small></div>
+                <div class="hs"><b><i class="fas fa-headset"></i> 24/7</b><small>دعم مباشر</small></div>
             </div>
         </div>
     </section>
@@ -784,6 +803,7 @@
     <script src="js/store/auto-update.js"></script>
     <script src="js/store/maintenance.js"></script>
     <script src="js/store/back-nav.js"></script>
+    <script src="js/store/hero.js"></script>
 
     <!-- زر خدمة العملاء الثابت -->
     <a href="https://wa.me/963939083098" class="wa-float-btn" target="_blank" title="تواصل مع خدمة العملاء">
